@@ -1,0 +1,50 @@
+//--------------------------------------------------------------------------------------------------
+//  Created by Pierre Molinaro on 14/03/2026.
+//--------------------------------------------------------------------------------------------------
+
+import SwiftUI
+
+//--------------------------------------------------------------------------------------------------
+
+struct MouseGesture_DragKnob <TypeDictionary : WidgetTypeArrayProtocol> : MouseGestureProtocol {
+
+  let alignedCurrentPoint : CanariPoint
+  let optionKeyInitiallyOn : Bool
+  let widgetID : UUID
+  let action : (inout any WidgetUIProtocol <TypeDictionary>, CanariPoint, Bool) -> Void
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  func onMouseDragged (geometry inGeometry : MouseGestureGeometryContext,
+                       beginOrContinueUndoGrouping inBeginOrContinueUndoGrouping : () -> Void,
+                       selection ioSelection : inout Set <UUID>,
+                       userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
+                       widgetsManager ioWidgetsManager : inout WidgetsManager <TypeDictionary>,
+                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<TypeDictionary>)?) {
+    let translation = inGeometry.alignedUserCurrentLocation - self.alignedCurrentPoint
+    if translation != .zero {
+      inBeginOrContinueUndoGrouping ()
+      self.action (&ioWidgetsManager [id: widgetID], translation, self.optionKeyInitiallyOn)
+      outOptionalNextState = MouseGesture_DragKnob (
+        alignedCurrentPoint: inGeometry.alignedUserCurrentLocation,
+        optionKeyInitiallyOn: self.optionKeyInitiallyOn,
+        widgetID: self.widgetID,
+        action: self.action
+      )
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  func onMouseUp (removeUndoGrouping inRemoveUndoGrouping : () -> Void,
+                  selection ioSelection : inout Set <UUID>,
+                  userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
+                  widgetsManager ioWidgetsManager : inout WidgetsManager <TypeDictionary>) {
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+}
+
+//--------------------------------------------------------------------------------------------------
+
