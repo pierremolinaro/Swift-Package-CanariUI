@@ -1,21 +1,31 @@
+//
+//  Scanner+myScanCanariLength.swift
+//  editeur-courbes-bezier
+//
+//  Created by Pierre Molinaro on 19/09/2025.
+//
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 26/03/2026.
-//--------------------------------------------------------------------------------------------------
 
-import SwiftUI
+import AppKit
 
 //--------------------------------------------------------------------------------------------------
 
-public protocol WidgetTypeArrayProtocol {
-
-  associatedtype TypeDictionary : WidgetTypeArrayProtocol
+extension Scanner {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  nonisolated static var array : [any WidgetUIProtocol <TypeDictionary>.Type] { get }
+  func myScanCanariLength (_ ioOk : inout Bool) -> CanariLength {
+    if ioOk, let v = self.scanInt () {
+      return .cu (v)
+    }else{
+      ioOk = false
+      return .zero
+    }
+  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 }
 
 //--------------------------------------------------------------------------------------------------
+

@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariPath {
+public struct CanariPath : Equatable, CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -45,6 +45,18 @@ public struct CanariPath {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public mutating func addPath (_ inPath : CanariPath) {
+    self.mPath.addPath (inPath.swiftuiPath)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public mutating func addRect (_ inRect : CanariRect) {
+    self.mPath.addRect (inRect.pxValue)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public mutating func addLine (to inPoint : CanariPoint) {
     self.mPath.addLine (to: inPoint.pxValue)
   }
@@ -58,16 +70,22 @@ public struct CanariPath {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public mutating func addQuadCurve (to inPoint : CanariPoint,
-                              control inCtrl : CanariPoint) {
+                                     control inCtrl : CanariPoint) {
     self.mPath.addQuadCurve (to: inPoint.pxValue, control: inCtrl.pxValue)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public mutating func addCurve (to inPoint : CanariPoint,
-                          control1 inCtrl1 : CanariPoint,
-                          control1 inCtrl2 : CanariPoint) {
+                                 control1 inCtrl1 : CanariPoint,
+                                 control2 inCtrl2 : CanariPoint) {
     self.mPath.addCurve (to: inPoint.pxValue, control1: inCtrl1.pxValue, control2: inCtrl2.pxValue)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public mutating func close () {
+    self.mPath.closeSubpath ()
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -78,6 +96,22 @@ public struct CanariPath {
     result.mPath = self.mPath.applying (af)
     return result
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func transformed (using inTransform : CGAffineTransform) -> CanariPath {
+    var result = CanariPath ()
+    result.mPath = self.mPath.applying (inTransform)
+    return result
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+//  public func clipped (inRect inRect : NSRect) -> CanariPath {
+//    var result = CanariPath ()
+//    result.mPath = self.mPath.applying (inTransform)
+//    return result
+//  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -99,16 +133,23 @@ public struct CanariPath {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public var description : String {
+    var s = "["
+    self.mPath.forEach {
+      switch $0 {
+      case .closeSubpath: s += "Z"
+      case .move(to: let p): s += "M\(p.x) \(p.y)"
+      case .line(to: let p): s += "L\(p.x) \(p.y)"
+      case .curve (to: let p, control1: let ctrl1, control2: let ctrl2) : s += "C\(p.x) \(p.y) \(ctrl1.x) \(ctrl1.y) \(ctrl2.x)\(ctrl2.y)"
+      case .quadCurve (to: let p, control: let ctrl) : s += "Q\(p.x) \(p.y) \(ctrl.x) \(ctrl.y)"
+      }
+    }
+    s += "]"
+    return s
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 }
 
 //--------------------------------------------------------------------------------------------------
-
-public extension Path {
-
-  public func zoomed (by inZoom : Double) -> Path {
-    let af = CGAffineTransform (scaleX: inZoom, y: inZoom)
-    return self.applying (af)
-  }
-
-
-}

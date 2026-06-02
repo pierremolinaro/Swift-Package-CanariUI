@@ -1,21 +1,31 @@
+//
+//  Scanner+myScanUInt8.swift
+//  editeur-courbes-bezier
+//
+//  Created by Pierre Molinaro on 18/09/2025.
+//
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 26/03/2026.
-//--------------------------------------------------------------------------------------------------
 
-import SwiftUI
+import AppKit
 
 //--------------------------------------------------------------------------------------------------
 
-public protocol WidgetTypeArrayProtocol {
-
-  associatedtype TypeDictionary : WidgetTypeArrayProtocol
+public extension Scanner {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  nonisolated static var array : [any WidgetUIProtocol <TypeDictionary>.Type] { get }
+  func myScanUInt8 (_ ioOk : inout Bool) -> UInt8 {
+    if ioOk, let v = self.scanInt (), v >= 0, v <= 255 {
+      return UInt8 (v)
+    }else{
+      ioOk = false
+      return .zero
+    }
+  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 }
 
 //--------------------------------------------------------------------------------------------------
+
