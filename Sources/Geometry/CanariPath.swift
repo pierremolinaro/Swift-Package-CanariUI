@@ -51,6 +51,12 @@ public struct CanariPath : Equatable, CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public mutating func move (toX inX : Double, toY inY : Double) {
+    self.mPath.move (to: CGPoint (x: inX, y: inY))
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public mutating func addPath (_ inPath : CanariPath) {
     self.mPath.addPath (inPath.swiftuiPath)
   }
@@ -173,6 +179,36 @@ public struct CanariPath : Equatable, CustomStringConvertible {
     }
     s += "]"
     return s
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func moved (x inX : CanariLength, y inY : CanariLength) -> CanariPath {
+    let dx = inX.pxValue
+    let dy = inY.pxValue
+    var path = CanariPath ()
+    self.mPath.forEach {
+      switch $0 {
+      case .closeSubpath :
+        path.close ()
+      case .move (to: let p) :
+        path.move (toX: p.x + dx, toY: p.y + dy)
+      case .line (to: let p) :
+        path.addLine (to: CGPoint (x: p.x + dx, y: p.y + dy))
+      case .curve (to: let p, control1: let ctrl1, control2: let ctrl2) :
+        path.addCurve (
+          to: CGPoint (x: p.x + dx, y: p.y + dy),
+          control1: CGPoint (x: ctrl1.x + dx, y: ctrl1.y + dy),
+          control2: CGPoint (x: ctrl2.x + dx, y: ctrl2.y + dy)
+        )
+      case .quadCurve (to: let p, control: let ctrl) :
+         path.addQuadCurve (
+          to: CGPoint (x: p.x + dx, y: p.y + dy),
+          control: CGPoint (x: ctrl.x + dx, y: ctrl.y + dy)
+        )
+      }
+    }
+    return path
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

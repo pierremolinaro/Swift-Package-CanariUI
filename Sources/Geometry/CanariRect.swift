@@ -207,6 +207,12 @@ public struct CanariRect : Hashable, CustomStringConvertible, Sendable, Codable 
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public func moved (x inX : CanariLength, y inY : CanariLength) -> CanariRect {
+    CanariRect (left: self.origin.x + inX, bottom: self.origin.y + inY, width: self.width, height: self.height)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 }
 
 //--------------------------------------------------------------------------------------------------
