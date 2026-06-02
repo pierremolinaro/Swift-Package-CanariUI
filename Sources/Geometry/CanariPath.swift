@@ -10,7 +10,7 @@ public struct CanariPath : Equatable, CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private var mPath : Path
+  var mPath : Path
   var swiftuiPath : Path { self.mPath }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -29,6 +29,12 @@ public struct CanariPath : Equatable, CustomStringConvertible {
 
   public init (ellipse inRect : CanariRect) {
     self.mPath = Path (ellipseIn: inRect.pxValue)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public mutating func move (to inPoint : CGPoint) {
+    self.mPath.move (to: inPoint)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -63,6 +69,12 @@ public struct CanariPath : Equatable, CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public mutating func addLine (to inPoint : CGPoint) {
+    self.mPath.addLine (to: inPoint)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public mutating func addLine (toX inX : CanariLength, toY inY : CanariLength) {
     self.mPath.addLine (to: CanariPoint (x: inX, y: inY).pxValue)
   }
@@ -76,10 +88,25 @@ public struct CanariPath : Equatable, CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public mutating func addQuadCurve (to inPoint : CGPoint,
+                                     control inCtrl : CGPoint) {
+    self.mPath.addQuadCurve (to: inPoint, control: inCtrl)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public mutating func addCurve (to inPoint : CanariPoint,
                                  control1 inCtrl1 : CanariPoint,
                                  control2 inCtrl2 : CanariPoint) {
     self.mPath.addCurve (to: inPoint.pxValue, control1: inCtrl1.pxValue, control2: inCtrl2.pxValue)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public mutating func addCurve (to inPoint : CGPoint,
+                                 control1 inCtrl1 : CGPoint,
+                                 control2 inCtrl2 : CGPoint) {
+    self.mPath.addCurve (to: inPoint, control1: inCtrl1, control2: inCtrl2)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

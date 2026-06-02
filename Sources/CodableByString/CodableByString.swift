@@ -1,8 +1,8 @@
 //
-//  Scanner+myScanUInt8.swift
-//  editeur-courbes-bezier
+//  CodableByString.swift
+//  CanariGeometry
 //
-//  Created by Pierre Molinaro on 18/09/2025.
+//  Created by Pierre Molinaro on 02/06/2026.
 //
 //--------------------------------------------------------------------------------------------------
 
@@ -10,22 +10,18 @@ import AppKit
 
 //--------------------------------------------------------------------------------------------------
 
-public extension Scanner {
+public protocol CodableByString {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func myScanInt32 (_ ioOk : inout Bool) -> Int32 {
-    if ioOk, let v = self.scanInt32 () {
-      return v
-    }else{
-      ioOk = false
-      return .zero
-    }
-  }
+  init (scanner inScanner : Scanner, _ ioOk : inout Bool)
+
+  func encodedString () -> String
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 }
 
 //--------------------------------------------------------------------------------------------------
+
 

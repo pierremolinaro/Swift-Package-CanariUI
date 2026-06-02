@@ -10,7 +10,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariFillStyle : Equatable {
+public struct CanariFillStyle : Equatable, CodableByString {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -30,8 +30,12 @@ public struct CanariFillStyle : Equatable {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (scanner inScanner : Scanner, _ ioOk : inout Bool) {
-    self.eoFill = inScanner.myScanBool (&ioOk)
+    self.eoFill = Bool (scanner: inScanner, &ioOk)
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func encodedString () -> String { self.eoFill.encodedString () }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

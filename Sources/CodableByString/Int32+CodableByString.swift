@@ -10,17 +10,23 @@ import AppKit
 
 //--------------------------------------------------------------------------------------------------
 
-public extension Scanner {
+extension Int32 : CodableByString {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func myScanUInt8 (_ ioOk : inout Bool) -> UInt8 {
-    if ioOk, let v = self.scanInt (), v >= 0, v <= 255 {
-      return UInt8 (v)
+  public init (scanner inScanner : Scanner, _ ioOk : inout Bool) {
+    if ioOk, let v = inScanner.scanInt32 () {
+      self = v
     }else{
       ioOk = false
-      return .zero
+      self = .zero
     }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func encodedString () -> String {
+    return "\(self)"
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -28,4 +34,3 @@ public extension Scanner {
 }
 
 //--------------------------------------------------------------------------------------------------
-

@@ -10,7 +10,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariStrokeStyle : Equatable {
+public struct CanariStrokeStyle : Equatable, CodableByString {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -31,18 +31,28 @@ public struct CanariStrokeStyle : Equatable {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (scanner inScanner : Scanner, _ ioOk : inout Bool) {
-    if let v = CGLineCap (rawValue: inScanner.myScanInt32 (&ioOk)) {
+    if let v = CGLineCap (rawValue: Int32 (scanner: inScanner, &ioOk)) {
       self.lineCapStyle = v
     }else{
       self.lineCapStyle = .round
     }
-    if let v = CGLineJoin (rawValue: inScanner.myScanInt32 (&ioOk)) {
+    if let v = CGLineJoin (rawValue: Int32 (scanner: inScanner, &ioOk)) {
       self.lineJoinStyle = v
     }else{
       self.lineJoinStyle = .round
     }
-    self.lineWidth = inScanner.myScanCanariLength (&ioOk)
-    self.miterLimit = inScanner.myScanCanariLength (&ioOk)
+    self.lineWidth = CanariLength (scanner: inScanner, &ioOk)
+    self.miterLimit = CanariLength (scanner: inScanner, &ioOk)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func encodedString () -> String {
+    var str = "\(self.lineCapStyle.rawValue) \(self.lineJoinStyle.rawValue) "
+    str += self.lineWidth.encodedString ()
+    str += " "
+    str += self.miterLimit.encodedString ()
+    return str
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

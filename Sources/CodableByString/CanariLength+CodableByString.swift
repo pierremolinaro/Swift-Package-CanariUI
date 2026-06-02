@@ -10,17 +10,23 @@ import AppKit
 
 //--------------------------------------------------------------------------------------------------
 
-extension Scanner {
+extension CanariLength : CodableByString {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func myScanCanariLength (_ ioOk : inout Bool) -> CanariLength {
-    if ioOk, let v = self.scanInt () {
-      return .cu (v)
+  public init (scanner inScanner : Scanner, _ ioOk : inout Bool) {
+    if ioOk, let v = inScanner.scanInt () {
+      self = .cu (v)
     }else{
       ioOk = false
-      return .zero
+      self = .zero
     }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func encodedString () -> String {
+    return "\(self.cuValue)"
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -28,4 +34,3 @@ extension Scanner {
 }
 
 //--------------------------------------------------------------------------------------------------
-

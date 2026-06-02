@@ -1,26 +1,28 @@
-//
-//  Scanner+myScanUInt8.swift
-//  editeur-courbes-bezier
-//
-//  Created by Pierre Molinaro on 18/09/2025.
-//
+//--------------------------------------------------------------------------------------------------
+//  Created by Pierre Molinaro on 02/06/2026.
 //--------------------------------------------------------------------------------------------------
 
 import AppKit
 
 //--------------------------------------------------------------------------------------------------
 
-public extension Scanner {
+extension CGPoint : CodableByString {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func myScanBool (_ ioOk : inout Bool) -> Bool {
-    if ioOk, let v = self.scanInt (), v >= 0, v <= 1 {
-      return v != 0
+  public init (scanner inScanner : Scanner, _ ioOk : inout Bool) {
+    if ioOk, let x = inScanner.scanDouble (), let y = inScanner.scanDouble () {
+      self = CGPoint (x: x, y: y)
     }else{
       ioOk = false
-      return false
+      self = .zero
     }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func encodedString () -> String {
+    return "\(self.x) \(self.y)"
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -28,4 +30,3 @@ public extension Scanner {
 }
 
 //--------------------------------------------------------------------------------------------------
-
