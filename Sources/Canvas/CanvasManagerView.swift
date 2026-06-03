@@ -4,6 +4,68 @@
 
 import SwiftUI
 
+public let coordinateSpaceName = "DropContainer"
+
+//--------------------------------------------------------------------------------------------------
+
+public struct TargetFrameKey : PreferenceKey {
+    public static let defaultValue: CGRect = .zero
+
+    public static func reduce(value: inout CGRect, nextValue: () -> CGRect) {
+        value = nextValue()
+    }
+}
+
+//--------------------------------------------------------------------------------------------------
+
+@Observable public final class CanvasUserLocationComputations {
+
+  var mZoom = 1.0
+  var mGeometryAvailableWidth = CanariLength.zero
+  var mGeometryAvailableHeight = CanariLength.zero
+  let mContext : CanvasManagerViewContext
+  let mContentSizeWithMargins : CanariSize
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public init (context inContext : CanvasManagerViewContext) {
+    self.mContext = inContext
+    self.mContentSizeWithMargins = CanariSize (
+      width: inContext.contentSize.width + inContext.margins.left + inContext.margins.right,
+      height: inContext.contentSize.height + inContext.margins.top + inContext.margins.bottom
+    )
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func unalignedUserPoint (fromLocationInContentView inLocation : NSPoint) -> CanariPoint {
+    let point = CanariPoint (
+      x: (.px (inLocation.x) - self.contentOverWidth () / 2.0) / self.mZoom - self.mContext.margins.left,
+      y: self.mContentSizeWithMargins.height - self.mContext.margins.bottom + (self.contentOverHeight () / 2.0 - .px (inLocation.y)) / self.mZoom
+    )
+    return point
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  func contentOverWidth () -> CanariLength {
+    let availableWidth = self.mGeometryAvailableWidth - self.mContext.rulerDescriptor.leftVerticalRulerWidth - self.mContext.rulerDescriptor.rightVerticalRulerWidth
+    let overwidth = availableWidth - self.mContentSizeWithMargins.width * self.mZoom
+    return max (overwidth, .zero)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  private func contentOverHeight () -> CanariLength {
+    let availableHeight = self.mGeometryAvailableHeight - self.mContext.rulerDescriptor.topHorizontalRulerHeight - self.mContext.rulerDescriptor.bottomHorizontalRulerHeight
+    let overHeight = availableHeight - self.mContentSizeWithMargins.height * self.mZoom
+    return max (overHeight, .zero)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+}
+
 //--------------------------------------------------------------------------------------------------
 
 fileprivate let BACK_DELETE_KEY_EQ = KeyEquivalent (Character (Unicode.Scalar (0x7F)!))
@@ -13,6 +75,10 @@ fileprivate let DEBUG_COLOR = Color.clear // red.opacity (0.15)
 //--------------------------------------------------------------------------------------------------
 
 public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol> : View {
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+//  @Environment(CanvasUserLocationComputations.self) private var mUserLocationComputations
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -80,6 +146,11 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol> : Vie
           }
           self.bottomSpacer ()
         }
+        .dropDestination (for: PDFDroppedFile.self) { items, location in
+          let p = self.unalignedUserPoint (geometry, fromLocationInContentView: location)
+          print (nsLocation, p)
+          return true
+        }
       }
       .onScrollPositionChange (self.$mScrollPosition, self.mContentZoom)
       .defaultScrollAnchor (.topLeading) // Aligne le contenu en haut à gauche
@@ -93,9 +164,12 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol> : Vie
         self.bottomRightCornerView (geometry)
         self.bottomLeftCornerView (geometry)
       }
+ //     .onChange (of: geometry) { }
     }
 //    .overlay { self.hoveredUserLocationDisplay () }
-    .onAppear { self.mWidgetsUserInterface.setUndoManager (self.undoManager) }
+    .onAppear {
+      self.mWidgetsUserInterface.setUndoManager (self.undoManager)
+    }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -245,8 +319,8 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol> : Vie
       leftMargin: self.mContext.margins.left
     )
     return AnyView (self.mBottomHorizontalRulerViewBuilder (context))
-    .frame (size: rulerSize)
-    .position (p: rulerPosition)
+      .frame (size: rulerSize)
+      .position (p: rulerPosition)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -318,6 +392,8 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol> : Vie
       )
       AnyView (self.mBackgroundViewBuilder (backgroundViewContext))
       Canvas { (context, size) in
+//        self.mUserLocationComputations.mGeometryAvailableWidth = inGeometry.availableWidth
+//        self.mUserLocationComputations.mGeometryAvailableHeight = inGeometry.availableHeight
     //--- ATTENTION ! Il y a un bug dans SwiftUI, on ne peut pas appliquer un y négatif à scaleEffect,
     //    il en suit un comportement imprévisible dans un Canvas. Il faut faire la symétrie en y ici.
         context.translateBy (
@@ -383,6 +459,7 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol> : Vie
       newZoom = self.mContentZoom * inValue.magnification
     }
     self.mContentZoom = min (max (newZoom, Double (self.mContext.zoomValues [0]) / 100.0), Double (self.mContext.zoomValues.last!) / 100.0)
+  //  self.mUserLocationComputations.mZoom = self.mContentZoom
   //--- Recalculer la nouvelle position semble très compliqué… Le plus simple est de suprimer
   //    le marquage
     self.mAlignedHoverUserLocation = nil
