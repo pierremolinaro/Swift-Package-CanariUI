@@ -18,12 +18,17 @@ struct MouseGesture_DragSelection <TypeDictionary : WidgetTypeArrayProtocol> : M
                        userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
                        widgetsManager ioWidgetsManager : inout WidgetsManager <TypeDictionary>,
                        optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<TypeDictionary>)?) {
-    let translation = inGeometry.alignedUserCurrentLocation - self.alignedCurrentPoint
+    var translation = inGeometry.alignedUserCurrentLocation - self.alignedCurrentPoint
+    for i in 0 ..< ioWidgetsManager.count {
+      if ioSelection.contains (ioWidgetsManager [widget: i].id) {
+        ioWidgetsManager [widget: i].limitTranslation (&translation)
+      }
+    }
     if translation != .zero {
       inBeginOrContinueUndoGrouping ()
       for i in 0 ..< ioWidgetsManager.count {
         if ioSelection.contains (ioWidgetsManager [widget: i].id) {
-          ioWidgetsManager [widget: i].translate (by: translation)
+          ioWidgetsManager [widget: i].performTranslation (by: translation)
         }
       }
       outOptionalNextState = MouseGesture_DragSelection (

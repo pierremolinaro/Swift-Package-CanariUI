@@ -164,9 +164,17 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
   //MARK: Translation
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public mutating func translate (by inTranslation : CanariPoint) {
+  public func limitTranslation (_ ioTranslation : inout CanariPoint) {
+    for widget in self.mArray {
+      widget.limitTranslation (&ioTranslation)
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public mutating func performTranslation (by inTranslation : CanariPoint) {
     for i in 0 ..< self.mArray.count {
-      self.mArray [i].translate (by: inTranslation)
+      self.mArray [i].performTranslation (by: inTranslation)
     }
   }
 

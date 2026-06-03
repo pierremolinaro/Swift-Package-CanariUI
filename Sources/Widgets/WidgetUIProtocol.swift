@@ -52,7 +52,9 @@ public protocol WidgetUIProtocol <TypeDictionary> : WidgetModelProtocol {
   //MARK: Translation
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func translate (by inTranslation : CanariPoint)
+  func limitTranslation (_ ioTranslation : inout CanariPoint)
+
+  mutating func performTranslation (by inTranslation : CanariPoint)
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: AlignmentGuidePoints
