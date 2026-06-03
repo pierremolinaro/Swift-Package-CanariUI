@@ -10,7 +10,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariStrokeStyle : Equatable, CodableByString {
+public struct CanariStrokeStyle : Equatable, CanariCodableByString {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -47,11 +47,11 @@ public struct CanariStrokeStyle : Equatable, CodableByString {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func encodedString () -> String {
+  public func canariCodableEncodedString () -> String {
     var str = "\(self.lineCapStyle.rawValue) \(self.lineJoinStyle.rawValue) "
-    str += self.lineWidth.encodedString ()
+    str += self.lineWidth.canariCodableEncodedString ()
     str += " "
-    str += self.miterLimit.encodedString ()
+    str += self.miterLimit.canariCodableEncodedString ()
     return str
   }
 

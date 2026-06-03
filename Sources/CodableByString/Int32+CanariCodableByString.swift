@@ -10,23 +10,23 @@ import AppKit
 
 //--------------------------------------------------------------------------------------------------
 
-extension Bool : CodableByString {
+extension Int32 : CanariCodableByString {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (scanner inScanner : Scanner, _ ioOk : inout Bool) {
-    if ioOk, let v = inScanner.scanInt (), v >= 0, v <= 1 {
-      self = v != 0
+    if ioOk, let v = inScanner.scanInt32 () {
+      self = v
     }else{
       ioOk = false
-      self = false
+      self = .zero
     }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func encodedString () -> String {
-    return self ? "1" : "0"
+  public func canariCodableEncodedString () -> String {
+    return "\(self)"
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

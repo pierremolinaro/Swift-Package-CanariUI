@@ -10,7 +10,7 @@ import AppKit
 
 //--------------------------------------------------------------------------------------------------
 
-extension UInt8 : CodableByString {
+extension UInt8 : CanariCodableByString {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -25,7 +25,7 @@ extension UInt8 : CodableByString {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func encodedString () -> String {
+  public func canariCodableEncodedString () -> String {
     return "\(self)"
   }
 

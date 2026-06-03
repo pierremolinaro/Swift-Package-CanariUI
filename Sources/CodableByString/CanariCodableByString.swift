@@ -1,32 +1,27 @@
-//--------------------------------------------------------------------------------------------------
+//
+//  CodableByString.swift
+//  CanariGeometry
+//
 //  Created by Pierre Molinaro on 02/06/2026.
+//
 //--------------------------------------------------------------------------------------------------
 
 import AppKit
 
 //--------------------------------------------------------------------------------------------------
 
-extension CGPoint : CodableByString {
+public protocol CanariCodableByString {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (scanner inScanner : Scanner, _ ioOk : inout Bool) {
-    if ioOk, let x = inScanner.scanDouble (), let y = inScanner.scanDouble () {
-      self = CGPoint (x: x, y: y)
-    }else{
-      ioOk = false
-      self = .zero
-    }
-  }
+  init (scanner inScanner : Scanner, _ ioOk : inout Bool)
 
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public func encodedString () -> String {
-    return "\(self.x) \(self.y)"
-  }
+  func canariCodableEncodedString () -> String
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 }
 
 //--------------------------------------------------------------------------------------------------
+
+

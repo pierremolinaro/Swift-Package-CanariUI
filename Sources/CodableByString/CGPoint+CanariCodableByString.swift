@@ -1,22 +1,18 @@
-//
-//  Scanner+myScanUInt8.swift
-//  editeur-courbes-bezier
-//
-//  Created by Pierre Molinaro on 18/09/2025.
-//
+//--------------------------------------------------------------------------------------------------
+//  Created by Pierre Molinaro on 02/06/2026.
 //--------------------------------------------------------------------------------------------------
 
 import AppKit
 
 //--------------------------------------------------------------------------------------------------
 
-extension UInt : CodableByString {
+extension CGPoint : CanariCodableByString {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (scanner inScanner : Scanner, _ ioOk : inout Bool) {
-    if ioOk, let v = inScanner.scanUInt64 (), v <= UInt.max {
-      self = UInt (v)
+    if ioOk, let x = inScanner.scanDouble (), let y = inScanner.scanDouble () {
+      self = CGPoint (x: x, y: y)
     }else{
       ioOk = false
       self = .zero
@@ -25,8 +21,8 @@ extension UInt : CodableByString {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func encodedString () -> String {
-    return "\(self)"
+  public func canariCodableEncodedString () -> String {
+    return "\(self.x) \(self.y)"
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

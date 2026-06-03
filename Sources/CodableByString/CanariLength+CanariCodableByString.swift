@@ -10,7 +10,7 @@ import AppKit
 
 //--------------------------------------------------------------------------------------------------
 
-extension CanariLength : CodableByString {
+extension CanariLength : CanariCodableByString {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -25,7 +25,7 @@ extension CanariLength : CodableByString {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func encodedString () -> String {
+  public func canariCodableEncodedString () -> String {
     return "\(self.cuValue)"
   }
 

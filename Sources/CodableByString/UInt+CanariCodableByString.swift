@@ -1,8 +1,8 @@
 //
-//  CodableByString.swift
-//  CanariGeometry
+//  Scanner+myScanUInt8.swift
+//  editeur-courbes-bezier
 //
-//  Created by Pierre Molinaro on 02/06/2026.
+//  Created by Pierre Molinaro on 18/09/2025.
 //
 //--------------------------------------------------------------------------------------------------
 
@@ -10,18 +10,27 @@ import AppKit
 
 //--------------------------------------------------------------------------------------------------
 
-public protocol CodableByString {
+extension UInt : CanariCodableByString {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  init (scanner inScanner : Scanner, _ ioOk : inout Bool)
+  public init (scanner inScanner : Scanner, _ ioOk : inout Bool) {
+    if ioOk, let v = inScanner.scanUInt64 (), v <= UInt.max {
+      self = UInt (v)
+    }else{
+      ioOk = false
+      self = .zero
+    }
+  }
 
-  func encodedString () -> String
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func canariCodableEncodedString () -> String {
+    return "\(self)"
+  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 }
 
 //--------------------------------------------------------------------------------------------------
-
-

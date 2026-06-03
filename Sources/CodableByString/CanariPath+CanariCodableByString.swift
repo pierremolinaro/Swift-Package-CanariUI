@@ -6,7 +6,7 @@ import AppKit
 
 //--------------------------------------------------------------------------------------------------
 
-extension CanariPath : CodableByString {
+extension CanariPath : CanariCodableByString {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -39,7 +39,7 @@ extension CanariPath : CodableByString {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func encodedString () -> String {
+  public func canariCodableEncodedString () -> String {
     var s = ""
     var current = CanariPoint.zero
     self.swiftuiPath.forEach {
