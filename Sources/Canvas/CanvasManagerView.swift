@@ -4,68 +4,6 @@
 
 import SwiftUI
 
-public let coordinateSpaceName = "DropContainer"
-
-//--------------------------------------------------------------------------------------------------
-
-public struct TargetFrameKey : PreferenceKey {
-    public static let defaultValue: CGRect = .zero
-
-    public static func reduce(value: inout CGRect, nextValue: () -> CGRect) {
-        value = nextValue()
-    }
-}
-
-//--------------------------------------------------------------------------------------------------
-
-@Observable public final class CanvasUserLocationComputations {
-
-  var mZoom = 1.0
-  var mGeometryAvailableWidth = CanariLength.zero
-  var mGeometryAvailableHeight = CanariLength.zero
-  let mContext : CanvasManagerViewContext
-  let mContentSizeWithMargins : CanariSize
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public init (context inContext : CanvasManagerViewContext) {
-    self.mContext = inContext
-    self.mContentSizeWithMargins = CanariSize (
-      width: inContext.contentSize.width + inContext.margins.left + inContext.margins.right,
-      height: inContext.contentSize.height + inContext.margins.top + inContext.margins.bottom
-    )
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public func unalignedUserPoint (fromLocationInContentView inLocation : NSPoint) -> CanariPoint {
-    let point = CanariPoint (
-      x: (.px (inLocation.x) - self.contentOverWidth () / 2.0) / self.mZoom - self.mContext.margins.left,
-      y: self.mContentSizeWithMargins.height - self.mContext.margins.bottom + (self.contentOverHeight () / 2.0 - .px (inLocation.y)) / self.mZoom
-    )
-    return point
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  func contentOverWidth () -> CanariLength {
-    let availableWidth = self.mGeometryAvailableWidth - self.mContext.rulerDescriptor.leftVerticalRulerWidth - self.mContext.rulerDescriptor.rightVerticalRulerWidth
-    let overwidth = availableWidth - self.mContentSizeWithMargins.width * self.mZoom
-    return max (overwidth, .zero)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  private func contentOverHeight () -> CanariLength {
-    let availableHeight = self.mGeometryAvailableHeight - self.mContext.rulerDescriptor.topHorizontalRulerHeight - self.mContext.rulerDescriptor.bottomHorizontalRulerHeight
-    let overHeight = availableHeight - self.mContentSizeWithMargins.height * self.mZoom
-    return max (overHeight, .zero)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-}
-
 //--------------------------------------------------------------------------------------------------
 
 fileprivate let BACK_DELETE_KEY_EQ = KeyEquivalent (Character (Unicode.Scalar (0x7F)!))
@@ -74,11 +12,7 @@ fileprivate let DEBUG_COLOR = Color.clear // red.opacity (0.15)
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol> : View {
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-//  @Environment(CanvasUserLocationComputations.self) private var mUserLocationComputations
+public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol, DropType : Transferable> : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -89,6 +23,7 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol> : Vie
   private let mRightVerticalRulerViewBuilder : (VerticalRulerViewContext) -> any View
   private let mContext : CanvasManagerViewContext
   private let mContentSizeWithMargins : CanariSize
+  private let mDroppedFileHandler : (([DropType], CanariPoint) -> Void)?
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -116,11 +51,13 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol> : Vie
         leftVerticalRulerViewBuilder inLeftVerticalRulerViewBuilder : @escaping (VerticalRulerViewContext) -> any View,
         topHorizontalRulerViewBuilder inTopHorizontalRulerViewBuilder : @escaping (HorizontalRulerViewContext) -> any View,
         rightVerticalRulerViewBuilder inRightVerticalRulerViewBuilder : @escaping (VerticalRulerViewContext) -> any View,
-        bottomHorizontalRulerViewBuilder inBottomHorizontalRulerViewBuilder : @escaping (HorizontalRulerViewContext) -> any View) {
+        bottomHorizontalRulerViewBuilder inBottomHorizontalRulerViewBuilder : @escaping (HorizontalRulerViewContext) -> any View,
+        droppedFileHandler inDroppedFileHandler : (([DropType], CanariPoint) -> Void)?) {
     self._mContentZoom = inZoom
     self._mAlignedHoverUserLocation = inAlignedHoverUserLocation
     self.mContext = inContext
     self.mWidgetsUserInterface = inWidgetsUserInterface
+    self.mDroppedFileHandler = inDroppedFileHandler
     self.mContentSizeWithMargins = CanariSize (
       width: inContext.contentSize.width + inContext.margins.left + inContext.margins.right,
       height: inContext.contentSize.height + inContext.margins.top + inContext.margins.bottom
@@ -146,9 +83,9 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol> : Vie
           }
           self.bottomSpacer ()
         }
-        .dropDestination (for: PDFDroppedFile.self) { items, location in
+        .dropDestination (for: DropType.self) { items, location in
           let p = self.unalignedUserPoint (geometry, fromLocationInContentView: location)
-          print (nsLocation, p)
+          self.mDroppedFileHandler? (items, p)
           return true
         }
       }

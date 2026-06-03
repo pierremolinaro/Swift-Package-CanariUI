@@ -13,7 +13,6 @@ public struct CanvasManagerViewContext {
   public let rulerDescriptor : RulerDisplayDescriptor
   public let magneticGrid : CanariLength?
   public let rulerBackColor : Color
-//  public let droppedItemType : Transferable.Type
 
   public init (zoomValues: [UInt16],
                contentSize: CanariSize,
@@ -21,14 +20,12 @@ public struct CanvasManagerViewContext {
                rulerDescriptor: RulerDisplayDescriptor,
                magneticGrid: CanariLength?,
                rulerBackColor: Color) {
-//               droppedItemType : Transferable.Type) {
     self.zoomValues = zoomValues
     self.contentSize = contentSize
     self.margins = margins
     self.rulerDescriptor = rulerDescriptor
     self.magneticGrid = magneticGrid
     self.rulerBackColor = rulerBackColor
-//    self.droppedItemType = droppedItemType
   }
 }
 
