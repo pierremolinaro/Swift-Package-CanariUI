@@ -12,22 +12,25 @@ extension CanariPath : CodableByString {
 
   public init (scanner inScanner : Scanner, _ ioOk : inout Bool) {
     self.init ()
+    var current = CanariPoint.zero
     while ioOk, !inScanner.isAtEnd {
       if inScanner.scanString ("M") != nil { // Move
-        let target = CanariPoint (scanner: inScanner, &ioOk)
-        self.move (to: target)
+        current += CanariPoint (scanner: inScanner, &ioOk)
+        self.move (to: current)
       }else if inScanner.scanString ("L") != nil { // Line
-        let target = CanariPoint (scanner: inScanner, &ioOk)
-        self.addLine (to: target)
+        current += CanariPoint (scanner: inScanner, &ioOk)
+        self.addLine (to: current)
       }else if ioOk, inScanner.scanString ("C") != nil { // Cubic
-        let target = CanariPoint (scanner: inScanner, &ioOk)
-        let c1 = CanariPoint (scanner: inScanner, &ioOk)
-        let c2 = CanariPoint (scanner: inScanner, &ioOk)
+        let target = current + CanariPoint (scanner: inScanner, &ioOk)
+        let c1 = current + CanariPoint (scanner: inScanner, &ioOk)
+        let c2 = current + CanariPoint (scanner: inScanner, &ioOk)
         self.addCurve (to: target, control1: c1, control2: c2)
+        current = target
       }else if ioOk, inScanner.scanString ("Q") != nil { // Quadratic
-        let target = CanariPoint (scanner: inScanner, &ioOk)
-        let c = CanariPoint (scanner: inScanner, &ioOk)
+        let target = current + CanariPoint (scanner: inScanner, &ioOk)
+        let c = current +  CanariPoint (scanner: inScanner, &ioOk)
         self.addQuadCurve (to: target, control: c)
+        current = target
       }else if ioOk, inScanner.scanString ("Z") != nil { // Close
         self.close ()
       }
@@ -38,21 +41,37 @@ extension CanariPath : CodableByString {
 
   public func encodedString () -> String {
     var s = ""
+    var current = CanariPoint.zero
     self.swiftuiPath.forEach {
       switch $0 {
       case .closeSubpath :
         s += "Z"
       case .move (to: let p) :
-        s += "M\(CanariLength.px (p.x).cuValue) \(CanariLength.px (p.y).cuValue)"
+        let cp = CanariPoint (px: p)
+        let dP = cp - current
+        s += "M\(dP.x.cuValue) \(dP.y.cuValue)"
+        current = cp
       case .line (to: let p) :
-        s += "L\(CanariLength.px (p.x).cuValue) \(CanariLength.px (p.y).cuValue)"
+        let cp = CanariPoint (px: p)
+        let dP = cp - current
+        s += "L\(dP.x.cuValue) \(dP.y.cuValue)"
+        current = cp
       case .curve (to: let p, control1: let ctrl1, control2: let ctrl2) :
-        s += "C\(CanariLength.px (p.x).cuValue) \(CanariLength.px (p.y).cuValue)"
-        s += " \(CanariLength.px (ctrl1.x).cuValue) \(CanariLength.px (ctrl1.y).cuValue)"
-        s += " \(CanariLength.px (ctrl2.x).cuValue) \(CanariLength.px (ctrl2.y).cuValue)"
+        let cp = CanariPoint (px: p)
+        let dP = cp - current
+        let dCtrl1 = CanariPoint (px: ctrl1) - current
+        let dCtrl2 = CanariPoint (px: ctrl2) - current
+        s += "C\(dP.x.cuValue) \(dP.y.cuValue)"
+        s += " \(dCtrl1.x.cuValue) \(dCtrl1.y.cuValue)"
+        s += " \(dCtrl2.x.cuValue) \(dCtrl2.y.cuValue)"
+        current = cp
       case .quadCurve (to: let p, control: let ctrl) :
-        s += "Q\(CanariLength.px (p.x).cuValue) \(CanariLength.px (p.y).cuValue)"
-        s += " \(CanariLength.px (ctrl.x).cuValue) \(CanariLength.px (ctrl.y).cuValue)"
+        let cp = CanariPoint (px: p)
+        let dP = cp - current
+        let dCtrl = CanariPoint (px: ctrl) - current
+        s += "Q\(dP.x.cuValue) \(dP.y.cuValue)"
+        s += " \(dCtrl.x.cuValue) \(dCtrl.y.cuValue)"
+        current = cp
       }
     }
     return s
