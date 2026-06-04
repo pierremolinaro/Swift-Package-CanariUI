@@ -24,7 +24,10 @@ struct MouseGesture_DragKnob <TypeDictionary : WidgetTypeArrayProtocol> : MouseG
     let translation = inGeometry.alignedUserCurrentLocation - self.alignedCurrentPoint
     if translation != .zero {
       inBeginOrContinueUndoGrouping ()
-      self.action (&ioWidgetsManager [id: widgetID], translation, self.optionKeyInitiallyOn)
+      if var widget = ioWidgetsManager [id: widgetID] {
+        self.action (&widget, translation, self.optionKeyInitiallyOn)
+        ioWidgetsManager [id: widgetID] = widget
+      }
       outOptionalNextState = MouseGesture_DragKnob (
         alignedCurrentPoint: inGeometry.alignedUserCurrentLocation,
         optionKeyInitiallyOn: self.optionKeyInitiallyOn,

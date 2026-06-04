@@ -112,11 +112,12 @@ public struct WidgetsManager <TypeDictionary : WidgetTypeArrayProtocol> : Equata
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  subscript (id inID : UUID) -> any WidgetUIProtocol <TypeDictionary> {
-    get { self.mWidgetsArray.first { $0.id == inID }! }
+  subscript (id inID : UUID) -> (any WidgetUIProtocol <TypeDictionary>)? {
+    get { self.mWidgetsArray.first { $0.id == inID } }
     set {
-      let idx = self.mWidgetsArray.firstIndex { $0.id == inID }!
-      self.mWidgetsArray [idx] = newValue
+      if let v = newValue, let idx = self.mWidgetsArray.firstIndex (where: { $0.id == inID } ) {
+        self.mWidgetsArray [idx] = v
+      }
     }
   }
 

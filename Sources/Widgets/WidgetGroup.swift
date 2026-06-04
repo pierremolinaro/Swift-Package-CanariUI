@@ -215,12 +215,14 @@ struct WidgetGroupView <TypeDictionary : WidgetTypeArrayProtocol> : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @State private var mInspectorProxy : InspectorProxy <TypeDictionary>
+//  @State private var mInspectorProxy : InspectorProxy <TypeDictionary>
+  private var mWidget : Binding <T?>
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   nonisolated init (proxy inInspectorProxy : InspectorProxy <TypeDictionary>) {
-    self.mInspectorProxy = inInspectorProxy
+//    self.mInspectorProxy = inInspectorProxy
+    self.mWidget = inInspectorProxy.getBinding ()
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -228,7 +230,8 @@ struct WidgetGroupView <TypeDictionary : WidgetTypeArrayProtocol> : View {
   var body : some View {
     VStack {
       Text ("Group").bold ()
-      Text ("\(self.mInspectorProxy.getProperty (\T.mUnGroupIsEnabled).description)")
+      Text ("\(self.mWidget.wrappedValue?.mUnGroupIsEnabled.description, default: "nil")")
+ //     Toggle ("UnGrouping is enabled", isOn: self.mWidget.mUnGroupIsEnabled)
       Spacer ()
     }
   }

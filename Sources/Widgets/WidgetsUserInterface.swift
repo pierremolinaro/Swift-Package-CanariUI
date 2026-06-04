@@ -210,7 +210,7 @@ import Combine
         }
         return MouseGesture_DragSelection <TypeDictionary> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
       }else{ // option-click on a non-selected widget
-        if let newWidget = self.mWidgetsManager [id: widgetID].duplicated () {
+        if let newWidget = self.mWidgetsManager [id: widgetID]?.duplicated () {
           self.mWidgetsManager.append (newWidget)
           self.mSelection = [newWidget.id]
           return MouseGesture_DragSelection <TypeDictionary> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
@@ -565,12 +565,13 @@ import Combine
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public override func performDelete () {
+    let selection = self.mSelection
+    self.mSelection.removeAll ()
     for widget in self.mWidgetsManager.widgets {
-      if self.mSelection.contains (widget.id) {
+      if selection.contains (widget.id) {
         self.mWidgetsManager.remove (id: widget.id)
       }
     }
-    self.mSelection.removeAll ()
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -609,7 +610,7 @@ import Combine
 
   public override var ungroupIsEnabled : Bool {
     for widget in self.mWidgetsManager.widgets {
-      if self.mSelection.contains (widget.id), widget is WidgetGroup <TypeDictionary> {
+      if self.mSelection.contains (widget.id), let w = widget as? WidgetGroup <TypeDictionary>, w.mUnGroupIsEnabled {
         return true
       }
     }
@@ -639,11 +640,24 @@ import Combine
       Text ("Empty Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
     }else if self.mSelection.count > 1 {
       Text ("Multiple Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
-    }else if let selectedWidgetID = self.mSelection.first,
-      let selectedIndex : Int = self.mWidgetsManager.widgets.firstIndex (where: { $0.id == selectedWidgetID }) {
-      AnyView (self.mWidgetsManager.widgets [selectedIndex].inspectorView (proxy: InspectorProxy (self, selectedIndex)))
+    }else if let selectedWidgetID = self.mSelection.first {
+      self.singleSelectionInspectorView (selectedWidgetID)
+//      let selectedIndex : Int = self.mWidgetsManager.widgets.firstIndex (where: { $0.id == selectedWidgetID }) {
+//      Text ("Single Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
     }else{
       Text ("Single Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  @ViewBuilder func singleSelectionInspectorView (_ selectedWidgetID : UUID) -> some View {
+    if let widget = self.mWidgetsManager [id: selectedWidgetID] {
+      AnyView (widget.inspectorView (proxy: InspectorProxy (self, selectedWidgetID)))
+    }else{
+      Text ("Single Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
+
+//      AnyView (self.mWidgetsManager [id: selectedWidgetID]?.inspectorView (proxy: InspectorProxy (self, selectedWidgetID)) ?? Spacer ())
     }
   }
 
