@@ -47,12 +47,58 @@ public final class InspectorProxy <TypeDictionary : WidgetTypeArrayProtocol> {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func getBinding <T : WidgetUIProtocol <TypeDictionary>> () -> Binding <T?> {
-    let binding = Binding <T?> (
-      get: { self.mWidgetsUserInterface.mWidgetsManager [id: self.mID] as? T },
+//  private var mBindingDictionary : [ObjectIdentifier : Binding <Any?>] = [:]
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+//  public func propertyBinding <T : WidgetUIProtocol <TypeDictionary>, Value> (keyPath inKeyPath : WritableKeyPath <T, Value>) -> Binding <Value?> {
+//    let binding = Binding <Value?> (
+//      get: {
+//       if let v = self.mWidgetsUserInterface.mWidgetsManager [id: self.mID] as? T {
+//         return v [keyPath: inKeyPath]
+//       }else{
+//         return nil
+//       }
+//      },
+//      set: {
+//        if let property = $0, var v = self.mWidgetsUserInterface.mWidgetsManager [id: self.mID] as? T {
+//          v [keyPath: inKeyPath] = property
+//          self.mWidgetsUserInterface.mWidgetsManager [id: self.mID] = v
+//        }
+//      }
+//    )
+//    return binding
+//  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+//  public func getBinding <T : WidgetUIProtocol <TypeDictionary>> () -> Binding <T?> {
+//    let binding = Binding <T?> (
+//      get: { self.mWidgetsUserInterface.mWidgetsManager [id: self.mID] as? T },
+//      set: {
+//        if let widget = $0 {
+//          self.mWidgetsUserInterface.mWidgetsManager [id: self.mID] = widget
+//        }
+//      }
+//    )
+//    return binding
+//  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public subscript <T : WidgetUIProtocol <TypeDictionary>, Value> (_ inKeyPath : WritableKeyPath <T, Value>) -> Binding <Value?> {
+    let binding = Binding <Value?> (
+      get: {
+        if let v = self.mWidgetsUserInterface.mWidgetsManager [id: self.mID] as? T {
+          return v [keyPath: inKeyPath]
+        }else{
+         return nil
+        }
+      },
       set: {
-        if let widget = $0 {
-          self.mWidgetsUserInterface.mWidgetsManager [id: self.mID] = widget
+        if let property = $0, var v = self.mWidgetsUserInterface.mWidgetsManager [id: self.mID] as? T {
+          v [keyPath: inKeyPath] = property
+          self.mWidgetsUserInterface.mWidgetsManager [id: self.mID] = v
         }
       }
     )

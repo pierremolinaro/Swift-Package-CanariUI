@@ -215,14 +215,12 @@ struct WidgetGroupView <TypeDictionary : WidgetTypeArrayProtocol> : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-//  @State private var mInspectorProxy : InspectorProxy <TypeDictionary>
-  private var mWidget : Binding <T?>
+  @State private var mProxy : InspectorProxy <TypeDictionary>
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   nonisolated init (proxy inInspectorProxy : InspectorProxy <TypeDictionary>) {
-//    self.mInspectorProxy = inInspectorProxy
-    self.mWidget = inInspectorProxy.getBinding ()
+    self.mProxy = inInspectorProxy
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -230,14 +228,56 @@ struct WidgetGroupView <TypeDictionary : WidgetTypeArrayProtocol> : View {
   var body : some View {
     VStack {
       Text ("Group").bold ()
-      Text ("\(self.mWidget.wrappedValue?.mUnGroupIsEnabled.description, default: "nil")")
- //     Toggle ("UnGrouping is enabled", isOn: self.mWidget.mUnGroupIsEnabled)
+//      Text ("\(self.mWidget.wrappedValue?.mUnGroupIsEnabled.description, default: "nil")")
+      Text ("\(self.mProxy [\T.mUnGroupIsEnabled].wrappedValue?.description, default: "nil")")
+      OptionalToggle ("UnGrouping is enabled", isOn: self.mProxy [\T.mUnGroupIsEnabled])
+      OptionalToggle ("UnGrouping is enabled", isOn: self.mProxy [\T.mUnGroupIsEnabled])
       Spacer ()
     }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+}
+
+//--------------------------------------------------------------------------------------------------
+
+struct OptionalToggle : View {
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  @Binding private var mBinding : Bool?
+  private let title : String
+  @State private var mIsOn : Bool
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  init (_ inTitle : String, isOn : Binding <Bool?>) {
+    self._mBinding = isOn
+    self.title = inTitle
+    self.mIsOn = isOn.wrappedValue ?? false
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  @ViewBuilder var body : some View {
+    if self.mBinding == nil {
+      Text ("nil").italic ()
+    }else{
+      Toggle (self.title, isOn: self.$mIsOn)
+      .onChange (of: self.mIsOn) {
+        if self.mBinding != $0 {
+          self.mBinding = $0
+        }
+      }
+      .onChange (of: self.mBinding) {
+        let v = self.mBinding ?? false
+        if self.mIsOn != v {
+          self.mIsOn = v
+        }
+      }
+    }
+  }
 }
 
 //--------------------------------------------------------------------------------------------------
