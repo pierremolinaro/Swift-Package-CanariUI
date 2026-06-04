@@ -66,8 +66,7 @@ public protocol WidgetUIProtocol <TypeDictionary> : WidgetModelProtocol {
   //MARK: inspectorView
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func inspectorView (widgetsUserInterface inWidgetsManager : WidgetsUserInterface <TypeDictionary>,
-                      index inIndex : Int) -> any View
+  func inspectorView (proxy inInspectorProxy : InspectorProxy <TypeDictionary>) -> any View
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

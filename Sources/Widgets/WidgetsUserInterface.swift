@@ -641,7 +641,7 @@ import Combine
       Text ("Multiple Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
     }else if let selectedWidgetID = self.mSelection.first,
       let selectedIndex : Int = self.mWidgetsManager.widgets.firstIndex (where: { $0.id == selectedWidgetID }) {
-      AnyView (self.mWidgetsManager.widgets [selectedIndex].inspectorView (widgetsUserInterface: self, index: selectedIndex))
+      AnyView (self.mWidgetsManager.widgets [selectedIndex].inspectorView (proxy: InspectorProxy (self, selectedIndex)))
     }else{
       Text ("Single Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
     }

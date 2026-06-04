@@ -15,7 +15,8 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private var mArray : [any WidgetUIProtocol <TypeDictionary>] // at 0: back, at count - 1: front
+  var mArray : [any WidgetUIProtocol <TypeDictionary>] // at 0: back, at count - 1: front
+  var mUnGroupIsEnabled : Bool
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -25,6 +26,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
 
   public init (_ inWidgets : [any WidgetUIProtocol <TypeDictionary>]) {
     self.mArray = inWidgets
+    self.mUnGroupIsEnabled = true
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -35,13 +37,14 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
       array.append (proxy.widget)
     }
     self.mArray = array
+    self.mUnGroupIsEnabled = true
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Encoding, Decoding
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private enum CodingKeys : String, CodingKey { case array }
+  private enum CodingKeys : String, CodingKey { case array, unGroupIsEnabled }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -53,6 +56,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
       array.append (proxy.widget)
     }
     self.mArray = array
+    self.mUnGroupIsEnabled = (try container.decodeIfPresent (Bool.self, forKey: .unGroupIsEnabled)) ?? true
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -64,6 +68,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
       proxyArray.append (WidgetProxy (widget))
     }
     try container.encode (proxyArray, forKey: .array)
+    try container.encode (self.mUnGroupIsEnabled, forKey: .unGroupIsEnabled)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -194,9 +199,38 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
   //MARK: inspectorView
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func inspectorView (widgetsUserInterface inWidgetsManager : WidgetsUserInterface <TypeDictionary>,
-                             index inIndex : Int) -> any View {
-    Text ("Group")
+  public func inspectorView (proxy inInspectorProxy : InspectorProxy <TypeDictionary>) -> any View {
+    WidgetGroupView (proxy: inInspectorProxy)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+}
+
+//--------------------------------------------------------------------------------------------------
+
+struct WidgetGroupView <TypeDictionary : WidgetTypeArrayProtocol> : View {
+
+  typealias T = WidgetGroup <TypeDictionary>
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  @State private var mInspectorProxy : InspectorProxy <TypeDictionary>
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  nonisolated init (proxy inInspectorProxy : InspectorProxy <TypeDictionary>) {
+    self.mInspectorProxy = inInspectorProxy
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  var body : some View {
+    VStack {
+      Text ("Group").bold ()
+      Text ("\(self.mInspectorProxy.getProperty (\T.mUnGroupIsEnabled).description)")
+      Spacer ()
+    }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
