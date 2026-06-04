@@ -631,6 +631,23 @@ import Combine
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Detail view
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  @ViewBuilder func editorDetailViewForCurrentSelection () -> some View {
+    if self.mSelection.isEmpty {
+      Text ("Empty Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
+    }else if self.mSelection.count > 1 {
+      Text ("Multiple Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
+    }else if let selectedWidgetID = self.mSelection.first,
+      let selectedIndex : Int = self.mWidgetsManager.widgets.firstIndex (where: { $0.id == selectedWidgetID }) {
+      AnyView (self.mWidgetsManager.widgets [selectedIndex].inspectorView (widgetsUserInterface: self, index: selectedIndex))
+    }else{
+      Text ("Single Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 }
 

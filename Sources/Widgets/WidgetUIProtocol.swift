@@ -63,6 +63,13 @@ public protocol WidgetUIProtocol <TypeDictionary> : WidgetModelProtocol {
   func alignmentGuidePoints () -> Set <CanariPoint>
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: inspectorView
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  func inspectorView (widgetsUserInterface inWidgetsManager : WidgetsUserInterface <TypeDictionary>,
+                      index inIndex : Int) -> any View
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 }
 

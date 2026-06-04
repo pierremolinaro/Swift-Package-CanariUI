@@ -35,6 +35,14 @@ public struct WidgetsManager <TypeDictionary : WidgetTypeArrayProtocol> : Equata
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  var count : Int { self.mWidgetsArray.count }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public var widgets : [any WidgetUIProtocol <TypeDictionary>] { self.mWidgetsArray }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public mutating func setWidgets (fromProxies inProxies : [WidgetProxy <TypeDictionary>]) {
     var widgetsArray = [any WidgetUIProtocol <TypeDictionary>] ()
     for proxy in inProxies {
@@ -61,14 +69,6 @@ public struct WidgetsManager <TypeDictionary : WidgetTypeArrayProtocol> : Equata
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var count : Int { self.mWidgetsArray.count }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  var widgets : [any WidgetUIProtocol <TypeDictionary>] { self.mWidgetsArray }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
   public var proxyArray : [WidgetProxy <TypeDictionary>] {
     var array = [WidgetProxy <TypeDictionary>] ()
     for widget in self.mWidgetsArray {
@@ -79,7 +79,7 @@ public struct WidgetsManager <TypeDictionary : WidgetTypeArrayProtocol> : Equata
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  subscript (widget inIndex : Int) -> any WidgetUIProtocol <TypeDictionary> {
+  public subscript (widget inIndex : Int) -> any WidgetUIProtocol <TypeDictionary> {
     get { self.mWidgetsArray [inIndex] }
     set { self.mWidgetsArray [inIndex] = newValue }
   }

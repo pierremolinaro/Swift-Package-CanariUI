@@ -191,6 +191,15 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: inspectorView
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func inspectorView (widgetsUserInterface inWidgetsManager : WidgetsUserInterface <TypeDictionary>,
+                             index inIndex : Int) -> any View {
+    Text ("Group")
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 }
 

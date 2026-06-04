@@ -43,6 +43,10 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol, DropT
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  private let mDetailColumnExpanded : Bool
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public init (context inContext : CanvasManagerViewContext,
         contentZoom inZoom : Binding <Double>,
         alignedHoverUserLocation inAlignedHoverUserLocation : Binding <CanariPoint?>,
@@ -52,12 +56,14 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol, DropT
         topHorizontalRulerViewBuilder inTopHorizontalRulerViewBuilder : @escaping (HorizontalRulerViewContext) -> any View,
         rightVerticalRulerViewBuilder inRightVerticalRulerViewBuilder : @escaping (VerticalRulerViewContext) -> any View,
         bottomHorizontalRulerViewBuilder inBottomHorizontalRulerViewBuilder : @escaping (HorizontalRulerViewContext) -> any View,
-        droppedFileHandler inDroppedFileHandler : (([DropType], CanariPoint) -> Void)?) {
+        droppedFileHandler inDroppedFileHandler : (([DropType], CanariPoint) -> Void)?,
+        detailColumnIsExpanded : Bool) {
     self._mContentZoom = inZoom
     self._mAlignedHoverUserLocation = inAlignedHoverUserLocation
     self.mContext = inContext
     self.mWidgetsUserInterface = inWidgetsUserInterface
     self.mDroppedFileHandler = inDroppedFileHandler
+    self.mDetailColumnExpanded = detailColumnIsExpanded
     self.mContentSizeWithMargins = CanariSize (
       width: inContext.contentSize.width + inContext.margins.left + inContext.margins.right,
       height: inContext.contentSize.height + inContext.margins.top + inContext.margins.bottom
@@ -72,40 +78,45 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol, DropT
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   @ViewBuilder public var body : some View {
-    GeometryReader { geometry in
-      ScrollView ([.horizontal, .vertical]) {
-        VStack (spacing: 0.0) {
-          self.topSpacer ()
-          HStack (spacing: 0.0) {
-            self.leftSpacer ()
-            self.contentView (geometry)
-            self.rightSpacer ()
+    HStack (spacing: 0) {
+      GeometryReader { geometry in
+        ScrollView ([.horizontal, .vertical]) {
+          VStack (spacing: 0.0) {
+            self.topSpacer ()
+            HStack (spacing: 0.0) {
+              self.leftSpacer ()
+              self.contentView (geometry)
+              self.rightSpacer ()
+            }
+            self.bottomSpacer ()
           }
-          self.bottomSpacer ()
+          .dropDestination (for: DropType.self) { items, location in
+            let p = self.unalignedUserPoint (geometry, fromLocationInContentView: location)
+            self.mDroppedFileHandler? (items, p)
+            return true
+          }
         }
-        .dropDestination (for: DropType.self) { items, location in
-          let p = self.unalignedUserPoint (geometry, fromLocationInContentView: location)
-          self.mDroppedFileHandler? (items, p)
-          return true
+        .onScrollPositionChange (self.$mScrollPosition, self.mContentZoom)
+        .defaultScrollAnchor (.topLeading) // Aligne le contenu en haut à gauche
+        .overlay {
+          self.rightVerticalRulerView (geometry)
+          self.leftVerticalRulerView (geometry)
+          self.topHorizontalRulerView (geometry)
+          self.bottomHorizontalRulerView (geometry)
+          self.topLeftCornerView ()
+          self.topRightCornerView (geometry)
+          self.bottomRightCornerView (geometry)
+          self.bottomLeftCornerView (geometry)
         }
       }
-      .onScrollPositionChange (self.$mScrollPosition, self.mContentZoom)
-      .defaultScrollAnchor (.topLeading) // Aligne le contenu en haut à gauche
-      .overlay {
-        self.rightVerticalRulerView (geometry)
-        self.leftVerticalRulerView (geometry)
-        self.topHorizontalRulerView (geometry)
-        self.bottomHorizontalRulerView (geometry)
-        self.topLeftCornerView ()
-        self.topRightCornerView (geometry)
-        self.bottomRightCornerView (geometry)
-        self.bottomLeftCornerView (geometry)
+      .onAppear {
+        self.mWidgetsUserInterface.setUndoManager (self.undoManager)
       }
- //     .onChange (of: geometry) { }
-    }
-//    .overlay { self.hoveredUserLocationDisplay () }
-    .onAppear {
-      self.mWidgetsUserInterface.setUndoManager (self.undoManager)
+      if self.mDetailColumnExpanded {
+        Divider ()
+        self.mWidgetsUserInterface.editorDetailViewForCurrentSelection ()
+        .frame (width: 250)
+      }
     }
   }
 
