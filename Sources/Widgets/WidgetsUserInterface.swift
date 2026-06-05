@@ -638,12 +638,10 @@ import Combine
   @ViewBuilder func editorDetailViewForCurrentSelection () -> some View {
     if self.mSelection.isEmpty {
       Text ("Empty Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
+    }else if let type = self.commonTypeForSelection () {
+      AnyView (type.inspectorView (proxy: InspectorProxy (self, self.mSelection)).id (self.mSelection))
     }else if self.mSelection.count > 1 {
       Text ("Multiple Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
-    }else if let selectedWidgetID = self.mSelection.first {
-      self.singleSelectionInspectorView (selectedWidgetID)
-//      let selectedIndex : Int = self.mWidgetsManager.widgets.firstIndex (where: { $0.id == selectedWidgetID }) {
-//      Text ("Single Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
     }else{
       Text ("Single Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
     }
@@ -651,14 +649,20 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @ViewBuilder func singleSelectionInspectorView (_ selectedWidgetID : UUID) -> some View {
-    if let widget = self.mWidgetsManager [id: selectedWidgetID] {
-      AnyView (widget.inspectorView (proxy: InspectorProxy (self, selectedWidgetID)))
-    }else{
-      Text ("Single Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
-
-//      AnyView (self.mWidgetsManager [id: selectedWidgetID]?.inspectorView (proxy: InspectorProxy (self, selectedWidgetID)) ?? Spacer ())
+  private func commonTypeForSelection () -> (WidgetUIProtocol <TypeDictionary>).Type? {
+    var result : (WidgetUIProtocol <TypeDictionary>).Type? = nil
+    for id in self.mSelection {
+      if let widget = self.mWidgetsManager [id: id] {
+        if let r = result {
+          if r != type (of: widget) {
+            return nil
+          }
+        }else{
+          result = type (of: widget)
+        }
+      }
     }
+    return result // WidgetGroup <TypeDictionary>.self
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -666,3 +670,4 @@ import Combine
 }
 
 //--------------------------------------------------------------------------------------------------
+

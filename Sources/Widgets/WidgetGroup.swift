@@ -21,6 +21,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   var widgetArray : [any WidgetUIProtocol <TypeDictionary>] { self.mArray }
+  var count : Int { self.mArray.count }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -199,8 +200,8 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
   //MARK: inspectorView
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func inspectorView (proxy inInspectorProxy : InspectorProxy <TypeDictionary>) -> any View {
-    WidgetGroupView (proxy: inInspectorProxy)
+  public static func inspectorView (proxy inProxy : InspectorProxy <TypeDictionary>) -> any View {
+    WidgetGroupView (proxy: inProxy)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -219,8 +220,8 @@ struct WidgetGroupView <TypeDictionary : WidgetTypeArrayProtocol> : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  nonisolated init (proxy inInspectorProxy : InspectorProxy <TypeDictionary>) {
-    self.mProxy = inInspectorProxy
+  nonisolated init (proxy inProxy : InspectorProxy <TypeDictionary>) {
+    self.mProxy = inProxy
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -228,56 +229,27 @@ struct WidgetGroupView <TypeDictionary : WidgetTypeArrayProtocol> : View {
   var body : some View {
     VStack {
       Text ("Group").bold ()
-//      Text ("\(self.mWidget.wrappedValue?.mUnGroupIsEnabled.description, default: "nil")")
-      Text ("\(self.mProxy [\T.mUnGroupIsEnabled].wrappedValue?.description, default: "nil")")
       OptionalToggle ("UnGrouping is enabled", isOn: self.mProxy [\T.mUnGroupIsEnabled])
-      OptionalToggle ("UnGrouping is enabled", isOn: self.mProxy [\T.mUnGroupIsEnabled])
+      HStack {
+        Text ("Count")
+        OptionalText (self.objectCountString ())
+      }
       Spacer ()
-    }
+    }.padding ()
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-}
-
-//--------------------------------------------------------------------------------------------------
-
-struct OptionalToggle : View {
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  @Binding private var mBinding : Bool?
-  private let title : String
-  @State private var mIsOn : Bool
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  init (_ inTitle : String, isOn : Binding <Bool?>) {
-    self._mBinding = isOn
-    self.title = inTitle
-    self.mIsOn = isOn.wrappedValue ?? false
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  @ViewBuilder var body : some View {
-    if self.mBinding == nil {
-      Text ("nil").italic ()
+  private func objectCountString () -> String? {
+    if let n = self.mProxy [\T.count] {
+      return "\(n)"
     }else{
-      Toggle (self.title, isOn: self.$mIsOn)
-      .onChange (of: self.mIsOn) {
-        if self.mBinding != $0 {
-          self.mBinding = $0
-        }
-      }
-      .onChange (of: self.mBinding) {
-        let v = self.mBinding ?? false
-        if self.mIsOn != v {
-          self.mIsOn = v
-        }
-      }
+      return nil
     }
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 }
 
 //--------------------------------------------------------------------------------------------------
