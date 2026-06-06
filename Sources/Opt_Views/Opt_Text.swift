@@ -1,16 +1,12 @@
-//
-//  OptionalToggle.swift
-//  CanariGeometry
-//
+//--------------------------------------------------------------------------------------------------
 //  Created by Pierre Molinaro on 04/06/2026.
-//
 //--------------------------------------------------------------------------------------------------
 
 import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct OptionalText : View {
+public struct Opt_Text : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -28,7 +24,7 @@ public struct OptionalText : View {
     if let text = self.mText {
       Text (text)
     }else{
-      Text ("Mutiple values").italic ()
+      Text ("Multiple values").italic ()
     }
   }
 

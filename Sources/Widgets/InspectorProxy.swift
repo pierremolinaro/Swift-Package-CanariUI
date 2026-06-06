@@ -23,7 +23,7 @@ public final class InspectorProxy <TypeDictionary : WidgetTypeArrayProtocol> {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public subscript <T : WidgetUIProtocol <TypeDictionary>, Value : Equatable> (_ inKeyPath : WritableKeyPath <T, Value>) -> Binding <Value?> {
+  public subscript <T : WidgetUIProtocol <TypeDictionary>, Value : Equatable> (bindingFor inKeyPath : WritableKeyPath <T, Value>) -> Binding <Value?> {
     let binding = Binding <Value?> (
       get: {
         var result : Value? = nil
@@ -57,7 +57,7 @@ public final class InspectorProxy <TypeDictionary : WidgetTypeArrayProtocol> {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public subscript <T : WidgetUIProtocol <TypeDictionary>, Value : Equatable> (_ inKeyPath : KeyPath <T, Value>) -> Value? {
+  public subscript <T : WidgetUIProtocol <TypeDictionary>, Value : Equatable> (valueFor inKeyPath : KeyPath <T, Value>) -> Value? {
     var result : Value? = nil
     for id in self.mSelection {
       if let v = self.mWidgetsUserInterface.mWidgetsManager [id: id] as? T {
@@ -72,6 +72,47 @@ public final class InspectorProxy <TypeDictionary : WidgetTypeArrayProtocol> {
       }
     }
     return result
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public subscript <T : WidgetUIProtocol <TypeDictionary>, Value : Hashable> (setOf inKeyPath : KeyPath <T, Value>) -> Set <Value> {
+    var result = Set <Value> ()
+    for id in self.mSelection {
+      if let v = self.mWidgetsUserInterface.mWidgetsManager [id: id] as? T {
+        let property = v [keyPath: inKeyPath]
+        result.insert (property)
+      }
+    }
+    return result
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func setProperty <T : WidgetUIProtocol <TypeDictionary>, Value> (_ inKeyPath : WritableKeyPath <T, Value>, _ inValue : Value) {
+    for id in self.mSelection {
+      if var v = self.mWidgetsUserInterface.mWidgetsManager [id: id] as? T {
+        v [keyPath: inKeyPath] = inValue
+        self.mWidgetsUserInterface.mWidgetsManager [id: id] = v
+      }
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func performWidgetUserInterfaceAction (_ inAction : (WidgetsUserInterface <TypeDictionary>) -> Void) {
+    inAction (self.mWidgetsUserInterface)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func performWidgetAction <T : WidgetUIProtocol <TypeDictionary> > (_ inAction : (inout T) -> Void) {
+    for id in self.mSelection {
+      if var widget = self.mWidgetsUserInterface.mWidgetsManager [id: id] as? T {
+        inAction (&widget)
+        self.mWidgetsUserInterface.mWidgetsManager [id: id] = widget
+      }
+    }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

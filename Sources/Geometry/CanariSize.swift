@@ -70,6 +70,12 @@ public struct CanariSize : Hashable, CustomStringConvertible, Sendable, RawRepre
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func string (in inUnit : CanariLength.Unit, fractionDigits inCount : Int = 3) -> String {
+    return "(\(self.width.string (in: inUnit, fractionDigits: inCount)) x \(self.height.string (in: inUnit, fractionDigits: inCount)))"
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: RawRepresentable
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

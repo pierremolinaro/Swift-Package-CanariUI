@@ -1,0 +1,144 @@
+//--------------------------------------------------------------------------------------------------
+//  Created by Pierre Molinaro on 06/06/2026.
+//--------------------------------------------------------------------------------------------------
+
+import SwiftUI
+
+//--------------------------------------------------------------------------------------------------
+
+public struct Set_CanariRectGraphicView : View {
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  private let mRectSet : Set <CanariRect>
+  private let mUnit : CanariLength.Unit
+  private let mFractionDigits : Int
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public init (rectSet inCanariRectSet : Set <CanariRect>,
+               unit inUnit : CanariLength.Unit = .cm,
+               fractionDigits inFractionDigits : Int = 2) {
+    self.mRectSet = inCanariRectSet
+    self.mUnit = inUnit
+    self.mFractionDigits = inFractionDigits
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public var body : some View {
+    VStack {
+      Opt_Text (self.maxY?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
+      HStack {
+        Opt_Text (self.minX?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
+        Spacer ()
+        Opt_Text (self.maxX?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
+      }
+      Opt_Text (self.minX?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
+    }
+    .background(
+      Rectangle ().stroke (style: StrokeStyle(lineWidth: 1, lineCap: .round, lineJoin: .round))
+    )
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  private var minX : CanariLength? {
+    var result : CanariLength? = nil
+    for rect in self.mRectSet {
+      if let r = result {
+        if rect.minX != r {
+          return nil
+        }
+      }else{
+        result = rect.minX
+      }
+    }
+    return result
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  private var maxX : CanariLength? {
+    var result : CanariLength? = nil
+    for rect in self.mRectSet {
+      if let r = result {
+        if rect.maxX != r {
+          return nil
+        }
+      }else{
+        result = rect.maxX
+      }
+    }
+    return result
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  private var minY : CanariLength? {
+    var result : CanariLength? = nil
+    for rect in self.mRectSet {
+      if let r = result {
+        if rect.minY != r {
+          return nil
+        }
+      }else{
+        result = rect.minY
+      }
+    }
+    return result
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  private var maxY : CanariLength? {
+    var result : CanariLength? = nil
+    for rect in self.mRectSet {
+      if let r = result {
+        if rect.maxY != r {
+          return nil
+        }
+      }else{
+        result = rect.maxY
+      }
+    }
+    return result
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  private var width : CanariLength? {
+    var result : CanariLength? = nil
+    for rect in self.mRectSet {
+      if let r = result {
+        if rect.width != r {
+          return nil
+        }
+      }else{
+        result = rect.width
+      }
+    }
+    return result
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  private var height : CanariLength? {
+    var result : CanariLength? = nil
+    for rect in self.mRectSet {
+      if let r = result {
+        if rect.height != r {
+          return nil
+        }
+      }else{
+        result = rect.height
+      }
+    }
+    return result
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+}
+
+//--------------------------------------------------------------------------------------------------

@@ -619,7 +619,7 @@ import Combine
 
   public override func performUngroup () {
     for widget in self.mWidgetsManager.widgets {
-      if self.mSelection.contains (widget.id), let group = widget as? WidgetGroup <TypeDictionary> {
+      if self.mSelection.contains (widget.id), let group = widget as? WidgetGroup <TypeDictionary>, group.mUnGroupIsEnabled {
         self.mWidgetsManager.replaceWidget (id: widget.id, with: group.widgetArray)
         self.mSelection.remove (widget.id)
         for p in group.widgetArray {
