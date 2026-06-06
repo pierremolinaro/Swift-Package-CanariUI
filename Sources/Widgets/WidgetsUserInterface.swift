@@ -15,7 +15,7 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (pasteboardType inPasteboardType : NSPasteboard.PasteboardType) {
+  public init (withPasteboardType inPasteboardType : NSPasteboard.PasteboardType) {
     self.mPasteboardType = inPasteboardType
     super.init ()
     self.mCancellable = Timer.publish (every: 0.5, on: .main, in: .common)
@@ -145,7 +145,6 @@ import Combine
   public func mouseDownOrMouseDragged (geometry inGeometry : MouseGestureGeometryContext) {
     enterTracing ("widgets.user.interface.mouse.dragging") ; defer { exitTracing ("widgets.user.interface.mouse.dragging") }
     if let dragGestureState = self.mDragGestureState { // Mouse dragged event
-//      print ("MouseDragged")
       var optionalNextState : (any MouseGestureProtocol <TypeDictionary>)? = nil
       dragGestureState.onMouseDragged (
         geometry: inGeometry,
@@ -159,7 +158,6 @@ import Combine
         self.mDragGestureState = nextState
       }
     }else{ // Mouse down event
-//      print ("mouseDown")
       self.mStartSelectionSet = self.mSelection
       let option = NSEvent.modifierFlags.contains (.option)
       if option {
