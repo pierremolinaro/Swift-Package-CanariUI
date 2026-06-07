@@ -40,13 +40,6 @@ struct Set_CanariLengthEditor : View {
 
   var body : some View {
     HStack (spacing: 0) {
-//      if self.mLengthArray.count > 1 {
-//        Menu ("") {
-//          ForEach (self.mLengthArray, id: \.self) { length in
-//            Button (length.string (in: self.mUnit, fractionDigits: self.mFractionDigits)) { self.mSetter (length) }
-//          }
-//        }.buttonStyle (.borderless)
-//      }
       TextField (
         "",
         value: self.$mDoubleValue,
@@ -68,30 +61,14 @@ struct Set_CanariLengthEditor : View {
         }
       }
       Text (" " + self.mUnit.unitString)
-      HStack (spacing: 0) {
-        Stepper {
-          EmptyView ()
-        } onIncrement: {
-          self.mSetter (CanariLength (self.mDoubleValue!, in: self.mUnit) + self.mUnit.length)
-        } onDecrement: {
-          self.mSetter (CanariLength (self.mDoubleValue!, in: self.mUnit) - self.mUnit.length)
-        }.help (self.mUnit.unitString).isHidden (self.mDoubleValue == nil).controlSize (.small)
-        Stepper {
-          EmptyView ()
-        } onIncrement: {
-          self.mSetter (CanariLength (self.mDoubleValue!, in: self.mUnit) + self.mUnit.length / 10.0)
-        } onDecrement: {
-          self.mSetter (CanariLength (self.mDoubleValue!, in: self.mUnit) - self.mUnit.length / 10.0)
-        }.help (self.mUnit.unitString + "/10").isHidden (self.mDoubleValue == nil).controlSize (.small)
-        Stepper {
-          EmptyView ()
-        } onIncrement: {
-          self.mSetter (CanariLength (self.mDoubleValue!, in: self.mUnit) + self.mUnit.length / 100.0)
-        } onDecrement: {
-          self.mSetter (CanariLength (self.mDoubleValue!, in: self.mUnit) - self.mUnit.length / 100.0)
-        }.help (self.mUnit.unitString + "/100").isHidden (self.mDoubleValue == nil).controlSize (.small)
-      }
-      .overlay (alignment: .leading) {
+      Stepper {
+        EmptyView ()
+      } onIncrement: {
+        self.mSetter (CanariLength (self.mDoubleValue!, in: self.mUnit) + self.mUnit.length)
+      } onDecrement: {
+        self.mSetter (CanariLength (self.mDoubleValue!, in: self.mUnit) - self.mUnit.length)
+      }.help (self.mUnit.unitString).isHidden (self.mDoubleValue == nil).controlSize (.small)
+      .overlay {
         if self.mLengthArray.count > 1 {
           Menu ("") {
             ForEach (self.mLengthArray, id: \.self) { length in
@@ -100,6 +77,20 @@ struct Set_CanariLengthEditor : View {
           }.buttonStyle (.borderless)
         }
       }
+      Stepper {
+        EmptyView ()
+      } onIncrement: {
+        self.mSetter (CanariLength (self.mDoubleValue!, in: self.mUnit) + self.mUnit.length / 10.0)
+      } onDecrement: {
+        self.mSetter (CanariLength (self.mDoubleValue!, in: self.mUnit) - self.mUnit.length / 10.0)
+      }.help (self.mUnit.unitString + "/10").isHidden (self.mDoubleValue == nil).controlSize (.small)
+      Stepper {
+        EmptyView ()
+      } onIncrement: {
+        self.mSetter (CanariLength (self.mDoubleValue!, in: self.mUnit) + self.mUnit.length / 100.0)
+      } onDecrement: {
+        self.mSetter (CanariLength (self.mDoubleValue!, in: self.mUnit) - self.mUnit.length / 100.0)
+      }.help (self.mUnit.unitString + "/100").isHidden (self.mDoubleValue == nil).controlSize (.small)
     }
   }
 

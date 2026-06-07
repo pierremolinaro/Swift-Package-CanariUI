@@ -21,8 +21,13 @@ public struct CanariPath : Equatable, CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (rect inRect : CanariRect) {
-    self.mPath = Path (inRect.pxValue)
+  public init (rect inRect : CanariRect, angle inAngle : CanariAngle = .zero) {
+    let x = inRect.center.x.pxValue
+    let y = inRect.center.y.pxValue
+    var af = CGAffineTransform (translationX: x, y: y)
+      .rotated (by: inAngle.radians)
+      .translatedBy (x: -x, y: -y)
+    self.mPath = Path (inRect.pxValue).applying (af)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

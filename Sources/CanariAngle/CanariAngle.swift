@@ -8,7 +8,7 @@ import Foundation
 // struct CanariAngle
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariAngle : Hashable, Comparable, CustomStringConvertible {
+public struct CanariAngle : Hashable, Comparable, CustomStringConvertible, Codable {
 
   public let radians : Double // -π ... π
 
@@ -89,7 +89,7 @@ public struct CanariAngle : Hashable, Comparable, CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func string (in inUnit : CanariAngle.Unit, digits inCount : Int = 3) -> String {
+  public func string (in inUnit : CanariAngle.Unit, fractionDigits inCount : Int = 3) -> String {
     return unsafe "\(String (format: "%.*f", inCount, self.value (in: inUnit)))\(inUnit.unitString)"
   }
 
