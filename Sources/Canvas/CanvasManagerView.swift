@@ -116,6 +116,7 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol, DropT
         Divider ()
         self.mWidgetsUserInterface.editorDetailViewForCurrentSelection ()
         .frame (width: 250)
+        .controlSize (.small)
       }
     }
   }

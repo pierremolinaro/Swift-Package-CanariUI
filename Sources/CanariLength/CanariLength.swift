@@ -207,6 +207,8 @@ public struct CanariLength : CustomStringConvertible, Hashable, Comparable, Send
       }
     }
 
+    public var length : CanariLength { .cu (self.toCanariUnits ()) }
+
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -38,7 +38,7 @@ struct CanariLengthEditor : View {
       }else{
         self.buildScaledToFit ()
       }
-      Text (self.mUnit.unitString)
+      Text (" " + self.mUnit.unitString)
     }
   }
 
