@@ -18,7 +18,7 @@ public struct WidgetKnob <TypeDictionary : WidgetTypeArrayProtocol> {
 
   public init (center inCenter : CanariPoint,
                dragAction inKnobDragAction : @escaping (inout any WidgetUIProtocol <TypeDictionary>, CanariPoint, Bool) -> Void,
-               menu inMenu : ((ContextualMenuExecutor <TypeDictionary>) -> any View)?) {
+               menu inMenu : ((ContextualMenuExecutor <TypeDictionary>) -> any View)? = nil) {
     self.center = inCenter
     self.dragAction = inKnobDragAction
     self.menu = inMenu

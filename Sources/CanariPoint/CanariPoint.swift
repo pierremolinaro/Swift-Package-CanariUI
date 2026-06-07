@@ -94,6 +94,12 @@ public struct CanariPoint : Hashable, CustomStringConvertible, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public func transformed (by inAffinity : CanariAffinity) -> CanariPoint {
+    return inAffinity.transforming (self)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   func distance (to inPoint : CanariPoint) -> CanariLength {
     let dx = (self.x - inPoint.x).cuValue
     let dy = (self.y - inPoint.y).cuValue

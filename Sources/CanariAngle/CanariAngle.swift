@@ -8,7 +8,7 @@ import Foundation
 // struct CanariAngle
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariAngle : Hashable, Comparable, CustomStringConvertible, Codable {
+public struct CanariAngle : Hashable, Comparable, CustomStringConvertible, Sendable {
 
   public let radians : Double // -π ... π
 
@@ -46,8 +46,8 @@ public struct CanariAngle : Hashable, Comparable, CustomStringConvertible, Codab
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public static func degrees (_ inValue : Double) -> CanariAngle { return CanariAngle (inValue, in: .degrees) }
-  public static func radians (_ inValue : Double) -> CanariAngle { return CanariAngle (inValue, in: .radians) }
+  public static func degrees (_ inValue : Double) -> CanariAngle { CanariAngle (inValue, in: .degrees) }
+  public static func radians (_ inValue : Double) -> CanariAngle { CanariAngle (inValue, in: .radians) }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

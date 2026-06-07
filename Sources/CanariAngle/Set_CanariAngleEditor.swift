@@ -32,8 +32,6 @@ public struct Set_CanariAngleEditor : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-//  @State var mV = 0.0
-
   public var body : some View {
     HStack (spacing: 0) {
    //   Slider (value: self.$mV, in: 0.0 ... 360.0, step: 1.0)

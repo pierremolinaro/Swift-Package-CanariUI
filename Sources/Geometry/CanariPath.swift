@@ -21,9 +21,25 @@ public struct CanariPath : Equatable, CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (rect inRect : CanariRect, angle inAngle : CanariAngle = .zero) {
-    let x = inRect.center.x.pxValue
-    let y = inRect.center.y.pxValue
+  public init (rect inRect : CanariRect,
+               angle inAngle : CanariAngle = .zero,
+               around inRotationCenter : CanariRotationCenter = .center) {
+    let rotationCenter : CanariPoint
+    switch inRotationCenter {
+    case .bottomLeft: rotationCenter = inRect.bottomLeft
+    case .bottomMiddle : rotationCenter = inRect.bottomMiddle
+    case .bottomRight: rotationCenter = inRect.bottomRight
+    case .center: rotationCenter = inRect.center
+    case .topLeft: rotationCenter = inRect.topLeft
+    case .topMiddle: rotationCenter = inRect.topMiddle
+    case .topRight: rotationCenter = inRect.topRight
+    case .bottomRight: rotationCenter = inRect.bottomRight
+    case .bottomLeft: rotationCenter = inRect.bottomLeft
+    case .middleLeft: rotationCenter = inRect.middleLeft
+    case .middleRight: rotationCenter = inRect.middleRight
+    }
+    let x = rotationCenter.x.pxValue
+    let y = rotationCenter.y.pxValue
     var af = CGAffineTransform (translationX: x, y: y)
       .rotated (by: inAngle.radians)
       .translatedBy (x: -x, y: -y)
