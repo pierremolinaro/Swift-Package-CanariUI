@@ -29,16 +29,36 @@ public struct Set_CanariRectGraphicView : View {
   public var body : some View {
     VStack {
       Opt_Text (self.maxY?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
+      .background (Rectangle ().fill (.white))
+      .anchorPreference (key: CentersKey.self, value: .center) { ["bottom" : $0] }
       HStack {
         Opt_Text (self.minX?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
+        .background (Rectangle ().fill (.white))
+        .anchorPreference (key: CentersKey.self, value: .center) { ["left" : $0] }
         Spacer ()
         Opt_Text (self.maxX?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
+        .background (Rectangle ().fill (.white))
+        .anchorPreference (key: CentersKey.self, value: .center) { ["right" : $0] }
       }
-      Opt_Text (self.minX?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
+      Opt_Text (self.minY?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
+      .background (Rectangle ().fill (.white))
+      .anchorPreference (key: CentersKey.self, value: .center) { ["top" : $0] }
     }
-    .background(
-      Rectangle ().stroke (style: StrokeStyle(lineWidth: 1, lineCap: .round, lineJoin: .round))
-    )
+    .backgroundPreferenceValue (CentersKey.self) { anchors in
+      GeometryReader { proxy in
+        let shape = Path { path in
+          let top = proxy [anchors ["top"]!].y
+          let left = proxy [anchors ["left"]!].x
+          let right = proxy [anchors ["right"]!].x
+          let bottom = proxy [anchors ["bottom"]!].y
+          path.addRect (CGRect (origin: CGPoint (x: left, y: top), size: CGSize (width: right - left, height: bottom - top)))
+        }
+        ZStack {
+          shape.fill (.gray.opacity (0.1))
+          shape.stroke (style: StrokeStyle(lineWidth: 1, lineCap: .round, lineJoin: .round))
+        }
+      }
+    }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -139,6 +159,24 @@ public struct Set_CanariRectGraphicView : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+}
+
+//--------------------------------------------------------------------------------------------------
+
+fileprivate struct CentersKey : PreferenceKey {
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static let defaultValue : [String: Anchor<CGPoint>] = [:]
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static func reduce (value: inout [String : Anchor<CGPoint>],
+                      nextValue: () -> [String : Anchor<CGPoint>]) {
+    value.merge(nextValue()) { _, new in new }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 }
 
 //--------------------------------------------------------------------------------------------------

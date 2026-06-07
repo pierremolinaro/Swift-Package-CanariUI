@@ -237,7 +237,7 @@ struct WidgetGroupView <TypeDictionary : WidgetTypeArrayProtocol> : View {
       }
       HStack {
         Text ("Count")
-        Set_Text (Set (self.mProxy [setOf: \T.count].map { String ($0) } ) )
+        Set_Text (Set (self.mProxy.arrayOf (\T.count).map { String ($0) } ) )
       }
       Button ("Ungroup") { self.mProxy.performWidgetUserInterfaceAction { $0.performUngroup () } }.disabled (!self.canUngroup ())
       Spacer ()
@@ -247,7 +247,7 @@ struct WidgetGroupView <TypeDictionary : WidgetTypeArrayProtocol> : View {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private func objectCountString () -> String? {
-    if let n = self.mProxy [valueFor: \T.count] {
+    if let n = self.mProxy.optValueOf (\T.count) {
       return "\(n)"
     }else{
       return nil
@@ -257,7 +257,7 @@ struct WidgetGroupView <TypeDictionary : WidgetTypeArrayProtocol> : View {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private func canUngroup () -> Bool {
-    if let v = self.mProxy [valueFor: \T.mUnGroupIsEnabled] {
+    if let v = self.mProxy.optValueOf (\T.mUnGroupIsEnabled) {
       return v
     }else{
       return false

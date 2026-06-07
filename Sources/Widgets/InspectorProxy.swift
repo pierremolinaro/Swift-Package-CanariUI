@@ -57,7 +57,7 @@ public final class InspectorProxy <TypeDictionary : WidgetTypeArrayProtocol> {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public subscript <T : WidgetUIProtocol <TypeDictionary>, Value : Equatable> (valueFor inKeyPath : KeyPath <T, Value>) -> Value? {
+  public func optValueOf <T : WidgetUIProtocol <TypeDictionary>, Value : Equatable> (_ inKeyPath : KeyPath <T, Value>) -> Value? {
     var result : Value? = nil
     for id in self.mSelection {
       if let v = self.mWidgetsUserInterface.mWidgetsManager [id: id] as? T {
@@ -76,7 +76,7 @@ public final class InspectorProxy <TypeDictionary : WidgetTypeArrayProtocol> {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public subscript <T : WidgetUIProtocol <TypeDictionary>, Value : Hashable> (setOf inKeyPath : KeyPath <T, Value>) -> Set <Value> {
+  public func setOf <T : WidgetUIProtocol <TypeDictionary>, Value : Hashable> (_ inKeyPath : KeyPath <T, Value>) -> Set <Value> {
     var result = Set <Value> ()
     for id in self.mSelection {
       if let v = self.mWidgetsUserInterface.mWidgetsManager [id: id] as? T {
@@ -85,6 +85,12 @@ public final class InspectorProxy <TypeDictionary : WidgetTypeArrayProtocol> {
       }
     }
     return result
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func arrayOf <T : WidgetUIProtocol <TypeDictionary>, Value : Hashable> (_ inKeyPath : KeyPath <T, Value>) -> [Value] {
+    return Array (self.setOf (inKeyPath))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
