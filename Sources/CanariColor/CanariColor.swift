@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariColor : Codable, Sendable, Equatable, RawRepresentable {
+public struct CanariColor : Codable, Sendable, Equatable, RawRepresentable, CanariCodableByString {
 
   public typealias RawValue = String // RawRepresentable
 
@@ -28,6 +28,20 @@ public struct CanariColor : Codable, Sendable, Equatable, RawRepresentable {
     self.blue = inBlue
     self.alpha = inAlpha
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public init (nsColor inColor : NSColor) {
+    let rgbColor : NSColor = inColor.usingColorSpace (.genericRGB)!
+    self.red = UInt8 (rgbColor.redComponent * 255.0)
+    self.green = UInt8 (rgbColor.greenComponent * 255.0)
+    self.blue = UInt8 (rgbColor.blueComponent * 255.0)
+    self.alpha = UInt8 (rgbColor.alphaComponent * 255.0)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public static var black : CanariColor { CanariColor (red: 0, green: 0, blue: 0, alpha: 255) }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -99,6 +113,29 @@ public struct CanariColor : Codable, Sendable, Equatable, RawRepresentable {
     }else{
       return nil
     }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: CanariCodableByString
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public init (scanner inScanner : Scanner, _ ioOk : inout Bool) {
+    if ioOk {
+      let red = UInt8 (scanner: inScanner, &ioOk)
+      let green = UInt8 (scanner: inScanner, &ioOk)
+      let blue = UInt8 (scanner: inScanner, &ioOk)
+      let alpha = UInt8 (scanner: inScanner, &ioOk)
+      self = CanariColor (red: red, green: green, blue: blue, alpha: alpha)
+    }else{
+      ioOk = false
+      self = CanariColor.black
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func canariCodableEncodedString () -> String {
+    return "\(self.red) \(self.green) \(self.blue) \(self.alpha)"
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

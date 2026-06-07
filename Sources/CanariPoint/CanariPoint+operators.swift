@@ -24,6 +24,12 @@ public func - (_ inLeft : CanariPoint, _ inRight : CanariPoint) -> CanariPoint {
 
 //--------------------------------------------------------------------------------------------------
 
+public func - (_ inLeft : CanariPoint, _ inRight : CanariSize) -> CanariPoint {
+  return CanariPoint (x: inLeft.x - inRight.width, y: inLeft.y - inRight.height)
+}
+
+//--------------------------------------------------------------------------------------------------
+
 public prefix func - (_ inOperand : CanariPoint) -> CanariPoint {
   return CanariPoint (x: -inOperand.x, y: -inOperand.y)
 }
