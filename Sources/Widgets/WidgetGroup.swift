@@ -15,8 +15,11 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var mArray : [any WidgetUIProtocol <TypeDictionary>] // at 0: back, at count - 1: front
+  var mCenter : CanariPoint
+  var mAngle : CanariAngle
   var mUnGroupIsEnabled : Bool
+
+  var mArray : [any WidgetUIProtocol <TypeDictionary>] // at 0: back, at count - 1: front
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -26,8 +29,19 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (_ inWidgets : [any WidgetUIProtocol <TypeDictionary>]) {
-    self.mArray = inWidgets
+    var vertices = [CanariPoint] ()
+    for widget in inWidgets {
+      vertices += widget.enclosingRect ().vertices
+    }
+    let r = CanariRect (vertices)
+    self.mArray = inWidgets.map {
+      var widget = $0
+      widget.performTranslation (by: -r.center)
+      return widget
+    }
     self.mUnGroupIsEnabled = true
+    self.mCenter = r.center
+    self.mAngle = .zero
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -37,15 +51,14 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
     for proxy in inProxyArray {
       array.append (proxy.widget)
     }
-    self.mArray = array
-    self.mUnGroupIsEnabled = true
+    self.init (array)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Encoding, Decoding
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private enum CodingKeys : String, CodingKey { case array, unGroupIsEnabled }
+  private enum CodingKeys : String, CodingKey { case center, angle, array, unGroupIsEnabled }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -57,7 +70,9 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
       array.append (proxy.widget)
     }
     self.mArray = array
-    self.mUnGroupIsEnabled = (try container.decodeIfPresent (Bool.self, forKey: .unGroupIsEnabled)) ?? true
+    self.mUnGroupIsEnabled = try container.decode (Bool.self, forKey: .unGroupIsEnabled)
+    self.mCenter = try container.decode (CanariPoint.self, forKey: .center)
+    self.mAngle = try container.decode (CanariAngle.self, forKey: .angle)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -70,6 +85,8 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
     }
     try container.encode (proxyArray, forKey: .array)
     try container.encode (self.mUnGroupIsEnabled, forKey: .unGroupIsEnabled)
+    try container.encode (self.mCenter, forKey: .center)
+    try container.encode (self.mAngle, forKey: .angle)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -84,7 +101,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
 
   public func isEqual (to inOther : any WidgetUIProtocol <TypeDictionary>) -> Bool {
     if let other = inOther as? WidgetGroup <TypeDictionary> {
-      if self.mArray.count != other.mArray.count {
+      if (self.mArray.count != other.mArray.count) || (self.mCenter != other.mCenter) || (self.mAngle != other.mAngle) {
         return false
       }else{
         for i in 0 ..< self.mArray.count {
@@ -116,6 +133,8 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
                     hovered inHovered : Bool,
                     selected inSelected : Bool,
                     groupLevel inGroupLevel : UInt) {
+    ioContext.translateBy (self.mCenter.scaled (by: inZoom))
+//    ioContext.rotate (by: self.mAngle)
     for widget in self.mArray {
       widget.draw (
         context: &ioContext,
@@ -126,19 +145,27 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
       )
     }
     if inSelected, inGroupLevel == 0 {
-      let path = CanariPath (rect: self.enclosingRect().scaled (by: inZoom))
-      ioContext.stroke (path, with: .color (.red), lineWidth: .px (2))
+      var vertices = [CanariPoint] ()
+      for widget in self.mArray {
+        vertices += widget.enclosingRect ().vertices
+      }
+      let r = CanariRect (vertices)
+
+      let path = CanariPath (rect: r.scaled (by: inZoom))
+      ioContext.stroke (path, with: .color (.black), lineWidth: .px (0.5))
     }
+//    ioContext.rotate (by: -self.mAngle)
+    ioContext.translateBy (-self.mCenter.scaled (by: inZoom))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func enclosingRect () -> CanariRect {
-    var r = CanariRect.empty
+    var vertices = [CanariPoint] ()
     for widget in self.mArray {
-      r = r.unioning (widget.enclosingRect ())
+      vertices += widget.enclosingRect ().vertices
     }
-    return r
+    return CanariRect (vertices).moved (x: self.mCenter.x, y: self.mCenter.y)
   }
 
 
@@ -147,8 +174,9 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func contains (point inPoint : CanariPoint) -> Bool {
+    let p = inPoint.moved (x: -self.mCenter.x, y: -self.mCenter.y)
     for widget in self.mArray {
-      if widget.contains (point: inPoint) {
+      if widget.contains (point: p) {
         return true
       }
     }
@@ -158,8 +186,9 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func intersect (rect inRect : CanariRect) -> Bool {
+    let r = inRect.moved (x: -self.mCenter.x, y: -self.mCenter.y)
     for widget in self.mArray {
-      if widget.intersect (rect: inRect) {
+      if widget.intersect (rect: r) {
         return true
       }
     }
@@ -171,17 +200,19 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func limitTranslation (_ ioTranslation : inout CanariPoint) {
-    for widget in self.mArray {
-      widget.limitTranslation (&ioTranslation)
+    let r = self.enclosingRect ()
+    if (r.minX + ioTranslation.x) < .zero {
+      ioTranslation.x = -r.minX
+    }
+    if (r.minY + ioTranslation.y) < .zero {
+      ioTranslation.y = -r.minY
     }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public mutating func performTranslation (by inTranslation : CanariPoint) {
-    for i in 0 ..< self.mArray.count {
-      self.mArray [i].performTranslation (by: inTranslation)
-    }
+     self.mCenter = self.mCenter.moved (x: inTranslation.x, y: inTranslation.y)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -201,7 +232,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public static func inspectorView (proxy inProxy : InspectorProxy <TypeDictionary>) -> any View {
-    WidgetGroupView (proxy: inProxy)
+    WidgetGroupInspectorView (proxy: inProxy)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -210,7 +241,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
 
 //--------------------------------------------------------------------------------------------------
 
-struct WidgetGroupView <TypeDictionary : WidgetTypeArrayProtocol> : View {
+fileprivate struct WidgetGroupInspectorView <TypeDictionary : WidgetTypeArrayProtocol> : View {
 
   typealias T = WidgetGroup <TypeDictionary>
 
@@ -229,39 +260,57 @@ struct WidgetGroupView <TypeDictionary : WidgetTypeArrayProtocol> : View {
   var body : some View {
     VStack {
       Text ("Group").bold ()
-      Opt_Toggle ("UnGrouping is enabled", isOn: self.mProxy [bindingFor: \T.mUnGroupIsEnabled])
-      Opt_Toggle ("UnGrouping is enabled", isOn: self.mProxy [bindingFor: \T.mUnGroupIsEnabled]).disabled(true)
-      HStack {
-        Text ("Count")
-        Opt_Text (self.objectCountString ())
+      Spacer ().frame (height: 16)
+      CanariElementInspector (title: "Ungrouping") {
+        HStack {
+          Text ("Group count")
+          Set_Text (Set (self.mProxy.arrayOf (\T.count).map { "\($0)" }) )
+        }
+        Opt_Toggle ("UnGrouping is enabled", isOn: self.mProxy [bindingFor: \T.mUnGroupIsEnabled])
+        Button ("Ungroup") { self.mProxy.performWidgetUserInterfaceAction { $0.performUngroup () } }.disabled (!self.canUngroup ())
       }
-      HStack {
-        Text ("Count")
-        Set_Text (Set (self.mProxy.arrayOf (\T.count).map { String ($0) } ) )
+//      Spacer ().frame (height: 16)
+//      Set_CanariRectGraphicView (rectSet: self.mProxy.setOf (\T.mRect))
+      CanariElementInspector (title: "Center") {
+        HStack {
+          Spacer ()
+          Form {
+            Set_CanariPointEditor (
+              pointSet: self.mProxy.setOf (\T.mCenter),
+              setterX: { newX in
+                self.mProxy.performWidgetAction { (widget : inout T) in
+                  widget.mCenter = CanariPoint (x: newX, y: widget.mCenter.y)
+                }
+              },
+              setterY: { newY in
+                self.mProxy.performWidgetAction { (widget : inout T) in
+                  widget.mCenter = CanariPoint (x: widget.mCenter.x, y: newY)
+                }
+              }
+            )
+          }
+          Spacer ()
+        }
       }
-      Button ("Ungroup") { self.mProxy.performWidgetUserInterfaceAction { $0.performUngroup () } }.disabled (!self.canUngroup ())
+      CanariElementInspector (title: "Angle") {
+        Set_CanariAngleEditor (
+          angleSet: self.mProxy.setOf (\T.mAngle),
+          setter: { newAngle in
+            self.mProxy.performWidgetAction { (widget : inout T) in
+              widget.mAngle = newAngle
+            }
+          },
+          width: 64
+        )
+      }
       Spacer ()
     }.padding ()
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private func objectCountString () -> String? {
-    if let n = self.mProxy.optValueOf (\T.count) {
-      return "\(n)"
-    }else{
-      return nil
-    }
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
   private func canUngroup () -> Bool {
-    if let v = self.mProxy.optValueOf (\T.mUnGroupIsEnabled) {
-      return v
-    }else{
-      return false
-    }
+    self.mProxy.optValueOf (\T.mUnGroupIsEnabled) ?? false
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

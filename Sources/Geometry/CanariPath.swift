@@ -177,13 +177,21 @@ public struct CanariPath : Equatable, CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func intersects (rect inRect : CanariRect) -> Bool {
+  public func intersects (_ inRect : CanariRect) -> Bool {
   //--- BIZARRE ! le code avec Path renvoie toujours une intersection non vide !!!
 //    let r = Path (inRect.pxValue)
 //    let intersection = self.mPath.intersection (r)
   //--- Alors, on utilise un CGPath, et là, c'est ok
     let r = unsafe CGPath (rect: inRect.pxValue, transform: nil)
     let intersection = self.mPath.cgPath.intersection (r)
+    return !intersection.isEmpty
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func intersects (_ inPath : CanariPath) -> Bool {
+  //--- On utilise aussi un CGPath
+    let intersection = self.mPath.cgPath.intersection (inPath.mPath.cgPath)
     return !intersection.isEmpty
   }
 
