@@ -429,7 +429,7 @@ import Combine
       var idx = 0
       while idx < self.mWidgetsManager.count {
         if self.mSelection.contains (self.mWidgetsManager [widget: idx].id) {
-          self.mWidgetsManager [widget: idx].performTranslation (by: translation)
+          self.mWidgetsManager [widget: idx].translate (by: translation)
         }
         idx += 1
       }
@@ -450,7 +450,7 @@ import Combine
       var idx = 0
       while idx < self.mWidgetsManager.count {
         if self.mSelection.contains (self.mWidgetsManager [widget: idx].id) {
-          self.mWidgetsManager [widget: idx].performTranslation (by: translation)
+          self.mWidgetsManager [widget: idx].translate (by: translation)
         }
         idx += 1
       }
@@ -471,7 +471,7 @@ import Combine
       var idx = 0
       while idx < self.mWidgetsManager.count {
         if self.mSelection.contains (self.mWidgetsManager [widget: idx].id) {
-          self.mWidgetsManager [widget: idx].performTranslation (by: translation)
+          self.mWidgetsManager [widget: idx].translate (by: translation)
         }
         idx += 1
       }
@@ -492,7 +492,7 @@ import Combine
       var idx = 0
       while idx < self.mWidgetsManager.count {
         if self.mSelection.contains (self.mWidgetsManager [widget: idx].id) {
-          self.mWidgetsManager [widget: idx].performTranslation (by: translation)
+          self.mWidgetsManager [widget: idx].translate (by: translation)
         }
         idx += 1
       }
@@ -618,15 +618,16 @@ import Combine
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public override func performUngroup () {
-    for widget in self.mWidgetsManager.widgets {
-      if self.mSelection.contains (widget.id), let group = widget as? WidgetGroup <TypeDictionary>, group.mUnGroupIsEnabled {
+    for w in self.mWidgetsManager.widgets {
+      if self.mSelection.contains (w.id), let group = w as? WidgetGroup <TypeDictionary>, group.mUnGroupIsEnabled {
         let array = group.widgetArray.map {
           var widget = $0
-          widget.performTranslation (by: group.mCenter)
+          widget.rotate (by: group.mAngle)
+          widget.translate (by: group.mCenter)
           return widget
         }
-        self.mWidgetsManager.replaceWidget (id: widget.id, with: array)
-        self.mSelection.remove (widget.id)
+        self.mWidgetsManager.replaceWidget (id: w.id, with: array)
+        self.mSelection.remove (w.id)
         for p in group.widgetArray {
           self.mSelection.insert (p.id)
         }

@@ -31,12 +31,12 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
   public init (_ inWidgets : [any WidgetUIProtocol <TypeDictionary>]) {
     var vertices = [CanariPoint] ()
     for widget in inWidgets {
-      vertices += widget.enclosingRect ().vertices
+      vertices += widget.enclosingRect.vertices
     }
     let r = CanariRect (vertices)
     self.mArray = inWidgets.map {
       var widget = $0
-      widget.performTranslation (by: -r.center)
+      widget.translate (by: -r.center)
       return widget
     }
     self.mUnGroupIsEnabled = true
@@ -134,7 +134,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
                     selected inSelected : Bool,
                     groupLevel inGroupLevel : UInt) {
     ioContext.translateBy (self.mCenter.scaled (by: inZoom))
-//    ioContext.rotate (by: self.mAngle)
+    ioContext.rotate (by: self.mAngle)
     for widget in self.mArray {
       widget.draw (
         context: &ioContext,
@@ -147,34 +147,53 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
     if inSelected, inGroupLevel == 0 {
       var vertices = [CanariPoint] ()
       for widget in self.mArray {
-        vertices += widget.enclosingRect ().vertices
+        vertices += widget.enclosingRect.vertices
       }
       let r = CanariRect (vertices)
 
       let path = CanariPath (rect: r.scaled (by: inZoom))
       ioContext.stroke (path, with: .color (.black), lineWidth: .px (0.5))
     }
-//    ioContext.rotate (by: -self.mAngle)
+    ioContext.rotate (by: -self.mAngle)
     ioContext.translateBy (-self.mCenter.scaled (by: inZoom))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func enclosingRect () -> CanariRect {
+  public var enclosingRect : CanariRect {
     var vertices = [CanariPoint] ()
     for widget in self.mArray {
-      vertices += widget.enclosingRect ().vertices
+      vertices += widget.enclosingRect.vertices
     }
-    return CanariRect (vertices).moved (x: self.mCenter.x, y: self.mCenter.y)
+    let path = CanariPath (rect: CanariRect (vertices))
+    let transformedPath = self.affinityFromRectToCanvas.transforming (path)
+    return transformedPath.boundingRect
   }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  private var affinityFromRectToCanvas : CanariAffinity {
+    CanariAffinity (translationByX: self.mCenter.x, byY: self.mCenter.y).rotating (self.mAngle)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  private var affinityFromCanvasToLocal : CanariAffinity {
+    CanariAffinity (rotation: -self.mAngle).translating (x: -self.mCenter.x, y: -self.mCenter.y)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  private func transformedFromRectToCanvas (x inX : CanariLength = .zero, y inY : CanariLength = .zero) -> CanariPoint {
+    return CanariPoint (x: inX, y: inY).transformed (by: self.affinityFromRectToCanvas)
+  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Location test
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func contains (point inPoint : CanariPoint) -> Bool {
-    let p = inPoint.moved (x: -self.mCenter.x, y: -self.mCenter.y)
+    let p = self.affinityFromCanvasToLocal.transforming (inPoint)
     for widget in self.mArray {
       if widget.contains (point: p) {
         return true
@@ -185,10 +204,10 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func intersect (rect inRect : CanariRect) -> Bool {
-    let r = inRect.moved (x: -self.mCenter.x, y: -self.mCenter.y)
+  public func intersect (path inPath : CanariPath) -> Bool {
+    let path = self.affinityFromCanvasToLocal.transforming (inPath)
     for widget in self.mArray {
-      if widget.intersect (rect: r) {
+      if widget.intersect (path: path) {
         return true
       }
     }
@@ -200,7 +219,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func limitTranslation (_ ioTranslation : inout CanariPoint) {
-    let r = self.enclosingRect ()
+    let r = self.enclosingRect
     if (r.minX + ioTranslation.x) < .zero {
       ioTranslation.x = -r.minX
     }
@@ -211,8 +230,16 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public mutating func performTranslation (by inTranslation : CanariPoint) {
+  public mutating func translate (by inTranslation : CanariPoint) {
      self.mCenter = self.mCenter.moved (x: inTranslation.x, y: inTranslation.y)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Rotate
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public mutating func rotate (by inAngle : CanariAngle) {
+    self.mAngle += inAngle
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -269,8 +296,9 @@ fileprivate struct WidgetGroupInspectorView <TypeDictionary : WidgetTypeArrayPro
         Opt_Toggle ("UnGrouping is enabled", isOn: self.mProxy [bindingFor: \T.mUnGroupIsEnabled])
         Button ("Ungroup") { self.mProxy.performWidgetUserInterfaceAction { $0.performUngroup () } }.disabled (!self.canUngroup ())
       }
-//      Spacer ().frame (height: 16)
-//      Set_CanariRectGraphicView (rectSet: self.mProxy.setOf (\T.mRect))
+      CanariElementInspector (title: "Enclosing Rectangle") {
+        Set_CanariRectGraphicView (rectSet: self.mProxy.setOf (\T.enclosingRect))
+      }
       CanariElementInspector (title: "Center") {
         HStack {
           Spacer ()

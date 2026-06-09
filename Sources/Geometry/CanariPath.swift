@@ -33,14 +33,12 @@ public struct CanariPath : Equatable, CustomStringConvertible {
     case .topLeft: rotationCenter = inRect.topLeft
     case .topMiddle: rotationCenter = inRect.topMiddle
     case .topRight: rotationCenter = inRect.topRight
-    case .bottomRight: rotationCenter = inRect.bottomRight
-    case .bottomLeft: rotationCenter = inRect.bottomLeft
     case .middleLeft: rotationCenter = inRect.middleLeft
     case .middleRight: rotationCenter = inRect.middleRight
     }
     let x = rotationCenter.x.pxValue
     let y = rotationCenter.y.pxValue
-    var af = CGAffineTransform (translationX: x, y: y)
+    let af = CGAffineTransform (translationX: x, y: y)
       .rotated (by: inAngle.radians)
       .translatedBy (x: -x, y: -y)
     self.mPath = Path (inRect.pxValue).applying (af)
@@ -246,6 +244,12 @@ public struct CanariPath : Equatable, CustomStringConvertible {
 
   public mutating func unionInPlace (_ inPath : CanariPath) {
     self.mPath = self.mPath.union (inPath.mPath)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public var boundingRect : CanariRect {
+    CanariRect (px: self.mPath.boundingRect)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

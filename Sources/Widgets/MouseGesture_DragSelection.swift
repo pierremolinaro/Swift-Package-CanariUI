@@ -28,7 +28,7 @@ struct MouseGesture_DragSelection <TypeDictionary : WidgetTypeArrayProtocol> : M
       inBeginOrContinueUndoGrouping ()
       for i in 0 ..< ioWidgetsManager.count {
         if ioSelection.contains (ioWidgetsManager [widget: i].id) {
-          ioWidgetsManager [widget: i].performTranslation (by: translation)
+          ioWidgetsManager [widget: i].translate (by: translation)
         }
       }
       outOptionalNextState = MouseGesture_DragSelection (

@@ -34,7 +34,6 @@ public struct Set_CanariAngleEditor : View {
 
   public var body : some View {
     HStack (spacing: 0) {
-   //   Slider (value: self.$mV, in: 0.0 ... 360.0, step: 1.0)
       TextField (
         "",
         value: self.$mDoubleValue,
@@ -56,13 +55,29 @@ public struct Set_CanariAngleEditor : View {
         }
       }
       Text (" ° ")
+//      Stepper {
+//        EmptyView ()
+//      } onIncrement: {
+//        self.mSetter (CanariAngle (self.mDoubleValue!, in: .degrees) + .degrees (10))
+//      } onDecrement: {
+//        self.mSetter (CanariAngle (self.mDoubleValue!, in: .degrees) - .degrees (10))
+//      }.help ("10°").isHidden (self.mDoubleValue == nil).controlSize (.small)
+//      .overlay {
+//        if self.mAngleArray.count > 1 {
+//          Menu ("") {
+//            ForEach (self.mAngleArray, id: \.self) { angle in
+//              Button (angle.string (in: .degrees, fractionDigits: 3)) { self.mSetter (angle) }
+//            }
+//          }.buttonStyle (.borderless)
+//        }
+//      }
       Stepper {
         EmptyView ()
       } onIncrement: {
-        self.mSetter (CanariAngle (self.mDoubleValue!, in: .degrees) + .degrees (10))
+        self.mSetter (CanariAngle (self.mDoubleValue!, in: .degrees) + .degrees (1))
       } onDecrement: {
-        self.mSetter (CanariAngle (self.mDoubleValue!, in: .degrees) - .degrees (10))
-      }.help ("10°").isHidden (self.mDoubleValue == nil).controlSize (.small)
+        self.mSetter (CanariAngle (self.mDoubleValue!, in: .degrees) - .degrees (1))
+      }.help ("1°").isHidden (self.mDoubleValue == nil).controlSize (.small)
       .overlay {
         if self.mAngleArray.count > 1 {
           Menu ("") {
@@ -75,17 +90,16 @@ public struct Set_CanariAngleEditor : View {
       Stepper {
         EmptyView ()
       } onIncrement: {
-        self.mSetter (CanariAngle (self.mDoubleValue!, in: .degrees) + .degrees (1))
-      } onDecrement: {
-        self.mSetter (CanariAngle (self.mDoubleValue!, in: .degrees) - .degrees (1))
-      }.help ("1°").isHidden (self.mDoubleValue == nil).controlSize (.small)
-      Stepper {
-        EmptyView ()
-      } onIncrement: {
         self.mSetter (CanariAngle (self.mDoubleValue!, in: .degrees) + .degrees (0.1))
       } onDecrement: {
         self.mSetter (CanariAngle (self.mDoubleValue!, in: .degrees) - .degrees (0.1))
       }.help ("0.1°").isHidden (self.mDoubleValue == nil).controlSize (.small)
+      ControlGroup ("") {
+        Button ("0°", systemImage: "arrow.right") { self.mSetter (.zero) }.labelsHidden().help ("0°")
+        Button ("90°", systemImage: "arrow.up") { self.mSetter (.degrees90) }.labelsHidden().help ("90°")
+        Button ("180°", systemImage: "arrow.left") { self.mSetter (.degrees180) }.labelsHidden().help ("180°")
+        Button ("-90°", systemImage: "arrow.down") { self.mSetter (.degrees270) }.labelsHidden().help ("270°")
+      }.controlGroupStyle (.automatic)
     }
   }
 

@@ -25,7 +25,7 @@ struct MouseGesture_SelectionRectangle <TypeDictionary : WidgetTypeArrayProtocol
     ioSelection = self.startSelectionSet
     let shift = NSEvent.modifierFlags.contains (.shift)
     for object in ioWidgetsManager.widgets {
-      if object.intersect (rect: selectionRectangle) {
+      if object.intersect (path: CanariPath (rect: selectionRectangle)) {
         if !shift {
           ioSelection.insert (object.id)
         }else if ioSelection.contains (object.id) {

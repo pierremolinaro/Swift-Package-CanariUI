@@ -38,7 +38,7 @@ public protocol WidgetUIProtocol <TypeDictionary> : WidgetModelProtocol {
              selected inSelected : Bool,
              groupLevel inGroupLevel : UInt)
 
-  func enclosingRect () -> CanariRect
+  var enclosingRect : CanariRect { get }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Location test
@@ -46,7 +46,7 @@ public protocol WidgetUIProtocol <TypeDictionary> : WidgetModelProtocol {
 
   func contains (point inPoint : CanariPoint) -> Bool
 
-  func intersect (rect inRect : CanariRect) -> Bool
+  func intersect (path inPath : CanariPath) -> Bool
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Translation
@@ -54,7 +54,13 @@ public protocol WidgetUIProtocol <TypeDictionary> : WidgetModelProtocol {
 
   func limitTranslation (_ ioTranslation : inout CanariPoint)
 
-  mutating func performTranslation (by inTranslation : CanariPoint)
+  mutating func translate (by inTranslation : CanariPoint)
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Rotate
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  mutating func rotate (by inAngle : CanariAngle)
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: AlignmentGuidePoints
