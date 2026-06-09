@@ -53,6 +53,16 @@ import Combine
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: append and set selection to added object
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func appendAndSetSelection (_ inNewObject : any WidgetUIProtocol <TypeDictionary>) {
+    self.mWidgetsManager.append (inNewObject)
+    self.mSelection.removeAll ()
+    self.mSelection.insert (inNewObject.id)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Object Creator
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

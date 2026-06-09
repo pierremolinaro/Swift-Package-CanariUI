@@ -12,7 +12,8 @@ fileprivate let DEBUG_COLOR = Color.clear // red.opacity (0.15)
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol, DropType : Transferable> : View {
+public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
+                                 DroppedFileType : Transferable> : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -23,7 +24,8 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol, DropT
   private let mRightVerticalRulerViewBuilder : (VerticalRulerViewContext) -> any View
   private let mContext : CanvasManagerViewContext
   private let mContentSizeWithMargins : CanariSize
-  private let mDroppedFileHandler : (([DropType], CanariPoint) -> Void)?
+  private let mDroppedFilesHandler : (([DroppedFileType], CanariPoint) -> Void)?
+  private let mDroppedStringsHandler : (([String], CanariPoint) -> Void)?
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -56,13 +58,15 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol, DropT
         topHorizontalRulerViewBuilder inTopHorizontalRulerViewBuilder : @escaping (HorizontalRulerViewContext) -> any View,
         rightVerticalRulerViewBuilder inRightVerticalRulerViewBuilder : @escaping (VerticalRulerViewContext) -> any View,
         bottomHorizontalRulerViewBuilder inBottomHorizontalRulerViewBuilder : @escaping (HorizontalRulerViewContext) -> any View,
-        droppedFileHandler inDroppedFileHandler : (([DropType], CanariPoint) -> Void)?,
+        droppedFilesHandler inDroppedFilesHandler : (([DroppedFileType], CanariPoint) -> Void)?,
+        droppedStringsHandler inDroppedStringsHandler : (([String], CanariPoint) -> Void)?,
         detailColumnIsExpanded : Bool) {
     self._mContentZoom = inZoom
     self._mAlignedHoverUserLocation = inAlignedHoverUserLocation
     self.mContext = inContext
     self.mWidgetsUserInterface = inWidgetsUserInterface
-    self.mDroppedFileHandler = inDroppedFileHandler
+    self.mDroppedFilesHandler = inDroppedFilesHandler
+    self.mDroppedStringsHandler = inDroppedStringsHandler
     self.mDetailColumnExpanded = detailColumnIsExpanded
     self.mContentSizeWithMargins = CanariSize (
       width: inContext.canvasSize.width + inContext.margins.left + inContext.margins.right,
@@ -86,14 +90,17 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol, DropT
             HStack (spacing: 0.0) {
               self.leftSpacer ()
               self.contentView (geometry)
+              .dropDestination (for: String.self, isEnabled: true) { items, dropSession in
+                let p = self.unalignedUserPoint (geometry, fromLocationInContentView: dropSession.location)
+                self.mDroppedStringsHandler? (items, p)
+              }
+              .dropDestination (for: DroppedFileType.self, isEnabled: true) { items, dropSession in
+                let p = self.unalignedUserPoint (geometry, fromLocationInContentView: dropSession.location)
+                self.mDroppedFilesHandler? (items, p)
+              }
               self.rightSpacer ()
             }
             self.bottomSpacer ()
-          }
-          .dropDestination (for: DropType.self) { items, location in
-            let p = self.unalignedUserPoint (geometry, fromLocationInContentView: location)
-            self.mDroppedFileHandler? (items, p)
-            return true
           }
         }
         .onScrollPositionChange (self.$mScrollPosition, self.mContentZoom)
