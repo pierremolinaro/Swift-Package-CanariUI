@@ -9,6 +9,12 @@ import SwiftUI
 public protocol WidgetUIProtocol <TypeDictionary> : WidgetModelProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Oriented Origin
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  var orientedOrigin : CanariOrientedOrigin { get set }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func knobs () -> [WidgetKnob <TypeDictionary>]
 
@@ -38,45 +44,34 @@ public protocol WidgetUIProtocol <TypeDictionary> : WidgetModelProtocol {
              selected inSelected : Bool,
              groupLevel inGroupLevel : UInt)
 
-  var enclosingRect : CanariRect { get }
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Local Enclosing rect
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  var localEnclosingRect : CanariRect { get }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Location test
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func contains (point inPoint : CanariPoint) -> Bool
+  func contains (localPoint inLocalPoint : CanariPoint) -> Bool
 
-  func intersect (path inPath : CanariPath) -> Bool
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: Translation
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  func limitTranslation (_ ioTranslation : inout CanariPoint)
-
-  mutating func translate (by inTranslation : CanariPoint)
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: Rotate
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  mutating func rotate (by inAngle : CanariAngle)
+  func intersect (localPath inLocalPath : CanariPath) -> Bool
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: AlignmentGuidePoints
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func alignmentGuidePoints () -> Set <CanariPoint>
+  var localAlignmentGuidePoints : [CanariPoint] { get }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: inspectorView
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  static func inspectorView (proxy inProxy : InspectorProxy <TypeDictionary>) -> any View
+  @MainActor static func inspectorView (proxy inProxy : InspectorProxy <TypeDictionary>) -> any View
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 }
 
 //--------------------------------------------------------------------------------------------------
-

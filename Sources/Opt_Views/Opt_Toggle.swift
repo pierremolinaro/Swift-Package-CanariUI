@@ -59,14 +59,14 @@ public struct Opt_Toggle : NSViewRepresentable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public final class Coordinator: NSObject {
+  public final class Coordinator : NSObject {
     private var mBinding : Binding<Bool?>
 
     init (value: Binding<Bool?>) {
       self.mBinding = value
     }
 
-    @objc func changed (_ sender : NSButton) {
+    @MainActor @objc func changed (_ sender : NSButton) {
       switch sender.state {
       case .on:
         self.mBinding.wrappedValue = true

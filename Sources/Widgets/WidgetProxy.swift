@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct WidgetProxy <TypeDictionary : WidgetTypeArrayProtocol> : Equatable, Codable {
+public struct WidgetProxy <TypeDictionary : WidgetTypeArrayProtocol> : Equatable, Codable, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

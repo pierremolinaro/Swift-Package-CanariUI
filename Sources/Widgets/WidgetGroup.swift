@@ -15,6 +15,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public var orientedOrigin : CanariOrientedOrigin = CanariOrientedOrigin (.zero, .zero)
   var mCenter : CanariPoint
   var mAngle : CanariAngle
   var mUnGroupIsEnabled : Bool
@@ -31,7 +32,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
   public init (_ inWidgets : [any WidgetUIProtocol <TypeDictionary>]) {
     var vertices = [CanariPoint] ()
     for widget in inWidgets {
-      vertices += widget.enclosingRect.vertices
+      vertices += widget.canvasEnclosingRect.vertices
     }
     let r = CanariRect (vertices)
     self.mArray = inWidgets.map {
@@ -147,7 +148,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
     if inSelected, inGroupLevel == 0 {
       var vertices = [CanariPoint] ()
       for widget in self.mArray {
-        vertices += widget.enclosingRect.vertices
+        vertices += widget.canvasEnclosingRect.vertices
       }
       let r = CanariRect (vertices)
 
@@ -160,15 +161,19 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var enclosingRect : CanariRect {
-    var vertices = [CanariPoint] ()
-    for widget in self.mArray {
-      vertices += widget.enclosingRect.vertices
-    }
-    let path = CanariPath (rect: CanariRect (vertices))
-    let transformedPath = self.affinityFromRectToCanvas.transforming (path)
-    return transformedPath.boundingRect
-  }
+  public var localEnclosingRect : CanariRect { CanariRect (center: .zero, size: .zero) }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+//  public var enclosingRect : CanariRect {
+//    var vertices = [CanariPoint] ()
+//    for widget in self.mArray {
+//      vertices += widget.canvasEnclosingRect.vertices
+//    }
+//    let path = CanariPath (rect: CanariRect (vertices))
+//    let transformedPath = self.affinityFromRectToCanvas.transforming (path)
+//    return transformedPath.boundingRect
+//  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -192,10 +197,9 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
   //MARK: Location test
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func contains (point inPoint : CanariPoint) -> Bool {
-    let p = self.affinityFromCanvasToLocal.transforming (inPoint)
+  public func contains (localPoint inLocalPoint : CanariPoint) -> Bool {
     for widget in self.mArray {
-      if widget.contains (point: p) {
+      if widget.contains (localPoint: inLocalPoint) {
         return true
       }
     }
@@ -204,10 +208,10 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func intersect (path inPath : CanariPath) -> Bool {
-    let path = self.affinityFromCanvasToLocal.transforming (inPath)
+  public func intersect (localPath inLocalPath : CanariPath) -> Bool {
+//    let path = self.affinityFromCanvasToLocal.transforming (inPath)
     for widget in self.mArray {
-      if widget.intersect (path: path) {
+      if widget.intersect (localPath: inLocalPath) {
         return true
       }
     }
@@ -219,7 +223,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func limitTranslation (_ ioTranslation : inout CanariPoint) {
-    let r = self.enclosingRect
+    let r = self.canvasEnclosingRect
     if (r.minX + ioTranslation.x) < .zero {
       ioTranslation.x = -r.minX
     }
@@ -246,10 +250,10 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
   //MARK: AlignmentGuidePoints
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func alignmentGuidePoints () -> Set <CanariPoint> {
-    var points = Set <CanariPoint> ()
+  public var localAlignmentGuidePoints : [CanariPoint] {
+    var points = [CanariPoint] ()
     for widget in self.mArray {
-      points.formUnion (widget.alignmentGuidePoints ())
+      points += widget.localAlignmentGuidePoints
     }
     return points
   }
@@ -278,7 +282,7 @@ fileprivate struct WidgetGroupInspectorView <TypeDictionary : WidgetTypeArrayPro
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  nonisolated init (proxy inProxy : InspectorProxy <TypeDictionary>) {
+  init (proxy inProxy : InspectorProxy <TypeDictionary>) {
     self.mProxy = inProxy
   }
 
@@ -297,7 +301,7 @@ fileprivate struct WidgetGroupInspectorView <TypeDictionary : WidgetTypeArrayPro
         Button ("Ungroup") { self.mProxy.performWidgetUserInterfaceAction { $0.performUngroup () } }.disabled (!self.canUngroup ())
       }
       CanariElementInspector (title: "Enclosing Rectangle") {
-        Set_CanariRectGraphicView (rectSet: self.mProxy.setOf (\T.enclosingRect))
+        Set_CanariRectGraphicView (rectSet: self.mProxy.setOf (\T.canvasEnclosingRect))
       }
       CanariElementInspector (title: "Center") {
         HStack {

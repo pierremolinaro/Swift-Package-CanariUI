@@ -173,6 +173,13 @@ public struct CanariRect : Hashable, CustomStringConvertible, Sendable, Codable 
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public func intersects (_ inPath : CanariPath) -> Bool {
+    let p = CanariPath (rect: self)
+    return inPath.intersects (p)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public func scaled (by inScale : CGFloat) -> CanariRect {
     return CanariRect (
       origin: CanariPoint (x: self.origin.x * inScale, y: self.origin.y * inScale),

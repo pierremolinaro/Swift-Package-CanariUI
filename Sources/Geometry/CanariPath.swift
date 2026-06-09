@@ -153,6 +153,15 @@ public struct CanariPath : Equatable, CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public func transformed (by inAffinity : CanariAffinity) -> CanariPath {
+    let af = inAffinity.cgAffineTransform
+    var result = CanariPath ()
+    result.mPath = self.mPath.applying (af)
+    return result
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public func transformed (using inTransform : CGAffineTransform) -> CanariPath {
     var result = CanariPath ()
     result.mPath = self.mPath.applying (inTransform)

@@ -31,7 +31,7 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private var mSelection = Set <UUID> ()
+  private(set) var mSelection = Set <UUID> ()
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -68,40 +68,45 @@ import Combine
   //MARK: Draw
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func draw (context : inout GraphicsContext, zoom inZoom : Double) {
+  public func draw (context ioContext : inout GraphicsContext, zoom inZoom : Double) {
     enterTracing ("widgets.user.interface.draw") ; defer { exitTracing ("widgets.user.interface.draw") }
+    ioContext.scaleBy (x: inZoom, y: inZoom)
   //--- Draw widgets
     for widget in self.mWidgetsManager.widgets {
+      ioContext.translateBy (widget.orientedOrigin.mOrigin)
+      ioContext.rotate (by: widget.orientedOrigin.mAngle)
       widget.draw (
-        context: &context,
+        context: &ioContext,
         zoom: inZoom,
         hovered: widget.id == self.mHoveredObject,
         selected: self.mSelection.contains (widget.id),
         groupLevel: 0
       )
+      ioContext.rotate (by: -widget.orientedOrigin.mAngle)
+      ioContext.translateBy (-widget.orientedOrigin.mOrigin)
     }
   //--- Get alignment points
     var selectedObjetsAlignmentPoints = Set <CanariPoint> ()
     for widget in self.mWidgetsManager.widgets {
       if self.mSelection.contains (widget.id) {
-        selectedObjetsAlignmentPoints.formUnion (widget.alignmentGuidePoints ())
+        selectedObjetsAlignmentPoints.formUnion (widget.orientedOrigin.localToCanvas (widget.localAlignmentGuidePoints))
       }
     }
   //--- Draw alignment guides
     for p in selectedObjetsAlignmentPoints {
       for widget in self.mWidgetsManager.widgets {
         if !self.mSelection.contains (widget.id) {
-          for q in widget.alignmentGuidePoints () {
+          for q in widget.orientedOrigin.localToCanvas (widget.localAlignmentGuidePoints) {
             if p.x == q.x, p.y != q.y { // Vertical guide
               var path = CanariPath ()
-              path.move (to: p.scaled (by: inZoom))
-              path.addLine (to: q.scaled (by: inZoom))
-              context.stroke (path, with: .color (.orange), lineWidth: .px (2))
+              path.move (to: p)
+              path.addLine (to: q)
+              ioContext.stroke (path, with: .color (.orange), lineWidth: .px (1) / inZoom)
             }else if p.y == q.y, p.x != q.x { // Horizontal guide
               var path = CanariPath ()
-              path.move (to: p.scaled (by: inZoom))
-              path.addLine (to: q.scaled (by: inZoom))
-              context.stroke (path, with: .color (.orange), lineWidth: .px (2))
+              path.move (to: p)
+              path.addLine (to: q)
+              ioContext.stroke (path, with: .color (.orange), lineWidth: .px (1) / inZoom)
             }
           }
         }
@@ -109,12 +114,17 @@ import Combine
     }
   //--- Draw knobs
     for widget in self.mWidgetsManager.widgets {
-      if self.mSelection.contains (widget.id) {
+      if self.mSelection.contains (widget.id), !widget.knobs ().isEmpty {
+        ioContext.translateBy (widget.orientedOrigin.mOrigin)
+        ioContext.rotate (by: widget.orientedOrigin.mAngle)
         for knob in widget.knobs () {
-          knob.draw (context: &context, zoom: inZoom)
+          knob.draw (context: &ioContext, zoom: inZoom)
         }
+        ioContext.rotate (by: -widget.orientedOrigin.mAngle)
+        ioContext.translateBy (-widget.orientedOrigin.mOrigin)
       }
     }
+    ioContext.scaleBy (x: 1.0 / inZoom, y: 1.0 / inZoom)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -124,7 +134,7 @@ import Combine
   public func hoverTracking (at inPoint : CanariPoint) {
     enterTracing ("widgets.user.interface.hover.tracking") ; defer { exitTracing ("widgets.user.interface.hover.tracking") }
     for widget in self.mWidgetsManager.widgets.reversed () {
-      if widget.contains (point: inPoint) {
+      if widget.contains (localPoint: widget.orientedOrigin.canvasToLocal (inPoint)) {
         self.mHoveredObject = widget.id
         return
       }
@@ -142,7 +152,7 @@ import Combine
   //MARK: Mouse down, mouse dragged, mouse up
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func mouseDownOrMouseDragged (geometry inGeometry : MouseGestureGeometryContext) {
+  @MainActor public func mouseDownOrMouseDragged (geometry inGeometry : MouseGestureGeometryContext) {
     enterTracing ("widgets.user.interface.mouse.dragging") ; defer { exitTracing ("widgets.user.interface.mouse.dragging") }
     if let dragGestureState = self.mDragGestureState { // Mouse dragged event
       var optionalNextState : (any MouseGestureProtocol <TypeDictionary>)? = nil
@@ -172,12 +182,12 @@ import Combine
 
  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private func mouseDownWithOptionKey (geometry inGeometry : MouseGestureGeometryContext) -> any MouseGestureProtocol<TypeDictionary> {
+  @MainActor private func mouseDownWithOptionKey (geometry inGeometry : MouseGestureGeometryContext) -> any MouseGestureProtocol<TypeDictionary> {
   //--- Mouse down in a knob of a selected object ?
     for widget in self.mWidgetsManager.widgets.reversed () {
       if self.mSelection.contains (widget.id) {
         for knob in widget.knobs () {
-          if knob.contains (point: inGeometry.unalignedUserStartLocation, zoom: inGeometry.zoom) {
+          if knob.contains (localPoint: widget.orientedOrigin.canvasToLocal (inGeometry.unalignedUserStartLocation), zoom: inGeometry.zoom) {
             return MouseGesture_DragKnob <TypeDictionary> (
               alignedCurrentPoint: inGeometry.alignedUserStartLocation,
               optionKeyInitiallyOn: true,
@@ -191,7 +201,7 @@ import Combine
 
     var widgetUnderMouseID : UUID? = nil
     for widget in self.mWidgetsManager.widgets.reversed () {
-      if widget.contains (point: inGeometry.unalignedUserStartLocation) {
+      if widget.contains (localPoint: widget.orientedOrigin.canvasToLocal (inGeometry.unalignedUserStartLocation)) {
         widgetUnderMouseID = widget.id
         break
       }
@@ -248,7 +258,7 @@ import Combine
   private func mouseDown_shiftKey (geometry inGeometry : MouseGestureGeometryContext) -> any MouseGestureProtocol <TypeDictionary> {
     var widgetUnderMouseID : UUID? = nil
     for widget in self.mWidgetsManager.widgets.reversed () {
-      if widget.contains (point: inGeometry.unalignedUserStartLocation) {
+      if widget.contains (localPoint: widget.orientedOrigin.canvasToLocal (inGeometry.unalignedUserStartLocation)) {
         widgetUnderMouseID = widget.id
         break
       }
@@ -272,7 +282,7 @@ import Combine
     for widget in self.mWidgetsManager.widgets.reversed () {
       if self.mSelection.contains (widget.id) {
         for knob in widget.knobs () {
-          if knob.contains (point: inGeometry.unalignedUserStartLocation, zoom: inGeometry.zoom) {
+          if knob.contains (localPoint: widget.orientedOrigin.canvasToLocal (inGeometry.unalignedUserStartLocation), zoom: inGeometry.zoom) {
             return MouseGesture_DragKnob <TypeDictionary> (
               alignedCurrentPoint: inGeometry.alignedUserStartLocation,
               optionKeyInitiallyOn: false,
@@ -285,13 +295,13 @@ import Combine
     }
   //--- Mouse down in a selected object ?
     for widget in self.mWidgetsManager.widgets.reversed () {
-      if self.mSelection.contains (widget.id), widget.contains (point: inGeometry.unalignedUserStartLocation) {
+      if self.mSelection.contains (widget.id), widget.contains (localPoint: widget.orientedOrigin.canvasToLocal (inGeometry.unalignedUserStartLocation)) {
         return MouseGesture_DragSelection <TypeDictionary> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
       }
     }
   //--- Mouse down in a non selected object ?
     for widget in self.mWidgetsManager.widgets.reversed () {
-      if widget.contains (point: inGeometry.unalignedUserStartLocation) {
+      if widget.contains (localPoint: widget.orientedOrigin.canvasToLocal (inGeometry.unalignedUserStartLocation)) {
         self.mSelection = [widget.id]
         return MouseGesture_DragSelection <TypeDictionary> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
       }
@@ -309,7 +319,7 @@ import Combine
       let widget = self.mWidgetsManager [widget: idx]
       if self.mSelection.contains (widget.id) {
         for knob in widget.knobs () {
-          if knob.contains (point: inUnalignedPoint, zoom: inZoom) {
+          if knob.contains (localPoint: widget.orientedOrigin.canvasToLocal (inUnalignedPoint), zoom: inZoom) {
             if let menu = knob.menu {
               return menu (ContextualMenuExecutor (self, idx))
             }else{
@@ -322,7 +332,7 @@ import Combine
   //--- CMD + Mouse down in a selected object ?
     for idx in (0 ..< self.mWidgetsManager.count).reversed () {
       let widget = self.mWidgetsManager [widget: idx]
-      if self.mSelection.contains (widget.id), widget.contains (point: inUnalignedPoint) {
+      if self.mSelection.contains (widget.id), widget.contains (localPoint: widget.orientedOrigin.canvasToLocal (inUnalignedPoint)) {
         return widget.contextualMenu (ContextualMenuExecutor (self, idx))
       }
     }
@@ -332,7 +342,7 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func mouseDraggedEnded () {
+  @MainActor public func mouseDraggedEnded () {
 //    print ("mouseDraggedEnded")
     self.mSelectionUserRectangle = nil
     if let dragGestureState = self.mDragGestureState {
@@ -363,7 +373,7 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private func beginOrContinueUndoGrouping () {
+  @MainActor private func beginOrContinueUndoGrouping () {
     if !self.mUndoGroupingIsOpened {
       self.mUndoGroupingIsOpened = true
       self.mUndoManager?.beginUndoGrouping ()
@@ -372,7 +382,7 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private func closeUndoGroupingIfOpened () {
+  @MainActor private func closeUndoGroupingIfOpened () {
     if self.mUndoGroupingIsOpened {
       self.mUndoGroupingIsOpened = false
       self.mUndoManager?.endUndoGrouping ()
@@ -381,7 +391,7 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private func closeAndRemoveUndoGroupingActions () {
+  @MainActor private func closeAndRemoveUndoGroupingActions () {
     if self.mUndoGroupingIsOpened {
       self.mUndoGroupingIsOpened = false
       self.mUndoManager?.endUndoGrouping ()
@@ -393,7 +403,7 @@ import Combine
   //MARK: Key actions
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func escapeKeyAction () {
+  @MainActor public func escapeKeyAction () {
     if self.mDragGestureState != nil {
       self.closeAndRemoveUndoGroupingActions ()
       self.mSelection = self.mStartSelectionSet
@@ -639,11 +649,11 @@ import Combine
   //MARK: Detail view
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @ViewBuilder func editorDetailViewForCurrentSelection () -> some View {
+  @MainActor @ViewBuilder func editorDetailViewForCurrentSelection () -> some View {
     if self.mSelection.isEmpty {
       Text ("Empty Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
     }else if let type = self.commonTypeForSelection () {
-      AnyView (type.inspectorView (proxy: InspectorProxy (self, self.mSelection)).id (self.mSelection))
+      AnyView (type.inspectorView (proxy: InspectorProxy (self)).id (self.mSelection))
     }else if self.mSelection.count > 1 {
       Text ("Multiple Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
     }else{
@@ -653,8 +663,8 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private func commonTypeForSelection () -> (WidgetUIProtocol <TypeDictionary>).Type? {
-    var result : (WidgetUIProtocol <TypeDictionary>).Type? = nil
+  private func commonTypeForSelection () -> (any WidgetUIProtocol <TypeDictionary>.Type)? {
+    var result : (any WidgetUIProtocol <TypeDictionary>.Type)? = nil
     for id in self.mSelection {
       if let widget = self.mWidgetsManager [id: id] {
         if let r = result {
