@@ -65,8 +65,8 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol, DropT
     self.mDroppedFileHandler = inDroppedFileHandler
     self.mDetailColumnExpanded = detailColumnIsExpanded
     self.mContentSizeWithMargins = CanariSize (
-      width: inContext.contentSize.width + inContext.margins.left + inContext.margins.right,
-      height: inContext.contentSize.height + inContext.margins.top + inContext.margins.bottom
+      width: inContext.canvasSize.width + inContext.margins.left + inContext.margins.right,
+      height: inContext.canvasSize.height + inContext.margins.top + inContext.margins.bottom
     )
     self.mBackgroundViewBuilder = inBackgroundViewBuilder
     self.mLeftVerticalRulerViewBuilder = inLeftVerticalRulerViewBuilder
@@ -460,7 +460,8 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol, DropT
       unalignedUserCurrentLocation: unalignedCurrent,
       alignedUserCurrentLocation: alignedCurrent,
       zoom: self.mContentZoom,
-      contentSize: self.mContentSizeWithMargins
+      contentSize: self.mContentSizeWithMargins,
+      canvasSize: self.mContext.canvasSize
     )
     self.mAlignedHoverUserLocation = alignedCurrent
     self.mWidgetsUserInterface.mouseDownOrMouseDragged (geometry: geometry)
@@ -523,7 +524,7 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol, DropT
 
   private func rightArrowKeyAction () -> KeyPress.Result {
     DispatchQueue.main.async {
-      self.mWidgetsUserInterface.rightArrowKeyAction (magneticGrid: self.mContext.magneticGrid)
+      self.mWidgetsUserInterface.rightArrowKeyAction (magneticGrid: self.mContext.magneticGrid, self.mContext.canvasSize)
     }
     return .handled
   }
@@ -532,7 +533,7 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol, DropT
 
   private func leftArrowKeyAction () -> KeyPress.Result {
     DispatchQueue.main.async {
-      self.mWidgetsUserInterface.leftArrowKeyAction (magneticGrid: self.mContext.magneticGrid)
+      self.mWidgetsUserInterface.leftArrowKeyAction (magneticGrid: self.mContext.magneticGrid, self.mContext.canvasSize)
     }
     return .handled
   }
@@ -541,7 +542,7 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol, DropT
 
   private func upArrowKeyAction () -> KeyPress.Result {
     DispatchQueue.main.async {
-      self.mWidgetsUserInterface.upArrowKeyAction (magneticGrid: self.mContext.magneticGrid)
+      self.mWidgetsUserInterface.upArrowKeyAction (magneticGrid: self.mContext.magneticGrid, self.mContext.canvasSize)
     }
     return .handled
   }
@@ -550,7 +551,7 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol, DropT
 
   private func downArrowKeyAction () -> KeyPress.Result {
     DispatchQueue.main.async {
-      self.mWidgetsUserInterface.downArrowKeyAction (magneticGrid: self.mContext.magneticGrid)
+      self.mWidgetsUserInterface.downArrowKeyAction (magneticGrid: self.mContext.magneticGrid, self.mContext.canvasSize)
     }
     return .handled
   }

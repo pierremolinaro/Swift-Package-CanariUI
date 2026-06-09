@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-extension WidgetUIProtocol {
+public extension WidgetUIProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Canvas Enclosing rect
@@ -28,8 +28,15 @@ extension WidgetUIProtocol {
   //MARK: Limit Translation
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func limitTranslation (_ ioTranslation : inout CanariPoint) {
+  func limitTranslation (_ ioTranslation : inout CanariPoint, _ inCanvasSize : CanariSize) {
     let r = self.canvasEnclosingRect
+    let newTopRight = r.topRight + ioTranslation
+    if newTopRight.x > inCanvasSize.width {
+      ioTranslation.x -= newTopRight.x - inCanvasSize.width
+    }
+    if newTopRight.y > inCanvasSize.height {
+      ioTranslation.y -= newTopRight.y - inCanvasSize.height
+    }
     let newBottomLeft = r.bottomLeft + ioTranslation
     if newBottomLeft.x < .zero {
       ioTranslation.x -= newBottomLeft.x

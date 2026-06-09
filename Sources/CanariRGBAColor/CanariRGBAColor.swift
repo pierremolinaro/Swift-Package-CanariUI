@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariColor : Codable, Sendable, Equatable, RawRepresentable, CanariCodableByString {
+public struct CanariRGBAColor : Codable, Sendable, Equatable, RawRepresentable, CanariCodableByString, CustomStringConvertible {
 
   public typealias RawValue = String // RawRepresentable
 
@@ -41,10 +41,6 @@ public struct CanariColor : Codable, Sendable, Equatable, RawRepresentable, Cana
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public static var black : CanariColor { CanariColor (red: 0, green: 0, blue: 0, alpha: 255) }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
   public var nsColor : NSColor {
     let fRed = CGFloat (self.red) / 255.0
     let fGreen = CGFloat (self.green) / 255.0
@@ -59,9 +55,10 @@ public struct CanariColor : Codable, Sendable, Equatable, RawRepresentable, Cana
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public static var blue : CanariColor { .init (red: 0, green: 0, blue: 255, alpha: 255) }
-  public static var orange : CanariColor { .init (red: 255, green: 165, blue: 0, alpha: 255) }
-  public static var green : CanariColor { .init (red: 0, green: 128, blue: 0, alpha: 255) }
+  public static var black  : CanariRGBAColor { .init (red: 000, green: 000, blue: 000, alpha: 255) }
+  public static var blue   : CanariRGBAColor { .init (red: 000, green: 000, blue: 255, alpha: 255) }
+  public static var orange : CanariRGBAColor { .init (red: 251, green: 176, blue: 039, alpha: 255) }
+  public static var green  : CanariRGBAColor { .init (red: 000, green: 128, blue: 000, alpha: 255) }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Codable
@@ -125,16 +122,22 @@ public struct CanariColor : Codable, Sendable, Equatable, RawRepresentable, Cana
       let green = UInt8 (scanner: inScanner, &ioOk)
       let blue = UInt8 (scanner: inScanner, &ioOk)
       let alpha = UInt8 (scanner: inScanner, &ioOk)
-      self = CanariColor (red: red, green: green, blue: blue, alpha: alpha)
+      self = CanariRGBAColor (red: red, green: green, blue: blue, alpha: alpha)
     }else{
       ioOk = false
-      self = CanariColor.black
+      self = CanariRGBAColor.black
     }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func canariCodableEncodedString () -> String {
+    return "\(self.red) \(self.green) \(self.blue) \(self.alpha)"
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public var description : String {
     return "\(self.red) \(self.green) \(self.blue) \(self.alpha)"
   }
 

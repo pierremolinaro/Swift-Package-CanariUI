@@ -427,13 +427,13 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func rightArrowKeyAction (magneticGrid inMagneticGrid : CanariLength?) {
+  public func rightArrowKeyAction (magneticGrid inMagneticGrid : CanariLength?, _ inCanvasSize : CanariSize) {
     if let magneticGrid = inMagneticGrid {
       let shift = NSEvent.modifierFlags.contains (.shift)
       var translation = CanariPoint (x: magneticGrid * (shift ? 10.0 : 1.0))
       for i in 0 ..< self.mWidgetsManager.count {
         if self.mSelection.contains (self.mWidgetsManager [widget: i].id) {
-          self.mWidgetsManager [widget: i].limitTranslation (&translation)
+          self.mWidgetsManager [widget: i].limitTranslation (&translation, inCanvasSize)
         }
       }
       var idx = 0
@@ -448,13 +448,13 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func leftArrowKeyAction (magneticGrid inMagneticGrid : CanariLength?) {
+  public func leftArrowKeyAction (magneticGrid inMagneticGrid : CanariLength?, _ inCanvasSize : CanariSize) {
     if let magneticGrid = inMagneticGrid {
       let shift = NSEvent.modifierFlags.contains (.shift)
       var translation = CanariPoint (x: magneticGrid * (shift ? -10.0 : -1.0))
       for i in 0 ..< self.mWidgetsManager.count {
         if self.mSelection.contains (self.mWidgetsManager [widget: i].id) {
-          self.mWidgetsManager [widget: i].limitTranslation (&translation)
+          self.mWidgetsManager [widget: i].limitTranslation (&translation, inCanvasSize)
         }
       }
       var idx = 0
@@ -469,13 +469,13 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func upArrowKeyAction (magneticGrid inMagneticGrid : CanariLength?) {
+  public func upArrowKeyAction (magneticGrid inMagneticGrid : CanariLength?, _ inCanvasSize : CanariSize) {
     if let magneticGrid = inMagneticGrid {
       let shift = NSEvent.modifierFlags.contains (.shift)
       var translation = CanariPoint (y: magneticGrid * (shift ? 10.0 : 1.0))
       for i in 0 ..< self.mWidgetsManager.count {
         if self.mSelection.contains (self.mWidgetsManager [widget: i].id) {
-          self.mWidgetsManager [widget: i].limitTranslation (&translation)
+          self.mWidgetsManager [widget: i].limitTranslation (&translation, inCanvasSize)
         }
       }
       var idx = 0
@@ -490,13 +490,13 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func downArrowKeyAction (magneticGrid inMagneticGrid : CanariLength?) {
+  public func downArrowKeyAction (magneticGrid inMagneticGrid : CanariLength?, _ inCanvasSize : CanariSize) {
     if let magneticGrid = inMagneticGrid {
       let shift = NSEvent.modifierFlags.contains (.shift)
       var translation = CanariPoint (y: magneticGrid * (shift ? -10.0 : -1.0))
       for i in 0 ..< self.mWidgetsManager.count {
         if self.mSelection.contains (self.mWidgetsManager [widget: i].id) {
-          self.mWidgetsManager [widget: i].limitTranslation (&translation)
+          self.mWidgetsManager [widget: i].limitTranslation (&translation, inCanvasSize)
         }
       }
       var idx = 0
