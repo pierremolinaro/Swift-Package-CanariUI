@@ -29,7 +29,7 @@ struct MouseGesture_Creation <TypeDictionary : WidgetTypeArrayProtocol> : MouseG
                   selection ioSelection : inout Set <UUID>,
                   userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
                   widgetsManager ioWidgetsManager : inout WidgetsManager<TypeDictionary>) {
-    if ioWidgetsManager [widget: ioWidgetsManager.count - 1].isGraphicallyEmpty () {
+    if ioWidgetsManager [widget: ioWidgetsManager.count - 1].isGraphicallyEmpty {
       ioWidgetsManager.removeLast ()
       ioSelection.removeAll ()
       inRemoveUndoGrouping ()

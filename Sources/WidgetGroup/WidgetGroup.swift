@@ -86,7 +86,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func knobs () -> [WidgetKnob <TypeDictionary>] { [] }
+  public var knobs : [WidgetKnob <TypeDictionary>] { [] }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -119,7 +119,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func isGraphicallyEmpty () -> Bool { self.mArray.isEmpty }
+  public var isGraphicallyEmpty : Bool { self.mArray.isEmpty }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Draw
@@ -131,7 +131,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
                     selected inSelected : Bool,
                     groupLevel inGroupLevel : UInt) {
     for widget in self.mArray {
-      widget.drawFromCanvas (
+      widget.drawFromGlobal (
         context: &ioContext,
         scale: inScale,
         hovered: inHovered,
@@ -140,45 +140,21 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
       )
     }
     if inSelected, inGroupLevel == 0 {
-      let path = CanariPath (rect: self.localEnclosingRect)
-      ioContext.stroke (path, with: .color (.black), lineWidth: .px (0.5))
+      ioContext.stroke (
+        CanariPath (rect: self.localOutline.boundingRect),
+        with: .color (.black), lineWidth: .px (0.5) / inScale
+      )
     }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var localEnclosingRect : CanariRect {
-    var vertices = [CanariPoint] ()
+  public var localOutline : CanariPath {
+    var path = CanariPath ()
     for widget in self.mArray {
-      vertices += widget.canvasEnclosingRect.vertices
+      path.unionInPlace (widget.orientedOrigin.localToGlobal (widget.localOutline))
     }
-    return CanariRect (vertices)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: Location test
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public func contains (localPoint inLocalPoint : CanariPoint) -> Bool {
-    for widget in self.mArray {
-      let p = widget.orientedOrigin.globalToLocal (inLocalPoint)
-      if widget.contains (localPoint: p) {
-        return true
-      }
-    }
-    return false
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public func intersect (localPath inLocalPath : CanariPath) -> Bool {
-    for widget in self.mArray {
-      let path = widget.orientedOrigin.globalToLocal (inLocalPath)
-      if widget.intersect (localPath: path) {
-        return true
-      }
-    }
-    return false
+    return path
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

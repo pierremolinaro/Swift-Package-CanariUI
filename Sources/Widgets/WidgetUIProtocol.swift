@@ -16,7 +16,7 @@ public protocol WidgetUIProtocol <TypeDictionary> : WidgetModelProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func knobs () -> [WidgetKnob <TypeDictionary>]
+  var knobs : [WidgetKnob <TypeDictionary>] { get }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -32,7 +32,7 @@ public protocol WidgetUIProtocol <TypeDictionary> : WidgetModelProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func isGraphicallyEmpty () -> Bool
+  var isGraphicallyEmpty : Bool { get }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Draw
@@ -45,18 +45,10 @@ public protocol WidgetUIProtocol <TypeDictionary> : WidgetModelProtocol {
              groupLevel inGroupLevel : UInt)
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: Local Enclosing rect
+  //MARK: Local outline path
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var localEnclosingRect : CanariRect { get }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: Location test
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  func contains (localPoint inLocalPoint : CanariPoint) -> Bool
-
-  func intersect (localPath inLocalPath : CanariPath) -> Bool
+  var localOutline : CanariPath { get }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: AlignmentGuidePoints

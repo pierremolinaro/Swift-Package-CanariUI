@@ -90,13 +90,13 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
             HStack (spacing: 0.0) {
               self.leftSpacer ()
               self.contentView (geometry)
-              .dropDestination (for: String.self, isEnabled: true) { items, dropSession in
-                let p = self.unalignedUserPoint (geometry, fromLocationInContentView: dropSession.location)
-                self.mDroppedStringsHandler? (items, p)
-              }
               .dropDestination (for: DroppedFileType.self, isEnabled: true) { items, dropSession in
                 let p = self.unalignedUserPoint (geometry, fromLocationInContentView: dropSession.location)
                 self.mDroppedFilesHandler? (items, p)
+              }
+              .dropDestination (for: String.self, isEnabled: true) { items, dropSession in
+                let p = self.unalignedUserPoint (geometry, fromLocationInContentView: dropSession.location)
+                self.mDroppedStringsHandler? (items, p)
               }
               self.rightSpacer ()
             }

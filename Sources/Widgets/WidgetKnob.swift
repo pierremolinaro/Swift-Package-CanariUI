@@ -36,8 +36,8 @@ public struct WidgetKnob <TypeDictionary : WidgetTypeArrayProtocol> {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func draw (context ioContext : inout GraphicsContext,
-             scale inScale : Double) {
+  func drawKnob (context ioContext : inout GraphicsContext,
+                 scale inScale : Double) {
     let r = CanariRect (center: self.localPoint, size: CanariSize (width: .px (10) / inScale, height: .px (10) / inScale))
     let path = CanariPath (ellipse: r)
     ioContext.fill (path, with: .color (.white))

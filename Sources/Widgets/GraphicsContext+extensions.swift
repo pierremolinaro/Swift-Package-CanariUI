@@ -22,7 +22,7 @@ public extension GraphicsContext {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func rotate (by inAngle : CanariAngle) {
+  mutating func rotateBy (_ inAngle : CanariAngle) {
     self.rotate (by: Angle.radians (inAngle.radians))
   }
 

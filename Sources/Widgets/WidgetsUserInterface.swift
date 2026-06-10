@@ -83,7 +83,7 @@ import Combine
     ioContext.scaleBy (x: inScale, y: inScale)
   //--- Draw widgets
     for widget in self.mWidgetsManager.widgets {
-      widget.drawFromCanvas (
+      widget.drawFromGlobal (
         context: &ioContext,
         scale: inScale * widget.orientedOrigin.mScale,
         hovered: widget.id == self.mHoveredObject,
@@ -120,15 +120,15 @@ import Combine
     }
   //--- Draw knobs
     for widget in self.mWidgetsManager.widgets {
-      if self.mSelection.contains (widget.id), !widget.knobs ().isEmpty {
+      if self.mSelection.contains (widget.id), !widget.knobs.isEmpty {
         ioContext.translateBy (widget.orientedOrigin.mOrigin)
-        ioContext.rotate (by: widget.orientedOrigin.mAngle)
+        ioContext.rotateBy (widget.orientedOrigin.mAngle)
         ioContext.scaleBy (x: widget.orientedOrigin.mScale, y: widget.orientedOrigin.mScale)
-        for knob in widget.knobs () {
-          knob.draw (context: &ioContext, scale: inScale * widget.orientedOrigin.mScale)
+        for knob in widget.knobs {
+          knob.drawKnob (context: &ioContext, scale: inScale * widget.orientedOrigin.mScale)
         }
         ioContext.scaleBy (x: 1.0 / widget.orientedOrigin.mScale, y: 1.0 / widget.orientedOrigin.mScale)
-        ioContext.rotate (by: -widget.orientedOrigin.mAngle)
+        ioContext.rotateBy (-widget.orientedOrigin.mAngle)
         ioContext.translateBy (-widget.orientedOrigin.mOrigin)
       }
     }
@@ -194,7 +194,7 @@ import Combine
   //--- Mouse down in a knob of a selected object ?
     for widget in self.mWidgetsManager.widgets.reversed () {
       if self.mSelection.contains (widget.id) {
-        for knob in widget.knobs () {
+        for knob in widget.knobs {
           if knob.contains (localPoint: widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation), scale: inGeometry.scale) {
             return MouseGesture_DragKnob <TypeDictionary> (
               alignedCurrentPoint: inGeometry.alignedUserStartLocation,
@@ -289,7 +289,7 @@ import Combine
   //--- Mouse down in a knob of a selected object ?
     for widget in self.mWidgetsManager.widgets.reversed () {
       if self.mSelection.contains (widget.id) {
-        for knob in widget.knobs () {
+        for knob in widget.knobs {
           if knob.contains (localPoint: widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation), scale: inGeometry.scale) {
             return MouseGesture_DragKnob <TypeDictionary> (
               alignedCurrentPoint: inGeometry.alignedUserStartLocation,
@@ -326,7 +326,7 @@ import Combine
     for idx in (0 ..< self.mWidgetsManager.count).reversed () {
       let widget = self.mWidgetsManager [widget: idx]
       if self.mSelection.contains (widget.id) {
-        for knob in widget.knobs () {
+        for knob in widget.knobs {
           if knob.contains (localPoint: widget.orientedOrigin.globalToLocal (inUnalignedPoint), scale: inScale) {
             if let menu = knob.menu {
               return menu (ContextualMenuExecutor (self, idx))

@@ -9,20 +9,26 @@ import SwiftUI
 public extension WidgetUIProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Location test
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  func contains (localPoint inLocalPoint : CanariPoint) -> Bool {
+    return self.localOutline.contains (inLocalPoint)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  func intersect (localPath inLocalPath : CanariPath) -> Bool {
+    return self.localOutline.intersects (inLocalPath)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Canvas Enclosing rect
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   var canvasEnclosingRect : CanariRect {
-    self.orientedOrigin.localToGlobal (self.localEnclosingRect).boundingRect
+    self.orientedOrigin.localToGlobal (self.localOutline).boundingRect
   }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: Rotate
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-//  mutating func rotate (by inAngle : CanariAngle) {
-//    self.orientedOrigin.mAngle += inAngle
-//  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Limit Translation
@@ -57,13 +63,13 @@ public extension WidgetUIProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func drawFromCanvas (context ioContext : inout GraphicsContext,
+  func drawFromGlobal (context ioContext : inout GraphicsContext,
                        scale inScale : Double,
                        hovered inHovered : Bool,
                        selected inSelected : Bool,
                        groupLevel inGroupLevel : UInt) {
     ioContext.translateBy (self.orientedOrigin.mOrigin)
-    ioContext.rotate (by: self.orientedOrigin.mAngle)
+    ioContext.rotateBy (self.orientedOrigin.mAngle)
     ioContext.scaleBy (x: self.orientedOrigin.mScale, y: self.orientedOrigin.mScale)
     self.draw (
       context: &ioContext,
@@ -73,7 +79,7 @@ public extension WidgetUIProtocol {
       groupLevel: inGroupLevel
     )
     ioContext.scaleBy (x: 1.0 / self.orientedOrigin.mScale, y: 1.0 / self.orientedOrigin.mScale)
-    ioContext.rotate (by: -self.orientedOrigin.mAngle)
+    ioContext.rotateBy (-self.orientedOrigin.mAngle)
     ioContext.translateBy (-self.orientedOrigin.mOrigin)
   }
 
