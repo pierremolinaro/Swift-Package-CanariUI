@@ -143,8 +143,8 @@ public struct CanariPath : Equatable, CustomStringConvertible {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func transformed (byMoving inTranslation : CanariPoint = .zero,
-                           zooming inZoom : Double = 1.0) -> CanariPath {
-    let af = CGAffineTransform (scaleX: inZoom, y: inZoom)
+                           zooming inScale : Double = 1.0) -> CanariPath {
+    let af = CGAffineTransform (scaleX: inScale, y: inScale)
       .translatedBy (x: inTranslation.x.pxValue, y: inTranslation.y.pxValue)
     var result = CanariPath ()
     result.mPath = self.mPath.applying (af)

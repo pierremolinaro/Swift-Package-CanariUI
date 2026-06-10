@@ -10,26 +10,26 @@ public struct WidgetKnob <TypeDictionary : WidgetTypeArrayProtocol> {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private let localCenter : CanariPoint
+  private let localPoint : CanariPoint
   let dragAction : (inout any WidgetUIProtocol <TypeDictionary>, CanariPoint, Bool) -> Void
   let menu : ((ContextualMenuExecutor <TypeDictionary>) -> any View)?
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (localCenter inCenter : CanariPoint,
+  public init (localPoint inCenter : CanariPoint,
                dragAction inKnobDragAction : @escaping (inout any WidgetUIProtocol <TypeDictionary>, CanariPoint, Bool) -> Void,
                menu inMenu : ((ContextualMenuExecutor <TypeDictionary>) -> any View)? = nil) {
-    self.localCenter = inCenter
+    self.localPoint = inCenter
     self.dragAction = inKnobDragAction
     self.menu = inMenu
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func contains (localPoint inLocalPoint : CanariPoint, zoom inZoom : Double) -> Bool {
+  public func contains (localPoint inLocalPoint : CanariPoint, scale inScale : Double) -> Bool {
     let r = CanariRect (
-      center: self.localCenter,
-      size: CanariSize (width: .px (10.0 * inZoom), height: .px (10.0 * inZoom))
+      center: self.localPoint,
+      size: CanariSize (width: .px (10.0 * inScale), height: .px (10.0 * inScale))
     )
     return r.contains (inLocalPoint)
   }
@@ -37,11 +37,11 @@ public struct WidgetKnob <TypeDictionary : WidgetTypeArrayProtocol> {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func draw (context ioContext : inout GraphicsContext,
-             zoom inZoom : Double) {
-    let r = CanariRect (center: self.localCenter, size: CanariSize (width: .px (10) / inZoom, height: .px (10) / inZoom))
+             scale inScale : Double) {
+    let r = CanariRect (center: self.localPoint, size: CanariSize (width: .px (10) / inScale, height: .px (10) / inScale))
     let path = CanariPath (ellipse: r)
     ioContext.fill (path, with: .color (.white))
-    ioContext.stroke (path, with: .color (.gray), lineWidth: .px (1) / inZoom)
+    ioContext.stroke (path, with: .color (.gray), lineWidth: .px (1) / inScale)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

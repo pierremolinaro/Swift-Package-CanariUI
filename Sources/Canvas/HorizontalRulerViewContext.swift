@@ -12,7 +12,7 @@ public struct HorizontalRulerViewContext {
 
   public let contentWidth : CanariLength
   public let rulerSize : CanariSize
-  public let zoom : Double
+  public let scale : Double
   public let hoverLocationX : CanariLength?
   public let scrollX : CanariLength
   public let originOffsetX : CanariLength
@@ -22,14 +22,14 @@ public struct HorizontalRulerViewContext {
 
   public init (contentWidth: CanariLength,
                rulerSize: CanariSize,
-               zoom: Double,
+               scale: Double,
                hoverLocationX: CanariLength?,
                scrollX: CanariLength,
                originOffsetX: CanariLength,
                leftMargin: CanariLength) {
     self.contentWidth = contentWidth
     self.rulerSize = rulerSize
-    self.zoom = zoom
+    self.scale = scale
     self.hoverLocationX = hoverLocationX
     self.scrollX = scrollX
     self.originOffsetX = originOffsetX

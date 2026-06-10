@@ -12,8 +12,8 @@ public extension View {
 
   @inlinable func position (x inX : CanariLength = .zero,
                             y inY : CanariLength = .zero,
-                            zoom inZoom : Double = 1.0) -> some View {
-    self.position (x: inX.pxValue * inZoom, y: inY.pxValue * inZoom)
+                            scale inScale : Double = 1.0) -> some View {
+    self.position (x: inX.pxValue * inScale, y: inY.pxValue * inScale)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -51,7 +51,8 @@ public extension WidgetUIProtocol {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   mutating func translate (by inTranslation : CanariPoint) {
-    self.orientedOrigin.translate (x: inTranslation.x, y: inTranslation.y)
+    self.orientedOrigin.mOrigin.x += inTranslation.x
+    self.orientedOrigin.mOrigin.y += inTranslation.y
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

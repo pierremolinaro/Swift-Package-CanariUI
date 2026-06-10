@@ -11,7 +11,7 @@ public struct BackgroundViewContext {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public let contentSizeWithMargins : CanariSize
-  public let contentZoom : Double
+  public let canvasScale : Double
   public let overWidth : CanariLength
   public let overHeight : CanariLength
   public let margins : CanvasMargins
@@ -19,12 +19,12 @@ public struct BackgroundViewContext {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (contentSizeWithMargins: CanariSize,
-               contentZoom: Double,
+               canvasScale: Double,
                overWidth: CanariLength,
                overHeight: CanariLength,
                margins: CanvasMargins) {
     self.contentSizeWithMargins = contentSizeWithMargins
-    self.contentZoom = contentZoom
+    self.canvasScale = canvasScale
     self.overWidth = overWidth
     self.overHeight = overHeight
     self.margins = margins

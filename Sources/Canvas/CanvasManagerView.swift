@@ -35,7 +35,7 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @Binding private var mContentZoom : Double
+  @Binding private var mCanvasScale : Double
   @State private var mTemporaryContentZoom : Double? = nil
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -50,7 +50,7 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (context inContext : CanvasManagerViewContext,
-        contentZoom inZoom : Binding <Double>,
+        canvasScale inScale : Binding <Double>,
         alignedHoverUserLocation inAlignedHoverUserLocation : Binding <CanariPoint?>,
         widgetsUserInterface inWidgetsUserInterface : WidgetsUserInterface <TypeDictionary>,
         backgroundViewBuilder inBackgroundViewBuilder : @escaping (BackgroundViewContext) -> any View,
@@ -61,7 +61,7 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
         droppedFilesHandler inDroppedFilesHandler : (([DroppedFileType], CanariPoint) -> Void)?,
         droppedStringsHandler inDroppedStringsHandler : (([String], CanariPoint) -> Void)?,
         detailColumnIsExpanded : Bool) {
-    self._mContentZoom = inZoom
+    self._mCanvasScale = inScale
     self._mAlignedHoverUserLocation = inAlignedHoverUserLocation
     self.mContext = inContext
     self.mWidgetsUserInterface = inWidgetsUserInterface
@@ -103,7 +103,7 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
             self.bottomSpacer ()
           }
         }
-        .onScrollPositionChange (self.$mScrollPosition, self.mContentZoom)
+        .onScrollPositionChange (self.$mScrollPosition, self.mCanvasScale)
         .defaultScrollAnchor (.topLeading) // Aligne le contenu en haut à gauche
         .overlay {
           self.rightVerticalRulerView (geometry)
@@ -134,7 +134,7 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
 
   private func topSpacer () -> some View {
     let size = CanariSize (
-      width: self.mContentSizeWithMargins.width * self.mContentZoom / 2.0,
+      width: self.mContentSizeWithMargins.width * self.mCanvasScale / 2.0,
       height: self.mContext.rulerDescriptor.topHorizontalRulerHeight
     )
     return Rectangle ().fill (DEBUG_COLOR).frame (size: size)
@@ -145,7 +145,7 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
 
   private func bottomSpacer () -> some View {
     let size = CanariSize (
-      width: self.mContentSizeWithMargins.width * self.mContentZoom / 2.0,
+      width: self.mContentSizeWithMargins.width * self.mCanvasScale / 2.0,
       height: self.mContext.rulerDescriptor.bottomHorizontalRulerHeight
     )
     return Rectangle ().fill (DEBUG_COLOR).frame (size: size)
@@ -157,7 +157,7 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
   private func leftSpacer () -> some View {
     let size = CanariSize (
       width: self.mContext.rulerDescriptor.leftVerticalRulerWidth,
-      height: self.mContentSizeWithMargins.height * self.mContentZoom / 2.0
+      height: self.mContentSizeWithMargins.height * self.mCanvasScale / 2.0
     )
 //    return Spacer ().frame (size: size)
     return Rectangle ().fill (DEBUG_COLOR).frame (size: size)
@@ -168,7 +168,7 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
   private func rightSpacer () -> some View {
     let size = CanariSize (
       width: self.mContext.rulerDescriptor.rightVerticalRulerWidth,
-      height: self.mContentSizeWithMargins.height * self.mContentZoom / 2.0
+      height: self.mContentSizeWithMargins.height * self.mCanvasScale / 2.0
     )
 //    return Spacer ().frame (size: size)
     return Rectangle ().fill (DEBUG_COLOR).frame (size: size)
@@ -243,7 +243,7 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
    let context = HorizontalRulerViewContext (
       contentWidth: self.mContentSizeWithMargins.width,
       rulerSize: rulerSize,
-      zoom: self.mContentZoom,
+      scale: self.mCanvasScale,
       hoverLocationX: self.mAlignedHoverUserLocation?.x,
       scrollX: self.mScrollPosition.x,
       originOffsetX: self.contentOverWidth (inGeometry) / 2.0,
@@ -268,7 +268,7 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
    let context = HorizontalRulerViewContext (
       contentWidth: self.mContentSizeWithMargins.width,
       rulerSize: rulerSize,
-      zoom: self.mContentZoom,
+      scale: self.mCanvasScale,
       hoverLocationX: self.mAlignedHoverUserLocation?.x,
       scrollX: self.mScrollPosition.x,
       originOffsetX: self.contentOverWidth (inGeometry) / 2.0,
@@ -293,7 +293,7 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
    let context = VerticalRulerViewContext (
       contentHeight: self.mContentSizeWithMargins.height,
       rulerSize: rulerSize,
-      zoom: self.mContentZoom,
+      scale: self.mCanvasScale,
       hoverLocationY: self.mAlignedHoverUserLocation?.y,
       scrollY: self.mScrollPosition.y,
       originOffsetY: self.contentOverHeight (inGeometry) / 2.0,
@@ -318,7 +318,7 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
    let context = VerticalRulerViewContext (
       contentHeight: self.mContentSizeWithMargins.height,
       rulerSize: rulerSize,
-      zoom: self.mContentZoom,
+      scale: self.mCanvasScale,
       hoverLocationY: self.mAlignedHoverUserLocation?.y,
       scrollY: self.mScrollPosition.y,
       originOffsetY: self.contentOverHeight (inGeometry) / 2.0,
@@ -336,12 +336,12 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
   private func contentView (_ inGeometry : GeometryProxy) -> some View {
     ZStack {
       let contentSizeWithMargins = CanariSize (
-        width: self.mContentSizeWithMargins.width + self.contentOverWidth (inGeometry) / self.mContentZoom,
-        height: self.mContentSizeWithMargins.height + self.contentOverHeight (inGeometry) / self.mContentZoom
+        width: self.mContentSizeWithMargins.width + self.contentOverWidth (inGeometry) / self.mCanvasScale,
+        height: self.mContentSizeWithMargins.height + self.contentOverHeight (inGeometry) / self.mCanvasScale
       )
       let backgroundViewContext = BackgroundViewContext (
         contentSizeWithMargins: contentSizeWithMargins,
-        contentZoom: self.mContentZoom,
+        canvasScale: self.mCanvasScale,
         overWidth: self.contentOverWidth (inGeometry),
         overHeight: self.contentOverHeight (inGeometry),
         margins: actualMargins (inGeometry)
@@ -353,11 +353,11 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
     //--- ATTENTION ! Il y a un bug dans SwiftUI, on ne peut pas appliquer un y négatif à scaleEffect,
     //    il en suit un comportement imprévisible dans un Canvas. Il faut faire la symétrie en y ici.
         context.translateBy (
-          x: self.mContext.margins.left * self.mContentZoom + self.contentOverWidth (inGeometry) / 2.0,
-          y: .px (size.height) - self.mContext.margins.bottom * self.mContentZoom - self.contentOverHeight (inGeometry) / 2.0
+          x: self.mContext.margins.left * self.mCanvasScale + self.contentOverWidth (inGeometry) / 2.0,
+          y: .px (size.height) - self.mContext.margins.bottom * self.mCanvasScale - self.contentOverHeight (inGeometry) / 2.0
         )
         context.scaleBy (x: 1.0, y: -1.0)
-        self.mWidgetsUserInterface.draw (context: &context, zoom: self.mContentZoom)
+        self.mWidgetsUserInterface.draw (context: &context, scale: self.mCanvasScale)
       }
     }
   //--- Observing modifier key changing
@@ -395,8 +395,8 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
     )
   //--- Fixer la dimension de la vue
     .frame (
-      width: self.mContentSizeWithMargins.width * self.mContentZoom + self.contentOverWidth (inGeometry),
-      height: self.mContentSizeWithMargins.height * self.mContentZoom + self.contentOverHeight (inGeometry)
+      width: self.mContentSizeWithMargins.width * self.mCanvasScale + self.contentOverWidth (inGeometry),
+      height: self.mContentSizeWithMargins.height * self.mCanvasScale + self.contentOverHeight (inGeometry)
     )
     .overlay { self.userSelectionRectangleDisplay (inGeometry) }
   //--- ATTENTION ! Il y a un bug dans SwiftUI, on ne peut pas appliquer un y négatif à scaleEffect,
@@ -411,11 +411,11 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
     if let lastContentZoom = self.mTemporaryContentZoom {
       newZoom = lastContentZoom * inValue.magnification
     }else{
-      self.mTemporaryContentZoom = self.mContentZoom
-      newZoom = self.mContentZoom * inValue.magnification
+      self.mTemporaryContentZoom = self.mCanvasScale
+      newZoom = self.mCanvasScale * inValue.magnification
     }
-    self.mContentZoom = min (max (newZoom, Double (self.mContext.zoomValues [0]) / 100.0), Double (self.mContext.zoomValues.last!) / 100.0)
-  //  self.mUserLocationComputations.mZoom = self.mContentZoom
+    self.mCanvasScale = min (max (newZoom, Double (self.mContext.zoomValues [0]) / 100.0), Double (self.mContext.zoomValues.last!) / 100.0)
+  //  self.mUserLocationComputations.mZoom = self.mCanvasScale
   //--- Recalculer la nouvelle position semble très compliqué… Le plus simple est de suprimer
   //    le marquage
     self.mAlignedHoverUserLocation = nil
@@ -446,7 +446,7 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
 
   @ViewBuilder private func editorContextualMenu () -> some View {
     if let p = self.mUnalignedHoverUserLocation {
-      AnyView (self.mWidgetsUserInterface.contextualMenu (at: p, zoom: self.mContentZoom))
+      AnyView (self.mWidgetsUserInterface.contextualMenu (at: p, scale: self.mCanvasScale))
     }else{
       EmptyView ()
     }
@@ -466,7 +466,7 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
       alignedUserStartLocation: alignedStart,
       unalignedUserCurrentLocation: unalignedCurrent,
       alignedUserCurrentLocation: alignedCurrent,
-      zoom: self.mContentZoom,
+      scale: self.mCanvasScale,
       contentSize: self.mContentSizeWithMargins,
       canvasSize: self.mContext.canvasSize
     )
@@ -499,10 +499,10 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
       Rectangle ()
       .fill (.gray.opacity (0.2))
       .stroke (.gray, lineWidth: 1.0)
-      .frame (width: r.width * self.mContentZoom, height: r.height * self.mContentZoom)
+      .frame (width: r.width * self.mCanvasScale, height: r.height * self.mCanvasScale)
       .position (
-        x: (r.midX + self.mContext.margins.left) * self.mContentZoom + self.contentOverWidth (inGeometry) / 2.0,
-        y: (self.mContentSizeWithMargins.height - r.midY - self.mContext.margins.bottom) * self.mContentZoom + self.contentOverHeight (inGeometry) / 2.0
+        x: (r.midX + self.mContext.margins.left) * self.mCanvasScale + self.contentOverWidth (inGeometry) / 2.0,
+        y: (self.mContentSizeWithMargins.height - r.midY - self.mContext.margins.bottom) * self.mCanvasScale + self.contentOverHeight (inGeometry) / 2.0
       )
     }
   }
@@ -569,7 +569,7 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
 
   private func contentOverWidth (_ inGeometry : GeometryProxy) -> CanariLength {
     let availableWidth = inGeometry.availableWidth - self.mContext.rulerDescriptor.leftVerticalRulerWidth - self.mContext.rulerDescriptor.rightVerticalRulerWidth
-    let overwidth = availableWidth - self.mContentSizeWithMargins.width * self.mContentZoom
+    let overwidth = availableWidth - self.mContentSizeWithMargins.width * self.mCanvasScale
     return max (overwidth, .zero)
   }
 
@@ -577,7 +577,7 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
 
   private func contentOverHeight (_ inGeometry : GeometryProxy) -> CanariLength {
     let availableHeight = inGeometry.availableHeight - self.mContext.rulerDescriptor.topHorizontalRulerHeight - self.mContext.rulerDescriptor.bottomHorizontalRulerHeight
-    let overHeight = availableHeight - self.mContentSizeWithMargins.height * self.mContentZoom
+    let overHeight = availableHeight - self.mContentSizeWithMargins.height * self.mCanvasScale
     return max (overHeight, .zero)
   }
 
@@ -585,10 +585,10 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
 
   private func actualMargins (_ inGeometry : GeometryProxy) -> CanvasMargins {
     CanvasMargins (
-      left: self.mContext.margins.left + self.contentOverWidth (inGeometry) / (2.0 * self.mContentZoom),
-      bottom: self.mContext.margins.bottom + self.contentOverHeight (inGeometry) / (2.0 * self.mContentZoom),
-      right: self.mContext.margins.right + self.contentOverWidth (inGeometry) / (2.0 * self.mContentZoom),
-      top: self.mContext.margins.top + self.contentOverHeight (inGeometry) / (2.0 * self.mContentZoom)
+      left: self.mContext.margins.left + self.contentOverWidth (inGeometry) / (2.0 * self.mCanvasScale),
+      bottom: self.mContext.margins.bottom + self.contentOverHeight (inGeometry) / (2.0 * self.mCanvasScale),
+      right: self.mContext.margins.right + self.contentOverWidth (inGeometry) / (2.0 * self.mCanvasScale),
+      top: self.mContext.margins.top + self.contentOverHeight (inGeometry) / (2.0 * self.mCanvasScale)
     )
   }
 
@@ -605,8 +605,8 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
   private func unalignedUserPoint (_ inGeometry : GeometryProxy,
                                    fromLocationInContentView inLocation : NSPoint) -> CanariPoint {
     let point = CanariPoint (
-      x: (.px (inLocation.x) - self.contentOverWidth (inGeometry) / 2.0) / self.mContentZoom - self.mContext.margins.left,
-      y: self.mContentSizeWithMargins.height - self.mContext.margins.bottom + (self.contentOverHeight (inGeometry) / 2.0 - .px (inLocation.y)) / self.mContentZoom
+      x: (.px (inLocation.x) - self.contentOverWidth (inGeometry) / 2.0) / self.mCanvasScale - self.mContext.margins.left,
+      y: self.mContentSizeWithMargins.height - self.mContext.margins.bottom + (self.contentOverHeight (inGeometry) / 2.0 - .px (inLocation.y)) / self.mCanvasScale
     )
     return point
   }

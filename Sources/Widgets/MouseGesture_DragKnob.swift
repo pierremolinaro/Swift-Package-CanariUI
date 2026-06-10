@@ -11,7 +11,7 @@ struct MouseGesture_DragKnob <TypeDictionary : WidgetTypeArrayProtocol> : MouseG
   let alignedCurrentPoint : CanariPoint
   let optionKeyInitiallyOn : Bool
   let widgetID : UUID
-  let action : (inout any WidgetUIProtocol <TypeDictionary>, CanariPoint, Bool) -> Void
+  let dragAction : (inout any WidgetUIProtocol <TypeDictionary>, CanariPoint, Bool) -> Void
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -25,15 +25,17 @@ struct MouseGesture_DragKnob <TypeDictionary : WidgetTypeArrayProtocol> : MouseG
     if translation != .zero {
       inBeginOrContinueUndoGrouping ()
       if var widget = ioWidgetsManager [id: widgetID] {
-        let localTranslation = CanariAffinity (rotation: -widget.orientedOrigin.mAngle).transforming (translation)
-        self.action (&widget, localTranslation, self.optionKeyInitiallyOn)
+        let localTranslation = CanariAffinity (scale: 1.0 / widget.orientedOrigin.mScale)
+          .rotating (-widget.orientedOrigin.mAngle)
+          .transforming (translation)
+        self.dragAction (&widget, localTranslation, self.optionKeyInitiallyOn)
         ioWidgetsManager [id: widgetID] = widget
       }
       outOptionalNextState = MouseGesture_DragKnob (
         alignedCurrentPoint: inGeometry.alignedUserCurrentLocation,
         optionKeyInitiallyOn: self.optionKeyInitiallyOn,
         widgetID: self.widgetID,
-        action: self.action
+        dragAction: self.dragAction
       )
     }
   }

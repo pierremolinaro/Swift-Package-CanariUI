@@ -11,7 +11,7 @@ public struct MouseGestureGeometryContext {
   public let alignedUserStartLocation : CanariPoint
   public let unalignedUserCurrentLocation : CanariPoint
   public let alignedUserCurrentLocation : CanariPoint
-  public let zoom : Double
+  public let scale : Double
   public let contentSize : CanariSize
   public let canvasSize : CanariSize
 
@@ -19,14 +19,14 @@ public struct MouseGestureGeometryContext {
                alignedUserStartLocation : CanariPoint,
                unalignedUserCurrentLocation : CanariPoint,
                alignedUserCurrentLocation : CanariPoint,
-               zoom : Double,
+               scale : Double,
                contentSize : CanariSize,
                canvasSize : CanariSize) {
     self.unalignedUserStartLocation = unalignedUserStartLocation
     self.alignedUserStartLocation = alignedUserStartLocation
     self.unalignedUserCurrentLocation = unalignedUserCurrentLocation
     self.alignedUserCurrentLocation = alignedUserCurrentLocation
-    self.zoom = zoom
+    self.scale = scale
     self.contentSize = contentSize
     self.canvasSize = canvasSize
   }

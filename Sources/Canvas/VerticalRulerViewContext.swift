@@ -12,7 +12,7 @@ public struct VerticalRulerViewContext {
 
   public let contentHeight : CanariLength
   public let rulerSize : CanariSize
-  public let zoom : Double
+  public let scale : Double
   public let hoverLocationY : CanariLength?
   public let scrollY : CanariLength
   public let originOffsetY : CanariLength
@@ -22,14 +22,14 @@ public struct VerticalRulerViewContext {
 
   public init (contentHeight: CanariLength,
                rulerSize: CanariSize,
-               zoom: Double,
+               scale: Double,
                hoverLocationY: CanariLength?,
                scrollY: CanariLength,
                originOffsetY: CanariLength,
                bottomMargin: CanariLength) {
     self.contentHeight = contentHeight
     self.rulerSize = rulerSize
-    self.zoom = zoom
+    self.scale = scale
     self.hoverLocationY = hoverLocationY
     self.scrollY = scrollY
     self.originOffsetY = originOffsetY

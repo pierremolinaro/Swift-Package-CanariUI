@@ -78,20 +78,22 @@ import Combine
   //MARK: Draw
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func draw (context ioContext : inout GraphicsContext, zoom inZoom : Double) {
+  public func draw (context ioContext : inout GraphicsContext, scale inScale : Double) {
     enterTracing ("widgets.user.interface.draw") ; defer { exitTracing ("widgets.user.interface.draw") }
-    ioContext.scaleBy (x: inZoom, y: inZoom)
+    ioContext.scaleBy (x: inScale, y: inScale)
   //--- Draw widgets
     for widget in self.mWidgetsManager.widgets {
       ioContext.translateBy (widget.orientedOrigin.mOrigin)
       ioContext.rotate (by: widget.orientedOrigin.mAngle)
+      ioContext.scaleBy (x: widget.orientedOrigin.mScale, y: widget.orientedOrigin.mScale)
       widget.draw (
         context: &ioContext,
-        zoom: inZoom,
+        scale: inScale * widget.orientedOrigin.mScale,
         hovered: widget.id == self.mHoveredObject,
         selected: self.mSelection.contains (widget.id),
         groupLevel: 0
       )
+      ioContext.scaleBy (x: 1.0 / widget.orientedOrigin.mScale, y: 1.0 / widget.orientedOrigin.mScale)
       ioContext.rotate (by: -widget.orientedOrigin.mAngle)
       ioContext.translateBy (-widget.orientedOrigin.mOrigin)
     }
@@ -111,12 +113,12 @@ import Combine
               var path = CanariPath ()
               path.move (to: p)
               path.addLine (to: q)
-              ioContext.stroke (path, with: .color (.orange), lineWidth: .px (1) / inZoom)
+              ioContext.stroke (path, with: .color (.orange), lineWidth: .px (1) / inScale)
             }else if p.y == q.y, p.x != q.x { // Horizontal guide
               var path = CanariPath ()
               path.move (to: p)
               path.addLine (to: q)
-              ioContext.stroke (path, with: .color (.orange), lineWidth: .px (1) / inZoom)
+              ioContext.stroke (path, with: .color (.orange), lineWidth: .px (1) / inScale)
             }
           }
         }
@@ -127,14 +129,16 @@ import Combine
       if self.mSelection.contains (widget.id), !widget.knobs ().isEmpty {
         ioContext.translateBy (widget.orientedOrigin.mOrigin)
         ioContext.rotate (by: widget.orientedOrigin.mAngle)
+        ioContext.scaleBy (x: widget.orientedOrigin.mScale, y: widget.orientedOrigin.mScale)
         for knob in widget.knobs () {
-          knob.draw (context: &ioContext, zoom: inZoom)
+          knob.draw (context: &ioContext, scale: inScale * widget.orientedOrigin.mScale)
         }
+        ioContext.scaleBy (x: 1.0 / widget.orientedOrigin.mScale, y: 1.0 / widget.orientedOrigin.mScale)
         ioContext.rotate (by: -widget.orientedOrigin.mAngle)
         ioContext.translateBy (-widget.orientedOrigin.mOrigin)
       }
     }
-    ioContext.scaleBy (x: 1.0 / inZoom, y: 1.0 / inZoom)
+    ioContext.scaleBy (x: 1.0 / inScale, y: 1.0 / inScale)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -197,12 +201,12 @@ import Combine
     for widget in self.mWidgetsManager.widgets.reversed () {
       if self.mSelection.contains (widget.id) {
         for knob in widget.knobs () {
-          if knob.contains (localPoint: widget.orientedOrigin.canvasToLocal (inGeometry.unalignedUserStartLocation), zoom: inGeometry.zoom) {
+          if knob.contains (localPoint: widget.orientedOrigin.canvasToLocal (inGeometry.unalignedUserStartLocation), scale: inGeometry.scale) {
             return MouseGesture_DragKnob <TypeDictionary> (
               alignedCurrentPoint: inGeometry.alignedUserStartLocation,
               optionKeyInitiallyOn: true,
               widgetID: widget.id,
-              action: knob.dragAction
+              dragAction: knob.dragAction
             )
           }
         }
@@ -292,12 +296,12 @@ import Combine
     for widget in self.mWidgetsManager.widgets.reversed () {
       if self.mSelection.contains (widget.id) {
         for knob in widget.knobs () {
-          if knob.contains (localPoint: widget.orientedOrigin.canvasToLocal (inGeometry.unalignedUserStartLocation), zoom: inGeometry.zoom) {
+          if knob.contains (localPoint: widget.orientedOrigin.canvasToLocal (inGeometry.unalignedUserStartLocation), scale: inGeometry.scale) {
             return MouseGesture_DragKnob <TypeDictionary> (
               alignedCurrentPoint: inGeometry.alignedUserStartLocation,
               optionKeyInitiallyOn: false,
               widgetID: widget.id,
-              action: knob.dragAction
+              dragAction: knob.dragAction
             )
           }
         }
@@ -323,13 +327,13 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func contextualMenu (at inUnalignedPoint : CanariPoint, zoom inZoom : Double) -> any View {
+  public func contextualMenu (at inUnalignedPoint : CanariPoint, scale inScale : Double) -> any View {
   //--- CMD + Mouse down in a knob of a selected object ?
     for idx in (0 ..< self.mWidgetsManager.count).reversed () {
       let widget = self.mWidgetsManager [widget: idx]
       if self.mSelection.contains (widget.id) {
         for knob in widget.knobs () {
-          if knob.contains (localPoint: widget.orientedOrigin.canvasToLocal (inUnalignedPoint), zoom: inZoom) {
+          if knob.contains (localPoint: widget.orientedOrigin.canvasToLocal (inUnalignedPoint), scale: inScale) {
             if let menu = knob.menu {
               return menu (ContextualMenuExecutor (self, idx))
             }else{

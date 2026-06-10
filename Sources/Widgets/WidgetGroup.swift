@@ -15,7 +15,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var orientedOrigin : CanariOrientedOrigin = CanariOrientedOrigin (.zero, .zero)
+  public var orientedOrigin : CanariOrientedOrigin = CanariOrientedOrigin (.zero, .zero, 0.0)
   var mCenter : CanariPoint
   var mAngle : CanariAngle
   var mUnGroupIsEnabled : Bool
@@ -130,16 +130,16 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func draw (context ioContext : inout GraphicsContext,
-                    zoom inZoom : Double,
+                    scale inScale : Double,
                     hovered inHovered : Bool,
                     selected inSelected : Bool,
                     groupLevel inGroupLevel : UInt) {
-    ioContext.translateBy (self.mCenter.scaled (by: inZoom))
+    ioContext.translateBy (self.mCenter.scaled (by: inScale))
     ioContext.rotate (by: self.mAngle)
     for widget in self.mArray {
       widget.draw (
         context: &ioContext,
-        zoom: inZoom,
+        scale: inScale,
         hovered: inHovered,
         selected: inSelected,
         groupLevel: inGroupLevel + 1
@@ -152,11 +152,11 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
       }
       let r = CanariRect (vertices)
 
-      let path = CanariPath (rect: r.scaled (by: inZoom))
+      let path = CanariPath (rect: r.scaled (by: inScale))
       ioContext.stroke (path, with: .color (.black), lineWidth: .px (0.5))
     }
     ioContext.rotate (by: -self.mAngle)
-    ioContext.translateBy (-self.mCenter.scaled (by: inZoom))
+    ioContext.translateBy (-self.mCenter.scaled (by: inScale))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

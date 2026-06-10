@@ -39,7 +39,7 @@ public protocol WidgetUIProtocol <TypeDictionary> : WidgetModelProtocol {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func draw (context ioContext : inout GraphicsContext,
-             zoom inZoom : Double,
+             scale inScale : Double,
              hovered inHovered : Bool,
              selected inSelected : Bool,
              groupLevel inGroupLevel : UInt)
