@@ -31,6 +31,16 @@ public struct CanariRGBAColor : Codable, Sendable, Equatable, RawRepresentable, 
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public init (_ inRGBColor : CanariRGBColor,
+               alpha inAlpha : UInt8) {
+    self.red = inRGBColor.red
+    self.green = inRGBColor.green
+    self.blue = inRGBColor.blue
+    self.alpha = inAlpha
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public init (nsColor inColor : NSColor) {
     let rgbColor : NSColor = inColor.usingColorSpace (.genericRGB)!
     self.red = UInt8 (rgbColor.redComponent * 255.0)
