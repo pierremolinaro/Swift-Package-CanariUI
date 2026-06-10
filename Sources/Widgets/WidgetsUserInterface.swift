@@ -83,32 +83,26 @@ import Combine
     ioContext.scaleBy (x: inScale, y: inScale)
   //--- Draw widgets
     for widget in self.mWidgetsManager.widgets {
-      ioContext.translateBy (widget.orientedOrigin.mOrigin)
-      ioContext.rotate (by: widget.orientedOrigin.mAngle)
-      ioContext.scaleBy (x: widget.orientedOrigin.mScale, y: widget.orientedOrigin.mScale)
-      widget.draw (
+      widget.drawFromCanvas (
         context: &ioContext,
         scale: inScale * widget.orientedOrigin.mScale,
         hovered: widget.id == self.mHoveredObject,
         selected: self.mSelection.contains (widget.id),
         groupLevel: 0
       )
-      ioContext.scaleBy (x: 1.0 / widget.orientedOrigin.mScale, y: 1.0 / widget.orientedOrigin.mScale)
-      ioContext.rotate (by: -widget.orientedOrigin.mAngle)
-      ioContext.translateBy (-widget.orientedOrigin.mOrigin)
     }
   //--- Get alignment points
     var selectedObjetsAlignmentPoints = Set <CanariPoint> ()
     for widget in self.mWidgetsManager.widgets {
       if self.mSelection.contains (widget.id) {
-        selectedObjetsAlignmentPoints.formUnion (widget.orientedOrigin.localToCanvas (widget.localAlignmentGuidePoints))
+        selectedObjetsAlignmentPoints.formUnion (widget.orientedOrigin.localToGlobal (widget.localAlignmentGuidePoints))
       }
     }
   //--- Draw alignment guides
     for p in selectedObjetsAlignmentPoints {
       for widget in self.mWidgetsManager.widgets {
         if !self.mSelection.contains (widget.id) {
-          for q in widget.orientedOrigin.localToCanvas (widget.localAlignmentGuidePoints) {
+          for q in widget.orientedOrigin.localToGlobal (widget.localAlignmentGuidePoints) {
             if p.x == q.x, p.y != q.y { // Vertical guide
               var path = CanariPath ()
               path.move (to: p)
@@ -148,7 +142,7 @@ import Combine
   public func hoverTracking (at inPoint : CanariPoint) {
     enterTracing ("widgets.user.interface.hover.tracking") ; defer { exitTracing ("widgets.user.interface.hover.tracking") }
     for widget in self.mWidgetsManager.widgets.reversed () {
-      if widget.contains (localPoint: widget.orientedOrigin.canvasToLocal (inPoint)) {
+      if widget.contains (localPoint: widget.orientedOrigin.globalToLocal (inPoint)) {
         self.mHoveredObject = widget.id
         return
       }
@@ -201,7 +195,7 @@ import Combine
     for widget in self.mWidgetsManager.widgets.reversed () {
       if self.mSelection.contains (widget.id) {
         for knob in widget.knobs () {
-          if knob.contains (localPoint: widget.orientedOrigin.canvasToLocal (inGeometry.unalignedUserStartLocation), scale: inGeometry.scale) {
+          if knob.contains (localPoint: widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation), scale: inGeometry.scale) {
             return MouseGesture_DragKnob <TypeDictionary> (
               alignedCurrentPoint: inGeometry.alignedUserStartLocation,
               optionKeyInitiallyOn: true,
@@ -215,7 +209,7 @@ import Combine
 
     var widgetUnderMouseID : UUID? = nil
     for widget in self.mWidgetsManager.widgets.reversed () {
-      if widget.contains (localPoint: widget.orientedOrigin.canvasToLocal (inGeometry.unalignedUserStartLocation)) {
+      if widget.contains (localPoint: widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
         widgetUnderMouseID = widget.id
         break
       }
@@ -272,7 +266,7 @@ import Combine
   private func mouseDown_shiftKey (geometry inGeometry : MouseGestureGeometryContext) -> any MouseGestureProtocol <TypeDictionary> {
     var widgetUnderMouseID : UUID? = nil
     for widget in self.mWidgetsManager.widgets.reversed () {
-      if widget.contains (localPoint: widget.orientedOrigin.canvasToLocal (inGeometry.unalignedUserStartLocation)) {
+      if widget.contains (localPoint: widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
         widgetUnderMouseID = widget.id
         break
       }
@@ -296,7 +290,7 @@ import Combine
     for widget in self.mWidgetsManager.widgets.reversed () {
       if self.mSelection.contains (widget.id) {
         for knob in widget.knobs () {
-          if knob.contains (localPoint: widget.orientedOrigin.canvasToLocal (inGeometry.unalignedUserStartLocation), scale: inGeometry.scale) {
+          if knob.contains (localPoint: widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation), scale: inGeometry.scale) {
             return MouseGesture_DragKnob <TypeDictionary> (
               alignedCurrentPoint: inGeometry.alignedUserStartLocation,
               optionKeyInitiallyOn: false,
@@ -309,13 +303,13 @@ import Combine
     }
   //--- Mouse down in a selected object ?
     for widget in self.mWidgetsManager.widgets.reversed () {
-      if self.mSelection.contains (widget.id), widget.contains (localPoint: widget.orientedOrigin.canvasToLocal (inGeometry.unalignedUserStartLocation)) {
+      if self.mSelection.contains (widget.id), widget.contains (localPoint: widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
         return MouseGesture_DragSelection <TypeDictionary> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
       }
     }
   //--- Mouse down in a non selected object ?
     for widget in self.mWidgetsManager.widgets.reversed () {
-      if widget.contains (localPoint: widget.orientedOrigin.canvasToLocal (inGeometry.unalignedUserStartLocation)) {
+      if widget.contains (localPoint: widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
         self.mSelection = [widget.id]
         return MouseGesture_DragSelection <TypeDictionary> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
       }
@@ -333,7 +327,7 @@ import Combine
       let widget = self.mWidgetsManager [widget: idx]
       if self.mSelection.contains (widget.id) {
         for knob in widget.knobs () {
-          if knob.contains (localPoint: widget.orientedOrigin.canvasToLocal (inUnalignedPoint), scale: inScale) {
+          if knob.contains (localPoint: widget.orientedOrigin.globalToLocal (inUnalignedPoint), scale: inScale) {
             if let menu = knob.menu {
               return menu (ContextualMenuExecutor (self, idx))
             }else{
@@ -346,7 +340,7 @@ import Combine
   //--- CMD + Mouse down in a selected object ?
     for idx in (0 ..< self.mWidgetsManager.count).reversed () {
       let widget = self.mWidgetsManager [widget: idx]
-      if self.mSelection.contains (widget.id), widget.contains (localPoint: widget.orientedOrigin.canvasToLocal (inUnalignedPoint)) {
+      if self.mSelection.contains (widget.id), widget.contains (localPoint: widget.orientedOrigin.globalToLocal (inUnalignedPoint)) {
         return widget.contextualMenu (ContextualMenuExecutor (self, idx))
       }
     }
@@ -644,15 +638,10 @@ import Combine
   public override func performUngroup () {
     for w in self.mWidgetsManager.widgets {
       if self.mSelection.contains (w.id), let group = w as? WidgetGroup <TypeDictionary>, group.mUnGroupIsEnabled {
-        let array = group.widgetArray.map {
-          var widget = $0
-          widget.rotate (by: group.mAngle)
-          widget.translate (by: group.mCenter)
-          return widget
-        }
+        let array = group.ungroupedArray ()
         self.mWidgetsManager.replaceWidget (id: w.id, with: array)
         self.mSelection.remove (w.id)
-        for p in group.widgetArray {
+        for p in array {
           self.mSelection.insert (p.id)
         }
       }

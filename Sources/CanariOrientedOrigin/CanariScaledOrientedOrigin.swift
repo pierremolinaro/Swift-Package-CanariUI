@@ -2,11 +2,11 @@
 //  Created by Pierre Molinaro on 09/06/2026.
 //--------------------------------------------------------------------------------------------------
 
-import AppKit
+import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariOrientedOrigin : Hashable, CustomStringConvertible, Sendable, Equatable {
+public struct CanariScaledOrientedOrigin : Hashable, CustomStringConvertible, Sendable, Equatable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -27,10 +27,10 @@ public struct CanariOrientedOrigin : Hashable, CustomStringConvertible, Sendable
   public var description : String { "(\(mOrigin), \(mAngle), \(self.mScale))" }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: Local to canvas
+  //MARK: Local to global
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var localToCanvasAffinity : CanariAffinity {
+  private var localToGlobalAffinity : CanariAffinity {
     CanariAffinity (translationByX: self.mOrigin.x, byY: self.mOrigin.y)
     .rotating (self.mAngle)
     .scaling (self.mScale)
@@ -38,44 +38,44 @@ public struct CanariOrientedOrigin : Hashable, CustomStringConvertible, Sendable
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func localToCanvas (x inX : CanariLength = .zero, y inY : CanariLength = .zero) -> CanariPoint {
-    return CanariPoint (x: inX, y: inY).transformed (by: self.localToCanvasAffinity)
+  public func localToGlobal (x inX : CanariLength = .zero, y inY : CanariLength = .zero) -> CanariPoint {
+    return CanariPoint (x: inX, y: inY).transformed (by: self.localToGlobalAffinity)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func localToCanvas (_ inPoint : CanariPoint) -> CanariPoint {
-    return inPoint.transformed (by: self.localToCanvasAffinity)
+  public func localToGlobal (_ inPoint : CanariPoint) -> CanariPoint {
+    return inPoint.transformed (by: self.localToGlobalAffinity)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func localToCanvas (_ inLocalRect : CanariRect) -> CanariPath {
+  public func localToGlobal (_ inLocalRect : CanariRect) -> CanariPath {
     let path = CanariPath (rect: inLocalRect)
-    return path.transformed (by: self.localToCanvasAffinity)
+    return path.transformed (by: self.localToGlobalAffinity)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func localToCanvas (_ inPointSet : [CanariPoint]) -> Set <CanariPoint> {
+  public func localToGlobal (_ inPointSet : [CanariPoint]) -> Set <CanariPoint> {
     var result = Set <CanariPoint> ()
     for p in inPointSet {
-      result.insert (p.transformed (by: self.localToCanvasAffinity))
+      result.insert (p.transformed (by: self.localToGlobalAffinity))
     }
     return result
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func localToCanvas (_ inPath : CanariPath) -> CanariPath {
-    return inPath.transformed (by: self.localToCanvasAffinity)
+  public func localToGlobal (_ inPath : CanariPath) -> CanariPath {
+    return inPath.transformed (by: self.localToGlobalAffinity)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Canvas to local
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var canvasToLocalAffinity : CanariAffinity {
+  private var globalToLocalAffinity : CanariAffinity {
     CanariAffinity (scale: 1.0 / self.mScale)
       .rotating (-self.mAngle)
       .translating (x: -self.mOrigin.x, y: -self.mOrigin.y)
@@ -83,33 +83,22 @@ public struct CanariOrientedOrigin : Hashable, CustomStringConvertible, Sendable
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func canvasToLocal (_ inCanvasPoint : CanariPoint) -> CanariPoint {
-    return inCanvasPoint.transformed (by: self.canvasToLocalAffinity)
+  public func globalToLocal (_ inCanvasPoint : CanariPoint) -> CanariPoint {
+    return inCanvasPoint.transformed (by: self.globalToLocalAffinity)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func canvasToLocal (_ inCanvasPath : CanariPath) -> CanariPath {
-    return inCanvasPath.transformed (by: self.canvasToLocalAffinity)
+  public func globalToLocal (_ inCanvasPath : CanariPath) -> CanariPath {
+    return inCanvasPath.transformed (by: self.globalToLocalAffinity)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-//  public mutating func translate (x inX : CanariLength = .zero, y inY : CanariLength = .zero) {
-//    self.mOrigin.x += inX
-//    self.mOrigin.y += inY
-//  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-//  public mutating func translate (_ inPoint : CanariPoint) {
-//    self.mOrigin += inPoint
-//  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public mutating func rotate (_ inAngle : CanariAngle) {
-    self.mAngle += inAngle
+  public mutating func updateFromOrientedOrigin (_ inOrientedOrigin : CanariScaledOrientedOrigin) {
+    self.mOrigin = inOrientedOrigin.localToGlobal (self.mOrigin)
+    self.mAngle += inOrientedOrigin.mAngle
+    self.mScale *= inOrientedOrigin.mScale
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

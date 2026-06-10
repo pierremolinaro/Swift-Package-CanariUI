@@ -46,6 +46,14 @@ public struct CanariPath : Equatable, CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public init (lineFrom inStart : CanariPoint, to inTarget : CanariPoint) {
+    self.init ()
+    self.move (to: inStart)
+    self.addLine (to: inTarget)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public init (ellipse inRect : CanariRect) {
     self.mPath = Path (ellipseIn: inRect.pxValue)
   }

@@ -19,9 +19,9 @@ public struct CanariSize : Hashable, CustomStringConvertible, Sendable, RawRepre
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init () {
-    self.init (width: .zero, height: .zero)
-  }
+//  public init () {
+//    self.init (width: .zero, height: .zero)
+//  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -35,7 +35,7 @@ public struct CanariSize : Hashable, CustomStringConvertible, Sendable, RawRepre
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (width inWidth : CanariLength, height inHeight : CanariLength) {
+  public init (width inWidth : CanariLength = .zero, height inHeight : CanariLength = .zero) {
     self.width = inWidth
     self.height = inHeight
   }

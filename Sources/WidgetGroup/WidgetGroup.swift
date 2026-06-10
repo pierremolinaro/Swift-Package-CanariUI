@@ -15,16 +15,13 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var orientedOrigin : CanariOrientedOrigin = CanariOrientedOrigin (.zero, .zero, 0.0)
-  var mCenter : CanariPoint
-  var mAngle : CanariAngle
+  public var orientedOrigin : CanariScaledOrientedOrigin
   var mUnGroupIsEnabled : Bool
 
   var mArray : [any WidgetUIProtocol <TypeDictionary>] // at 0: back, at count - 1: front
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var widgetArray : [any WidgetUIProtocol <TypeDictionary>] { self.mArray }
   var count : Int { self.mArray.count }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -41,8 +38,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
       return widget
     }
     self.mUnGroupIsEnabled = true
-    self.mCenter = r.center
-    self.mAngle = .zero
+    self.orientedOrigin = CanariScaledOrientedOrigin (r.center, .zero, 1.0)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -59,7 +55,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
   //MARK: Encoding, Decoding
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private enum CodingKeys : String, CodingKey { case center, angle, array, unGroupIsEnabled }
+  private enum CodingKeys : String, CodingKey { case oo, array, unGroupIsEnabled }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -72,8 +68,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
     }
     self.mArray = array
     self.mUnGroupIsEnabled = try container.decode (Bool.self, forKey: .unGroupIsEnabled)
-    self.mCenter = try container.decode (CanariPoint.self, forKey: .center)
-    self.mAngle = try container.decode (CanariAngle.self, forKey: .angle)
+    self.orientedOrigin = try container.decode (CanariScaledOrientedOrigin.self, forKey: .oo)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -86,8 +81,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
     }
     try container.encode (proxyArray, forKey: .array)
     try container.encode (self.mUnGroupIsEnabled, forKey: .unGroupIsEnabled)
-    try container.encode (self.mCenter, forKey: .center)
-    try container.encode (self.mAngle, forKey: .angle)
+    try container.encode (self.orientedOrigin, forKey: .oo)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -102,11 +96,13 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
 
   public func isEqual (to inOther : any WidgetUIProtocol <TypeDictionary>) -> Bool {
     if let other = inOther as? WidgetGroup <TypeDictionary> {
-      if (self.mArray.count != other.mArray.count) || (self.mCenter != other.mCenter) || (self.mAngle != other.mAngle) {
+      if (self.mArray.count != other.mArray.count)
+            || (self.orientedOrigin != other.orientedOrigin)
+            || (self.mUnGroupIsEnabled != other.mUnGroupIsEnabled) {
         return false
       }else{
         for i in 0 ..< self.mArray.count {
-          if !self.mArray[i].isEqual (to: other.widgetArray[i]) {
+          if !self.mArray[i].isEqual (to: other.mArray[i]) {
             return false
           }
         }
@@ -134,10 +130,8 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
                     hovered inHovered : Bool,
                     selected inSelected : Bool,
                     groupLevel inGroupLevel : UInt) {
-    ioContext.translateBy (self.mCenter.scaled (by: inScale))
-    ioContext.rotate (by: self.mAngle)
     for widget in self.mArray {
-      widget.draw (
+      widget.drawFromCanvas (
         context: &ioContext,
         scale: inScale,
         hovered: inHovered,
@@ -146,51 +140,19 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
       )
     }
     if inSelected, inGroupLevel == 0 {
-      var vertices = [CanariPoint] ()
-      for widget in self.mArray {
-        vertices += widget.canvasEnclosingRect.vertices
-      }
-      let r = CanariRect (vertices)
-
-      let path = CanariPath (rect: r.scaled (by: inScale))
+      let path = CanariPath (rect: self.localEnclosingRect)
       ioContext.stroke (path, with: .color (.black), lineWidth: .px (0.5))
     }
-    ioContext.rotate (by: -self.mAngle)
-    ioContext.translateBy (-self.mCenter.scaled (by: inScale))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var localEnclosingRect : CanariRect { CanariRect (center: .zero, size: .zero) }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-//  public var enclosingRect : CanariRect {
-//    var vertices = [CanariPoint] ()
-//    for widget in self.mArray {
-//      vertices += widget.canvasEnclosingRect.vertices
-//    }
-//    let path = CanariPath (rect: CanariRect (vertices))
-//    let transformedPath = self.affinityFromRectToCanvas.transforming (path)
-//    return transformedPath.boundingRect
-//  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  private var affinityFromRectToCanvas : CanariAffinity {
-    CanariAffinity (translationByX: self.mCenter.x, byY: self.mCenter.y).rotating (self.mAngle)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  private var affinityFromCanvasToLocal : CanariAffinity {
-    CanariAffinity (rotation: -self.mAngle).translating (x: -self.mCenter.x, y: -self.mCenter.y)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  private func transformedFromRectToCanvas (x inX : CanariLength = .zero, y inY : CanariLength = .zero) -> CanariPoint {
-    return CanariPoint (x: inX, y: inY).transformed (by: self.affinityFromRectToCanvas)
+  public var localEnclosingRect : CanariRect {
+    var vertices = [CanariPoint] ()
+    for widget in self.mArray {
+      vertices += widget.canvasEnclosingRect.vertices
+    }
+    return CanariRect (vertices)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -199,7 +161,8 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
 
   public func contains (localPoint inLocalPoint : CanariPoint) -> Bool {
     for widget in self.mArray {
-      if widget.contains (localPoint: inLocalPoint) {
+      let p = widget.orientedOrigin.globalToLocal (inLocalPoint)
+      if widget.contains (localPoint: p) {
         return true
       }
     }
@@ -209,41 +172,13 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func intersect (localPath inLocalPath : CanariPath) -> Bool {
-//    let path = self.affinityFromCanvasToLocal.transforming (inPath)
     for widget in self.mArray {
-      if widget.intersect (localPath: inLocalPath) {
+      let path = widget.orientedOrigin.globalToLocal (inLocalPath)
+      if widget.intersect (localPath: path) {
         return true
       }
     }
     return false
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: Translation
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public func limitTranslation (_ ioTranslation : inout CanariPoint) {
-    let r = self.canvasEnclosingRect
-    if (r.minX + ioTranslation.x) < .zero {
-      ioTranslation.x = -r.minX
-    }
-    if (r.minY + ioTranslation.y) < .zero {
-      ioTranslation.y = -r.minY
-    }
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public mutating func translate (by inTranslation : CanariPoint) {
-     self.mCenter = self.mCenter.moved (x: inTranslation.x, y: inTranslation.y)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: Rotate
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public mutating func rotate (by inAngle : CanariAngle) {
-    self.mAngle += inAngle
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -256,6 +191,18 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
       points += widget.localAlignmentGuidePoints
     }
     return points
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: ungrouped array
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  func ungroupedArray () -> [any WidgetUIProtocol <TypeDictionary>] {
+    return self.mArray.map {
+      var widget = $0
+      widget.orientedOrigin.updateFromOrientedOrigin (self.orientedOrigin)
+      return widget
+    }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -300,41 +247,77 @@ fileprivate struct WidgetGroupInspectorView <TypeDictionary : WidgetTypeArrayPro
         Opt_Toggle ("UnGrouping is enabled", isOn: self.mProxy [bindingFor: \T.mUnGroupIsEnabled])
         Button ("Ungroup") { self.mProxy.performWidgetUserInterfaceAction { $0.performUngroup () } }.disabled (!self.canUngroup ())
       }
-      CanariElementInspector (title: "Enclosing Rectangle") {
-        Set_CanariRectGraphicView (rectSet: self.mProxy.setOf (\T.canvasEnclosingRect))
-      }
-      CanariElementInspector (title: "Center") {
-        HStack {
-          Spacer ()
-          Form {
-            Set_CanariPointEditor (
-              pointSet: self.mProxy.setOf (\T.mCenter),
-              setterX: { newX in
-                self.mProxy.performWidgetAction { (widget : inout T) in
-                  widget.mCenter = CanariPoint (x: newX, y: widget.mCenter.y)
-                }
-              },
-              setterY: { newY in
-                self.mProxy.performWidgetAction { (widget : inout T) in
-                  widget.mCenter = CanariPoint (x: widget.mCenter.x, y: newY)
-                }
-              }
-            )
+      Inspector_CanariPoint (
+        title: "Center",
+        pointSet: self.mProxy.setOf (\T.orientedOrigin.mOrigin),
+        setterX: { newX in
+          self.mProxy.performWidgetAction { (widget : inout T) in
+            widget.orientedOrigin.mOrigin.x = newX
           }
-          Spacer ()
+        },
+        setterY: { newY in
+          self.mProxy.performWidgetAction { (widget : inout T) in
+            widget.orientedOrigin.mOrigin.y = newY
+          }
         }
-      }
+      )
       CanariElementInspector (title: "Angle") {
         Set_CanariAngleEditor (
-          angleSet: self.mProxy.setOf (\T.mAngle),
+          angleSet: self.mProxy.setOf (\T.orientedOrigin.mAngle),
           setter: { newAngle in
             self.mProxy.performWidgetAction { (widget : inout T) in
-              widget.mAngle = newAngle
+              widget.orientedOrigin.mAngle = newAngle
             }
           },
           width: 64
         )
       }
+      CanariElementInspector (title: "Scale") {
+        Set_DoubleEditor (
+          valueSet: self.mProxy.setOf (\T.orientedOrigin.mScale),
+          setter: { newScale in
+            self.mProxy.performWidgetAction { (widget : inout T) in
+              widget.orientedOrigin.mScale = newScale
+            }
+          },
+          width: 64
+        )
+      }
+      CanariElementInspector (title: "Enclosing Rectangle") {
+        Set_CanariRectGraphicView (rectSet: self.mProxy.setOf (\T.canvasEnclosingRect))
+      }
+//      CanariElementInspector (title: "Center") {
+//        HStack {
+//          Spacer ()
+//          Form {
+//            Set_CanariPointEditor (
+//              pointSet: self.mProxy.setOf (\T.mCenter),
+//              setterX: { newX in
+//                self.mProxy.performWidgetAction { (widget : inout T) in
+//                  widget.mCenter = CanariPoint (x: newX, y: widget.mCenter.y)
+//                }
+//              },
+//              setterY: { newY in
+//                self.mProxy.performWidgetAction { (widget : inout T) in
+//                  widget.mCenter = CanariPoint (x: widget.mCenter.x, y: newY)
+//                }
+//              }
+//            )
+//          }
+//          Spacer ()
+//        }
+//      }
+//      CanariElementInspector (title: "Angle") {
+//        Set_CanariAngleEditor (
+//          angleSet: self.mProxy.setOf (\T.mAngle),
+//          setter: { newAngle in
+//            self.mProxy.performWidgetAction { (widget : inout T) in
+//              widget.mAngle = newAngle
+//            }
+//          },
+//          width: 64
+//        )
+//      }
       Spacer ()
     }.padding ()
   }

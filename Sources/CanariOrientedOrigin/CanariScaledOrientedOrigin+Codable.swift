@@ -6,7 +6,7 @@ import AppKit
 
 //--------------------------------------------------------------------------------------------------
 
-extension CanariOrientedOrigin : Codable {
+extension CanariScaledOrientedOrigin : Codable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -19,7 +19,7 @@ extension CanariOrientedOrigin : Codable {
        let y = Int (components [1]),
        let angle = Int (components [2]),
        let scale = Double (components [3]) {
-      self = CanariOrientedOrigin (
+      self = CanariScaledOrientedOrigin (
         CanariPoint (x: .cu (x), y: .cu (y)),
         CanariAngle (Double (angle) / 1000.0, in: .degrees),
         scale

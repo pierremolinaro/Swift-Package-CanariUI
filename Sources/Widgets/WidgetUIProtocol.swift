@@ -12,7 +12,7 @@ public protocol WidgetUIProtocol <TypeDictionary> : WidgetModelProtocol {
   //MARK: Oriented Origin
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var orientedOrigin : CanariOrientedOrigin { get set }
+  var orientedOrigin : CanariScaledOrientedOrigin { get set }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
