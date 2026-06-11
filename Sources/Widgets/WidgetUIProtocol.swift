@@ -45,12 +45,6 @@ public protocol WidgetUIProtocol <TypeDictionary> : WidgetModelProtocol {
              groupLevel inGroupLevel : UInt)
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: Local outline path
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  var localOutline : CanariPath { get }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: AlignmentGuidePoints
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

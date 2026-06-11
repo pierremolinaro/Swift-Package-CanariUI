@@ -16,6 +16,12 @@ public protocol WidgetModelProtocol <TypeDictionary> : Identifiable, Sendable, C
   static func documentEncodedTypeName () -> String
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Local outline path
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  var localOutline : CanariPath { get }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 }
 

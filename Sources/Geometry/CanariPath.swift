@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariPath : Equatable, CustomStringConvertible {
+public struct CanariPath : Equatable, CustomStringConvertible, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
