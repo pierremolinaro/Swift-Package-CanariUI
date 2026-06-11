@@ -90,17 +90,21 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
             HStack (spacing: 0.0) {
               self.leftSpacer ()
               self.contentView (geometry)
-              .dropDestination (for: DroppedFileType.self, isEnabled: true) { items, dropSession in
-                let p = self.unalignedUserPoint (geometry, fromLocationInContentView: dropSession.location)
-                self.mDroppedFilesHandler? (items, p)
-              }
               .dropDestination (for: String.self, isEnabled: true) { items, dropSession in
                 let p = self.unalignedUserPoint (geometry, fromLocationInContentView: dropSession.location)
                 self.mDroppedStringsHandler? (items, p)
               }
+              .dropDestination (for: DroppedFileType.self, isEnabled: true) { items, dropSession in
+                let p = self.unalignedUserPoint (geometry, fromLocationInContentView: dropSession.location)
+                self.mDroppedFilesHandler? (items, p)
+              }
+//              .dropDestination (for: String.self, isEnabled: true) { items, dropSession in
+//                let p = self.unalignedUserPoint (geometry, fromLocationInContentView: dropSession.location)
+//                self.mDroppedStringsHandler? (items, p)
+//              }
               self.rightSpacer ()
             }
-            self.bottomSpacer ()
+           self.bottomSpacer ()
           }
         }
         .onScrollPositionChange (self.$mScrollPosition, self.mCanvasScale)
@@ -367,7 +371,7 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
   //--- Mouse Hover
     .onContinuousHover { phase in self.continuousHoverTracking (inGeometry, phase) }
   //--- Context menu
-    .contextMenu { self.editorContextualMenu () }
+ //   .contextMenu { self.editorContextualMenu () }
   //--- Mouse down / dragging tracking
     .gesture (DragGesture (minimumDistance: 0) // 0 : nécessaire pour détecter un mouseDown
       .onChanged { dragGestureValue in self.mouseDownOrMouseDragged (inGeometry, dragGestureValue) }
