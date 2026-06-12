@@ -15,26 +15,19 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var orientedOrigin : CanariScaledOrientedOrigin {
-    didSet {
-      self.mPrivateGlobalOutline = self.orientedOrigin.localToGlobal (self.localOutline)
-      self.mPrivateGlobalBoundingRect = self.mPrivateGlobalOutline.boundingRect
-    }
-  }
+  public var orientedOrigin : CanariScaledOrientedOrigin
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private let mPrivateLocalOutline : CanariPath
   private let mPrivateLocalBoundingRect : CanariRect
-  private var mPrivateGlobalOutline : CanariPath
-  private var mPrivateGlobalBoundingRect : CanariRect
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var localOutline : CanariPath { self.mPrivateLocalOutline }
   public var localBoundingRect : CanariRect { self.mPrivateLocalBoundingRect }
-  public var globalOutline : CanariPath { self.mPrivateGlobalOutline }
-  public var globalBoundingRect : CanariRect { self.mPrivateGlobalBoundingRect }
+  public var globalOutline : CanariPath { self.orientedOrigin.localToGlobal (localOutline) }
+  public var globalBoundingRect : CanariRect { self.globalOutline.boundingRect }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -66,8 +59,6 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
     }
     self.mPrivateLocalOutline = localOutline
     self.mPrivateLocalBoundingRect = localOutline.boundingRect
-    self.mPrivateGlobalOutline = self.orientedOrigin.localToGlobal (localOutline)
-    self.mPrivateGlobalBoundingRect = self.mPrivateGlobalOutline.boundingRect
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -104,8 +95,6 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
     }
     self.mPrivateLocalOutline = localOutline
     self.mPrivateLocalBoundingRect = localOutline.boundingRect
-    self.mPrivateGlobalOutline = self.orientedOrigin.localToGlobal (localOutline)
-    self.mPrivateGlobalBoundingRect = self.mPrivateGlobalOutline.boundingRect
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

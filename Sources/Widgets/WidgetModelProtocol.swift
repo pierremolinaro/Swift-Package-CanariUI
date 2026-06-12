@@ -4,15 +4,6 @@
 
 import SwiftUI
 
-//struct MyStruct : Sendable {
-//  var mValue : String = ""
-//
-//  func setValue (_ inArgument : Int) {
-//    var mValue = calculCoûteux (inArgument)
-//  }
-//
-//}
-
 //--------------------------------------------------------------------------------------------------
 
 public protocol WidgetModelProtocol <TypeDictionary> : Identifiable, Sendable, Codable {
