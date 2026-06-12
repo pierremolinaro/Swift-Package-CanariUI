@@ -15,10 +15,31 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var orientedOrigin : CanariScaledOrientedOrigin
-  var mUnGroupIsEnabled : Bool
+  public var orientedOrigin : CanariScaledOrientedOrigin {
+    didSet {
+      self.mPrivateGlobalOutline = self.orientedOrigin.localToGlobal (self.localOutline)
+      self.mPrivateGlobalBoundingRect = self.mPrivateGlobalOutline.boundingRect
+    }
+  }
 
-  var mArray : [any WidgetUIProtocol <TypeDictionary>] // at 0: back, at count - 1: front
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  private let mPrivateLocalOutline : CanariPath
+  private let mPrivateLocalBoundingRect : CanariRect
+  private var mPrivateGlobalOutline : CanariPath
+  private var mPrivateGlobalBoundingRect : CanariRect
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public var localOutline : CanariPath { self.mPrivateLocalOutline }
+  public var localBoundingRect : CanariRect { self.mPrivateLocalBoundingRect }
+  public var globalOutline : CanariPath { self.mPrivateGlobalOutline }
+  public var globalBoundingRect : CanariRect { self.mPrivateGlobalBoundingRect }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  var mUnGroupIsEnabled : Bool
+  let mArray : [any WidgetUIProtocol <TypeDictionary>] // at 0: back, at count - 1: front
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -29,7 +50,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
   public init (_ inWidgets : [any WidgetUIProtocol <TypeDictionary>]) {
     var vertices = [CanariPoint] ()
     for widget in inWidgets {
-      vertices += widget.canvasEnclosingRect.vertices
+      vertices += widget.globalBoundingRect.vertices
     }
     let r = CanariRect (vertices)
     self.mArray = inWidgets.map {
@@ -39,6 +60,14 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
     }
     self.mUnGroupIsEnabled = true
     self.orientedOrigin = CanariScaledOrientedOrigin (r.center, .zero, 1.0)
+    var localOutline = CanariPath ()
+    for widget in inWidgets {
+      localOutline.unionInPlace (widget.globalOutline)
+    }
+    self.mPrivateLocalOutline = localOutline
+    self.mPrivateLocalBoundingRect = localOutline.boundingRect
+    self.mPrivateGlobalOutline = self.orientedOrigin.localToGlobal (localOutline)
+    self.mPrivateGlobalBoundingRect = self.mPrivateGlobalOutline.boundingRect
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -69,6 +98,14 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
     self.mArray = array
     self.mUnGroupIsEnabled = try container.decode (Bool.self, forKey: .unGroupIsEnabled)
     self.orientedOrigin = try container.decode (CanariScaledOrientedOrigin.self, forKey: .oo)
+    var localOutline = CanariPath ()
+    for widget in array {
+      localOutline.unionInPlace (widget.globalOutline)
+    }
+    self.mPrivateLocalOutline = localOutline
+    self.mPrivateLocalBoundingRect = localOutline.boundingRect
+    self.mPrivateGlobalOutline = self.orientedOrigin.localToGlobal (localOutline)
+    self.mPrivateGlobalBoundingRect = self.mPrivateGlobalOutline.boundingRect
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -141,20 +178,10 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
     }
     if inSelected, inGroupLevel == 0 {
       ioContext.stroke (
-        CanariPath (rect: self.localOutline.boundingRect),
+        CanariPath (rect: self.localBoundingRect),
         with: .color (.black), lineWidth: .px (0.5) / inScale
       )
     }
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public var localOutline : CanariPath {
-    var path = CanariPath ()
-    for widget in self.mArray {
-      path.unionInPlace (widget.orientedOrigin.localToGlobal (widget.localOutline))
-    }
-    return path
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -260,7 +287,7 @@ fileprivate struct WidgetGroupInspectorView <TypeDictionary : WidgetTypeArrayPro
         )
       }
       CanariElementInspector (title: "Enclosing Rectangle") {
-        Set_CanariRectGraphicView (rectSet: self.mProxy.setOf (\T.canvasEnclosingRect))
+        Set_CanariRectGraphicView (rectSet: self.mProxy.setOf (\T.globalBoundingRect))
       }
 //      CanariElementInspector (title: "Center") {
 //        HStack {

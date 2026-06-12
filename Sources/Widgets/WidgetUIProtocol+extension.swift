@@ -12,22 +12,8 @@ public extension WidgetUIProtocol {
   //MARK: Location test
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func contains (localPoint inLocalPoint : CanariPoint) -> Bool {
+  func containsLocalPoint (_ inLocalPoint : CanariPoint) -> Bool {
     return self.localOutline.contains (inLocalPoint)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  func intersect (localPath inLocalPath : CanariPath) -> Bool {
-    return self.localOutline.intersects (inLocalPath)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: Canvas Enclosing rect
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  var canvasEnclosingRect : CanariRect {
-    self.orientedOrigin.localToGlobal (self.localOutline).boundingRect
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -35,7 +21,7 @@ public extension WidgetUIProtocol {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func limitTranslation (_ ioTranslation : inout CanariPoint, _ inCanvasSize : CanariSize) {
-    let r = self.canvasEnclosingRect
+    let r = self.globalBoundingRect
     let newTopRight = r.topRight + ioTranslation
     if newTopRight.x > inCanvasSize.width {
       ioTranslation.x -= newTopRight.x - inCanvasSize.width

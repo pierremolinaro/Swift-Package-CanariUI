@@ -22,6 +22,24 @@ public protocol WidgetModelProtocol <TypeDictionary> : Identifiable, Sendable, C
   var localOutline : CanariPath { get }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Local bounding rect
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  var localBoundingRect : CanariRect { get }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Global outline path
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  var globalOutline : CanariPath { get }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Global bounding rect
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  var globalBoundingRect : CanariRect { get }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 }
 

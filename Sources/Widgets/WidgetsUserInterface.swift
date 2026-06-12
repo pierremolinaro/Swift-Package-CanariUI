@@ -142,7 +142,7 @@ import Combine
   public func hoverTracking (at inPoint : CanariPoint) {
     enterTracing ("widgets.user.interface.hover.tracking") ; defer { exitTracing ("widgets.user.interface.hover.tracking") }
     for widget in self.mWidgetsManager.widgets.reversed () {
-      if widget.contains (localPoint: widget.orientedOrigin.globalToLocal (inPoint)) {
+      if widget.containsLocalPoint (widget.orientedOrigin.globalToLocal (inPoint)) {
         self.mHoveredObject = widget.id
         return
       }
@@ -161,8 +161,8 @@ import Combine
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   @MainActor public func mouseDownOrMouseDragged (geometry inGeometry : MouseGestureGeometryContext) {
-    enterTracing ("widgets.user.interface.mouse.dragging") ; defer { exitTracing ("widgets.user.interface.mouse.dragging") }
     if let dragGestureState = self.mDragGestureState { // Mouse dragged event
+      enterTracing ("widgets.user.interface.mouse.dragging") ; defer { exitTracing ("widgets.user.interface.mouse.dragging") }
       var optionalNextState : (any MouseGestureProtocol <TypeDictionary>)? = nil
       dragGestureState.onMouseDragged (
         geometry: inGeometry,
@@ -176,6 +176,7 @@ import Combine
         self.mDragGestureState = nextState
       }
     }else{ // Mouse down event
+      enterTracing ("widgets.user.interface.mouse.down") ; defer { exitTracing ("widgets.user.interface.mouse.down") }
       self.mStartSelectionSet = self.mSelection
       let option = NSEvent.modifierFlags.contains (.option)
       if option {
@@ -209,7 +210,7 @@ import Combine
 
     var widgetUnderMouseID : UUID? = nil
     for widget in self.mWidgetsManager.widgets.reversed () {
-      if widget.contains (localPoint: widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
+      if widget.containsLocalPoint (widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
         widgetUnderMouseID = widget.id
         break
       }
@@ -266,7 +267,7 @@ import Combine
   private func mouseDown_shiftKey (geometry inGeometry : MouseGestureGeometryContext) -> any MouseGestureProtocol <TypeDictionary> {
     var widgetUnderMouseID : UUID? = nil
     for widget in self.mWidgetsManager.widgets.reversed () {
-      if widget.contains (localPoint: widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
+      if widget.containsLocalPoint (widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
         widgetUnderMouseID = widget.id
         break
       }
@@ -303,13 +304,13 @@ import Combine
     }
   //--- Mouse down in a selected object ?
     for widget in self.mWidgetsManager.widgets.reversed () {
-      if self.mSelection.contains (widget.id), widget.contains (localPoint: widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
+      if self.mSelection.contains (widget.id), widget.containsLocalPoint (widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
         return MouseGesture_DragSelection <TypeDictionary> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
       }
     }
   //--- Mouse down in a non selected object ?
     for widget in self.mWidgetsManager.widgets.reversed () {
-      if widget.contains (localPoint: widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
+      if widget.containsLocalPoint (widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
         self.mSelection = [widget.id]
         return MouseGesture_DragSelection <TypeDictionary> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
       }
@@ -340,7 +341,7 @@ import Combine
   //--- CMD + Mouse down in a selected object ?
     for idx in (0 ..< self.mWidgetsManager.count).reversed () {
       let widget = self.mWidgetsManager [widget: idx]
-      if self.mSelection.contains (widget.id), widget.contains (localPoint: widget.orientedOrigin.globalToLocal (inUnalignedPoint)) {
+      if self.mSelection.contains (widget.id), widget.containsLocalPoint (widget.orientedOrigin.globalToLocal (inUnalignedPoint)) {
         return widget.contextualMenu (ContextualMenuExecutor (self, idx))
       }
     }
