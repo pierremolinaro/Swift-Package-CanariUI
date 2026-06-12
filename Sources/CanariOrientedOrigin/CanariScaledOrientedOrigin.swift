@@ -7,6 +7,7 @@ import Synchronization
 
 //--------------------------------------------------------------------------------------------------
 
+fileprivate nonisolated let gLocalBoundingRectCache = Mutex <[UUID : CanariRect]> ([:])
 fileprivate nonisolated let gGlobalOutlineCache = Mutex <[UUID : CanariPath]> ([:])
 fileprivate nonisolated let gGlobalBoundingRectCache = Mutex <[UUID : CanariRect]> ([:])
 
@@ -19,6 +20,7 @@ public struct CanariScaledOrientedOrigin : CustomStringConvertible, Sendable, Eq
   public var mOrigin : CanariPoint {
     didSet {
       if self.mOrigin != oldValue {
+        gLocalBoundingRectCache.withLock { $0 [self.id] = nil }
         gGlobalOutlineCache.withLock { $0 [self.id] = nil }
         gGlobalBoundingRectCache.withLock { $0 [self.id] = nil }
       }
@@ -30,6 +32,7 @@ public struct CanariScaledOrientedOrigin : CustomStringConvertible, Sendable, Eq
   public var mAngle : CanariAngle {
     didSet {
       if self.mAngle != oldValue {
+        gLocalBoundingRectCache.withLock { $0 [self.id] = nil }
         gGlobalOutlineCache.withLock { $0 [self.id] = nil }
         gGlobalBoundingRectCache.withLock { $0 [self.id] = nil }
       }
@@ -41,14 +44,16 @@ public struct CanariScaledOrientedOrigin : CustomStringConvertible, Sendable, Eq
   public var mScale : Double {
     didSet {
       if self.mScale != oldValue {
+        gLocalBoundingRectCache.withLock { $0 [self.id] = nil }
         gGlobalOutlineCache.withLock { $0 [self.id] = nil }
         gGlobalBoundingRectCache.withLock { $0 [self.id] = nil }
       }
     }
   }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   private var mLocalOutline : CanariPath
-  private var mLocalBoundingRect : CanariRect
   private let id : UUID
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -60,15 +65,19 @@ public struct CanariScaledOrientedOrigin : CustomStringConvertible, Sendable, Eq
     self.mAngle = inAngle
     self.mScale = inScale
     self.mLocalOutline = CanariPath ()
-    self.mLocalBoundingRect = CanariRect ()
     self.id = UUID ()
   }
+
+//  isolated deinit { }
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public var localOutline : CanariPath { self.mLocalOutline }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public mutating func setLocalOutline (_ inLocalOutLine : CanariPath) {
     self.mLocalOutline = inLocalOutLine
-    self.mLocalBoundingRect = inLocalOutLine.boundingRect
+    gLocalBoundingRectCache.withLock { $0 [self.id] = nil }
     gGlobalOutlineCache.withLock { $0 [self.id] = nil }
     gGlobalBoundingRectCache.withLock { $0 [self.id] = nil }
 
@@ -76,8 +85,15 @@ public struct CanariScaledOrientedOrigin : CustomStringConvertible, Sendable, Eq
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var localOutline : CanariPath { self.mLocalOutline }
-  public var localBoundingRect : CanariRect { self.mLocalBoundingRect }
+  public var localBoundingRect : CanariRect {
+    if let r = gLocalBoundingRectCache.withLock ({ $0 [self.id] }) {
+      return r
+    }else{
+      let r = self.localToGlobal (self.localOutline).boundingRect
+      gLocalBoundingRectCache.withLock { $0 [self.id] = r }
+      return r
+    }
+  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
