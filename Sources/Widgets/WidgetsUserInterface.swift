@@ -15,23 +15,55 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (withPasteboardType inPasteboardType : NSPasteboard.PasteboardType) {
-    self.mPasteboardType = inPasteboardType
-    super.init ()
-    self.mCancellable = Timer.publish (every: 0.5, on: .main, in: .common)
-    .autoconnect ()
-    .sink { _ in
-      self.mInternalPasteIsEnabled = NSPasteboard.general.string (forType: self.mPasteboardType) != nil
-    }
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
   public var mWidgetsManager = WidgetsManager <TypeDictionary> ()
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private(set) var mSelection = Set <UUID> ()
+//  private(set) var mSelection = PassthroughSubject <Set <UUID>, Never> ()
+//  private var mDelayedSelectionForInspectorView = Set <UUID> ()
+//
+//  private var cancellables = Set<AnyCancellable>()
+
+//  @ObservationIgnored private var updateTask: Task<Void, Never>? = nil
+
+//    func mouseMoved(to position: CGPoint) {
+//      updateTask?.cancel()
+//
+//      updateTask = Task { @MainActor in
+//          try? await Task.sleep(for: .milliseconds(100))
+//          mDelayedSelectionForInspectoeView = mSelection
+//      }
+//  }
+
+//  private var cancellables = Set<AnyCancellable>()
+
+//    init() {
+//        $rawPosition
+//            .throttle(for: .milliseconds(100),
+//                      scheduler: RunLoop.main,
+//                      latest: true)
+//            .assign(to: &$displayedPosition)
+//    }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public init (withPasteboardType inPasteboardType : NSPasteboard.PasteboardType) {
+    self.mPasteboardType = inPasteboardType
+//    self.mDelayedSelectionForInspectorView.throttle (
+//      for: .milliseconds(100),
+//      scheduler: RunLoop.main,
+//      latest: true
+//    )
+//            .assign(to: &$mDelayedSelection)
+
+    super.init ()
+    self.mCancellableTimerForUpdateInternalPasteState = Timer.publish (every: 0.5, on: .main, in: .common)
+    .autoconnect ()
+    .sink { _ in
+      self.mInternalPasteIsEnabled = NSPasteboard.general.string (forType: self.mPasteboardType) != nil
+    }
+  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -542,7 +574,7 @@ import Combine
   // Une solution, faute de mieux : utiliser un timer, démarré dans init
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private var mCancellable : AnyCancellable? = nil
+  private var mCancellableTimerForUpdateInternalPasteState : AnyCancellable? = nil
   private var mInternalPasteIsEnabled = false
 
   public override var pasteIsEnabled : Bool { self.mInternalPasteIsEnabled }
@@ -650,10 +682,26 @@ import Combine
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: Detail view
+  //MARK:
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @MainActor @ViewBuilder func editorDetailViewForCurrentSelection () -> some View {
+//  private var mSelectionForInspector = Set <UUID> ()
+//  private var mUpdateTask : Task <Void, Never>? = nil
+//
+//  private func updateSelectionInspectorView () {
+//    self.mUpdateTask?.cancel ()
+//    self.mUpdateTask = Task {
+//      try? await Task.sleep (for: .milliseconds(100))
+////      self.mSelectionForInspector = self.mSelection
+////      await MainActor.run { self.mSelectionForInspector = self.mSelection }
+//    }
+//  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Inspector view
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  @MainActor @ViewBuilder func inspectorViewForCurrentSelection () -> some View {
     if self.mSelection.isEmpty {
       Text ("Empty Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
     }else if let type = self.commonTypeForSelection () {

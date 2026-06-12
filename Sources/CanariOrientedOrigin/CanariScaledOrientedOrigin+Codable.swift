@@ -19,7 +19,7 @@ extension CanariScaledOrientedOrigin : Codable {
        let y = Int (components [1]),
        let angle = Int (components [2]),
        let scale = Double (components [3]) {
-      self = CanariScaledOrientedOrigin (
+      self.init (
         CanariPoint (x: .cu (x), y: .cu (y)),
         CanariAngle (Double (angle) / 1000.0, in: .degrees),
         scale
@@ -33,8 +33,8 @@ extension CanariScaledOrientedOrigin : Codable {
 
   public func encode (to inEncoder : any Encoder) throws { // Encodable
     var container = inEncoder.singleValueContainer ()
-    let a = Int ((self.mAngle.degrees * 1000.0).rounded ())
-    try container.encode ("\(self.mOrigin.x.cuValue) \(self.mOrigin.y.cuValue) \(a) \(self.mScale)")
+    let angle = Int ((self.mAngle.degrees * 1000.0).rounded ())
+    try container.encode ("\(self.mOrigin.x.cuValue) \(self.mOrigin.y.cuValue) \(angle) \(self.mScale)")
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -3,6 +3,7 @@
 //--------------------------------------------------------------------------------------------------
 
 import SwiftUI
+import Combine
 
 //--------------------------------------------------------------------------------------------------
 
@@ -12,8 +13,7 @@ fileprivate let DEBUG_COLOR = Color.clear // red.opacity (0.15)
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
-                                 DroppedFileType : Transferable> : View {
+public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol> : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -24,8 +24,7 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
   private let mRightVerticalRulerViewBuilder : (VerticalRulerViewContext) -> any View
   private let mContext : CanvasManagerViewContext
   private let mContentSizeWithMargins : CanariSize
-  private let mDroppedFilesHandler : (([DroppedFileType], CanariPoint) -> Void)?
-  private let mDroppedStringsHandler : (([String], CanariPoint) -> Void)?
+  private let mDroppedFilesHandler : (([Data], CanariPoint) -> Void)?
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -58,15 +57,13 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
         topHorizontalRulerViewBuilder inTopHorizontalRulerViewBuilder : @escaping (HorizontalRulerViewContext) -> any View,
         rightVerticalRulerViewBuilder inRightVerticalRulerViewBuilder : @escaping (VerticalRulerViewContext) -> any View,
         bottomHorizontalRulerViewBuilder inBottomHorizontalRulerViewBuilder : @escaping (HorizontalRulerViewContext) -> any View,
-        droppedFilesHandler inDroppedFilesHandler : (([DroppedFileType], CanariPoint) -> Void)?,
-        droppedStringsHandler inDroppedStringsHandler : (([String], CanariPoint) -> Void)?,
+        droppedFilesHandler inDroppedFilesHandler : (([Data], CanariPoint) -> Void)?,
         detailColumnIsExpanded : Bool) {
     self._mCanvasScale = inScale
     self._mAlignedHoverUserLocation = inAlignedHoverUserLocation
     self.mContext = inContext
     self.mWidgetsUserInterface = inWidgetsUserInterface
     self.mDroppedFilesHandler = inDroppedFilesHandler
-    self.mDroppedStringsHandler = inDroppedStringsHandler
     self.mDetailColumnExpanded = detailColumnIsExpanded
     self.mContentSizeWithMargins = CanariSize (
       width: inContext.canvasSize.width + inContext.margins.left + inContext.margins.right,
@@ -90,11 +87,18 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
             HStack (spacing: 0.0) {
               self.leftSpacer ()
               self.contentView (geometry)
-              .dropDestination (for: String.self, isEnabled: true) { items, dropSession in
-                let p = self.unalignedUserPoint (geometry, fromLocationInContentView: dropSession.location)
-                self.mDroppedStringsHandler? (items, p)
-              }
-              .dropDestination (for: DroppedFileType.self, isEnabled: true) { items, dropSession in
+//              .dropDestination (for: String.self, isEnabled: true) { items, dropSession in
+//                let p = self.unalignedUserPoint (geometry, fromLocationInContentView: dropSession.location)
+//                self.mDroppedStringsHandler? (items, p)
+//              }
+//              .onDrop (of: [.pdf, .svg], isTargeted: nil) { (providers : [NSItemProvider]) in
+//                for provider in providers {
+//                  let p = self.unalignedUserPoint (geometry, fromLocationInContentView: provider.containerFrame.origin)
+//                  self.mDroppedFilesHandler? (provider, p)
+//                }
+//                return true
+//              }
+              .dropDestination (for: Data.self, isEnabled: true) { items, dropSession in
                 let p = self.unalignedUserPoint (geometry, fromLocationInContentView: dropSession.location)
                 self.mDroppedFilesHandler? (items, p)
               }
@@ -121,12 +125,23 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
       }
       if self.mDetailColumnExpanded {
         Divider ()
-        self.mWidgetsUserInterface.editorDetailViewForCurrentSelection ()
+        self.mWidgetsUserInterface.inspectorViewForCurrentSelection ()
         .frame (width: 250)
         .controlSize (.small)
+//        .onReceive(
+//          mousePositions.throttle (
+//            for: .milliseconds(100),
+//            scheduler: RunLoop.main,
+//            latest: true
+//          )
+//        ) { position in displayedPosition = position }
       }
     }
   }
+
+//    @State private var displayedPosition = Set <UUID> ()
+//
+//    let mousePositions = PassthroughSubject<Set <UUID>, Never>()
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Spacers
