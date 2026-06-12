@@ -17,6 +17,13 @@ public struct CanariRect : Hashable, CustomStringConvertible, Sendable, Codable 
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public init () {
+    self.origin = .zero
+    self.size = .zero
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public init (origin inOrigin : CanariPoint, size inSize : CanariSize) {
     self.origin = inOrigin
     self.size = inSize

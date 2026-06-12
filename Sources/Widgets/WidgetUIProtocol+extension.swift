@@ -13,7 +13,7 @@ public extension WidgetUIProtocol {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func containsLocalPoint (_ inLocalPoint : CanariPoint) -> Bool {
-    return self.localOutline.contains (inLocalPoint)
+    return self.orientedOrigin.localOutline.contains (inLocalPoint)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -21,7 +21,7 @@ public extension WidgetUIProtocol {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func limitTranslation (_ ioTranslation : inout CanariPoint, _ inCanvasSize : CanariSize) {
-    let r = self.globalBoundingRect
+    let r = self.orientedOrigin.globalBoundingRect
     let newTopRight = r.topRight + ioTranslation
     if newTopRight.x > inCanvasSize.width {
       ioTranslation.x -= newTopRight.x - inCanvasSize.width
