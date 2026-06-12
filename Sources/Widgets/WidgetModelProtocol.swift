@@ -4,6 +4,15 @@
 
 import SwiftUI
 
+//struct MyStruct : Sendable {
+//  var mValue : String = ""
+//
+//  func setValue (_ inArgument : Int) {
+//    var mValue = calculCoûteux (inArgument)
+//  }
+//
+//}
+
 //--------------------------------------------------------------------------------------------------
 
 public protocol WidgetModelProtocol <TypeDictionary> : Identifiable, Sendable, Codable {
@@ -14,6 +23,10 @@ public protocol WidgetModelProtocol <TypeDictionary> : Identifiable, Sendable, C
 
   var id : UUID { get }
   static func documentEncodedTypeName () -> String
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  func duplicated () -> (any WidgetUIProtocol <TypeDictionary>)?
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Local outline path

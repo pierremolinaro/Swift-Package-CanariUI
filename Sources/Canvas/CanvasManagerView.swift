@@ -98,10 +98,6 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
                 let p = self.unalignedUserPoint (geometry, fromLocationInContentView: dropSession.location)
                 self.mDroppedFilesHandler? (items, p)
               }
-//              .dropDestination (for: String.self, isEnabled: true) { items, dropSession in
-//                let p = self.unalignedUserPoint (geometry, fromLocationInContentView: dropSession.location)
-//                self.mDroppedStringsHandler? (items, p)
-//              }
               self.rightSpacer ()
             }
            self.bottomSpacer ()
@@ -352,8 +348,6 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol,
       )
       AnyView (self.mBackgroundViewBuilder (backgroundViewContext))
       Canvas { (context, size) in
-//        self.mUserLocationComputations.mGeometryAvailableWidth = inGeometry.availableWidth
-//        self.mUserLocationComputations.mGeometryAvailableHeight = inGeometry.availableHeight
     //--- ATTENTION ! Il y a un bug dans SwiftUI, on ne peut pas appliquer un y négatif à scaleEffect,
     //    il en suit un comportement imprévisible dans un Canvas. Il faut faire la symétrie en y ici.
         context.translateBy (

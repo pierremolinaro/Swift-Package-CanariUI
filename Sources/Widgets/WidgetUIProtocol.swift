@@ -28,10 +28,6 @@ public protocol WidgetUIProtocol <TypeDictionary> : WidgetModelProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func duplicated () -> (any WidgetUIProtocol <TypeDictionary>)?
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
   var isGraphicallyEmpty : Bool { get }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
