@@ -6,7 +6,12 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariRGBColor : Codable, Sendable, Equatable, RawRepresentable, CanariCodableByString, CustomStringConvertible {
+public struct CanariRGBColor : Codable,
+                               Sendable,
+                               Hashable,
+                               RawRepresentable,
+                               CanariCodableByString,
+                               CustomStringConvertible {
 
   public typealias RawValue = String // RawRepresentable
 
