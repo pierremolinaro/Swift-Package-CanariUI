@@ -47,6 +47,29 @@ public struct CanariStrokeStyle : Equatable, CanariCodableByString, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public init? (widthString inWidthString : String,
+                linejoinString inLinejoinString: String,
+                lineCapString inLineCapString : String) {
+    if let lineWidth_px = Double (inWidthString) {
+      if inLineCapString == "round" {
+        self.lineCapStyle = .round
+      }else{
+        fatalError ("inLinejoinString not handled yet")
+      }
+      if inLinejoinString == "round" {
+        self.lineJoinStyle = .round
+      }else{
+        fatalError ("inLinejoinString not handled yet")
+      }
+      self.lineWidth = CanariLength.px (lineWidth_px)
+      self.miterLimit = CanariLength.px (10.0)
+    }else{
+      return nil
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public func canariCodableEncodedString () -> String {
     var str = "\(self.lineCapStyle.rawValue) \(self.lineJoinStyle.rawValue) "
     str += self.lineWidth.canariCodableEncodedString ()
