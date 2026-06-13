@@ -280,6 +280,14 @@ public struct CanariAffinity : CustomStringConvertible, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public func scaling (x inX : Double, y inY : Double) -> CanariAffinity {
+    var af = self
+    af.scale (x: inX, y: inY)
+    return af
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 }
 
 //--------------------------------------------------------------------------------------------------

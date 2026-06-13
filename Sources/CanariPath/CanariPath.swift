@@ -150,6 +150,13 @@ public struct CanariPath : Equatable, CustomStringConvertible, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public mutating func transformInPlace (by inAffinity : CanariAffinity) {
+    let af = inAffinity.cgAffineTransform
+    self.mPath = self.mPath.applying (af)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public func transformed (byMoving inTranslation : CanariPoint = .zero,
                            zooming inScale : Double = 1.0) -> CanariPath {
     let af = CGAffineTransform (scaleX: inScale, y: inScale)
@@ -289,211 +296,214 @@ public struct CanariPath : Equatable, CustomStringConvertible, Sendable {
   //--------------------------------------------------------------------------------------------------
 
   public init? (fromSVGPathString inString : String) {
-    if inString.isEmpty {
-      return nil
-    }else{
-      self.init ()
-      var currentPoint = CGPoint ()
-      let scanner = Scanner (string: inString)
-      scanner.caseSensitive = true
-      while !scanner.isAtEnd {
-        if scanner.scanString ("M") != nil { // Move to point absolute
-          do{
-            let x = scanner.scanDouble ()!
-            _ = scanner.scanString (",")
-            let y = scanner.scanDouble ()!
-            // print ("  M \(x) \(y)")
-            currentPoint = NSPoint (x: x, y: y)
-            self.move (to: currentPoint)
-          }
-          while let x2 = scanner.scanDouble () { // Line to point absolute
-            _ = scanner.scanString (",")
-            let y2 = scanner.scanDouble ()!
-            // print ("   +L \(x2) \(y2)")
-            currentPoint = NSPoint (x: x2, y: y2)
-            self.addLine (to: currentPoint)
-          }
-        }else if scanner.scanString ("m") != nil { // Move to point
-          do{
-            let dx = scanner.scanDouble ()!
-            _ = scanner.scanString (",")
-            let dy = scanner.scanDouble ()!
-            // print ("  m \(dx) \(dy)")
-            currentPoint.x += dx
-            currentPoint.y += dy
-            self.move (to: currentPoint)
-          }
-          while let dx2 = scanner.scanDouble () {
-            _ = scanner.scanString (",")
-            let dy2 = scanner.scanDouble ()!
-            // print ("   +l \(dx2) \(dy2)")
-            currentPoint.x += dx2
-            currentPoint.y += dy2
-            self.addLine (to: currentPoint)
-          }
-        }else if scanner.scanString ("L") != nil { // Line to point
-          do{
-            let x = scanner.scanDouble ()!
-            _ = scanner.scanString (",")
-            let y = scanner.scanDouble ()!
-            // print ("  L \(x) \(y)")
-            currentPoint = NSPoint (x: x, y: y)
-            self.addLine (to: currentPoint)
-          }
-          while let x2 = scanner.scanDouble () {
-            _ = scanner.scanString (",")
-            let y2 = scanner.scanDouble ()!
-            // print ("   +L \(x2) \(y2)")
-            self.addLine (to: NSPoint (x: x2, y: y2))
-          }
-        }else if scanner.scanString ("l") != nil { // Line to point
-          do{
-            let dx = scanner.scanDouble ()!
-            _ = scanner.scanString (",")
-            let dy = scanner.scanDouble ()!
-            // print ("  l \(dx) \(dy)")
-            currentPoint.x += dx
-            currentPoint.y += dy
-            self.addLine (to: currentPoint)
-          }
-          while let dx = scanner.scanDouble () {
-            _ = scanner.scanString (",")
-            let dy = scanner.scanDouble ()!
-            // print ("   +l \(dx) \(dy)")
-            currentPoint.x += dx
-            currentPoint.y += dy
-            self.addLine (to: currentPoint)
-          }
-        }else if scanner.scanString ("C") != nil { // Cubic to point
-          do{
-            let ctrl1X = scanner.scanDouble ()!
-            _ = scanner.scanString (",")
-            let ctrl1Y = scanner.scanDouble ()!
-            let ctrl2X = scanner.scanDouble ()!
-            _ = scanner.scanString (",")
-            let ctrl2Y = scanner.scanDouble ()!
-            let endX = scanner.scanDouble ()!
-            _ = scanner.scanString (",")
-            let endY = scanner.scanDouble ()!
-            // print ("  C \(endX) \(endY) \(ctrl1X) \(ctrl1Y) \(ctrl2X) \(ctrl2Y)")
-            currentPoint = NSPoint (x: endX, y: endY)
-            self.addCurve (
-              to: currentPoint,
-              control1: NSPoint (x: ctrl1X, y: ctrl1Y),
-              control2: NSPoint (x: ctrl2X, y: ctrl2Y)
-            )
-          }
-          while let ctrl1X = scanner.scanDouble () {
-            _ = scanner.scanString (",")
-            let ctrl1Y = scanner.scanDouble ()!
-            let ctrl2X = scanner.scanDouble ()!
-            _ = scanner.scanString (",")
-            let ctrl2Y = scanner.scanDouble ()!
-            let endX = scanner.scanDouble ()!
-            _ = scanner.scanString (",")
-            let endY = scanner.scanDouble ()!
-            // print ("   +C \(endX) \(endY) \(ctrl1X) \(ctrl1Y) \(ctrl2X) \(ctrl2Y)")
-            self.addCurve (
-              to: NSPoint (x: endX, y: endY),
-              control1: NSPoint (x: ctrl1X, y: ctrl1Y),
-              control2: NSPoint (x: ctrl2X, y: ctrl2Y)
-            )
-          }
-        }else if scanner.scanString ("c") != nil { // Cubic to point
-          do{
-            let ctrl1X = scanner.scanDouble ()!
-            _ = scanner.scanString (",")
-            let ctrl1Y = scanner.scanDouble ()!
-            let ctrl2X = scanner.scanDouble ()!
-            _ = scanner.scanString (",")
-            let ctrl2Y = scanner.scanDouble ()!
-            let endX = scanner.scanDouble ()!
-            _ = scanner.scanString (",")
-            let endY = scanner.scanDouble ()!
-            // print ("  c \(endX) \(endY) \(ctrl1X) \(ctrl1Y) \(ctrl2X) \(ctrl2Y)")
-            currentPoint.x += endX
-            currentPoint.y += endY
-            self.addCurve (
-              to: currentPoint,
-              control1: NSPoint (x: currentPoint.x + ctrl1X, y: currentPoint.y + ctrl1Y),
-              control2: NSPoint (x: currentPoint.x + ctrl2X, y: currentPoint.y + ctrl2Y)
-            )
-          }
-          while let ctrl1X = scanner.scanDouble () {
-            _ = scanner.scanString (",")
-            let ctrl1Y = scanner.scanDouble ()!
-            let ctrl2X = scanner.scanDouble ()!
-            _ = scanner.scanString (",")
-            let ctrl2Y = scanner.scanDouble ()!
-            let endX = scanner.scanDouble ()!
-            _ = scanner.scanString (",")
-            let endY = scanner.scanDouble ()!
-            // print ("   +c \(endX) \(endY) \(ctrl1X) \(ctrl1Y) \(ctrl2X) \(ctrl2Y)")
-            currentPoint.x += endX
-            currentPoint.y += endY
-            self.addCurve (
-              to: currentPoint,
-              control1: NSPoint (x: currentPoint.x + ctrl1X, y: currentPoint.y + ctrl1Y),
-              control2: NSPoint (x: currentPoint.x + ctrl2X, y: currentPoint.y + ctrl2Y)
-            )
-          }
-        }else if scanner.scanString ("H") != nil { // Horizontal line to absolute X
-          do{
-            let x = scanner.scanDouble ()!
-            // print ("  H \(x)")
-            currentPoint.x = x
-            self.addLine (to: currentPoint)
-          }
-          while let x = scanner.scanDouble () {
-            // print ("   +H \(x)")
-            currentPoint.x = x
-            self.addLine (to: currentPoint)
-          }
-        }else if scanner.scanString ("h") != nil { // Horizontal line to relative X
-          do{
-            let dx = scanner.scanDouble ()!
-            // print ("  h \(dx)")
-            currentPoint.x += dx
-            self.addLine (to: currentPoint)
-          }
-          while let dx = scanner.scanDouble () {
-            // print ("   +h \(dx)")
-            currentPoint.x += dx
-            self.addLine (to: currentPoint)
-          }
-        }else if scanner.scanString ("V") != nil { // Vertical to point
-          do{
-            let y = scanner.scanDouble ()!
-            // print ("  V \(y)")
-            currentPoint.y = y
-            self.addLine (to: currentPoint)
-          }
-          while let y = scanner.scanDouble () {
-            // print ("   +V \(y)")
-            currentPoint.y = y
-            self.addLine (to: currentPoint)
-          }
-        }else if scanner.scanString ("v") != nil { // Vertical to point
-          do{
-            let dy = scanner.scanDouble ()!
-            // print ("  v \(dy)")
-            currentPoint.y += dy
-            self.addLine (to: currentPoint)
-          }
-          while let dy = scanner.scanDouble () {
-            // print ("   +v \(dy)")
-            currentPoint.y += dy
-            self.addLine (to: currentPoint)
-          }
-        }else if scanner.scanString ("Z") != nil { // Close path
-          self.close ()
-        }else if scanner.scanString ("z") != nil { // Close path
-          self.close ()
-        }else{
-          fatalError ("index \(scanner.currentIndex)")
+    guard !inString.isEmpty else { return nil }
+    self.init ()
+    var currentPoint = CGPoint ()
+    let scanner = Scanner (string: inString)
+    scanner.caseSensitive = true
+    while !scanner.isAtEnd {
+      if scanner.scanString ("M") != nil { // Move to point absolute
+        do{
+          let x = scanner.scanDouble ()!
+          _ = scanner.scanString (",")
+          let y = scanner.scanDouble ()!
+          // print ("  M \(x) \(y)")
+          currentPoint = NSPoint (x: x, y: y)
+          self.move (to: currentPoint)
         }
+        while let x2 = scanner.scanDouble () { // Line to point absolute
+          _ = scanner.scanString (",")
+          let y2 = scanner.scanDouble ()!
+          // print ("   +L \(x2) \(y2)")
+          currentPoint = NSPoint (x: x2, y: y2)
+          self.addLine (to: currentPoint)
+        }
+      }else if scanner.scanString ("m") != nil { // Move to point
+        do{
+          let dx = scanner.scanDouble ()!
+          _ = scanner.scanString (",")
+          let dy = scanner.scanDouble ()!
+          // print ("  m \(dx) \(dy)")
+          currentPoint.x += dx
+          currentPoint.y += dy
+          self.move (to: currentPoint)
+        }
+        while let dx2 = scanner.scanDouble () {
+          _ = scanner.scanString (",")
+          let dy2 = scanner.scanDouble ()!
+          // print ("   +l \(dx2) \(dy2)")
+          currentPoint.x += dx2
+          currentPoint.y += dy2
+          self.addLine (to: currentPoint)
+        }
+      }else if scanner.scanString ("L") != nil { // Line to point
+        do{
+          let x = scanner.scanDouble ()!
+          _ = scanner.scanString (",")
+          let y = scanner.scanDouble ()!
+          // print ("  L \(x) \(y)")
+          currentPoint = NSPoint (x: x, y: y)
+          self.addLine (to: currentPoint)
+        }
+        while let x2 = scanner.scanDouble () {
+          _ = scanner.scanString (",")
+          let y2 = scanner.scanDouble ()!
+          // print ("   +L \(x2) \(y2)")
+          self.addLine (to: NSPoint (x: x2, y: y2))
+        }
+      }else if scanner.scanString ("l") != nil { // Line to point
+        do{
+          let dx = scanner.scanDouble ()!
+          _ = scanner.scanString (",")
+          let dy = scanner.scanDouble ()!
+          // print ("  l \(dx) \(dy)")
+          currentPoint.x += dx
+          currentPoint.y += dy
+          self.addLine (to: currentPoint)
+        }
+        while let dx = scanner.scanDouble () {
+          _ = scanner.scanString (",")
+          let dy = scanner.scanDouble ()!
+          // print ("   +l \(dx) \(dy)")
+          currentPoint.x += dx
+          currentPoint.y += dy
+          self.addLine (to: currentPoint)
+        }
+      }else if scanner.scanString ("C") != nil { // Cubic to point
+        do{
+          let ctrl1X = scanner.scanDouble ()!
+          _ = scanner.scanString (",")
+          let ctrl1Y = scanner.scanDouble ()!
+          let ctrl2X = scanner.scanDouble ()!
+          _ = scanner.scanString (",")
+          let ctrl2Y = scanner.scanDouble ()!
+          let endX = scanner.scanDouble ()!
+          _ = scanner.scanString (",")
+          let endY = scanner.scanDouble ()!
+          // print ("  C \(endX) \(endY) \(ctrl1X) \(ctrl1Y) \(ctrl2X) \(ctrl2Y)")
+          currentPoint = NSPoint (x: endX, y: endY)
+          self.addCurve (
+            to: currentPoint,
+            control1: NSPoint (x: ctrl1X, y: ctrl1Y),
+            control2: NSPoint (x: ctrl2X, y: ctrl2Y)
+          )
+        }
+        while let ctrl1X = scanner.scanDouble () {
+          _ = scanner.scanString (",")
+          let ctrl1Y = scanner.scanDouble ()!
+          let ctrl2X = scanner.scanDouble ()!
+          _ = scanner.scanString (",")
+          let ctrl2Y = scanner.scanDouble ()!
+          let endX = scanner.scanDouble ()!
+          _ = scanner.scanString (",")
+          let endY = scanner.scanDouble ()!
+          // print ("   +C \(endX) \(endY) \(ctrl1X) \(ctrl1Y) \(ctrl2X) \(ctrl2Y)")
+          self.addCurve (
+            to: NSPoint (x: endX, y: endY),
+            control1: NSPoint (x: ctrl1X, y: ctrl1Y),
+            control2: NSPoint (x: ctrl2X, y: ctrl2Y)
+          )
+        }
+      }else if scanner.scanString ("c") != nil { // Cubic to point
+        do{
+          let ctrl1X = scanner.scanDouble ()!
+          _ = scanner.scanString (",")
+          let ctrl1Y = scanner.scanDouble ()!
+          let ctrl2X = scanner.scanDouble ()!
+          _ = scanner.scanString (",")
+          let ctrl2Y = scanner.scanDouble ()!
+          let endX = scanner.scanDouble ()!
+          _ = scanner.scanString (",")
+          let endY = scanner.scanDouble ()!
+          // print ("  c \(endX) \(endY) \(ctrl1X) \(ctrl1Y) \(ctrl2X) \(ctrl2Y)")
+          currentPoint.x += endX
+          currentPoint.y += endY
+          self.addCurve (
+            to: currentPoint,
+            control1: NSPoint (x: currentPoint.x + ctrl1X, y: currentPoint.y + ctrl1Y),
+            control2: NSPoint (x: currentPoint.x + ctrl2X, y: currentPoint.y + ctrl2Y)
+          )
+        }
+        while let ctrl1X = scanner.scanDouble () {
+          _ = scanner.scanString (",")
+          let ctrl1Y = scanner.scanDouble ()!
+          let ctrl2X = scanner.scanDouble ()!
+          _ = scanner.scanString (",")
+          let ctrl2Y = scanner.scanDouble ()!
+          let endX = scanner.scanDouble ()!
+          _ = scanner.scanString (",")
+          let endY = scanner.scanDouble ()!
+          // print ("   +c \(endX) \(endY) \(ctrl1X) \(ctrl1Y) \(ctrl2X) \(ctrl2Y)")
+          currentPoint.x += endX
+          currentPoint.y += endY
+          self.addCurve (
+            to: currentPoint,
+            control1: NSPoint (x: currentPoint.x + ctrl1X, y: currentPoint.y + ctrl1Y),
+            control2: NSPoint (x: currentPoint.x + ctrl2X, y: currentPoint.y + ctrl2Y)
+          )
+        }
+      }else if scanner.scanString ("H") != nil { // Horizontal line to absolute X
+        do{
+          let x = scanner.scanDouble ()!
+          // print ("  H \(x)")
+          currentPoint.x = x
+          self.addLine (to: currentPoint)
+        }
+        while let x = scanner.scanDouble () {
+          // print ("   +H \(x)")
+          currentPoint.x = x
+          self.addLine (to: currentPoint)
+        }
+      }else if scanner.scanString ("h") != nil { // Horizontal line to relative X
+        do{
+          let dx = scanner.scanDouble ()!
+          // print ("  h \(dx)")
+          currentPoint.x += dx
+          self.addLine (to: currentPoint)
+        }
+        while let dx = scanner.scanDouble () {
+          // print ("   +h \(dx)")
+          currentPoint.x += dx
+          self.addLine (to: currentPoint)
+        }
+      }else if scanner.scanString ("V") != nil { // Vertical to point
+        do{
+          let y = scanner.scanDouble ()!
+          // print ("  V \(y)")
+          currentPoint.y = y
+          self.addLine (to: currentPoint)
+        }
+        while let y = scanner.scanDouble () {
+          // print ("   +V \(y)")
+          currentPoint.y = y
+          self.addLine (to: currentPoint)
+        }
+      }else if scanner.scanString ("v") != nil { // Vertical to point
+        do{
+          let dy = scanner.scanDouble ()!
+          // print ("  v \(dy)")
+          currentPoint.y += dy
+          self.addLine (to: currentPoint)
+        }
+        while let dy = scanner.scanDouble () {
+          // print ("   +v \(dy)")
+          currentPoint.y += dy
+          self.addLine (to: currentPoint)
+        }
+      }else if scanner.scanString ("Z") != nil { // Close path
+        self.close ()
+      }else if scanner.scanString ("z") != nil { // Close path
+        self.close ()
+      }else{
+        fatalError ("index \(scanner.currentIndex)")
       }
     }
+  // Perform a vertical symetry (SVG y goes from top to bottom)
+    let midY = self.boundingRect.midY
+    let af = CanariAffinity (translationByX: .zero, byY: midY)
+      .scaling (x: 1.0, y: -1.0)
+      .translating (x: .zero, y: -midY)
+    self.transformInPlace (by: af)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

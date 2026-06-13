@@ -33,6 +33,30 @@ public struct CanariRGBColor : Codable,
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public init? (svgColorString inString : String) { // "svg(nnn, nnn, nnn)"
+    if inString.hasPrefix ("rgb("), inString.hasSuffix (")") {
+      var s = inString
+      s.removeFirst (4)
+      s.removeLast (1)
+      s.removeAll { $0 == " " }
+      let components = s.components (separatedBy: ",")
+      if components.count == 3,
+         let red = UInt8 (components [0]),
+         let green = UInt8 (components [1]),
+         let blue = UInt8 (components [2]) {
+        self.red = red
+        self.green = green
+        self.blue = blue
+      }else{
+        return nil
+      }
+    }else{
+      return nil
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public init (nsColor inColor : NSColor) {
     let rgbColor : NSColor = inColor.usingColorSpace (.genericRGB)!
     self.red = UInt8 (rgbColor.redComponent * 255.0)
