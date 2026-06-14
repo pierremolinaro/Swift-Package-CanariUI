@@ -6,7 +6,7 @@ import Foundation
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariAffinity : CustomStringConvertible, Sendable {
+public struct CanariAffinity : CustomStringConvertible, Sendable, Equatable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -36,6 +36,15 @@ public struct CanariAffinity : CustomStringConvertible, Sendable {
     self.mAffineTransform = AffineTransform (
       translationByX: inX.pxValue,
       byY: inY.pxValue
+    )
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public init (translation inPoint : CanariPoint) {
+    self.mAffineTransform = AffineTransform (
+      translationByX: inPoint.x.pxValue,
+      byY: inPoint.y.pxValue
     )
   }
 
@@ -244,6 +253,14 @@ public struct CanariAffinity : CustomStringConvertible, Sendable {
                            y inDy : CanariLength = .zero) -> CanariAffinity {
     var af = self
     af.translate (x: inDx, y: inDy)
+    return af
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func translating (_ inPoint : CanariPoint) -> CanariAffinity {
+    var af = self
+    af.translate (x: inPoint.x, y: inPoint.y)
     return af
   }
 

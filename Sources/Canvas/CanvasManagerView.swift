@@ -10,6 +10,7 @@ import Combine
 fileprivate let BACK_DELETE_KEY_EQ = KeyEquivalent (Character (Unicode.Scalar (0x7F)!))
 fileprivate let PASTEBOARD_TYPE = NSPasteboard.PasteboardType (rawValue: Bundle.main.bundleIdentifier! + ".widgets")
 fileprivate let DEBUG_COLOR = Color.clear // red.opacity (0.15)
+fileprivate let ANCHOR_FOR_INITIAL_SCROLL = "bottom.left.for.initial.scroll"
 
 //--------------------------------------------------------------------------------------------------
 
@@ -84,7 +85,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
               self.topSpacer ()
               HStack (spacing: 0.0) {
                 self.leftSpacer ()
-                self.contentView (geometry).id ("bottom.left.for.initial.scroll")
+                self.contentView (geometry).id (ANCHOR_FOR_INITIAL_SCROLL)
   //              .dropDestination (for: String.self, isEnabled: true) { items, dropSession in
   //                let p = self.unalignedUserPoint (geometry, fromLocationInContentView: dropSession.location)
   //                self.mDroppedStringsHandler? (items, p)
@@ -124,7 +125,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
           }
         }
         .defaultScrollAnchor (.topLeading) // Aligne le contenu en haut à gauche
-        .onAppear { proxy.scrollTo ("bottom.left.for.initial.scroll", anchor: .bottomLeading) }
+        .onAppear { proxy.scrollTo (ANCHOR_FOR_INITIAL_SCROLL, anchor: .bottomLeading) }
       }
       .onAppear {
         self.mWidgetsUserInterface.setUndoManager (self.undoManager)

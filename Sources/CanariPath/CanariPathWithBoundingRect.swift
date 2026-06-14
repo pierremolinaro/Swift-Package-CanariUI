@@ -17,7 +17,7 @@ public struct CanariPathWithBoundingRect : Sendable, Equatable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (_ inPath : CanariPath) {
+  public init (_ inPath : CanariPath = CanariPath ()) {
     self.path = inPath
     self.boundingRect = inPath.boundingRect
   }
