@@ -28,6 +28,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  @Binding private var mCenterOfVisibleRectUserLocation : CanariPoint
   @State private var mScrollPosition = CanariPoint.zero
   @Binding private var mAlignedHoverUserLocation : CanariPoint?
   @State private var mUnalignedHoverUserLocation : CanariPoint? = nil
@@ -53,7 +54,8 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
         topHorizontalRulerViewBuilder inTopHorizontalRulerViewBuilder : @escaping (HorizontalRulerViewContext) -> any View,
         rightVerticalRulerViewBuilder inRightVerticalRulerViewBuilder : @escaping (VerticalRulerViewContext) -> any View,
         bottomHorizontalRulerViewBuilder inBottomHorizontalRulerViewBuilder : @escaping (HorizontalRulerViewContext) -> any View,
-        droppedFilesHandler inDroppedFilesHandler : (([Data], CanariPoint) -> Void)?) {
+        droppedFilesHandler inDroppedFilesHandler : (([Data], CanariPoint) -> Void)?,
+        centerOfVisibleRectUserLocation inCenterOfVisibleRectUserLocation : Binding <CanariPoint>) {
     self._mCanvasScale = inScale
     self._mAlignedHoverUserLocation = inAlignedHoverUserLocation
     self.mContext = inContext
@@ -68,51 +70,61 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
     self.mRightVerticalRulerViewBuilder = inRightVerticalRulerViewBuilder
     self.mBottomHorizontalRulerViewBuilder = inBottomHorizontalRulerViewBuilder
     self.mTopHorizontalRulerViewBuilder = inTopHorizontalRulerViewBuilder
+    self._mCenterOfVisibleRectUserLocation = inCenterOfVisibleRectUserLocation
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   @ViewBuilder public var body : some View {
     HStack (spacing: 0) {
-      GeometryReader { geometry in
-        ScrollView ([.horizontal, .vertical]) {
-          VStack (spacing: 0.0) {
-            self.topSpacer ()
-            HStack (spacing: 0.0) {
-              self.leftSpacer ()
-              self.contentView (geometry)
-//              .dropDestination (for: String.self, isEnabled: true) { items, dropSession in
-//                let p = self.unalignedUserPoint (geometry, fromLocationInContentView: dropSession.location)
-//                self.mDroppedStringsHandler? (items, p)
-//              }
-//              .onDrop (of: [.pdf, .svg], isTargeted: nil) { (providers : [NSItemProvider]) in
-//                for provider in providers {
-//                  let p = self.unalignedUserPoint (geometry, fromLocationInContentView: provider.containerFrame.origin)
-//                  self.mDroppedFilesHandler? (provider, p)
-//                }
-//                return true
-//              }
-              .dropDestination (for: Data.self, isEnabled: true) { items, dropSession in
-                let p = self.unalignedUserPoint (geometry, fromLocationInContentView: dropSession.location)
-                self.mDroppedFilesHandler? (items, p)
+      ScrollViewReader { proxy in
+        GeometryReader { geometry in
+          ScrollView ([.horizontal, .vertical]) {
+            VStack (spacing: 0.0) {
+              self.topSpacer ()
+              HStack (spacing: 0.0) {
+                self.leftSpacer ()
+                self.contentView (geometry).id ("bottom.left.for.initial.scroll")
+  //              .dropDestination (for: String.self, isEnabled: true) { items, dropSession in
+  //                let p = self.unalignedUserPoint (geometry, fromLocationInContentView: dropSession.location)
+  //                self.mDroppedStringsHandler? (items, p)
+  //              }
+  //              .onDrop (of: [.pdf, .svg], isTargeted: nil) { (providers : [NSItemProvider]) in
+  //                for provider in providers {
+  //                  let p = self.unalignedUserPoint (geometry, fromLocationInContentView: provider.containerFrame.origin)
+  //                  self.mDroppedFilesHandler? (provider, p)
+  //                }
+  //                return true
+  //              }
+                .dropDestination (for: Data.self, isEnabled: true) { items, dropSession in
+                  let p = self.unalignedUserPoint (geometry, fromLocationInContentView: dropSession.location)
+                  self.mDroppedFilesHandler? (items, p)
+                }
+                self.rightSpacer ()
               }
-              self.rightSpacer ()
+             self.bottomSpacer ()
             }
-           self.bottomSpacer ()
+          }
+          .onScrollPositionChange (self.$mScrollPosition, self.mCanvasScale)
+          .onScrollGeometryChange (for: CGRect.self, of: \.visibleRect) { _, newRect in
+            self.mCenterOfVisibleRectUserLocation = self.alignedUserPoint (
+              geometry,
+              fromLocationInContentView: CGPoint (x: newRect.midX, y: newRect.midY)
+            )
+          }
+          .overlay {
+            self.rightVerticalRulerView (geometry)
+            self.leftVerticalRulerView (geometry)
+            self.topHorizontalRulerView (geometry)
+            self.bottomHorizontalRulerView (geometry)
+            self.topLeftCornerView ()
+            self.topRightCornerView (geometry)
+            self.bottomRightCornerView (geometry)
+            self.bottomLeftCornerView (geometry)
           }
         }
-        .onScrollPositionChange (self.$mScrollPosition, self.mCanvasScale)
         .defaultScrollAnchor (.topLeading) // Aligne le contenu en haut à gauche
-        .overlay {
-          self.rightVerticalRulerView (geometry)
-          self.leftVerticalRulerView (geometry)
-          self.topHorizontalRulerView (geometry)
-          self.bottomHorizontalRulerView (geometry)
-          self.topLeftCornerView ()
-          self.topRightCornerView (geometry)
-          self.bottomRightCornerView (geometry)
-          self.bottomLeftCornerView (geometry)
-        }
+        .onAppear { proxy.scrollTo ("bottom.left.for.initial.scroll", anchor: .bottomLeading) }
       }
       .onAppear {
         self.mWidgetsUserInterface.setUndoManager (self.undoManager)
@@ -582,6 +594,8 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
     )
   }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Point User Location
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private func alignedUserPoint (_ inGeometry : GeometryProxy,

@@ -274,7 +274,7 @@ public struct CanariPath : Equatable, CustomStringConvertible, Sendable {
 
   public var boundingRect : CanariRect {
 //    enterTracing ("path.bounding.rect") ; defer { exitTracing ("path.bounding.rect") }
-    return CanariRect (px: self.mPath.boundingRect)
+    return self.mPath.isEmpty ? CanariRect () : CanariRect (px: self.mPath.boundingRect)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -3,13 +3,6 @@
 //--------------------------------------------------------------------------------------------------
 
 import SwiftUI
-import Synchronization
-
-//--------------------------------------------------------------------------------------------------
-
-fileprivate nonisolated let gLocalBoundingRectCache = Mutex <[UUID : CanariRect]> ([:])
-fileprivate nonisolated let gGlobalOutlineCache = Mutex <[UUID : CanariPath]> ([:])
-fileprivate nonisolated let gGlobalBoundingRectCache = Mutex <[UUID : CanariRect]> ([:])
 
 //--------------------------------------------------------------------------------------------------
 
@@ -20,9 +13,7 @@ public struct CanariScaledOrientedOrigin : CustomStringConvertible, Sendable, Eq
   public var mOrigin : CanariPoint {
     didSet {
       if self.mOrigin != oldValue {
-        gLocalBoundingRectCache.withLock { $0 [self.id] = nil }
-        gGlobalOutlineCache.withLock { $0 [self.id] = nil }
-        gGlobalBoundingRectCache.withLock { $0 [self.id] = nil }
+        self.mGlobalOutlineAndBoundingRect = CanariPathWithBoundingRect (self.localToGlobal (self.mLocalOutlineAndBoundingRect.path))
       }
     }
   }
@@ -32,9 +23,7 @@ public struct CanariScaledOrientedOrigin : CustomStringConvertible, Sendable, Eq
   public var mAngle : CanariAngle {
     didSet {
       if self.mAngle != oldValue {
-        gLocalBoundingRectCache.withLock { $0 [self.id] = nil }
-        gGlobalOutlineCache.withLock { $0 [self.id] = nil }
-        gGlobalBoundingRectCache.withLock { $0 [self.id] = nil }
+        self.mGlobalOutlineAndBoundingRect = CanariPathWithBoundingRect (self.localToGlobal (self.mLocalOutlineAndBoundingRect.path))
       }
     }
   }
@@ -44,17 +33,15 @@ public struct CanariScaledOrientedOrigin : CustomStringConvertible, Sendable, Eq
   public var mScale : Double {
     didSet {
       if self.mScale != oldValue {
-        gLocalBoundingRectCache.withLock { $0 [self.id] = nil }
-        gGlobalOutlineCache.withLock { $0 [self.id] = nil }
-        gGlobalBoundingRectCache.withLock { $0 [self.id] = nil }
+        self.mGlobalOutlineAndBoundingRect = CanariPathWithBoundingRect (self.localToGlobal (self.mLocalOutlineAndBoundingRect.path))
       }
     }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private var mLocalOutline : CanariPath
-  private let id : UUID
+  private var mLocalOutlineAndBoundingRect : CanariPathWithBoundingRect
+  private var mGlobalOutlineAndBoundingRect : CanariPathWithBoundingRect
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -64,59 +51,37 @@ public struct CanariScaledOrientedOrigin : CustomStringConvertible, Sendable, Eq
     self.mOrigin = inOrigin
     self.mAngle = inAngle
     self.mScale = inScale
-    self.mLocalOutline = CanariPath ()
-    self.id = UUID ()
+    self.mLocalOutlineAndBoundingRect = CanariPathWithBoundingRect (CanariPath ())
+    self.mGlobalOutlineAndBoundingRect = CanariPathWithBoundingRect (CanariPath ())
   }
 
-//  isolated deinit { }
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var localOutline : CanariPath { self.mLocalOutline }
+  public var localOutline : CanariPath { self.mLocalOutlineAndBoundingRect.path }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public mutating func setLocalOutline (_ inLocalOutLine : CanariPath) {
-    self.mLocalOutline = inLocalOutLine
-    gLocalBoundingRectCache.withLock { $0 [self.id] = nil }
-    gGlobalOutlineCache.withLock { $0 [self.id] = nil }
-    gGlobalBoundingRectCache.withLock { $0 [self.id] = nil }
-
+    self.mLocalOutlineAndBoundingRect = CanariPathWithBoundingRect (inLocalOutLine)
+    self.mGlobalOutlineAndBoundingRect = CanariPathWithBoundingRect (self.localToGlobal (self.mLocalOutlineAndBoundingRect.path))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var localBoundingRect : CanariRect {
-    if let r = gLocalBoundingRectCache.withLock ({ $0 [self.id] }) {
-      return r
-    }else{
-      let r = self.localToGlobal (self.localOutline).boundingRect
-      gLocalBoundingRectCache.withLock { $0 [self.id] = r }
-      return r
-    }
+    self.mLocalOutlineAndBoundingRect.boundingRect
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var globalOutline : CanariPath {
-    if let path = gGlobalOutlineCache.withLock ({ $0 [self.id] }) {
-      return path
-    }else{
-      let path = self.localToGlobal (self.localOutline)
-      gGlobalOutlineCache.withLock { $0 [self.id] = path }
-      return path
-    }
+    self.mGlobalOutlineAndBoundingRect.path
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var globalBoundingRect : CanariRect {
-    if let r = gGlobalBoundingRectCache.withLock ({ $0 [self.id] }) {
-      return r
-    }else{
-      let r = self.localToGlobal (self.localOutline).boundingRect
-      gGlobalBoundingRectCache.withLock { $0 [self.id] = r }
-      return r
-    }
+    self.mGlobalOutlineAndBoundingRect.boundingRect
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -1,21 +1,26 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 26/03/2026.
+//  Created by Pierre Molinaro on 14/06/2026.
 //--------------------------------------------------------------------------------------------------
 
 import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
+// Computing bounding rect is costly, using this struct enables computing it once
+//--------------------------------------------------------------------------------------------------
 
-public protocol DocumentWidgetsDescriptionProtocol {
-
-  associatedtype WidgetTypesDescription : DocumentWidgetsDescriptionProtocol
+public struct CanariPathWithBoundingRect : Sendable, Equatable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  nonisolated static var widgetTypeArray : [any WidgetUIProtocol <WidgetTypesDescription>.Type] { get }
+  public let path : CanariPath
+  public let boundingRect : CanariRect
 
-//  @MainActor static func limitTranslation (_ ioTranslation : inout CanariPoint, _ inCanvasSize : CanariSize)
-//  static func limitTranslation2 ()
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public init (_ inPath : CanariPath) {
+    self.path = inPath
+    self.boundingRect = inPath.boundingRect
+  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
