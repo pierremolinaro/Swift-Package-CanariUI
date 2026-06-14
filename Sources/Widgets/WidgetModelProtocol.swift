@@ -6,9 +6,9 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public protocol WidgetModelProtocol <TypeDictionary> : Identifiable, Sendable, Codable {
+public protocol WidgetModelProtocol <WidgetTypesDescription> : Identifiable, Sendable, Codable {
 
-  associatedtype TypeDictionary : WidgetTypeArrayProtocol
+  associatedtype WidgetTypesDescription : DocumentWidgetsDescriptionProtocol
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -17,7 +17,7 @@ public protocol WidgetModelProtocol <TypeDictionary> : Identifiable, Sendable, C
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func duplicated () -> (any WidgetUIProtocol <TypeDictionary>)?
+  func duplicated () -> (any WidgetUIProtocol <WidgetTypesDescription>)?
 
  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

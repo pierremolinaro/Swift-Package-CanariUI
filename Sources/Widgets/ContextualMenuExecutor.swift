@@ -6,16 +6,16 @@ import Foundation
 
 //--------------------------------------------------------------------------------------------------
 
-public final class ContextualMenuExecutor <TypeDictionary : WidgetTypeArrayProtocol> {
+public final class ContextualMenuExecutor <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private let mWidgetsUserInterface : WidgetsUserInterface <TypeDictionary>
+  private let mWidgetsUserInterface : WidgetsUserInterface <WidgetTypesDescription>
   private let mWidgetIndex : Int
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  init (_ inWidgetsUserInterface : WidgetsUserInterface <TypeDictionary>,
+  init (_ inWidgetsUserInterface : WidgetsUserInterface <WidgetTypesDescription>,
         _ inIndex : Int) {
     self.mWidgetsUserInterface = inWidgetsUserInterface
     self.mWidgetIndex = inIndex
@@ -23,7 +23,7 @@ public final class ContextualMenuExecutor <TypeDictionary : WidgetTypeArrayProto
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func execute <T : WidgetUIProtocol <TypeDictionary>> (_ inAction : (inout T) -> Void) {
+  public func execute <T : WidgetUIProtocol <WidgetTypesDescription>> (_ inAction : (inout T) -> Void) {
     if var widget = self.mWidgetsUserInterface.mWidgetsManager [widget: self.mWidgetIndex] as? T {
       inAction (&widget)
       self.mWidgetsUserInterface.mWidgetsManager [widget: self.mWidgetIndex] = widget

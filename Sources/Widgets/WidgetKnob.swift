@@ -6,19 +6,19 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct WidgetKnob <TypeDictionary : WidgetTypeArrayProtocol> {
+public struct WidgetKnob <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private let localPoint : CanariPoint
-  let dragAction : (inout any WidgetUIProtocol <TypeDictionary>, CanariPoint, Bool) -> Void
-  let menu : ((ContextualMenuExecutor <TypeDictionary>) -> any View)?
+  let dragAction : (inout any WidgetUIProtocol <WidgetTypesDescription>, CanariPoint, Bool) -> Void
+  let menu : ((ContextualMenuExecutor <WidgetTypesDescription>) -> any View)?
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (localPoint inCenter : CanariPoint,
-               dragAction inKnobDragAction : @escaping (inout any WidgetUIProtocol <TypeDictionary>, CanariPoint, Bool) -> Void,
-               menu inMenu : ((ContextualMenuExecutor <TypeDictionary>) -> any View)? = nil) {
+               dragAction inKnobDragAction : @escaping (inout any WidgetUIProtocol <WidgetTypesDescription>, CanariPoint, Bool) -> Void,
+               menu inMenu : ((ContextualMenuExecutor <WidgetTypesDescription>) -> any View)? = nil) {
     self.localPoint = inCenter
     self.dragAction = inKnobDragAction
     self.menu = inMenu

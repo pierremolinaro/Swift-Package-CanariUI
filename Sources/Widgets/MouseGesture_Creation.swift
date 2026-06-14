@@ -6,9 +6,9 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-struct MouseGesture_Creation <TypeDictionary : WidgetTypeArrayProtocol> : MouseGestureProtocol {
+struct MouseGesture_Creation <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : MouseGestureProtocol {
 
-  let objectCreator : (MouseGestureGeometryContext) -> any WidgetUIProtocol <TypeDictionary>
+  let objectCreator : (MouseGestureGeometryContext) -> any WidgetUIProtocol <WidgetTypesDescription>
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -16,8 +16,8 @@ struct MouseGesture_Creation <TypeDictionary : WidgetTypeArrayProtocol> : MouseG
                        beginOrContinueUndoGrouping inBeginOrContinueUndoGrouping : () -> Void,
                        selection ioSelection : inout Set <UUID>,
                        userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                       widgetsManager ioWidgetsManager : inout WidgetsManager<TypeDictionary>,
-                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<TypeDictionary>)?) {
+                       widgetsManager ioWidgetsManager : inout WidgetsManager<WidgetTypesDescription>,
+                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<WidgetTypesDescription>)?) {
     let newObject = self.objectCreator (inGeometry)
     ioWidgetsManager [widget: ioWidgetsManager.count - 1] = newObject
     ioSelection = [newObject.id]
@@ -28,7 +28,7 @@ struct MouseGesture_Creation <TypeDictionary : WidgetTypeArrayProtocol> : MouseG
   func onMouseUp (removeUndoGrouping inRemoveUndoGrouping : () -> Void,
                   selection ioSelection : inout Set <UUID>,
                   userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                  widgetsManager ioWidgetsManager : inout WidgetsManager<TypeDictionary>) {
+                  widgetsManager ioWidgetsManager : inout WidgetsManager<WidgetTypesDescription>) {
     if ioWidgetsManager [widget: ioWidgetsManager.count - 1].isGraphicallyEmpty {
       ioWidgetsManager.removeLast ()
       ioSelection.removeAll ()

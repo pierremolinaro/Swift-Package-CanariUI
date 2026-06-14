@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-struct MouseGesture_SelectionRectangle <TypeDictionary : WidgetTypeArrayProtocol> : MouseGestureProtocol {
+struct MouseGesture_SelectionRectangle <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : MouseGestureProtocol {
 
   let startSelectionSet : Set <UUID>
 
@@ -16,8 +16,8 @@ struct MouseGesture_SelectionRectangle <TypeDictionary : WidgetTypeArrayProtocol
                        beginOrContinueUndoGrouping inBeginOrContinueUndoGrouping : () -> Void,
                        selection ioSelection : inout Set <UUID>,
                        userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                       widgetsManager ioWidgetsManager : inout WidgetsManager <TypeDictionary>,
-                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol <TypeDictionary>)?) {
+                       widgetsManager ioWidgetsManager : inout WidgetsManager <WidgetTypesDescription>,
+                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol <WidgetTypesDescription>)?) {
   //--- Update selection rectangle
     let selectionRectangle = CanariRect ([inGeometry.unalignedUserStartLocation, inGeometry.unalignedUserCurrentLocation])
     ioUserSelectionRectangle = selectionRectangle
@@ -44,7 +44,7 @@ struct MouseGesture_SelectionRectangle <TypeDictionary : WidgetTypeArrayProtocol
   func onMouseUp (removeUndoGrouping inRemoveUndoGrouping : () -> Void,
                   selection ioSelection : inout Set <UUID>,
                   userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                  widgetsManager ioWidgetsManager : inout WidgetsManager <TypeDictionary>) {
+                  widgetsManager ioWidgetsManager : inout WidgetsManager <WidgetTypesDescription>) {
     ioUserSelectionRectangle = nil
   }
 

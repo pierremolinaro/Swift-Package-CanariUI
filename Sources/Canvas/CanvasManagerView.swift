@@ -13,7 +13,7 @@ fileprivate let DEBUG_COLOR = Color.clear // red.opacity (0.15)
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol> : View {
+public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -39,32 +39,26 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol> : Vie
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @State private var mWidgetsUserInterface : WidgetsUserInterface <TypeDictionary>
+  @State private var mWidgetsUserInterface : WidgetsUserInterface <WidgetTypesDescription>
   @Environment(\.undoManager) private var undoManager
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  private let mDetailColumnExpanded : Bool
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (context inContext : CanvasManagerViewContext,
         canvasScale inScale : Binding <Double>,
         alignedHoverUserLocation inAlignedHoverUserLocation : Binding <CanariPoint?>,
-        widgetsUserInterface inWidgetsUserInterface : WidgetsUserInterface <TypeDictionary>,
+        widgetsUserInterface inWidgetsUserInterface : WidgetsUserInterface <WidgetTypesDescription>,
         backgroundViewBuilder inBackgroundViewBuilder : @escaping (BackgroundViewContext) -> any View,
         leftVerticalRulerViewBuilder inLeftVerticalRulerViewBuilder : @escaping (VerticalRulerViewContext) -> any View,
         topHorizontalRulerViewBuilder inTopHorizontalRulerViewBuilder : @escaping (HorizontalRulerViewContext) -> any View,
         rightVerticalRulerViewBuilder inRightVerticalRulerViewBuilder : @escaping (VerticalRulerViewContext) -> any View,
         bottomHorizontalRulerViewBuilder inBottomHorizontalRulerViewBuilder : @escaping (HorizontalRulerViewContext) -> any View,
-        droppedFilesHandler inDroppedFilesHandler : (([Data], CanariPoint) -> Void)?,
-        detailColumnIsExpanded : Bool) {
+        droppedFilesHandler inDroppedFilesHandler : (([Data], CanariPoint) -> Void)?) {
     self._mCanvasScale = inScale
     self._mAlignedHoverUserLocation = inAlignedHoverUserLocation
     self.mContext = inContext
     self.mWidgetsUserInterface = inWidgetsUserInterface
     self.mDroppedFilesHandler = inDroppedFilesHandler
-    self.mDetailColumnExpanded = detailColumnIsExpanded
     self.mContentSizeWithMargins = CanariSize (
       width: inContext.canvasSize.width + inContext.margins.left + inContext.margins.right,
       height: inContext.canvasSize.height + inContext.margins.top + inContext.margins.bottom
@@ -123,25 +117,8 @@ public struct CanvasManagerView <TypeDictionary : WidgetTypeArrayProtocol> : Vie
       .onAppear {
         self.mWidgetsUserInterface.setUndoManager (self.undoManager)
       }
-      if self.mDetailColumnExpanded {
-        Divider ()
-        self.mWidgetsUserInterface.inspectorViewForCurrentSelection ()
-        .frame (width: 250)
-        .controlSize (.small)
-//        .onReceive(
-//          mousePositions.throttle (
-//            for: .milliseconds(100),
-//            scheduler: RunLoop.main,
-//            latest: true
-//          )
-//        ) { position in displayedPosition = position }
-      }
     }
   }
-
-//    @State private var displayedPosition = Set <UUID> ()
-//
-//    let mousePositions = PassthroughSubject<Set <UUID>, Never>()
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Spacers

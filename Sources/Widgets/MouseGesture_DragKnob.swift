@@ -6,12 +6,12 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-struct MouseGesture_DragKnob <TypeDictionary : WidgetTypeArrayProtocol> : MouseGestureProtocol {
+struct MouseGesture_DragKnob <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : MouseGestureProtocol {
 
   let alignedCurrentPoint : CanariPoint
   let optionKeyInitiallyOn : Bool
   let widgetID : UUID
-  let dragAction : (inout any WidgetUIProtocol <TypeDictionary>, CanariPoint, Bool) -> Void
+  let dragAction : (inout any WidgetUIProtocol <WidgetTypesDescription>, CanariPoint, Bool) -> Void
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -19,8 +19,8 @@ struct MouseGesture_DragKnob <TypeDictionary : WidgetTypeArrayProtocol> : MouseG
                        beginOrContinueUndoGrouping inBeginOrContinueUndoGrouping : () -> Void,
                        selection ioSelection : inout Set <UUID>,
                        userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                       widgetsManager ioWidgetsManager : inout WidgetsManager <TypeDictionary>,
-                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<TypeDictionary>)?) {
+                       widgetsManager ioWidgetsManager : inout WidgetsManager <WidgetTypesDescription>,
+                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<WidgetTypesDescription>)?) {
     let translation = inGeometry.alignedUserCurrentLocation - self.alignedCurrentPoint
     if translation != .zero {
       inBeginOrContinueUndoGrouping ()
@@ -45,7 +45,7 @@ struct MouseGesture_DragKnob <TypeDictionary : WidgetTypeArrayProtocol> : MouseG
   func onMouseUp (removeUndoGrouping inRemoveUndoGrouping : () -> Void,
                   selection ioSelection : inout Set <UUID>,
                   userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                  widgetsManager ioWidgetsManager : inout WidgetsManager <TypeDictionary>) {
+                  widgetsManager ioWidgetsManager : inout WidgetsManager <WidgetTypesDescription>) {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

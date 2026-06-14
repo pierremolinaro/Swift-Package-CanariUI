@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public protocol WidgetUIProtocol <TypeDictionary> : WidgetModelProtocol {
+public protocol WidgetUIProtocol <WidgetTypesDescription> : WidgetModelProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Oriented Origin
@@ -16,15 +16,15 @@ public protocol WidgetUIProtocol <TypeDictionary> : WidgetModelProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var knobs : [WidgetKnob <TypeDictionary>] { get }
+  var knobs : [WidgetKnob <WidgetTypesDescription>] { get }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func contextualMenu (_ inExecutor : ContextualMenuExecutor <TypeDictionary>) -> any View
+  func contextualMenu (_ inExecutor : ContextualMenuExecutor <WidgetTypesDescription>) -> any View
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func isEqual (to inOther : any WidgetUIProtocol <TypeDictionary>) -> Bool
+  func isEqual (to inOther : any WidgetUIProtocol <WidgetTypesDescription>) -> Bool
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -50,7 +50,7 @@ public protocol WidgetUIProtocol <TypeDictionary> : WidgetModelProtocol {
   //MARK: inspectorView
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @MainActor static func inspectorView (proxy inProxy : InspectorProxy <TypeDictionary>) -> any View
+  @MainActor static func inspectorView (proxy inProxy : InspectorProxy <WidgetTypesDescription>) -> any View
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

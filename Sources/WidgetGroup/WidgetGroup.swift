@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIProtocol {
+public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : WidgetUIProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -20,7 +20,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   var mUnGroupIsEnabled : Bool
-  let mArray : [any WidgetUIProtocol <TypeDictionary>] // at 0: back, at count - 1: front
+  let mArray : [any WidgetUIProtocol <WidgetTypesDescription>] // at 0: back, at count - 1: front
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -28,7 +28,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (_ inWidgets : [any WidgetUIProtocol <TypeDictionary>]) {
+  public init (_ inWidgets : [any WidgetUIProtocol <WidgetTypesDescription>]) {
     var vertices = [CanariPoint] ()
     for widget in inWidgets {
       vertices += widget.orientedOrigin.globalBoundingRect.vertices
@@ -50,8 +50,8 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (proxies inProxyArray : [WidgetProxy <TypeDictionary>]) {
-    var array = [any WidgetUIProtocol <TypeDictionary>] ()
+  public init (proxies inProxyArray : [WidgetProxy <WidgetTypesDescription>]) {
+    var array = [any WidgetUIProtocol <WidgetTypesDescription>] ()
     for proxy in inProxyArray {
       array.append (proxy.widget)
     }
@@ -68,8 +68,8 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
 
   public init (from inDecoder : Decoder) throws {
     let container = try inDecoder.container (keyedBy: CodingKeys.self)
-    let proxyArray = try container.decode ([WidgetProxy <TypeDictionary>].self, forKey: .array)
-    var array = [any WidgetUIProtocol <TypeDictionary>] ()
+    let proxyArray = try container.decode ([WidgetProxy <WidgetTypesDescription>].self, forKey: .array)
+    var array = [any WidgetUIProtocol <WidgetTypesDescription>] ()
     for proxy in proxyArray {
       array.append (proxy.widget)
     }
@@ -87,7 +87,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
 
   public func encode (to inEncoder : Encoder) throws {
     var container = inEncoder.container (keyedBy: CodingKeys.self)
-    var proxyArray = [WidgetProxy <TypeDictionary>] ()
+    var proxyArray = [WidgetProxy <WidgetTypesDescription>] ()
     for widget in self.mArray {
       proxyArray.append (WidgetProxy (widget))
     }
@@ -98,16 +98,16 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var knobs : [WidgetKnob <TypeDictionary>] { [] }
+  public var knobs : [WidgetKnob <WidgetTypesDescription>] { [] }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func contextualMenu (_ inExecutor : ContextualMenuExecutor <TypeDictionary>) -> any View { EmptyView () }
+  public func contextualMenu (_ inExecutor : ContextualMenuExecutor <WidgetTypesDescription>) -> any View { EmptyView () }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func isEqual (to inOther : any WidgetUIProtocol <TypeDictionary>) -> Bool {
-    if let other = inOther as? WidgetGroup <TypeDictionary> {
+  public func isEqual (to inOther : any WidgetUIProtocol <WidgetTypesDescription>) -> Bool {
+    if let other = inOther as? WidgetGroup <WidgetTypesDescription> {
       if (self.mArray.count != other.mArray.count)
             || (self.orientedOrigin != other.orientedOrigin)
             || (self.mUnGroupIsEnabled != other.mUnGroupIsEnabled) {
@@ -127,7 +127,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func duplicated () -> (any WidgetUIProtocol <TypeDictionary>)? { nil }
+  public func duplicated () -> (any WidgetUIProtocol <WidgetTypesDescription>)? { nil }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -175,7 +175,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
   //MARK: ungrouped array
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func ungroupedArray () -> [any WidgetUIProtocol <TypeDictionary>] {
+  func ungroupedArray () -> [any WidgetUIProtocol <WidgetTypesDescription>] {
     return self.mArray.map {
       var widget = $0
       widget.orientedOrigin.updateFromOrientedOrigin (self.orientedOrigin)
@@ -187,7 +187,7 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
   //MARK: inspectorView
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public static func inspectorView (proxy inProxy : InspectorProxy <TypeDictionary>) -> any View {
+  public static func inspectorView (proxy inProxy : InspectorProxy <WidgetTypesDescription>) -> any View {
     WidgetGroupInspectorView (proxy: inProxy)
   }
 
@@ -197,17 +197,17 @@ public struct WidgetGroup <TypeDictionary : WidgetTypeArrayProtocol> : WidgetUIP
 
 //--------------------------------------------------------------------------------------------------
 
-fileprivate struct WidgetGroupInspectorView <TypeDictionary : WidgetTypeArrayProtocol> : View {
+fileprivate struct WidgetGroupInspectorView <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : View {
 
-  typealias T = WidgetGroup <TypeDictionary>
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  @State private var mProxy : InspectorProxy <TypeDictionary>
+  typealias T = WidgetGroup <WidgetTypesDescription>
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  init (proxy inProxy : InspectorProxy <TypeDictionary>) {
+  @State private var mProxy : InspectorProxy <WidgetTypesDescription>
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  init (proxy inProxy : InspectorProxy <WidgetTypesDescription>) {
     self.mProxy = inProxy
   }
 

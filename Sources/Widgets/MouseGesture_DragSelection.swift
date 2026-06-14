@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-struct MouseGesture_DragSelection <TypeDictionary : WidgetTypeArrayProtocol> : MouseGestureProtocol {
+struct MouseGesture_DragSelection <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : MouseGestureProtocol {
 
   let alignedCurrentPoint : CanariPoint
 
@@ -16,8 +16,8 @@ struct MouseGesture_DragSelection <TypeDictionary : WidgetTypeArrayProtocol> : M
                        beginOrContinueUndoGrouping inBeginOrContinueUndoGrouping : () -> Void,
                        selection ioSelection : inout Set <UUID>,
                        userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                       widgetsManager ioWidgetsManager : inout WidgetsManager <TypeDictionary>,
-                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<TypeDictionary>)?) {
+                       widgetsManager ioWidgetsManager : inout WidgetsManager <WidgetTypesDescription>,
+                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<WidgetTypesDescription>)?) {
     var translation = inGeometry.alignedUserCurrentLocation - self.alignedCurrentPoint
     for i in 0 ..< ioWidgetsManager.count {
       if ioSelection.contains (ioWidgetsManager [widget: i].id) {
@@ -42,7 +42,7 @@ struct MouseGesture_DragSelection <TypeDictionary : WidgetTypeArrayProtocol> : M
   func onMouseUp (removeUndoGrouping inRemoveUndoGrouping : () -> Void,
                   selection ioSelection : inout Set <UUID>,
                   userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                  widgetsManager ioWidgetsManager : inout WidgetsManager <TypeDictionary>) {
+                  widgetsManager ioWidgetsManager : inout WidgetsManager <WidgetTypesDescription>) {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

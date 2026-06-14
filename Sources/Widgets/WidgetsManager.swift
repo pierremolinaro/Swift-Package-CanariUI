@@ -6,11 +6,11 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct WidgetsManager <TypeDictionary : WidgetTypeArrayProtocol> : Equatable {
+public struct WidgetsManager <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : Equatable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private var mWidgetsArray : [any WidgetUIProtocol <TypeDictionary>] // at 0: back, at count - 1: front
+  private var mWidgetsArray : [any WidgetUIProtocol <WidgetTypesDescription>] // at 0: back, at count - 1: front
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -20,7 +20,7 @@ public struct WidgetsManager <TypeDictionary : WidgetTypeArrayProtocol> : Equata
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func contentsIsExactly (_ inWidgets : [WidgetProxy <TypeDictionary>]) -> Bool {
+  public func contentsIsExactly (_ inWidgets : [WidgetProxy <WidgetTypesDescription>]) -> Bool {
     if self.mWidgetsArray.count != inWidgets.count {
       return false
     }else{
@@ -39,12 +39,12 @@ public struct WidgetsManager <TypeDictionary : WidgetTypeArrayProtocol> : Equata
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var widgets : [any WidgetUIProtocol <TypeDictionary>] { self.mWidgetsArray }
+  public var widgets : [any WidgetUIProtocol <WidgetTypesDescription>] { self.mWidgetsArray }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public mutating func setWidgets (fromProxies inProxies : [WidgetProxy <TypeDictionary>]) {
-    var widgetsArray = [any WidgetUIProtocol <TypeDictionary>] ()
+  public mutating func setWidgets (fromProxies inProxies : [WidgetProxy <WidgetTypesDescription>]) {
+    var widgetsArray = [any WidgetUIProtocol <WidgetTypesDescription>] ()
     for proxy in inProxies {
       widgetsArray.append (proxy.widget)
     }
@@ -53,8 +53,8 @@ public struct WidgetsManager <TypeDictionary : WidgetTypeArrayProtocol> : Equata
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public static func == (_ inLeft : WidgetsManager <TypeDictionary>,
-                         _ inRight : WidgetsManager <TypeDictionary>) -> Bool { // Equatable
+  public static func == (_ inLeft : WidgetsManager <WidgetTypesDescription>,
+                         _ inRight : WidgetsManager <WidgetTypesDescription>) -> Bool { // Equatable
     if inLeft.count != inRight.count {
       return false
     }else{
@@ -69,8 +69,8 @@ public struct WidgetsManager <TypeDictionary : WidgetTypeArrayProtocol> : Equata
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var proxyArray : [WidgetProxy <TypeDictionary>] {
-    var array = [WidgetProxy <TypeDictionary>] ()
+  public var proxyArray : [WidgetProxy <WidgetTypesDescription>] {
+    var array = [WidgetProxy <WidgetTypesDescription>] ()
     for widget in self.mWidgetsArray {
       array.append(WidgetProxy (widget))
     }
@@ -79,14 +79,14 @@ public struct WidgetsManager <TypeDictionary : WidgetTypeArrayProtocol> : Equata
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public subscript (widget inIndex : Int) -> any WidgetUIProtocol <TypeDictionary> {
+  public subscript (widget inIndex : Int) -> any WidgetUIProtocol <WidgetTypesDescription> {
     get { self.mWidgetsArray [inIndex] }
     set { self.mWidgetsArray [inIndex] = newValue }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func append (_ inNewObject : any WidgetUIProtocol <TypeDictionary>) {
+  mutating func append (_ inNewObject : any WidgetUIProtocol <WidgetTypesDescription>) {
     self.mWidgetsArray.append (inNewObject)
   }
 
@@ -112,7 +112,7 @@ public struct WidgetsManager <TypeDictionary : WidgetTypeArrayProtocol> : Equata
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  subscript (id inID : UUID) -> (any WidgetUIProtocol <TypeDictionary>)? {
+  subscript (id inID : UUID) -> (any WidgetUIProtocol <WidgetTypesDescription>)? {
     get { self.mWidgetsArray.first { $0.id == inID } }
     set {
       if let v = newValue, let idx = self.mWidgetsArray.firstIndex (where: { $0.id == inID } ) {
@@ -123,8 +123,8 @@ public struct WidgetsManager <TypeDictionary : WidgetTypeArrayProtocol> : Equata
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func widgetArray (fromSelection inSelection : Set <UUID>) -> [any WidgetUIProtocol <TypeDictionary>] {
-    var result = [any WidgetUIProtocol <TypeDictionary>] ()
+  func widgetArray (fromSelection inSelection : Set <UUID>) -> [any WidgetUIProtocol <WidgetTypesDescription>] {
+    var result = [any WidgetUIProtocol <WidgetTypesDescription>] ()
     for widget in self.mWidgetsArray {
       if inSelection.contains (widget.id) {
         result.append (widget)
@@ -135,8 +135,8 @@ public struct WidgetsManager <TypeDictionary : WidgetTypeArrayProtocol> : Equata
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func proxyArray (fromSelection inSelection : Set <UUID>) -> [WidgetProxy <TypeDictionary>] {
-    var result = [WidgetProxy <TypeDictionary>] ()
+  func proxyArray (fromSelection inSelection : Set <UUID>) -> [WidgetProxy <WidgetTypesDescription>] {
+    var result = [WidgetProxy <WidgetTypesDescription>] ()
     for widget in self.mWidgetsArray {
       if inSelection.contains (widget.id) {
         result.append (WidgetProxy (widget))
@@ -147,7 +147,7 @@ public struct WidgetsManager <TypeDictionary : WidgetTypeArrayProtocol> : Equata
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func replaceWidget (id inID : UUID, with inArray : [any WidgetUIProtocol <TypeDictionary>]) {
+  mutating func replaceWidget (id inID : UUID, with inArray : [any WidgetUIProtocol <WidgetTypesDescription>]) {
     var idx = self.mWidgetsArray.firstIndex { $0.id == inID }!
     self.mWidgetsArray.remove (at: idx)
     for proxy in inArray {

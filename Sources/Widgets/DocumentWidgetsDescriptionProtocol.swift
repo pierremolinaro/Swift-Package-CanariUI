@@ -6,13 +6,16 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public protocol WidgetTypeArrayProtocol {
+public protocol DocumentWidgetsDescriptionProtocol {
 
-  associatedtype TypeDictionary : WidgetTypeArrayProtocol
+  associatedtype WidgetTypesDescription : DocumentWidgetsDescriptionProtocol
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  nonisolated static var array : [any WidgetUIProtocol <TypeDictionary>.Type] { get }
+  nonisolated static var widgetTypeArray : [any WidgetUIProtocol <WidgetTypesDescription>.Type] { get }
+
+//  @MainActor static func limitTranslation (_ ioTranslation : inout CanariPoint, _ inCanvasSize : CanariSize)
+//  nonisolated static func limitTranslation2 ()
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

@@ -7,7 +7,7 @@ import Combine
 
 //--------------------------------------------------------------------------------------------------
 
-@Observable public final class WidgetsUserInterface <TypeDictionary : WidgetTypeArrayProtocol> : MenuCommands {
+@Observable public final class WidgetsUserInterface <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : MenuCommands {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -15,7 +15,7 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var mWidgetsManager = WidgetsManager <TypeDictionary> ()
+  public var mWidgetsManager = WidgetsManager <WidgetTypesDescription> ()
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -74,13 +74,13 @@ import Combine
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private var mStartSelectionSet = Set <UUID> ()
-  private var mDragGestureState : (any MouseGestureProtocol<TypeDictionary>)? = nil
+  private var mDragGestureState : (any MouseGestureProtocol<WidgetTypesDescription>)? = nil
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: append
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func append (_ inNewObject : any WidgetUIProtocol <TypeDictionary>) {
+  public func append (_ inNewObject : any WidgetUIProtocol <WidgetTypesDescription>) {
     self.mWidgetsManager.append (inNewObject)
   }
 
@@ -88,7 +88,7 @@ import Combine
   //MARK: append and set selection to added object
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func appendAndSetSelection (_ inNewObject : any WidgetUIProtocol <TypeDictionary>) {
+  public func appendAndSetSelection (_ inNewObject : any WidgetUIProtocol <WidgetTypesDescription>) {
     self.mWidgetsManager.append (inNewObject)
     self.mSelection.removeAll ()
     self.mSelection.insert (inNewObject.id)
@@ -98,13 +98,13 @@ import Combine
   //MARK: Object Creator
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func setObjectCreator (_ inNewCreator : @escaping (MouseGestureGeometryContext) -> any WidgetUIProtocol <TypeDictionary>) {
+  public func setObjectCreator (_ inNewCreator : @escaping (MouseGestureGeometryContext) -> any WidgetUIProtocol <WidgetTypesDescription>) {
     self.mObjectCreator = inNewCreator
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private var mObjectCreator : ((MouseGestureGeometryContext) -> any WidgetUIProtocol <TypeDictionary>)? = nil
+  private var mObjectCreator : ((MouseGestureGeometryContext) -> any WidgetUIProtocol <WidgetTypesDescription>)? = nil
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Draw
@@ -195,7 +195,7 @@ import Combine
   @MainActor public func mouseDownOrMouseDragged (geometry inGeometry : MouseGestureGeometryContext) {
     if let dragGestureState = self.mDragGestureState { // Mouse dragged event
       enterTracing ("widgets.user.interface.mouse.dragging") ; defer { exitTracing ("widgets.user.interface.mouse.dragging") }
-      var optionalNextState : (any MouseGestureProtocol <TypeDictionary>)? = nil
+      var optionalNextState : (any MouseGestureProtocol <WidgetTypesDescription>)? = nil
       dragGestureState.onMouseDragged (
         geometry: inGeometry,
         beginOrContinueUndoGrouping: { self.beginOrContinueUndoGrouping () },
@@ -204,7 +204,7 @@ import Combine
         widgetsManager: &self.mWidgetsManager,
         optionalNextState: &optionalNextState
       )
-      if let nextState : any MouseGestureProtocol<TypeDictionary> = optionalNextState {
+      if let nextState : any MouseGestureProtocol<WidgetTypesDescription> = optionalNextState {
         self.mDragGestureState = nextState
       }
     }else{ // Mouse down event
@@ -212,10 +212,10 @@ import Combine
       self.mStartSelectionSet = self.mSelection
       let option = NSEvent.modifierFlags.contains (.option)
       if option {
-        let state : any MouseGestureProtocol<TypeDictionary> = self.mouseDownWithOptionKey (geometry: inGeometry)
+        let state : any MouseGestureProtocol<WidgetTypesDescription> = self.mouseDownWithOptionKey (geometry: inGeometry)
         self.mDragGestureState = state
       }else{
-        let state : any MouseGestureProtocol<TypeDictionary> = self.mouseDownWithoutOptionKey (geometry: inGeometry)
+        let state : any MouseGestureProtocol<WidgetTypesDescription> = self.mouseDownWithoutOptionKey (geometry: inGeometry)
         self.mDragGestureState = state
       }
     }
@@ -223,13 +223,13 @@ import Combine
 
  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @MainActor private func mouseDownWithOptionKey (geometry inGeometry : MouseGestureGeometryContext) -> any MouseGestureProtocol<TypeDictionary> {
+  @MainActor private func mouseDownWithOptionKey (geometry inGeometry : MouseGestureGeometryContext) -> any MouseGestureProtocol<WidgetTypesDescription> {
   //--- Mouse down in a knob of a selected object ?
     for widget in self.mWidgetsManager.widgets.reversed () {
       if self.mSelection.contains (widget.id) {
         for knob in widget.knobs {
           if knob.contains (localPoint: widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation), scale: inGeometry.scale) {
-            return MouseGesture_DragKnob <TypeDictionary> (
+            return MouseGesture_DragKnob <WidgetTypesDescription> (
               alignedCurrentPoint: inGeometry.alignedUserStartLocation,
               optionKeyInitiallyOn: true,
               widgetID: widget.id,
@@ -257,14 +257,14 @@ import Combine
             self.mSelection.insert (newWidget.id)
           }
         }
-        return MouseGesture_DragSelection <TypeDictionary> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
+        return MouseGesture_DragSelection <WidgetTypesDescription> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
       }else{ // option-click on a non-selected widget
         if let newWidget = self.mWidgetsManager [id: widgetID]?.duplicated () {
           self.mWidgetsManager.append (newWidget)
           self.mSelection = [newWidget.id]
-          return MouseGesture_DragSelection <TypeDictionary> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
+          return MouseGesture_DragSelection <WidgetTypesDescription> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
         }else{
-          return MouseGesture_Inactive <TypeDictionary> ()
+          return MouseGesture_Inactive <WidgetTypesDescription> ()
         }
       }
     }else if let objectCreator = self.mObjectCreator {
@@ -272,18 +272,18 @@ import Combine
       let widget = objectCreator (inGeometry)
       self.mWidgetsManager.append (widget)
       self.mSelection = [widget.id]
-      return MouseGesture_Creation <TypeDictionary> (objectCreator: objectCreator)
+      return MouseGesture_Creation <WidgetTypesDescription> (objectCreator: objectCreator)
     }else{
-      return MouseGesture_Inactive <TypeDictionary> ()
+      return MouseGesture_Inactive <WidgetTypesDescription> ()
     }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private func mouseDownWithoutOptionKey (geometry inGeometry : MouseGestureGeometryContext) -> any MouseGestureProtocol <TypeDictionary> {
+  private func mouseDownWithoutOptionKey (geometry inGeometry : MouseGestureGeometryContext) -> any MouseGestureProtocol <WidgetTypesDescription> {
     let control = NSEvent.modifierFlags.contains (.control)
     if control {
-      return MouseGesture_Inactive <TypeDictionary> ()
+      return MouseGesture_Inactive <WidgetTypesDescription> ()
     }else{
       let shift = NSEvent.modifierFlags.contains (.shift)
       if shift {
@@ -296,7 +296,7 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private func mouseDown_shiftKey (geometry inGeometry : MouseGestureGeometryContext) -> any MouseGestureProtocol <TypeDictionary> {
+  private func mouseDown_shiftKey (geometry inGeometry : MouseGestureGeometryContext) -> any MouseGestureProtocol <WidgetTypesDescription> {
     var widgetUnderMouseID : UUID? = nil
     for widget in self.mWidgetsManager.widgets.reversed () {
       if widget.containsLocalPoint (widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
@@ -310,21 +310,21 @@ import Combine
       }else{
         self.mSelection.insert (id)
       }
-      return MouseGesture_Inactive <TypeDictionary> ()
+      return MouseGesture_Inactive <WidgetTypesDescription> ()
     }else{
-      return MouseGesture_Inactive <TypeDictionary> ()
+      return MouseGesture_Inactive <WidgetTypesDescription> ()
     }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private func mouseDown_noKey (geometry inGeometry : MouseGestureGeometryContext) -> any MouseGestureProtocol <TypeDictionary> {
+  private func mouseDown_noKey (geometry inGeometry : MouseGestureGeometryContext) -> any MouseGestureProtocol <WidgetTypesDescription> {
   //--- Mouse down in a knob of a selected object ?
     for widget in self.mWidgetsManager.widgets.reversed () {
       if self.mSelection.contains (widget.id) {
         for knob in widget.knobs {
           if knob.contains (localPoint: widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation), scale: inGeometry.scale) {
-            return MouseGesture_DragKnob <TypeDictionary> (
+            return MouseGesture_DragKnob <WidgetTypesDescription> (
               alignedCurrentPoint: inGeometry.alignedUserStartLocation,
               optionKeyInitiallyOn: false,
               widgetID: widget.id,
@@ -337,19 +337,19 @@ import Combine
   //--- Mouse down in a selected object ?
     for widget in self.mWidgetsManager.widgets.reversed () {
       if self.mSelection.contains (widget.id), widget.containsLocalPoint (widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
-        return MouseGesture_DragSelection <TypeDictionary> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
+        return MouseGesture_DragSelection <WidgetTypesDescription> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
       }
     }
   //--- Mouse down in a non selected object ?
     for widget in self.mWidgetsManager.widgets.reversed () {
       if widget.containsLocalPoint (widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
         self.mSelection = [widget.id]
-        return MouseGesture_DragSelection <TypeDictionary> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
+        return MouseGesture_DragSelection <WidgetTypesDescription> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
       }
     }
   //--- Mouse down out any selected object
     self.mSelection.removeAll ()
-    return MouseGesture_SelectionRectangle <TypeDictionary> (startSelectionSet: self.mSelection)
+    return MouseGesture_SelectionRectangle <WidgetTypesDescription> (startSelectionSet: self.mSelection)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -448,7 +448,7 @@ import Combine
     if self.mDragGestureState != nil {
       self.closeAndRemoveUndoGroupingActions ()
       self.mSelection = self.mStartSelectionSet
-      self.mDragGestureState = MouseGesture_Inactive <TypeDictionary> ()
+      self.mDragGestureState = MouseGesture_Inactive <WidgetTypesDescription> ()
     }
   }
 
@@ -585,7 +585,7 @@ import Combine
     let pb = NSPasteboard.general
     if let string = pb.string (forType: self.mPasteboardType) {
       let decoder = JSONDecoder ()
-      if let decodedWidgets = try? decoder.decode ([WidgetProxy <TypeDictionary>].self, from: string.data (using: .utf8)!) {
+      if let decodedWidgets = try? decoder.decode ([WidgetProxy <WidgetTypesDescription>].self, from: string.data (using: .utf8)!) {
         self.mSelection.removeAll ()
         for proxy in decodedWidgets {
           self.mWidgetsManager.append (proxy.widget)
@@ -640,14 +640,14 @@ import Combine
 
   public override var groupIsEnabled : Bool {
     (self.mSelection.count > 1)
-    && (TypeDictionary.array.first { $0 == WidgetGroup <TypeDictionary>.self } != nil)
+    && (WidgetTypesDescription.widgetTypeArray.first { $0 == WidgetGroup <WidgetTypesDescription>.self } != nil)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public override func performGroup () {
     let selectedWidgets = self.mWidgetsManager.widgetArray (fromSelection: self.mSelection)
-    let widgetGroup = WidgetGroup <TypeDictionary> (selectedWidgets)
+    let widgetGroup = WidgetGroup <WidgetTypesDescription> (selectedWidgets)
     for widget in selectedWidgets {
       self.mWidgetsManager.remove (id: widget.id)
     }
@@ -659,7 +659,7 @@ import Combine
 
   public override var ungroupIsEnabled : Bool {
     for widget in self.mWidgetsManager.widgets {
-      if self.mSelection.contains (widget.id), let w = widget as? WidgetGroup <TypeDictionary>, w.mUnGroupIsEnabled {
+      if self.mSelection.contains (widget.id), let w = widget as? WidgetGroup <WidgetTypesDescription>, w.mUnGroupIsEnabled {
         return true
       }
     }
@@ -670,7 +670,7 @@ import Combine
 
   public override func performUngroup () {
     for w in self.mWidgetsManager.widgets {
-      if self.mSelection.contains (w.id), let group = w as? WidgetGroup <TypeDictionary>, group.mUnGroupIsEnabled {
+      if self.mSelection.contains (w.id), let group = w as? WidgetGroup <WidgetTypesDescription>, group.mUnGroupIsEnabled {
         let array = group.ungroupedArray ()
         self.mWidgetsManager.replaceWidget (id: w.id, with: array)
         self.mSelection.remove (w.id)
@@ -701,7 +701,7 @@ import Combine
   //MARK: Inspector view
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @MainActor @ViewBuilder func inspectorViewForCurrentSelection () -> some View {
+  @MainActor @ViewBuilder public func inspectorViewForCurrentSelection () -> some View {
     if self.mSelection.isEmpty {
       Text ("Empty Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
     }else if let type = self.commonTypeForSelection () {
@@ -715,8 +715,8 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private func commonTypeForSelection () -> (any WidgetUIProtocol <TypeDictionary>.Type)? {
-    var result : (any WidgetUIProtocol <TypeDictionary>.Type)? = nil
+  private func commonTypeForSelection () -> (any WidgetUIProtocol <WidgetTypesDescription>.Type)? {
+    var result : (any WidgetUIProtocol <WidgetTypesDescription>.Type)? = nil
     for id in self.mSelection {
       if let widget = self.mWidgetsManager [id: id] {
         if let r = result {
@@ -728,7 +728,7 @@ import Combine
         }
       }
     }
-    return result // WidgetGroup <TypeDictionary>.self
+    return result // WidgetGroup <WidgetTypesDescription>.self
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

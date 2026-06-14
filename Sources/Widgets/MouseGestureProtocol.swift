@@ -6,11 +6,11 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-protocol MouseGestureProtocol <TypeDictionary> {
+protocol MouseGestureProtocol <WidgetTypesDescription> {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  associatedtype TypeDictionary : WidgetTypeArrayProtocol
+  associatedtype WidgetTypesDescription : DocumentWidgetsDescriptionProtocol
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -18,15 +18,15 @@ protocol MouseGestureProtocol <TypeDictionary> {
                        beginOrContinueUndoGrouping inBeginOrContinueUndoGrouping : () -> Void,
                        selection ioSelection : inout Set <UUID>,
                        userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                       widgetsManager ioWidgetsManager : inout WidgetsManager <TypeDictionary>,
-                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<TypeDictionary>)?)
+                       widgetsManager ioWidgetsManager : inout WidgetsManager <WidgetTypesDescription>,
+                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<WidgetTypesDescription>)?)
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func onMouseUp (removeUndoGrouping inRemoveUndoGrouping : () -> Void,
                   selection ioSelection : inout Set <UUID>,
                   userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                  widgetsManager ioWidgetsManager : inout WidgetsManager <TypeDictionary>)
+                  widgetsManager ioWidgetsManager : inout WidgetsManager <WidgetTypesDescription>)
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

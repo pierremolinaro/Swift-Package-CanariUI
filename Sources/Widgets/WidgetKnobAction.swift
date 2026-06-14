@@ -6,16 +6,16 @@ import Foundation
 
 //--------------------------------------------------------------------------------------------------
 
-final class WidgetKnobAction <TypeDictionary : WidgetTypeArrayProtocol> {
+final class WidgetKnobAction <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private let mWidgetsUserInterface : WidgetsUserInterface <TypeDictionary>
+  private let mWidgetsUserInterface : WidgetsUserInterface <WidgetTypesDescription>
   private let mWidgetIndex : Int
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  init (_ inWidgetsUserInterface : WidgetsUserInterface <TypeDictionary>,
+  init (_ inWidgetsUserInterface : WidgetsUserInterface <WidgetTypesDescription>,
         _ inIndex : Int) {
     self.mWidgetsUserInterface = inWidgetsUserInterface
     self.mWidgetIndex = inIndex
@@ -23,7 +23,7 @@ final class WidgetKnobAction <TypeDictionary : WidgetTypeArrayProtocol> {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func execute (_ inAction : (inout any WidgetUIProtocol <TypeDictionary>) -> Void) {
+  func execute (_ inAction : (inout any WidgetUIProtocol <WidgetTypesDescription>) -> Void) {
     var widget = self.mWidgetsUserInterface.mWidgetsManager [widget: self.mWidgetIndex]
     inAction (&widget)
     self.mWidgetsUserInterface.mWidgetsManager [widget: self.mWidgetIndex] = widget

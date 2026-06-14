@@ -6,15 +6,15 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct WidgetProxy <TypeDictionary : WidgetTypeArrayProtocol> : Equatable, Codable, Sendable {
+public struct WidgetProxy <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : Equatable, Codable, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public let widget : any WidgetUIProtocol <TypeDictionary>
+  public let widget : any WidgetUIProtocol <WidgetTypesDescription>
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (_ inWidget : any WidgetUIProtocol <TypeDictionary>) {
+  public init (_ inWidget : any WidgetUIProtocol <WidgetTypesDescription>) {
     self.widget = inWidget
   }
 
@@ -28,7 +28,7 @@ public struct WidgetProxy <TypeDictionary : WidgetTypeArrayProtocol> : Equatable
 
   nonisolated public init (from inDecoder : Decoder) throws {
     var dictionary : [String : any WidgetUIProtocol.Type] = [:]
-    for type : any WidgetUIProtocol.Type in TypeDictionary.array {
+    for type : any WidgetUIProtocol.Type in WidgetTypesDescription.widgetTypeArray {
       let name = type.documentEncodedTypeName ()
       dictionary [name] = type
     }
@@ -36,7 +36,7 @@ public struct WidgetProxy <TypeDictionary : WidgetTypeArrayProtocol> : Equatable
     let typeName = try container.decode (String.self, forKey: .type)
     if let type = dictionary [typeName] {
       let widget : any WidgetUIProtocol = try container.decode (type, forKey: .value)
-      self.widget = widget as! any WidgetUIProtocol <TypeDictionary>
+      self.widget = widget as! any WidgetUIProtocol <WidgetTypesDescription>
     }else{
       throw DecodingError.dataCorruptedError (
         forKey: .type,
@@ -56,7 +56,7 @@ public struct WidgetProxy <TypeDictionary : WidgetTypeArrayProtocol> : Equatable
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public static func == (_ inLeft : WidgetProxy<TypeDictionary>, _ inRight : WidgetProxy<TypeDictionary>) -> Bool {
+  public static func == (_ inLeft : WidgetProxy<WidgetTypesDescription>, _ inRight : WidgetProxy<WidgetTypesDescription>) -> Bool {
     inLeft.widget.isEqual (to: inRight.widget)
   }
 
