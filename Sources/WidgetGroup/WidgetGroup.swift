@@ -11,7 +11,7 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public static func documentEncodedTypeName () -> String { "*group*" }
-  public let id = UUID ()
+  public let id : UUID
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -29,6 +29,8 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (_ inWidgets : [any WidgetUIProtocol <WidgetTypesDescription>]) {
+    self.id = UUID ()
+    self.mUnGroupIsEnabled = true
     var vertices = [CanariPoint] ()
     for widget in inWidgets {
       vertices += widget.orientedOrigin.globalBoundingRect.vertices
@@ -39,10 +41,9 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
       widget.translate (by: -r.center)
       return widget
     }
-    self.mUnGroupIsEnabled = true
     self.orientedOrigin = CanariScaledOrientedOrigin (r.center, .zero, 1.0)
     var localOutline = CanariPath ()
-    for widget in inWidgets {
+    for widget in self.mArray {
       localOutline.unionInPlace (widget.orientedOrigin.globalOutline)
     }
     self.orientedOrigin.setLocalOutline (localOutline)
@@ -67,6 +68,7 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (from inDecoder : Decoder) throws {
+    self.id = UUID ()
     let container = try inDecoder.container (keyedBy: CodingKeys.self)
     let proxyArray = try container.decode ([WidgetProxy <WidgetTypesDescription>].self, forKey: .array)
     var array = [any WidgetUIProtocol <WidgetTypesDescription>] ()
@@ -126,9 +128,30 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: duplicated
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func duplicated () -> (any WidgetUIProtocol <WidgetTypesDescription>)? { nil }
+  public func duplicated () -> (any WidgetUIProtocol <WidgetTypesDescription>)? {
+    var newWidgetArray = [any WidgetUIProtocol <WidgetTypesDescription>] ()
+    for widget in self.mArray {
+      newWidgetArray.append (widget.duplicated ()!)
+    }
+    return WidgetGroup (self.orientedOrigin, self.mUnGroupIsEnabled, newWidgetArray)
+  }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  private init (_ inOrientedOrigin : borrowing CanariScaledOrientedOrigin,
+                _ inUnGroupIsEnabled : Bool,
+                _ inArray : [any WidgetUIProtocol <WidgetTypesDescription>]) {
+    self.id = UUID ()
+    self.orientedOrigin = CanariScaledOrientedOrigin (inOrientedOrigin)
+    self.mUnGroupIsEnabled = inUnGroupIsEnabled
+    self.mArray = inArray
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: isGraphicallyEmpty
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var isGraphicallyEmpty : Bool { self.mArray.isEmpty }
