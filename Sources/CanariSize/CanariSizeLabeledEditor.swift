@@ -35,7 +35,7 @@ public struct CanariSizeLabeledEditor : View {
 
   public var body : some View {
     LabeledContent {
-      CanariLengthEditor (
+      EditorOfCanariLength (
         value: self.$mSizeBinding.width,
         unit: self.mUnit,
         fractionDigits: self.mFractionDigits,
@@ -45,7 +45,7 @@ public struct CanariSizeLabeledEditor : View {
       Text ("Width")
     }
     LabeledContent {
-      CanariLengthEditor (
+      EditorOfCanariLength (
         value: self.$mSizeBinding.height,
         unit: self.mUnit,
         fractionDigits: self.mFractionDigits,

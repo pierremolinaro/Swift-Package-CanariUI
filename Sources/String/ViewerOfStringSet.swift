@@ -6,39 +6,26 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct Opt_CanariPointView : View {
+public struct ViewerOfStringSet : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private let mPoint : CanariPoint?
-  private let mUnit : CanariLength.Unit
-  private let mFractionDigits : Int
+  private let mText : Set <String>
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (point inCanariPoint : CanariPoint?,
-               unit inUnit : CanariLength.Unit = .cm,
-               fractionDigits inFractionDigits : Int = 2) {
-    self.mPoint = inCanariPoint
-    self.mUnit = inUnit
-    self.mFractionDigits = inFractionDigits
+  public init (_ inText : Set <String>) {
+    self.mText = inText
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var body : some View {
-    LabeledContent (
-      content: {
-        Opt_Text (self.mPoint?.x.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
-      },
-      label: { Text ("X") }
-    )
-    LabeledContent (
-      content: {
-        Opt_Text (self.mPoint?.y.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
-      },
-      label: { Text ("Y") }
-    )
+    if self.mText.isEmpty {
+      Text ("No value").italic ()
+    }else{
+      Text (self.mText.joined (separator: ", ")).italic ()
+    }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

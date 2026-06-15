@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-struct Set_CanariLengthEditor : View {
+struct EditorOfCanariLengthSet : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct Set_CanariPointEditor : View {
+public struct EditorOfCanariPointSet : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -39,7 +39,7 @@ public struct Set_CanariPointEditor : View {
   public var body : some View {
     LabeledContent (
       content: {
-        Set_CanariLengthEditor (
+        EditorOfCanariLengthSet (
           lengthSet: Set (Array (self.mPointSet).map (\.x)),
           setter: { self.mSetterX ($0) },
           unit: self.mUnit,
@@ -52,7 +52,7 @@ public struct Set_CanariPointEditor : View {
     )
     LabeledContent (
       content: {
-        Set_CanariLengthEditor (
+        EditorOfCanariLengthSet (
           lengthSet: Set (Array (self.mPointSet).map (\.y)),
           setter: { self.mSetterY ($0) },
           unit: self.mUnit,

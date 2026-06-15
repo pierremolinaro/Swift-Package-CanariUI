@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct Set_CanariRectGraphicView : View {
+public struct ViewerOfCanariRectSet : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -28,19 +28,19 @@ public struct Set_CanariRectGraphicView : View {
 
   public var body : some View {
     VStack {
-      Opt_Text (self.maxY?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
+      ViewerOfOptionalString (self.maxY?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
       .background (Rectangle ().fill (.white))
       .anchorPreference (key: CentersKey.self, value: .center) { ["bottom" : $0] }
       HStack {
-        Opt_Text (self.minX?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
+        ViewerOfOptionalString (self.minX?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
         .background (Rectangle ().fill (.white))
         .anchorPreference (key: CentersKey.self, value: .center) { ["left" : $0] }
         Spacer ()
-        Opt_Text (self.maxX?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
+        ViewerOfOptionalString (self.maxX?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
         .background (Rectangle ().fill (.white))
         .anchorPreference (key: CentersKey.self, value: .center) { ["right" : $0] }
       }
-      Opt_Text (self.minY?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
+      ViewerOfOptionalString (self.minY?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
       .background (Rectangle ().fill (.white))
       .anchorPreference (key: CentersKey.self, value: .center) { ["top" : $0] }
     }

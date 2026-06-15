@@ -44,7 +44,6 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
     var localOutline = CanariPath ()
     for widget in self.mArray {
       widget.orientedOrigin.withGlobalOutline { localOutline.unionInPlace ($0) }
-//      localOutline.unionInPlace (widget.orientedOrigin.globalOutline)
     }
     self.orientedOrigin.setLocalOutline (localOutline)
   }
@@ -81,7 +80,6 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
     var localOutline = CanariPath ()
     for widget in array {
       widget.orientedOrigin.withGlobalOutline { localOutline.unionInPlace ($0) }
-//     localOutline.unionInPlace (widget.orientedOrigin.globalOutline)
     }
     self.orientedOrigin.setLocalOutline (localOutline)
   }
@@ -246,12 +244,12 @@ fileprivate struct WidgetGroupInspectorView <WidgetTypesDescription : DocumentWi
       CanariElementInspector (title: "Ungrouping", subTitle: "") {
         HStack {
           Text ("Group count")
-          Set_Text (Set (self.mProxy.arrayOf (\T.count).map { "\($0)" }) )
+          ViewerOfStringSet (Set (self.mProxy.arrayOf (\T.count).map { "\($0)" }) )
         }
         Opt_Toggle ("UnGrouping is enabled", isOn: self.mProxy [bindingFor: \T.mUnGroupIsEnabled])
         Button ("Ungroup") { self.mProxy.performWidgetUserInterfaceAction { $0.performUngroup () } }.disabled (!self.canUngroup ())
       }
-      Inspector_CanariPoint (
+      InspectorOfCanariPointSet (
         title: "Center",
         pointSet: self.mProxy.setOf (\T.orientedOrigin.mOrigin),
         setterX: { newX in
@@ -266,7 +264,7 @@ fileprivate struct WidgetGroupInspectorView <WidgetTypesDescription : DocumentWi
         }
       )
       CanariElementInspector (title: "Angle", subTitle: "") {
-        Set_CanariAngleEditor (
+        EditorOfCanariAngleSet (
           angleSet: self.mProxy.setOf (\T.orientedOrigin.mAngle),
           setter: { newAngle in
             self.mProxy.performWidgetAction { (widget : inout T) in
@@ -276,7 +274,7 @@ fileprivate struct WidgetGroupInspectorView <WidgetTypesDescription : DocumentWi
         )
       }
       CanariElementInspector (title: "Scale", subTitle: "") {
-        Set_ScaleEditor (
+        EditorOfScaleSet (
           valueSet: self.mProxy.setOf (\T.orientedOrigin.mScale),
           setter: { newScale in
             self.mProxy.performWidgetAction { (widget : inout T) in
@@ -286,13 +284,13 @@ fileprivate struct WidgetGroupInspectorView <WidgetTypesDescription : DocumentWi
         )
       }
       CanariElementInspector (title: "Enclosing Rectangle", subTitle: "") {
-        Set_CanariRectGraphicView (rectSet: self.mProxy.setOf (\T.orientedOrigin.globalBoundingRect))
+        ViewerOfCanariRectSet (rectSet: self.mProxy.setOf (\T.orientedOrigin.globalBoundingRect))
       }
 //      CanariElementInspector (title: "Center") {
 //        HStack {
 //          Spacer ()
 //          Form {
-//            Set_CanariPointEditor (
+//            SetOfCanariPointsEditor (
 //              pointSet: self.mProxy.setOf (\T.mCenter),
 //              setterX: { newX in
 //                self.mProxy.performWidgetAction { (widget : inout T) in
@@ -310,7 +308,7 @@ fileprivate struct WidgetGroupInspectorView <WidgetTypesDescription : DocumentWi
 //        }
 //      }
 //      CanariElementInspector (title: "Angle") {
-//        Set_CanariAngleEditor (
+//        SetOfCanariAnglesEditor (
 //          angleSet: self.mProxy.setOf (\T.mAngle),
 //          setter: { newAngle in
 //            self.mProxy.performWidgetAction { (widget : inout T) in
