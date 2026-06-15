@@ -20,7 +20,7 @@ public extension GraphicsContext {
 
   func stroke (_ inPath : CanariPath,
                with inShading : GraphicsContext.Shading,
-               lineWidth inLineWidth : CanariLength = .px (1)) {
+               lineWidth inLineWidth : CanariLength) {
     self.stroke (inPath.swiftuiPath, with: inShading, lineWidth: inLineWidth.pxValue)
   }
 

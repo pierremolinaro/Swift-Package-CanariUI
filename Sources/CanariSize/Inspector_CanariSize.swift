@@ -37,7 +37,7 @@ public struct Inspector_CanariSize : View {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var body : some View {
-    CanariElementInspector (title: self.mTitle) {
+    CanariElementInspector (title: self.mTitle, subTitle: "cm") {
       HStack {
         Spacer ()
         Form {

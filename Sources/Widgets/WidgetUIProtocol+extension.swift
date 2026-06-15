@@ -54,19 +54,19 @@ public extension WidgetUIProtocol {
                        hovered inHovered : Bool,
                        selected inSelected : Bool,
                        groupLevel inGroupLevel : UInt) {
-    ioContext.translateBy (self.orientedOrigin.mOrigin)
-    ioContext.rotateBy (self.orientedOrigin.mAngle)
-    ioContext.scaleBy (x: self.orientedOrigin.mScale, y: self.orientedOrigin.mScale)
-    self.draw (
+    ioContext.translate (by: self.orientedOrigin.mOrigin)
+    ioContext.rotate (by: self.orientedOrigin.mAngle)
+    ioContext.scale (by: self.orientedOrigin.mScale)
+    self.drawWidget (
       context: &ioContext,
       scale: inScale * self.orientedOrigin.mScale,
       hovered: inHovered,
       selected: inSelected,
       groupLevel: inGroupLevel
     )
-    ioContext.scaleBy (x: 1.0 / self.orientedOrigin.mScale, y: 1.0 / self.orientedOrigin.mScale)
-    ioContext.rotateBy (-self.orientedOrigin.mAngle)
-    ioContext.translateBy (-self.orientedOrigin.mOrigin)
+    ioContext.scale (by: 1.0 / self.orientedOrigin.mScale)
+    ioContext.rotate (by: -self.orientedOrigin.mAngle)
+    ioContext.translate (by: -self.orientedOrigin.mOrigin)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

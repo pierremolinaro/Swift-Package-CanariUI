@@ -41,7 +41,8 @@ public struct Set_CanariSizeEditor : View {
           setter: { self.mWidthSetter ($0) },
           unit: self.mUnit,
           fractionDigits: self.mFractionDigits,
-          width: self.mFieldWidth
+          width: self.mFieldWidth,
+          displayUnit: false
         )
       },
       label: { Text ("Width") }
@@ -53,7 +54,8 @@ public struct Set_CanariSizeEditor : View {
           setter: { self.mHeightSetter ($0) },
           unit: self.mUnit,
           fractionDigits: self.mFractionDigits,
-          width: self.mFieldWidth
+          width: self.mFieldWidth,
+          displayUnit: false
         )
       },
       label: { Text ("Height") }

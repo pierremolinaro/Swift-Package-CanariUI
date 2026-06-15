@@ -69,11 +69,19 @@ public struct CanariAngle : Hashable, Comparable, CustomStringConvertible, Senda
 
   public static var zero : CanariAngle { return CanariAngle (0, in: .degrees) }
 
+  public static var degrees45 : CanariAngle { return CanariAngle (45, in: .degrees) }
+
   public static var degrees90 : CanariAngle { return CanariAngle (90, in: .degrees) }
+
+  public static var degrees135 : CanariAngle { return CanariAngle (135, in: .degrees) }
 
   public static var degrees180 : CanariAngle { return CanariAngle (180, in: .degrees) }
 
+  public static var degrees225 : CanariAngle { return CanariAngle (225, in: .degrees) }
+
   public static var degrees270 : CanariAngle { return CanariAngle (270, in: .degrees) }
+
+  public static var degrees315 : CanariAngle { return CanariAngle (315, in: .degrees) }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

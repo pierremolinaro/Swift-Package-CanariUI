@@ -16,14 +16,20 @@ public extension GraphicsContext {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func translateBy (_ inPoint : CanariPoint) {
+  mutating func translate (by inPoint : CanariPoint) {
     self.translateBy (x: inPoint.x, y: inPoint.y)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func rotateBy (_ inAngle : CanariAngle) {
+  mutating func rotate (by inAngle : CanariAngle) {
     self.rotate (by: Angle.radians (inAngle.radians))
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  mutating func scale (by inScale : Double) {
+    self.scaleBy (x: inScale, y: inScale)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

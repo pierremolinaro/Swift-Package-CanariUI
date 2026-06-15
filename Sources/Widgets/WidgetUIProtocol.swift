@@ -34,11 +34,11 @@ public protocol WidgetUIProtocol <WidgetTypesDescription> : WidgetModelProtocol 
   //MARK: Draw
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func draw (context ioContext : inout GraphicsContext,
-             scale inScale : Double,
-             hovered inHovered : Bool,
-             selected inSelected : Bool,
-             groupLevel inGroupLevel : UInt)
+  func drawWidget (context ioContext : inout GraphicsContext,
+                   scale inScale : Double,
+                   hovered inHovered : Bool,
+                   selected inSelected : Bool,
+                   groupLevel inGroupLevel : UInt)
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: AlignmentGuidePoints

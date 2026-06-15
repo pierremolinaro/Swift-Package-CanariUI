@@ -20,43 +20,11 @@ import Combine
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private(set) var mSelection = Set <UUID> ()
-//  private(set) var mSelection = PassthroughSubject <Set <UUID>, Never> ()
-//  private var mDelayedSelectionForInspectorView = Set <UUID> ()
-//
-//  private var cancellables = Set<AnyCancellable>()
-
-//  @ObservationIgnored private var updateTask: Task<Void, Never>? = nil
-
-//    func mouseMoved(to position: CGPoint) {
-//      updateTask?.cancel()
-//
-//      updateTask = Task { @MainActor in
-//          try? await Task.sleep(for: .milliseconds(100))
-//          mDelayedSelectionForInspectoeView = mSelection
-//      }
-//  }
-
-//  private var cancellables = Set<AnyCancellable>()
-
-//    init() {
-//        $rawPosition
-//            .throttle(for: .milliseconds(100),
-//                      scheduler: RunLoop.main,
-//                      latest: true)
-//            .assign(to: &$displayedPosition)
-//    }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (withPasteboardType inPasteboardType : NSPasteboard.PasteboardType) {
     self.mPasteboardType = inPasteboardType
-//    self.mDelayedSelectionForInspectorView.throttle (
-//      for: .milliseconds(100),
-//      scheduler: RunLoop.main,
-//      latest: true
-//    )
-//            .assign(to: &$mDelayedSelection)
-
     super.init ()
     self.mCancellableTimerForUpdateInternalPasteState = Timer.publish (every: 0.5, on: .main, in: .common)
     .autoconnect ()
@@ -110,9 +78,11 @@ import Combine
   //MARK: Draw
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func draw (context ioContext : inout GraphicsContext, scale inScale : Double) {
+  public func draw (context ioContext : inout GraphicsContext,
+                    hoverUserLocationPoint inHoverUserLocationPoint : CanariPoint?,
+                    scale inScale : Double) {
     enterTracing ("widgets.user.interface.draw") ; defer { exitTracing ("widgets.user.interface.draw") }
-    ioContext.scaleBy (x: inScale, y: inScale)
+    ioContext.scale (by: inScale)
   //--- Draw widgets
     for widget in self.mWidgetsManager.widgets {
       widget.drawFromGlobal (
@@ -153,18 +123,27 @@ import Combine
   //--- Draw knobs
     for widget in self.mWidgetsManager.widgets {
       if self.mSelection.contains (widget.id), !widget.knobs.isEmpty {
-        ioContext.translateBy (widget.orientedOrigin.mOrigin)
-        ioContext.rotateBy (widget.orientedOrigin.mAngle)
-        ioContext.scaleBy (x: widget.orientedOrigin.mScale, y: widget.orientedOrigin.mScale)
+        ioContext.translate (by: widget.orientedOrigin.mOrigin)
+        ioContext.rotate (by: widget.orientedOrigin.mAngle)
+        ioContext.scale (by: widget.orientedOrigin.mScale)
         for knob in widget.knobs {
-          knob.drawKnob (context: &ioContext, scale: inScale * widget.orientedOrigin.mScale)
+          let inside : Bool
+          if let p = inHoverUserLocationPoint {
+            inside = knob.contains (
+              localPoint: widget.orientedOrigin.globalToLocal (p),
+              scale: inScale
+            )
+          }else{
+            inside = false
+          }
+          knob.drawKnob (context: &ioContext, inside: inside, scale: inScale * widget.orientedOrigin.mScale)
         }
-        ioContext.scaleBy (x: 1.0 / widget.orientedOrigin.mScale, y: 1.0 / widget.orientedOrigin.mScale)
-        ioContext.rotateBy (-widget.orientedOrigin.mAngle)
-        ioContext.translateBy (-widget.orientedOrigin.mOrigin)
+        ioContext.scale (by: 1.0 / widget.orientedOrigin.mScale)
+        ioContext.rotate (by: -widget.orientedOrigin.mAngle)
+        ioContext.translate (by: -widget.orientedOrigin.mOrigin)
       }
     }
-    ioContext.scaleBy (x: 1.0 / inScale, y: 1.0 / inScale)
+    ioContext.scale (by: 1.0 / inScale)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

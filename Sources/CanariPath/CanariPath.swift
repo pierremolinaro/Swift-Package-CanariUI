@@ -157,8 +157,17 @@ public struct CanariPath : Equatable, CustomStringConvertible, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public func rotated (by inAngle : CanariAngle) -> CanariPath {
+    let af = CGAffineTransform (rotationAngle: inAngle.radians)
+    var result = CanariPath ()
+    result.mPath = self.mPath.applying (af)
+    return result
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public func transformed (byMoving inTranslation : CanariPoint = .zero,
-                           zooming inScale : Double = 1.0) -> CanariPath {
+                           scaling inScale : Double = 1.0) -> CanariPath {
     let af = CGAffineTransform (scaleX: inScale, y: inScale)
       .translatedBy (x: inTranslation.x.pxValue, y: inTranslation.y.pxValue)
     var result = CanariPath ()
@@ -232,6 +241,12 @@ public struct CanariPath : Equatable, CustomStringConvertible, Sendable {
     }
     s += "]"
     return s
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func moved (by inPoint : CanariPoint) -> CanariPath {
+    return self.moved (x: inPoint.x, y: inPoint.y)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

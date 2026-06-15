@@ -24,6 +24,18 @@ public struct CanariPathWithBoundingRect : Sendable, Equatable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public func rotated (by inAngle : CanariAngle) -> Self {
+    CanariPathWithBoundingRect (self.path.rotated (by: inAngle))
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func scaled (by inScale : Double) -> Self {
+    CanariPathWithBoundingRect (self.path.transformed (scaling: inScale))
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 }
 
 //--------------------------------------------------------------------------------------------------

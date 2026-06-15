@@ -161,11 +161,11 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
   //MARK: Draw
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func draw (context ioContext : inout GraphicsContext,
-                    scale inScale : Double,
-                    hovered inHovered : Bool,
-                    selected inSelected : Bool,
-                    groupLevel inGroupLevel : UInt) {
+  public func drawWidget (context ioContext : inout GraphicsContext,
+                          scale inScale : Double,
+                          hovered inHovered : Bool,
+                          selected inSelected : Bool,
+                          groupLevel inGroupLevel : UInt) {
     for widget in self.mArray {
       widget.drawFromGlobal (
         context: &ioContext,
@@ -243,7 +243,7 @@ fileprivate struct WidgetGroupInspectorView <WidgetTypesDescription : DocumentWi
     VStack {
       Text ("Group").bold ()
       Spacer ().frame (height: 16)
-      CanariElementInspector (title: "Ungrouping") {
+      CanariElementInspector (title: "Ungrouping", subTitle: "") {
         HStack {
           Text ("Group count")
           Set_Text (Set (self.mProxy.arrayOf (\T.count).map { "\($0)" }) )
@@ -265,29 +265,27 @@ fileprivate struct WidgetGroupInspectorView <WidgetTypesDescription : DocumentWi
           }
         }
       )
-      CanariElementInspector (title: "Angle") {
+      CanariElementInspector (title: "Angle", subTitle: "") {
         Set_CanariAngleEditor (
           angleSet: self.mProxy.setOf (\T.orientedOrigin.mAngle),
           setter: { newAngle in
             self.mProxy.performWidgetAction { (widget : inout T) in
               widget.orientedOrigin.mAngle = newAngle
             }
-          },
-          width: 64
+          }
         )
       }
-      CanariElementInspector (title: "Scale") {
-        Set_DoubleEditor (
+      CanariElementInspector (title: "Scale", subTitle: "") {
+        Set_ScaleEditor (
           valueSet: self.mProxy.setOf (\T.orientedOrigin.mScale),
           setter: { newScale in
             self.mProxy.performWidgetAction { (widget : inout T) in
               widget.orientedOrigin.mScale = newScale
             }
-          },
-          width: 64
+          }
         )
       }
-      CanariElementInspector (title: "Enclosing Rectangle") {
+      CanariElementInspector (title: "Enclosing Rectangle", subTitle: "") {
         Set_CanariRectGraphicView (rectSet: self.mProxy.setOf (\T.orientedOrigin.globalBoundingRect))
       }
 //      CanariElementInspector (title: "Center") {

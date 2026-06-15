@@ -15,6 +15,7 @@ struct Set_CanariLengthEditor : View {
   private let mUnit : CanariLength.Unit
   private let mFractionDigits : Int
   private let mWidth : CGFloat
+  private let mDisplayUnit : Bool
   private let mSetter : (CanariLength) -> Void
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -23,7 +24,8 @@ struct Set_CanariLengthEditor : View {
         setter inSetter: @escaping (CanariLength) -> Void,
         unit inUnit : CanariLength.Unit = .cm,
         fractionDigits inFractionDigits : Int = 2,
-        width inWidth : CGFloat) {
+        width inWidth : CGFloat,
+        displayUnit inDisplayUnit : Bool) {
     self.mLengthArray = Array (inLengthSet).sorted ()
     if inLengthSet.count == 1, let v = inLengthSet.first {
       self.mDoubleValue = v.value (in: inUnit)
@@ -34,6 +36,7 @@ struct Set_CanariLengthEditor : View {
     self.mFractionDigits = inFractionDigits
     self.mWidth = inWidth
     self.mSetter = inSetter
+    self.mDisplayUnit = inDisplayUnit
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -60,7 +63,9 @@ struct Set_CanariLengthEditor : View {
           self.mDoubleValue = nil
         }
       }
-      Text (" " + self.mUnit.unitString)
+      if self.mDisplayUnit {
+        Text (" " + self.mUnit.unitString)
+      }
       Stepper {
         EmptyView ()
       } onIncrement: {

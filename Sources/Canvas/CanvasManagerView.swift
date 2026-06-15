@@ -360,7 +360,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
           y: .px (size.height) - self.mContext.margins.bottom * self.mCanvasScale - self.contentOverHeight (inGeometry) / 2.0
         )
         context.scaleBy (x: 1.0, y: -1.0)
-        self.mWidgetsUserInterface.draw (context: &context, scale: self.mCanvasScale)
+        self.mWidgetsUserInterface.draw (context: &context, hoverUserLocationPoint: self.mUnalignedHoverUserLocation, scale: self.mCanvasScale)
       }
     }
   //--- Observing modifier key changing
@@ -418,7 +418,6 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
       newZoom = self.mCanvasScale * inValue.magnification
     }
     self.mCanvasScale = min (max (newZoom, Double (self.mContext.zoomValues [0]) / 100.0), Double (self.mContext.zoomValues.last!) / 100.0)
-  //  self.mUserLocationComputations.mZoom = self.mCanvasScale
   //--- Recalculer la nouvelle position semble très compliqué… Le plus simple est de suprimer
   //    le marquage
     self.mAlignedHoverUserLocation = nil

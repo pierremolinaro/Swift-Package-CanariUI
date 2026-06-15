@@ -37,7 +37,7 @@ public struct Inspector_CanariPoint : View {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var body : some View {
-    CanariElementInspector (title: "Center") {
+    CanariElementInspector (title: "Center", subTitle: "cm") {
       HStack {
         Spacer ()
         Form {
@@ -46,7 +46,8 @@ public struct Inspector_CanariPoint : View {
             setterX: { newX in self.mSetterX (newX) },
             setterY: { newY in self.mSetterY (newY) },
             unit: self.mUnit,
-            fractionDigits: self.mFractionDigits
+            fractionDigits: self.mFractionDigits,
+            displayUnit: false
           )
         }
         Spacer ()
