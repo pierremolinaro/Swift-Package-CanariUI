@@ -6,19 +6,20 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariScaledOrientedOrigin : Sendable, Equatable {
+public struct UNUSED_CanariScaledOrientedOrigin : Sendable, Equatable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private var mLocalBoundingRect : CanariRect
-  private var mGlobalOutlineAndBoundingRect : CanariPathWithBoundingRect
+  private let mLocalBoundingRectCache : CanariComputationCache <CanariRect>
+  private let mGlobalOutlineAndBoundingRectCache : CanariComputationCache <CanariPathWithBoundingRect>
   private var mLocalOutline : CanariPath
+  private var mComputationsAreDelayed = false
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var mOrigin : CanariPoint {
     didSet {
-      if self.mOrigin != oldValue {
+      if self.mOrigin != oldValue, !self.mComputationsAreDelayed {
         self.computeAffinities ()
         self.launchGlobalOutlineAndBoundingRectComputation ()
       }
@@ -29,7 +30,7 @@ public struct CanariScaledOrientedOrigin : Sendable, Equatable {
 
   public var mAngle : CanariAngle {
     didSet {
-      if self.mAngle != oldValue {
+      if self.mAngle != oldValue, !self.mComputationsAreDelayed {
         self.computeAffinities ()
         self.launchGlobalOutlineAndBoundingRectComputation ()
       }
@@ -40,11 +41,23 @@ public struct CanariScaledOrientedOrigin : Sendable, Equatable {
 
   public var mScale : Double {
     didSet {
-      if self.mScale != oldValue {
+      if self.mScale != oldValue, !self.mComputationsAreDelayed {
         self.computeAffinities ()
         self.launchGlobalOutlineAndBoundingRectComputation ()
       }
     }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public mutating func updateFromOrientedOrigin (_ inOrientedOrigin : borrowing UNUSED_CanariScaledOrientedOrigin) {
+    self.mComputationsAreDelayed = true
+    self.mOrigin = inOrientedOrigin.localToGlobal (self.mOrigin)
+    self.mAngle += inOrientedOrigin.mAngle
+    self.mScale *= inOrientedOrigin.mScale
+    self.mComputationsAreDelayed = false
+    self.computeAffinities ()
+    self.launchGlobalOutlineAndBoundingRectComputation ()
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -55,78 +68,59 @@ public struct CanariScaledOrientedOrigin : Sendable, Equatable {
     self.mOrigin = inOrigin
     self.mAngle = inAngle
     self.mScale = inScale
-    self.mLocalOutline = .init ()
-    self.mLocalBoundingRect = .init ()
-    self.mGlobalOutlineAndBoundingRect = .init ()
+    self.mLocalOutline = CanariPath ()
+    self.mGlobalOutlineAndBoundingRectCache = .init (defaultResult: CanariPathWithBoundingRect ())
+    self.mLocalBoundingRectCache = .init (defaultResult: CanariRect ())
     self.computeAffinities ()
   }
 
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public init (_ inOrientedOrigin : borrowing UNUSED_CanariScaledOrientedOrigin) {
+    self.mOrigin = inOrientedOrigin.mOrigin
+    self.mAngle = inOrientedOrigin.mAngle
+    self.mScale = inOrientedOrigin.mScale
+    self.mLocalOutline = CanariPath ()
+    self.mComputationsAreDelayed = false
+    self.mGlobalOutlineAndBoundingRectCache = .init (defaultResult: CanariPathWithBoundingRect ())
+    self.mLocalBoundingRectCache = .init (defaultResult: CanariRect ())
+  //---
+    self.computeAffinities ()
+    self.setLocalOutline (inOrientedOrigin.mLocalOutline)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public var localOutline : CanariPath { self.mLocalOutline }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public mutating func setLocalOutline (_ inLocalOutLine : CanariPath) {
     self.mLocalOutline = inLocalOutLine
-    self.mLocalBoundingRect = inLocalOutLine.boundingRect
+    self.mLocalBoundingRectCache.launchComputing { inLocalOutLine.boundingRect }
     let localToGlobalAffinity = self.mLocalToGlobalAffinity
-    self.mGlobalOutlineAndBoundingRect = CanariPathWithBoundingRect (inLocalOutLine.transformed (by: localToGlobalAffinity))
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: With local bounding rect
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public func withLocalBoundingRect (action inAction : (CanariRect) -> Void) {
-    inAction (self.mLocalBoundingRect)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: With local outline
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public func withLocalOutline (action inAction : (CanariPath) -> Void) {
-    inAction (self.mLocalOutline)
+    self.mGlobalOutlineAndBoundingRectCache.launchComputing {
+      CanariPathWithBoundingRect (inLocalOutLine.transformed (by: localToGlobalAffinity))
+    }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func localOutline (containsLocalPoint inLocalPoint : CanariPoint) -> Bool {
-    return self.mLocalOutline.contains (inLocalPoint)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: With global outline
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public func withGlobalOutline (action inAction : (CanariPath) -> Void) {
-    inAction (self.mGlobalOutlineAndBoundingRect.path)
+  public var localBoundingRect : CanariRect {
+    self.mLocalBoundingRectCache.getComputedResult ()
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func globalOutlineIntersects (globalRect inGlobalRect : CanariRect) -> Bool {
-    self.mGlobalOutlineAndBoundingRect.boundingRect.intersects (inGlobalRect)
-      &&
-    self.mGlobalOutlineAndBoundingRect.path.intersects (inGlobalRect)
+  public var globalOutline : CanariPath {
+    self.mGlobalOutlineAndBoundingRectCache.getComputedResult().path
   }
 
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: With global bounding rect
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var globalBoundingRect : CanariRect {
-    self.mGlobalOutlineAndBoundingRect.boundingRect
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: With global bounding rect
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public mutating func transformToGlobal (_ inGlobalOrientedOrigin : borrowing CanariScaledOrientedOrigin) {
-    self.mOrigin = inGlobalOrientedOrigin.localToGlobal (self.mOrigin)
-    self.mAngle += inGlobalOrientedOrigin.mAngle
-    self.mScale *= inGlobalOrientedOrigin.mScale
-    self.computeAffinities ()
-    self.launchGlobalOutlineAndBoundingRectComputation ()
+    self.mGlobalOutlineAndBoundingRectCache.getComputedResult().boundingRect
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -151,10 +145,12 @@ public struct CanariScaledOrientedOrigin : Sendable, Equatable {
   //MARK: Launch Global outline and bounding rect computations
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private mutating func launchGlobalOutlineAndBoundingRectComputation () {
+  private func launchGlobalOutlineAndBoundingRectComputation () {
     let localOutline = self.mLocalOutline
     let localToGlobalAffinity = self.mLocalToGlobalAffinity
-    self.mGlobalOutlineAndBoundingRect = CanariPathWithBoundingRect (localOutline.transformed (by: localToGlobalAffinity))
+    self.mGlobalOutlineAndBoundingRectCache.launchComputing {
+      CanariPathWithBoundingRect (localOutline.transformed (by: localToGlobalAffinity))
+    }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -190,9 +186,9 @@ public struct CanariScaledOrientedOrigin : Sendable, Equatable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-//  public func localToGlobal (_ inPath : CanariPath) -> CanariPath {
-//    return inPath.transformed (by: self.mLocalToGlobalAffinity)
-//  }
+  public func localToGlobal (_ inPath : CanariPath) -> CanariPath {
+    return inPath.transformed (by: self.mLocalToGlobalAffinity)
+  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Global to local

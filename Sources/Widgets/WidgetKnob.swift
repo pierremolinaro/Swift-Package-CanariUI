@@ -11,7 +11,7 @@ public struct WidgetKnob <WidgetTypesDescription : DocumentWidgetsDescriptionPro
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private let localPoint : CanariPoint
-  let dragAction : (inout any WidgetUIProtocol <WidgetTypesDescription>, CanariPoint, Bool) -> Void
+  let dragWidgetKnobAction : (inout any WidgetUIProtocol <WidgetTypesDescription>, CanariPoint, Bool) -> Void
   let menu : ((ContextualMenuExecutor <WidgetTypesDescription>) -> any View)?
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -20,7 +20,7 @@ public struct WidgetKnob <WidgetTypesDescription : DocumentWidgetsDescriptionPro
                dragAction inKnobDragAction : @escaping (inout any WidgetUIProtocol <WidgetTypesDescription>, CanariPoint, Bool) -> Void,
                menu inMenu : ((ContextualMenuExecutor <WidgetTypesDescription>) -> any View)? = nil) {
     self.localPoint = inCenter
-    self.dragAction = inKnobDragAction
+    self.dragWidgetKnobAction = inKnobDragAction
     self.menu = inMenu
   }
 

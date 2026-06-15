@@ -233,7 +233,7 @@ import Combine
               alignedCurrentPoint: inGeometry.alignedUserStartLocation,
               optionKeyInitiallyOn: true,
               widgetID: widget.id,
-              dragAction: knob.dragAction
+              dragWidgetKnobAction: knob.dragWidgetKnobAction
             )
           }
         }
@@ -328,7 +328,7 @@ import Combine
               alignedCurrentPoint: inGeometry.alignedUserStartLocation,
               optionKeyInitiallyOn: false,
               widgetID: widget.id,
-              dragAction: knob.dragAction
+              dragWidgetKnobAction: knob.dragWidgetKnobAction
             )
           }
         }

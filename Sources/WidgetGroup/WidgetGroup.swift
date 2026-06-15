@@ -43,7 +43,8 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
     self.orientedOrigin = CanariScaledOrientedOrigin (r.center, .zero, 1.0)
     var localOutline = CanariPath ()
     for widget in self.mArray {
-      localOutline.unionInPlace (widget.orientedOrigin.globalOutline)
+      widget.orientedOrigin.withGlobalOutline { localOutline.unionInPlace ($0) }
+//      localOutline.unionInPlace (widget.orientedOrigin.globalOutline)
     }
     self.orientedOrigin.setLocalOutline (localOutline)
   }
@@ -79,7 +80,8 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
     self.orientedOrigin = try container.decode (CanariScaledOrientedOrigin.self, forKey: .oo)
     var localOutline = CanariPath ()
     for widget in array {
-      localOutline.unionInPlace (widget.orientedOrigin.globalOutline)
+      widget.orientedOrigin.withGlobalOutline { localOutline.unionInPlace ($0) }
+//     localOutline.unionInPlace (widget.orientedOrigin.globalOutline)
     }
     self.orientedOrigin.setLocalOutline (localOutline)
   }
@@ -136,11 +138,11 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private init (_ inOrientedOrigin : borrowing CanariScaledOrientedOrigin,
+  private init (_ inOrientedOrigin : CanariScaledOrientedOrigin,
                 _ inUnGroupIsEnabled : Bool,
                 _ inArray : [any WidgetUIProtocol <WidgetTypesDescription>]) {
     self.id = UUID ()
-    self.orientedOrigin = CanariScaledOrientedOrigin (inOrientedOrigin)
+    self.orientedOrigin = inOrientedOrigin
     self.mUnGroupIsEnabled = inUnGroupIsEnabled
     var newWidgetArray = [any WidgetUIProtocol <WidgetTypesDescription>] ()
     for widget in inArray {
@@ -174,10 +176,12 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
       )
     }
     if inSelected, inGroupLevel == 0 {
-      ioContext.stroke (
-        CanariPath (rect: self.orientedOrigin.localBoundingRect),
-        with: .color (.black), lineWidth: .px (0.5) / inScale
-      )
+      self.orientedOrigin.withLocalBoundingRect {
+        ioContext.stroke (
+          CanariPath (rect: $0),
+          with: .color (.black), lineWidth: .px (0.5) / inScale
+        )
+      }
     }
   }
 
@@ -200,7 +204,7 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
   func ungroupedArray () -> [any WidgetUIProtocol <WidgetTypesDescription>] {
     return self.mArray.map {
       var widget = $0
-      widget.orientedOrigin.updateFromOrientedOrigin (self.orientedOrigin)
+      widget.orientedOrigin.transformToGlobal (self.orientedOrigin)
       return widget
     }
   }

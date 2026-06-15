@@ -13,7 +13,7 @@ public extension WidgetUIProtocol {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func containsLocalPoint (_ inLocalPoint : CanariPoint) -> Bool {
-    return self.orientedOrigin.localOutline.contains (inLocalPoint)
+    return self.orientedOrigin.localOutline (containsLocalPoint: inLocalPoint)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
