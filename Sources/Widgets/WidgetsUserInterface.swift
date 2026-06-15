@@ -640,7 +640,7 @@ import Combine
 
   public override var groupIsEnabled : Bool {
     (self.mSelection.count > 1)
-    && (WidgetTypesDescription.widgetTypeArray.first { $0 == WidgetGroup <WidgetTypesDescription>.self } != nil)
+    && (WidgetTypesDescription.widgetTypeArray.first { $0.0 == WidgetGroup <WidgetTypesDescription>.self } != nil)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

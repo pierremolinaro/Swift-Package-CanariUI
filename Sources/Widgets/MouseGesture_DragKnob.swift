@@ -25,9 +25,10 @@ struct MouseGesture_DragKnob <WidgetTypesDescription : DocumentWidgetsDescriptio
     if translation != .zero {
       inBeginOrContinueUndoGrouping ()
       if var widget = ioWidgetsManager [id: widgetID] {
-        let localTranslation = CanariAffinity (scale: 1.0 / widget.orientedOrigin.mScale)
-          .rotating (-widget.orientedOrigin.mAngle)
-          .transforming (translation)
+//        let localTranslation = CanariAffinity (scale: 1.0 / widget.orientedOrigin.mScale)
+//          .rotating (-widget.orientedOrigin.mAngle)
+//          .transforming (translation)
+        let localTranslation = widget.orientedOrigin.globalToLocal (translation)
         self.dragAction (&widget, localTranslation, self.optionKeyInitiallyOn)
         ioWidgetsManager [id: widgetID] = widget
       }

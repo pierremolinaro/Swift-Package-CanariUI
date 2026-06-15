@@ -13,7 +13,6 @@ public protocol WidgetModelProtocol <WidgetTypesDescription> : Identifiable, Sen
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   var id : UUID { get }
-  static func documentEncodedTypeName () -> String
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

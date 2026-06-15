@@ -10,7 +10,6 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public static func documentEncodedTypeName () -> String { "*group*" }
   public let id : UUID
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -132,11 +131,7 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func duplicated () -> (any WidgetUIProtocol <WidgetTypesDescription>)? {
-    var newWidgetArray = [any WidgetUIProtocol <WidgetTypesDescription>] ()
-    for widget in self.mArray {
-      newWidgetArray.append (widget.duplicated ()!)
-    }
-    return WidgetGroup (self.orientedOrigin, self.mUnGroupIsEnabled, newWidgetArray)
+    return WidgetGroup (self.orientedOrigin, self.mUnGroupIsEnabled, self.mArray)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -147,7 +142,11 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
     self.id = UUID ()
     self.orientedOrigin = CanariScaledOrientedOrigin (inOrientedOrigin)
     self.mUnGroupIsEnabled = inUnGroupIsEnabled
-    self.mArray = inArray
+    var newWidgetArray = [any WidgetUIProtocol <WidgetTypesDescription>] ()
+    for widget in inArray {
+      newWidgetArray.append (widget.duplicated ()!)
+    }
+    self.mArray = newWidgetArray
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

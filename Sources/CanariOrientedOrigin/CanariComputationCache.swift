@@ -46,7 +46,7 @@ public final class CanariComputationCache <CachedResult : Equatable & Sendable> 
         aTaskIsWaiting = true
       }
       let task = Task.detached {
-        enterTracing ("computed.cache.run") ; defer { exitTracing ("computed.cache.run") }
+        enterTracing ("cache.run") ; defer { exitTracing ("cache.run") }
         let result = inComputeFunction ()
         self.mState.withLock {
           if case .waiting (_) = $0 {
@@ -62,7 +62,7 @@ public final class CanariComputationCache <CachedResult : Equatable & Sendable> 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func getComputedResult () -> CachedResult {
-    enterTracing ("computed.cache.get") ; defer { exitTracing ("computed.cache.get") }
+    enterTracing ("cache.get") ; defer { exitTracing ("cache.get") }
     self.mCriticalSection.wait ()
       var isWaiting = true
       var result = self.mDefaultResult

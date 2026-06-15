@@ -28,8 +28,7 @@ public struct WidgetProxy <WidgetTypesDescription : DocumentWidgetsDescriptionPr
 
   nonisolated public init (from inDecoder : Decoder) throws {
     var dictionary : [String : any WidgetUIProtocol.Type] = [:]
-    for type : any WidgetUIProtocol.Type in WidgetTypesDescription.widgetTypeArray {
-      let name = type.documentEncodedTypeName ()
+    for (type, name) : (any WidgetUIProtocol.Type, String) in WidgetTypesDescription.widgetTypeArray {
       dictionary [name] = type
     }
     let container = try inDecoder.container (keyedBy: CodingKeys.self)
@@ -50,13 +49,14 @@ public struct WidgetProxy <WidgetTypesDescription : DocumentWidgetsDescriptionPr
 
   public nonisolated func encode (to inEncoder : Encoder) throws {
     var container = inEncoder.container (keyedBy: CodingKeys.self)
-    try container.encode (type (of: self.widget).documentEncodedTypeName (), forKey: .type)
+    try container.encode (WidgetTypesDescription.documentEncodedTypeName (self.widget), forKey: .type)
     try container.encode (self.widget, forKey: .value)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public static func == (_ inLeft : WidgetProxy<WidgetTypesDescription>, _ inRight : WidgetProxy<WidgetTypesDescription>) -> Bool {
+  public static func == (_ inLeft : borrowing WidgetProxy<WidgetTypesDescription>,
+                         _ inRight : borrowing WidgetProxy<WidgetTypesDescription>) -> Bool {
     inLeft.widget.isEqual (to: inRight.widget)
   }
 
