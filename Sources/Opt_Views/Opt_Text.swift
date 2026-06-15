@@ -24,7 +24,7 @@ public struct Opt_Text : View {
     if let text = self.mText {
       Text (text)
     }else{
-      Text ("Multiple values").italic ()
+      Text (MULTIPLE_VALUES_MARK).italic ()
     }
   }
 

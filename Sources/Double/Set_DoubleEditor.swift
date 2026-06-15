@@ -45,7 +45,7 @@ public struct Set_DoubleEditor : View {
         "",
         value: self.$mDoubleValue,
         format: .number.precision (.fractionLength (self.mFractionDigits)),
-        prompt: Text ("Multiple values")
+        prompt: Text (MULTIPLE_VALUES_MARK)
       )
       .onSubmit {
         if let v = self.mDoubleValue {

@@ -36,7 +36,7 @@ public struct Set_CanariAngleEditor : View {
         "",
         value: self.$mDoubleValue,
         format: .number.precision (.fractionLength (3)),
-        prompt: Text ("Multiple values")
+        prompt: Text (MULTIPLE_VALUES_MARK)
       )
       .onSubmit {
         if let v = self.mDoubleValue {
