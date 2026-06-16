@@ -13,6 +13,7 @@ public struct CanariElementInspector <Content> : View where Content : View {
   private let mTitle : String
   private let mSubTitle : String
   private let mContent : () -> Content
+  @State private var mIsExpanded = true
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -27,15 +28,16 @@ public struct CanariElementInspector <Content> : View where Content : View {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var body : some View {
-    VStack {
+    DisclosureGroup (isExpanded: self.$mIsExpanded) {
+      self.mContent ()
+    } label: {
       HStack {
         Text (self.mTitle).bold ()
         Spacer ()
-        if !self.mSubTitle.isEmpty {
+        if !self.mSubTitle.isEmpty, self.mIsExpanded {
           Text (self.mSubTitle)
         }
       }
-      self.mContent ()
     }
     .padding (6.0)
     .frame (maxWidth: .infinity)
