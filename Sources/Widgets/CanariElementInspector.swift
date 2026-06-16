@@ -41,7 +41,7 @@ public struct CanariElementInspector <Content> : View where Content : View {
     }
     .padding (6.0)
     .frame (maxWidth: .infinity)
-    .background (RoundedRectangle(cornerRadius: 6.0).fill(Color.gray.opacity(0.1)))
+    .background (RoundedRectangle(cornerRadius: 8.0).fill(.quinary))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
