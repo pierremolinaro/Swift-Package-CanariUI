@@ -24,6 +24,13 @@ public struct CanariPathWithBoundingRect : Sendable, Equatable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+//  private init (_ inPath : CanariPath, _ inBoundingRect : CanariRect) {
+//    self.path = inPath
+//    self.boundingRect = inPath.boundingRect
+//  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public func rotated (by inAngle : CanariAngle) -> Self {
     CanariPathWithBoundingRect (self.path.rotated (by: inAngle))
   }
@@ -32,6 +39,12 @@ public struct CanariPathWithBoundingRect : Sendable, Equatable {
 
   public func scaled (by inScale : Double) -> Self {
     CanariPathWithBoundingRect (self.path.transformed (scaling: inScale))
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public var xMirrored : Self {
+    CanariPathWithBoundingRect (self.path.xMirrored)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

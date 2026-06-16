@@ -194,6 +194,12 @@ public struct CanariPath : Equatable, CustomStringConvertible, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public var xMirrored : Self {
+    self.transformed (by: CanariAffinity (scale: 1.0, horizontalFlip: true))
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 //  public func clipped (inRect inRect : NSRect) -> CanariPath {
 //    var result = CanariPath ()
 //    result.mPath = self.mPath.applying (inTransform)

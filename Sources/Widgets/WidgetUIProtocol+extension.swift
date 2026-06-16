@@ -56,7 +56,7 @@ public extension WidgetUIProtocol {
                        groupLevel inGroupLevel : UInt) {
     ioContext.translate (by: self.orientedOrigin.mOrigin)
     ioContext.rotate (by: self.orientedOrigin.mAngle)
-    ioContext.scale (by: self.orientedOrigin.mScale)
+    ioContext.scale (by: self.orientedOrigin.mScale, horizontalFlip: self.orientedOrigin.mHorizontalFlip)
     self.drawWidget (
       context: &ioContext,
       scale: inScale * self.orientedOrigin.mScale,
@@ -64,7 +64,7 @@ public extension WidgetUIProtocol {
       selected: inSelected,
       groupLevel: inGroupLevel
     )
-    ioContext.scale (by: 1.0 / self.orientedOrigin.mScale)
+    ioContext.scale (by: 1.0 / self.orientedOrigin.mScale, horizontalFlip: self.orientedOrigin.mHorizontalFlip)
     ioContext.rotate (by: -self.orientedOrigin.mAngle)
     ioContext.translate (by: -self.orientedOrigin.mOrigin)
   }

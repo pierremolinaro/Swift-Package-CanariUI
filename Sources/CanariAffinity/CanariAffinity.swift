@@ -75,8 +75,11 @@ public struct CanariAffinity : CustomStringConvertible, Sendable, Equatable {
        [ 0  0  1 ]
   */
 
-  public init (scale inFactor : CGFloat) {
-    self.mAffineTransform = AffineTransform (scale: inFactor)
+  public init (scale inFactor : CGFloat, horizontalFlip inHorizontalFlip : Bool = false) {
+    self.mAffineTransform = AffineTransform (
+      scaleByX: inHorizontalFlip ? -inFactor : inFactor,
+      byY: inFactor
+    )
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -292,6 +295,18 @@ public struct CanariAffinity : CustomStringConvertible, Sendable, Equatable {
   public func scaling (_ inFactor : Double) -> CanariAffinity {
     var af = self
     af.scale (inFactor)
+    return af
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func scaling (_ inFactor : Double, horizontalFlip inHorizontalFlip : Bool) -> CanariAffinity {
+    var af = self
+    if inHorizontalFlip {
+      af.scale (x: -inFactor, y: inFactor)
+    }else{
+      af.scale (inFactor)
+    }
     return af
   }
 

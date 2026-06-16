@@ -42,6 +42,17 @@ public struct CanariScaledOrientedOrigin : Sendable, Equatable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public var mHorizontalFlip : Bool {
+    didSet {
+      if self.mHorizontalFlip != oldValue {
+        self.computeAffinities ()
+        self.mOriginCenteredGlobalOutlineAndBoundingRect = self.mOriginCenteredGlobalOutlineAndBoundingRect.xMirrored
+      }
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   private var mOriginCenteredLocalOutline : CanariPath
   private var mOriginCenteredLocalBoundingRect : CanariRect
   private var mOriginCenteredGlobalOutlineAndBoundingRect : CanariPathWithBoundingRect
@@ -50,10 +61,12 @@ public struct CanariScaledOrientedOrigin : Sendable, Equatable {
 
   public init (_ inOrigin : CanariPoint,
                _ inAngle : CanariAngle,
-               _ inScale : Double) {
+               _ inScale : Double,
+               _ inHorizontalFlip : Bool) {
     self.mOrigin = inOrigin
     self.mAngle = inAngle
     self.mScale = inScale
+    self.mHorizontalFlip = inHorizontalFlip
     self.mOriginCenteredLocalOutline = .init ()
     self.mOriginCenteredLocalBoundingRect = .init ()
     self.mOriginCenteredGlobalOutlineAndBoundingRect = .init ()
@@ -66,7 +79,7 @@ public struct CanariScaledOrientedOrigin : Sendable, Equatable {
   public mutating func setLocalOutline (_ inLocalOutLine : CanariPath) {
     self.mOriginCenteredLocalOutline = inLocalOutLine
     self.mOriginCenteredLocalBoundingRect = inLocalOutLine.boundingRect
-    let affinity = CanariAffinity (rotation: self.mAngle).scaling (self.mScale)
+    let affinity = CanariAffinity (rotation: self.mAngle).scaling (self.mScale, horizontalFlip: self.mHorizontalFlip)
     self.mOriginCenteredGlobalOutlineAndBoundingRect = CanariPathWithBoundingRect (inLocalOutLine.transformed (by: affinity))
   }
 
@@ -125,6 +138,7 @@ public struct CanariScaledOrientedOrigin : Sendable, Equatable {
     self.mOrigin = inGlobalOrientedOrigin.localToGlobal (self.mOrigin)
     self.mAngle += inGlobalOrientedOrigin.mAngle
     self.mScale *= inGlobalOrientedOrigin.mScale
+    self.mHorizontalFlip = self.mHorizontalFlip != inGlobalOrientedOrigin.mHorizontalFlip
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -139,8 +153,8 @@ public struct CanariScaledOrientedOrigin : Sendable, Equatable {
   private mutating func computeAffinities () {
     self.mLocalToGlobalAffinity = CanariAffinity (translation: self.mOrigin)
       .rotating (self.mAngle)
-      .scaling (self.mScale)
-    self.mGlobalToLocalAffinity = CanariAffinity (scale: 1.0 / self.mScale)
+      .scaling (self.mScale, horizontalFlip: self.mHorizontalFlip)
+    self.mGlobalToLocalAffinity = CanariAffinity (scale: 1.0 / self.mScale, horizontalFlip: self.mHorizontalFlip)
       .rotating (-self.mAngle)
       .translating (-self.mOrigin)
   }
@@ -175,12 +189,6 @@ public struct CanariScaledOrientedOrigin : Sendable, Equatable {
     }
     return result
   }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-//  public func localToGlobal (_ inPath : CanariPath) -> CanariPath {
-//    return inPath.transformed (by: self.mLocalToGlobalAffinity)
-//  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Global to local

@@ -40,7 +40,7 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
       widget.translate (by: -r.center)
       return widget
     }
-    self.orientedOrigin = CanariScaledOrientedOrigin (r.center, .zero, 1.0)
+    self.orientedOrigin = CanariScaledOrientedOrigin (r.center, .zero, 1.0, false)
     var localOutline = CanariPath ()
     for widget in self.mArray {
       widget.orientedOrigin.withGlobalOutline { localOutline.unionInPlace ($0) }

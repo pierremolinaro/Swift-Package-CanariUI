@@ -28,8 +28,8 @@ public extension GraphicsContext {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func scale (by inScale : Double) {
-    self.scaleBy (x: inScale, y: inScale)
+  mutating func scale (by inScale : Double, horizontalFlip inHorizontalFlip : Bool = false) {
+    self.scaleBy (x: inHorizontalFlip ? -inScale : inScale, y: inScale)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
