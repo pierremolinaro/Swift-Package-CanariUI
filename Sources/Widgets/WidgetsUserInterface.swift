@@ -453,7 +453,7 @@ import Combine
       var translation = CanariPoint (x: magneticGrid * (shift ? 10.0 : 1.0))
       for i in 0 ..< self.mWidgetsManager.count {
         if self.mSelection.contains (self.mWidgetsManager [widget: i].id) {
-          self.mWidgetsManager [widget: i].limitTranslation (&translation, inCanvasSize)
+          self.mWidgetsManager [widget: i].orientedOrigin.limitTranslationWithinCanvas (&translation, inCanvasSize)
         }
       }
       var idx = 0
@@ -474,7 +474,7 @@ import Combine
       var translation = CanariPoint (x: magneticGrid * (shift ? -10.0 : -1.0))
       for i in 0 ..< self.mWidgetsManager.count {
         if self.mSelection.contains (self.mWidgetsManager [widget: i].id) {
-          self.mWidgetsManager [widget: i].limitTranslation (&translation, inCanvasSize)
+          self.mWidgetsManager [widget: i].orientedOrigin.limitTranslationWithinCanvas (&translation, inCanvasSize)
         }
       }
       var idx = 0
@@ -495,7 +495,7 @@ import Combine
       var translation = CanariPoint (y: magneticGrid * (shift ? 10.0 : 1.0))
       for i in 0 ..< self.mWidgetsManager.count {
         if self.mSelection.contains (self.mWidgetsManager [widget: i].id) {
-          self.mWidgetsManager [widget: i].limitTranslation (&translation, inCanvasSize)
+          self.mWidgetsManager [widget: i].orientedOrigin.limitTranslationWithinCanvas (&translation, inCanvasSize)
         }
       }
       var idx = 0
@@ -516,7 +516,7 @@ import Combine
       var translation = CanariPoint (y: magneticGrid * (shift ? -10.0 : -1.0))
       for i in 0 ..< self.mWidgetsManager.count {
         if self.mSelection.contains (self.mWidgetsManager [widget: i].id) {
-          self.mWidgetsManager [widget: i].limitTranslation (&translation, inCanvasSize)
+          self.mWidgetsManager [widget: i].orientedOrigin.limitTranslationWithinCanvas (&translation, inCanvasSize)
         }
       }
       var idx = 0

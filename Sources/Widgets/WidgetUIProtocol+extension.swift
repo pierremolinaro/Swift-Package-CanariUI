@@ -20,23 +20,23 @@ public extension WidgetUIProtocol {
   //MARK: Limit Translation
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func limitTranslation (_ ioTranslation : inout CanariPoint, _ inCanvasSize : CanariSize) {
-    let r = self.orientedOrigin.globalBoundingRect
-    let newTopRight = r.topRight + ioTranslation
-    if newTopRight.x > inCanvasSize.width {
-      ioTranslation.x -= newTopRight.x - inCanvasSize.width
-    }
-    if newTopRight.y > inCanvasSize.height {
-      ioTranslation.y -= newTopRight.y - inCanvasSize.height
-    }
-    let newBottomLeft = r.bottomLeft + ioTranslation
-    if newBottomLeft.x < .zero {
-      ioTranslation.x -= newBottomLeft.x
-    }
-    if newBottomLeft.y < .zero {
-      ioTranslation.y -= newBottomLeft.y
-    }
-  }
+//  func limitTranslation (_ ioTranslation : inout CanariPoint, _ inCanvasSize : CanariSize) {
+//    let r = self.orientedOrigin.globalBoundingRect
+//    let newTopRight = r.topRight + ioTranslation
+//    if newTopRight.x > inCanvasSize.width {
+//      ioTranslation.x -= newTopRight.x - inCanvasSize.width
+//    }
+//    if newTopRight.y > inCanvasSize.height {
+//      ioTranslation.y -= newTopRight.y - inCanvasSize.height
+//    }
+//    let newBottomLeft = r.bottomLeft + ioTranslation
+//    if newBottomLeft.x < .zero {
+//      ioTranslation.x -= newBottomLeft.x
+//    }
+//    if newBottomLeft.y < .zero {
+//      ioTranslation.y -= newBottomLeft.y
+//    }
+//  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Translate

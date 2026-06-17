@@ -101,7 +101,7 @@ public struct UNUSED_CanariScaledOrientedOrigin : Sendable, Equatable {
     self.mLocalBoundingRectCache.launchComputing { inLocalOutLine.boundingRect }
     let localToGlobalAffinity = self.mLocalToGlobalAffinity
     self.mGlobalOutlineAndBoundingRectCache.launchComputing {
-      CanariPathWithBoundingRect (inLocalOutLine.transformed (by: localToGlobalAffinity))
+      CanariPathWithBoundingRect (path: inLocalOutLine.transformed (by: localToGlobalAffinity))
     }
   }
 
@@ -149,7 +149,7 @@ public struct UNUSED_CanariScaledOrientedOrigin : Sendable, Equatable {
     let localOutline = self.mLocalOutline
     let localToGlobalAffinity = self.mLocalToGlobalAffinity
     self.mGlobalOutlineAndBoundingRectCache.launchComputing {
-      CanariPathWithBoundingRect (localOutline.transformed (by: localToGlobalAffinity))
+      CanariPathWithBoundingRect (path: localOutline.transformed (by: localToGlobalAffinity))
     }
   }
 

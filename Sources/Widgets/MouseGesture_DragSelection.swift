@@ -21,7 +21,7 @@ struct MouseGesture_DragSelection <WidgetTypesDescription : DocumentWidgetsDescr
     var translation = inGeometry.alignedUserCurrentLocation - self.alignedCurrentPoint
     for i in 0 ..< ioWidgetsManager.count {
       if ioSelection.contains (ioWidgetsManager [widget: i].id) {
-        ioWidgetsManager [widget: i].limitTranslation (&translation, inGeometry.canvasSize)
+        ioWidgetsManager [widget: i].orientedOrigin.limitTranslationWithinCanvas (&translation, inGeometry.canvasSize)
       }
     }
     if translation != .zero {
