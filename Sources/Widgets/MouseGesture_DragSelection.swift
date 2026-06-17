@@ -19,9 +19,15 @@ struct MouseGesture_DragSelection <WidgetTypesDescription : DocumentWidgetsDescr
                        widgetsManager ioWidgetsManager : inout WidgetsManager <WidgetTypesDescription>,
                        optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<WidgetTypesDescription>)?) {
     var translation = inGeometry.alignedUserCurrentLocation - self.alignedCurrentPoint
+    var unselectedWidgetOutlines = [CanariPath] ()
+    for i in 0 ..< ioWidgetsManager.count {
+      if !ioSelection.contains (ioWidgetsManager [widget: i].id) {
+        unselectedWidgetOutlines.append (ioWidgetsManager [widget: i].orientedOrigin.globalOutline)
+      }
+    }
     for i in 0 ..< ioWidgetsManager.count {
       if ioSelection.contains (ioWidgetsManager [widget: i].id) {
-        ioWidgetsManager [widget: i].orientedOrigin.limitTranslationWithinCanvas (&translation, inGeometry.canvasSize)
+        ioWidgetsManager [widget: i].orientedOrigin.limitTranslationWithinCanvas (&translation, inGeometry.canvasSize, unselectedWidgetOutlines)
       }
     }
     if translation != .zero {

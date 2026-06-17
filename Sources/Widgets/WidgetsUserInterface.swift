@@ -450,19 +450,8 @@ import Combine
   public func rightArrowKeyAction (magneticGrid inMagneticGrid : CanariLength?, _ inCanvasSize : CanariSize) {
     if let magneticGrid = inMagneticGrid {
       let shift = NSEvent.modifierFlags.contains (.shift)
-      var translation = CanariPoint (x: magneticGrid * (shift ? 10.0 : 1.0))
-      for i in 0 ..< self.mWidgetsManager.count {
-        if self.mSelection.contains (self.mWidgetsManager [widget: i].id) {
-          self.mWidgetsManager [widget: i].orientedOrigin.limitTranslationWithinCanvas (&translation, inCanvasSize)
-        }
-      }
-      var idx = 0
-      while idx < self.mWidgetsManager.count {
-        if self.mSelection.contains (self.mWidgetsManager [widget: idx].id) {
-          self.mWidgetsManager [widget: idx].translate (by: translation)
-        }
-        idx += 1
-      }
+      let t = CanariPoint (x: magneticGrid * (shift ? 10.0 : 1.0))
+      self.handleTranslation (expected: t, inCanvasSize)
     }
   }
 
@@ -471,19 +460,8 @@ import Combine
   public func leftArrowKeyAction (magneticGrid inMagneticGrid : CanariLength?, _ inCanvasSize : CanariSize) {
     if let magneticGrid = inMagneticGrid {
       let shift = NSEvent.modifierFlags.contains (.shift)
-      var translation = CanariPoint (x: magneticGrid * (shift ? -10.0 : -1.0))
-      for i in 0 ..< self.mWidgetsManager.count {
-        if self.mSelection.contains (self.mWidgetsManager [widget: i].id) {
-          self.mWidgetsManager [widget: i].orientedOrigin.limitTranslationWithinCanvas (&translation, inCanvasSize)
-        }
-      }
-      var idx = 0
-      while idx < self.mWidgetsManager.count {
-        if self.mSelection.contains (self.mWidgetsManager [widget: idx].id) {
-          self.mWidgetsManager [widget: idx].translate (by: translation)
-        }
-        idx += 1
-      }
+      let t = CanariPoint (x: magneticGrid * (shift ? -10.0 : -1.0))
+      self.handleTranslation (expected: t, inCanvasSize)
     }
   }
 
@@ -492,19 +470,8 @@ import Combine
   public func upArrowKeyAction (magneticGrid inMagneticGrid : CanariLength?, _ inCanvasSize : CanariSize) {
     if let magneticGrid = inMagneticGrid {
       let shift = NSEvent.modifierFlags.contains (.shift)
-      var translation = CanariPoint (y: magneticGrid * (shift ? 10.0 : 1.0))
-      for i in 0 ..< self.mWidgetsManager.count {
-        if self.mSelection.contains (self.mWidgetsManager [widget: i].id) {
-          self.mWidgetsManager [widget: i].orientedOrigin.limitTranslationWithinCanvas (&translation, inCanvasSize)
-        }
-      }
-      var idx = 0
-      while idx < self.mWidgetsManager.count {
-        if self.mSelection.contains (self.mWidgetsManager [widget: idx].id) {
-          self.mWidgetsManager [widget: idx].translate (by: translation)
-        }
-        idx += 1
-      }
+      let t = CanariPoint (y: magneticGrid * (shift ? 10.0 : 1.0))
+      self.handleTranslation (expected: t, inCanvasSize)
     }
   }
 
@@ -513,19 +480,35 @@ import Combine
   public func downArrowKeyAction (magneticGrid inMagneticGrid : CanariLength?, _ inCanvasSize : CanariSize) {
     if let magneticGrid = inMagneticGrid {
       let shift = NSEvent.modifierFlags.contains (.shift)
-      var translation = CanariPoint (y: magneticGrid * (shift ? -10.0 : -1.0))
-      for i in 0 ..< self.mWidgetsManager.count {
-        if self.mSelection.contains (self.mWidgetsManager [widget: i].id) {
-          self.mWidgetsManager [widget: i].orientedOrigin.limitTranslationWithinCanvas (&translation, inCanvasSize)
-        }
+      let t = CanariPoint (y: magneticGrid * (shift ? -10.0 : -1.0))
+      self.handleTranslation (expected: t, inCanvasSize)
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Limit translation
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func handleTranslation (expected inExpectedTranslation : CanariPoint,
+                                 _ inCanvasSize : CanariSize) {
+    var unselectedWidgetOutlines = [CanariPath] ()
+    for i in 0 ..< self.mWidgetsManager.count {
+      if !self.mSelection.contains (self.mWidgetsManager [widget: i].id) {
+        unselectedWidgetOutlines.append (self.mWidgetsManager [widget: i].orientedOrigin.globalOutline)
       }
-      var idx = 0
-      while idx < self.mWidgetsManager.count {
-        if self.mSelection.contains (self.mWidgetsManager [widget: idx].id) {
-          self.mWidgetsManager [widget: idx].translate (by: translation)
-        }
-        idx += 1
+    }
+    var translation = inExpectedTranslation
+    for i in 0 ..< self.mWidgetsManager.count {
+      if self.mSelection.contains (self.mWidgetsManager [widget: i].id) {
+        self.mWidgetsManager [widget: i].orientedOrigin.limitTranslationWithinCanvas (&translation, inCanvasSize, unselectedWidgetOutlines)
       }
+    }
+    var idx = 0
+    while idx < self.mWidgetsManager.count {
+      if self.mSelection.contains (self.mWidgetsManager [widget: idx].id) {
+        self.mWidgetsManager [widget: idx].translate (by: translation)
+      }
+      idx += 1
     }
   }
 

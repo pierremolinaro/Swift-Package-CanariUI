@@ -47,6 +47,10 @@ public struct CanariPoint : Hashable, CustomStringConvertible, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public var isZero : Bool { self.x.isZero && self.y.isZero }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public var xMirrored : CanariPoint {
     return CanariPoint (x: -self.x, y: self.y)
   }

@@ -24,7 +24,8 @@ public struct CanariScaledOrientedOrigin : Sendable, Equatable {
     didSet {
       if self.mAngle != oldValue {
         self.computeAffinities ()
-        self.mOriginCenteredGlobalOutlineAndBoundingRect = self.mOriginCenteredGlobalOutlineAndBoundingRect.rotated (by: self.mAngle - oldValue)
+        let x = self.mOriginCenteredGlobalOutlineAndBoundingRect.rotated (by: self.mAngle - oldValue)
+        self.mOriginCenteredGlobalOutlineAndBoundingRect = x
       }
     }
   }
@@ -46,11 +47,7 @@ public struct CanariScaledOrientedOrigin : Sendable, Equatable {
     didSet {
       if self.mHorizontalFlip != oldValue {
         self.computeAffinities ()
-        let affinity = CanariAffinity (rotation: self.mAngle)
-          .scaling (self.mScale, horizontalFlip: self.mHorizontalFlip)
-        self.mOriginCenteredGlobalOutlineAndBoundingRect = CanariPathWithBoundingRect (
-          path: self.mOriginCenteredLocalOutline.transformed (by: affinity)
-        )
+        self.computeOriginCenteredGlobalOutlineAndBoundingRect ()
       }
     }
   }
@@ -83,8 +80,16 @@ public struct CanariScaledOrientedOrigin : Sendable, Equatable {
   public mutating func setLocalOutline (_ inLocalOutLine : CanariPath) {
     self.mOriginCenteredLocalOutline = inLocalOutLine
     self.mOriginCenteredLocalBoundingRect = inLocalOutLine.boundingRect
-    let affinity = CanariAffinity (rotation: self.mAngle).scaling (self.mScale, horizontalFlip: self.mHorizontalFlip)
-    self.mOriginCenteredGlobalOutlineAndBoundingRect = CanariPathWithBoundingRect (path: inLocalOutLine.transformed (by: affinity))
+    self.computeOriginCenteredGlobalOutlineAndBoundingRect ()
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  private mutating func computeOriginCenteredGlobalOutlineAndBoundingRect () {
+    let affinity = CanariAffinity (rotation: self.mAngle)
+          .scaling (self.mScale, horizontalFlip: self.mHorizontalFlip)
+    let path = self.mOriginCenteredLocalOutline.transformed (by: affinity)
+    self.mOriginCenteredGlobalOutlineAndBoundingRect = CanariPathWithBoundingRect (path: path)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -136,6 +141,12 @@ public struct CanariScaledOrientedOrigin : Sendable, Equatable {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public var globalOutline : CanariPath {
+    self.mOriginCenteredGlobalOutlineAndBoundingRect.path.moved (by: self.mOrigin)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: With global bounding rect
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -156,8 +167,9 @@ public struct CanariScaledOrientedOrigin : Sendable, Equatable {
   //MARK: Limit translation
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func limitTranslationWithinCanvas (_ ioTranslation : inout CanariPoint, _ inCanvasSize : CanariSize) {
-    let r = self.mOriginCenteredGlobalOutlineAndBoundingRect.path.boundingRect.moved (by: self.mOrigin)
+  public func limitTranslationWithinCanvas (_ ioTranslation : inout CanariPoint,
+                                            _ inCanvasSize : CanariSize) {
+    let r = self.mOriginCenteredGlobalOutlineAndBoundingRect.boundingRect.moved (by: self.mOrigin)
     let newTopRight = r.topRight + ioTranslation
     if newTopRight.x > inCanvasSize.width {
       ioTranslation.x -= newTopRight.x - inCanvasSize.width
@@ -171,6 +183,23 @@ public struct CanariScaledOrientedOrigin : Sendable, Equatable {
     }
     if newBottomLeft.y < .zero {
       ioTranslation.y -= newBottomLeft.y
+    }
+  }
+
+ // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func limitTranslationWithinCanvas (_ ioTranslation : inout CanariPoint,
+                                            _ inCanvasSize : CanariSize,
+                                            _ inUnselectedWidgetOutlines : [CanariPath]) {
+    self.limitTranslationWithinCanvas (&ioTranslation, inCanvasSize)
+    var idx = 0
+    while !ioTranslation.isZero, idx < inUnselectedWidgetOutlines.count {
+      let intersects = inUnselectedWidgetOutlines [idx].intersects (self.globalOutline.moved (by: ioTranslation))
+      if intersects {
+        ioTranslation *= 0.5
+      }else{
+        idx += 1
+      }
     }
   }
 
