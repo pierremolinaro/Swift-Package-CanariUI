@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct WidgetsManager <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : Equatable {
+public struct WidgetsManager <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -16,21 +16,6 @@ public struct WidgetsManager <WidgetTypesDescription : DocumentWidgetsDescriptio
 
   public init () {
     self.mWidgetsArray = []
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public func contentsIsExactly (_ inWidgets : [WidgetProxy <WidgetTypesDescription>]) -> Bool {
-    if self.mWidgetsArray.count != inWidgets.count {
-      return false
-    }else{
-      for i in 0 ..< self.mWidgetsArray.count {
-        if !self.mWidgetsArray [i].isEqual (to: inWidgets [i].widget) {
-          return false
-        }
-      }
-      return true
-    }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -49,22 +34,6 @@ public struct WidgetsManager <WidgetTypesDescription : DocumentWidgetsDescriptio
       widgetsArray.append (proxy.widget)
     }
     self.mWidgetsArray = widgetsArray
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public static func == (_ inLeft : WidgetsManager <WidgetTypesDescription>,
-                         _ inRight : WidgetsManager <WidgetTypesDescription>) -> Bool { // Equatable
-    if inLeft.count != inRight.count {
-      return false
-    }else{
-      for i in 0 ..< inLeft.count {
-        if !inLeft.mWidgetsArray [i].isEqual (to: inRight.mWidgetsArray [i]) {
-          return false
-        }
-      }
-      return true
-    }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -153,6 +122,30 @@ public struct WidgetsManager <WidgetTypesDescription : DocumentWidgetsDescriptio
     for proxy in inArray {
       self.mWidgetsArray.insert (proxy, at: idx)
       idx += 1
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+}
+
+//--------------------------------------------------------------------------------------------------
+
+extension WidgetsManager : Equatable {
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public static func == (_ inLeft : WidgetsManager <WidgetTypesDescription>,
+                         _ inRight : WidgetsManager <WidgetTypesDescription>) -> Bool { // Equatable
+    if inLeft.count != inRight.count {
+      return false
+    }else{
+      for i in 0 ..< inLeft.count {
+        if !inLeft.mWidgetsArray [i].isEqual (to: inRight.mWidgetsArray [i]) {
+          return false
+        }
+      }
+      return true
     }
   }
 

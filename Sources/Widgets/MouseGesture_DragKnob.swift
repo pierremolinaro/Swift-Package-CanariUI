@@ -19,18 +19,17 @@ struct MouseGesture_DragKnob <WidgetTypesDescription : DocumentWidgetsDescriptio
                        beginOrContinueUndoGrouping inBeginOrContinueUndoGrouping : () -> Void,
                        selection ioSelection : inout Set <UUID>,
                        userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                       widgetsManager ioWidgetsManager : inout WidgetsManager <WidgetTypesDescription>,
+                       widgetsManagerInterface inWidgetsManagerInterface : WidgetsUserInterface <WidgetTypesDescription>,
                        optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<WidgetTypesDescription>)?) {
     let translation = inGeometry.alignedUserCurrentLocation - self.alignedCurrentPoint
     if translation != .zero {
       inBeginOrContinueUndoGrouping ()
-      if var widget = ioWidgetsManager [id: widgetID] {
+      if var widget = inWidgetsManagerInterface [id: widgetID] {
         let localTranslation = CanariAffinity (scale: 1.0 / widget.orientedOrigin.mScale)
           .rotating (-widget.orientedOrigin.mAngle)
           .transforming (translation)
-//        let localTranslation = widget.orientedOrigin.globalToLocal (translation)
         self.dragWidgetKnobAction (&widget, localTranslation, self.optionKeyInitiallyOn)
-        ioWidgetsManager [id: widgetID] = widget
+        inWidgetsManagerInterface [id: widgetID] = widget
       }
       outOptionalNextState = MouseGesture_DragKnob (
         alignedCurrentPoint: inGeometry.alignedUserCurrentLocation,
@@ -46,7 +45,7 @@ struct MouseGesture_DragKnob <WidgetTypesDescription : DocumentWidgetsDescriptio
   func onMouseUp (removeUndoGrouping inRemoveUndoGrouping : () -> Void,
                   selection ioSelection : inout Set <UUID>,
                   userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                  widgetsManager ioWidgetsManager : inout WidgetsManager <WidgetTypesDescription>) {
+                  widgetsManagerInterface inWidgetsManagerInterface : WidgetsUserInterface <WidgetTypesDescription>) {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -16,7 +16,7 @@ struct MouseGesture_SelectionRectangle <WidgetTypesDescription : DocumentWidgets
                        beginOrContinueUndoGrouping inBeginOrContinueUndoGrouping : () -> Void,
                        selection ioSelection : inout Set <UUID>,
                        userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                       widgetsManager ioWidgetsManager : inout WidgetsManager <WidgetTypesDescription>,
+                       widgetsManagerInterface inWidgetsManagerInterface : WidgetsUserInterface <WidgetTypesDescription>,
                        optionalNextState outOptionalNextState : inout (any MouseGestureProtocol <WidgetTypesDescription>)?) {
   //--- Update selection rectangle
     let selectionRectangle = CanariRect ([inGeometry.unalignedUserStartLocation, inGeometry.unalignedUserCurrentLocation])
@@ -24,7 +24,7 @@ struct MouseGesture_SelectionRectangle <WidgetTypesDescription : DocumentWidgets
   //--- Compute selection
     ioSelection = self.startSelectionSet
     let shift = NSEvent.modifierFlags.contains (.shift)
-    for widget in ioWidgetsManager.widgets {
+    for widget in inWidgetsManagerInterface.widgets {
       if widget.orientedOrigin.globalOutlineIntersects (globalRect: selectionRectangle) {
         if !shift {
           ioSelection.insert (widget.id)
@@ -44,7 +44,7 @@ struct MouseGesture_SelectionRectangle <WidgetTypesDescription : DocumentWidgets
   func onMouseUp (removeUndoGrouping inRemoveUndoGrouping : () -> Void,
                   selection ioSelection : inout Set <UUID>,
                   userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                  widgetsManager ioWidgetsManager : inout WidgetsManager <WidgetTypesDescription>) {
+                  widgetsManagerInterface inWidgetsManagerInterface : WidgetsUserInterface <WidgetTypesDescription>) {
     ioUserSelectionRectangle = nil
   }
 

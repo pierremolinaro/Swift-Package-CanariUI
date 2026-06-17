@@ -24,9 +24,9 @@ final class WidgetKnobAction <WidgetTypesDescription : DocumentWidgetsDescriptio
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func execute (_ inAction : (inout any WidgetUIProtocol <WidgetTypesDescription>) -> Void) {
-    var widget = self.mWidgetsUserInterface.mWidgetsManager [widget: self.mWidgetIndex]
+    var widget = self.mWidgetsUserInterface [widget: self.mWidgetIndex]
     inAction (&widget)
-    self.mWidgetsUserInterface.mWidgetsManager [widget: self.mWidgetIndex] = widget
+    self.mWidgetsUserInterface [widget: self.mWidgetIndex] = widget
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -15,14 +15,6 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var mWidgetsManager = WidgetsManager <WidgetTypesDescription> ()
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  private(set) var mSelection = Set <UUID> ()
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
   public init (withPasteboardType inPasteboardType : NSPasteboard.PasteboardType) {
     self.mPasteboardType = inPasteboardType
     super.init ()
@@ -34,6 +26,77 @@ import Combine
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Widget array
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  private var mWidgetsManager = WidgetsManager <WidgetTypesDescription> ()
+  public var widgets : [any WidgetUIProtocol <WidgetTypesDescription>] { self.mWidgetsManager.widgets }
+  public var count : Int { self.mWidgetsManager.count }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public subscript (widget inIndex : Int) -> any WidgetUIProtocol <WidgetTypesDescription> {
+    get { self.mWidgetsManager [widget: inIndex] }
+    set { self.mWidgetsManager [widget: inIndex] = newValue }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  subscript (id inID : UUID) -> (any WidgetUIProtocol <WidgetTypesDescription>)? {
+    get { self.mWidgetsManager [id: inID] }
+    set { self.mWidgetsManager [id: inID] = newValue }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  func removeLast () {
+    self.mWidgetsManager.removeLast ()
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public var proxyArray : [WidgetProxy <WidgetTypesDescription>] {
+    var array = [WidgetProxy <WidgetTypesDescription>] ()
+    for widget in self.widgets {
+      array.append (WidgetProxy (widget))
+    }
+    return array
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func contentsIsExactly (_ inWidgets : [WidgetProxy <WidgetTypesDescription>]) -> Bool {
+    if self.count != inWidgets.count {
+      return false
+    }else{
+      for i in 0 ..< self.widgets.count {
+        if !self.widgets [i].isEqual (to: inWidgets [i].widget) {
+          return false
+        }
+      }
+      return true
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func setWidgets (fromProxies inProxies : [WidgetProxy <WidgetTypesDescription>]) {
+    self.mWidgetsManager.setWidgets (fromProxies: inProxies)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: append
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func append (_ inNewObject : any WidgetUIProtocol <WidgetTypesDescription>) {
+    self.mWidgetsManager.append (inNewObject)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  private(set) var mSelection = Set <UUID> ()
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private var mHoveredObject : UUID? = nil
   private var mSelectionUserRectangle : CanariRect? = nil
@@ -43,14 +106,6 @@ import Combine
 
   private var mStartSelectionSet = Set <UUID> ()
   private var mDragGestureState : (any MouseGestureProtocol<WidgetTypesDescription>)? = nil
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: append
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public func append (_ inNewObject : any WidgetUIProtocol <WidgetTypesDescription>) {
-    self.mWidgetsManager.append (inNewObject)
-  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: append and set selection to added object
@@ -180,7 +235,7 @@ import Combine
         beginOrContinueUndoGrouping: { self.beginOrContinueUndoGrouping () },
         selection: &self.mSelection,
         userSelectionRectangle: &self.mSelectionUserRectangle,
-        widgetsManager: &self.mWidgetsManager,
+        widgetsManagerInterface: self,
         optionalNextState: &optionalNextState
       )
       if let nextState : any MouseGestureProtocol<WidgetTypesDescription> = optionalNextState {
@@ -370,7 +425,7 @@ import Combine
         removeUndoGrouping: { self.closeAndRemoveUndoGroupingActions () },
         selection: &self.mSelection,
         userSelectionRectangle: &self.mSelectionUserRectangle,
-        widgetsManager: &self.mWidgetsManager
+        widgetsManagerInterface: self
       )
       self.closeUndoGroupingIfOpened ()
       self.mDragGestureState = nil
@@ -644,22 +699,6 @@ import Combine
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK:
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-//  private var mSelectionForInspector = Set <UUID> ()
-//  private var mUpdateTask : Task <Void, Never>? = nil
-//
-//  private func updateSelectionInspectorView () {
-//    self.mUpdateTask?.cancel ()
-//    self.mUpdateTask = Task {
-//      try? await Task.sleep (for: .milliseconds(100))
-////      self.mSelectionForInspector = self.mSelection
-////      await MainActor.run { self.mSelectionForInspector = self.mSelection }
-//    }
-//  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Inspector view
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -699,3 +738,18 @@ import Combine
 
 //--------------------------------------------------------------------------------------------------
 
+//extension Array : Equatable where Element == [any WidgetUIProtocol <any DocumentWidgetsDescriptionProtocol>] {
+//
+////  public static func == (inLeft : Self, inRight : Self) -> Bool {
+////    if inLeft.count != inRight.count {
+////      return false
+////    }else{
+////      for i in 0 ..< inLeft.count {
+////        if !inLeft [i].isEqual (to: inRight [i]) {
+////          return false
+////        }
+////      }
+////      return true
+////    }
+////  }
+//}

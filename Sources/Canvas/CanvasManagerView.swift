@@ -8,7 +8,7 @@ import Combine
 //--------------------------------------------------------------------------------------------------
 
 fileprivate let BACK_DELETE_KEY_EQ = KeyEquivalent (Character (Unicode.Scalar (0x7F)!))
-fileprivate let PASTEBOARD_TYPE = NSPasteboard.PasteboardType (rawValue: Bundle.main.bundleIdentifier! + ".widgets")
+//fileprivate let PASTEBOARD_TYPE = NSPasteboard.PasteboardType (rawValue: Bundle.main.bundleIdentifier! + ".widgets")
 fileprivate let DEBUG_COLOR = Color.clear // red.opacity (0.15)
 fileprivate let ANCHOR_FOR_INITIAL_SCROLL = "bottom.left.for.initial.scroll"
 
