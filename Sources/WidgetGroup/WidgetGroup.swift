@@ -37,7 +37,7 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
     let r = CanariRect (vertices)
     self.mArray = inProxys.map {
       var widget = $0.widget
-      widget.translate (by: -r.center)
+      widget.orientedOrigin.mOrigin -= r.center
       return WidgetProxy (widget)
     }
     self.orientedOrigin = CanariScaledOrientedOrigin (r.center, .zero, 1.0, false)

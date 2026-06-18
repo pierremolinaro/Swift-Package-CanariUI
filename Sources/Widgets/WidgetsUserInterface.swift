@@ -233,7 +233,7 @@ import Combine
   public func hoverTracking (at inPoint : CanariPoint) {
     enterTracing ("widgets.user.interface.hover.tracking") ; defer { exitTracing ("widgets.user.interface.hover.tracking") }
     for proxy in self.mWidgetsManager.proxyArray.reversed () {
-      if proxy.widget.containsLocalPoint (proxy.widget.orientedOrigin.globalToLocal (inPoint)) {
+      if proxy.widget.orientedOrigin.localOutline (containsLocalPoint: proxy.widget.orientedOrigin.globalToLocal (inPoint)) {
         self.mHoveredObject = proxy.widget.id
         return
       }
@@ -300,7 +300,7 @@ import Combine
 
     var widgetUnderMouseID : UUID? = nil
     for proxy in self.mWidgetsManager.proxyArray.reversed () {
-      if proxy.widget.containsLocalPoint (proxy.widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
+      if proxy.widget.orientedOrigin.localOutline (containsLocalPoint: proxy.widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
         widgetUnderMouseID = proxy.widget.id
         break
       }
@@ -357,7 +357,7 @@ import Combine
   private func mouseDown_shiftKey (geometry inGeometry : MouseGestureGeometryContext) -> any MouseGestureProtocol <WidgetTypesDescription> {
     var widgetUnderMouseID : UUID? = nil
     for proxy in self.mWidgetsManager.proxyArray.reversed () {
-      if proxy.widget.containsLocalPoint (proxy.widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
+      if proxy.widget.orientedOrigin.localOutline (containsLocalPoint:proxy.widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
         widgetUnderMouseID = proxy.widget.id
         break
       }
@@ -394,13 +394,13 @@ import Combine
     }
   //--- Mouse down in a selected object ?
     for proxy in self.mWidgetsManager.proxyArray.reversed () {
-      if self.mSelection.contains (proxy.widget.id), proxy.widget.containsLocalPoint (proxy.widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
+      if self.mSelection.contains (proxy.widget.id), proxy.widget.orientedOrigin.localOutline (containsLocalPoint:proxy.widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
         return MouseGesture_DragSelection <WidgetTypesDescription> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
       }
     }
   //--- Mouse down in a non selected object ?
     for proxy in self.mWidgetsManager.proxyArray.reversed () {
-      if proxy.widget.containsLocalPoint (proxy.widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
+      if proxy.widget.orientedOrigin.localOutline (containsLocalPoint:proxy.widget.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
         self.mSelection = [proxy.widget.id]
         return MouseGesture_DragSelection <WidgetTypesDescription> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
       }
@@ -431,7 +431,7 @@ import Combine
   //--- CMD + Mouse down in a selected object ?
     for idx in (0 ..< self.mWidgetsManager.count).reversed () {
       let proxy = self.mWidgetsManager [proxyIndex: idx]
-      if self.mSelection.contains (proxy.widget.id), proxy.widget.containsLocalPoint (proxy.widget.orientedOrigin.globalToLocal (inUnalignedPoint)) {
+      if self.mSelection.contains (proxy.widget.id), proxy.widget.orientedOrigin.localOutline (containsLocalPoint:proxy.widget.orientedOrigin.globalToLocal (inUnalignedPoint)) {
         return proxy.widget.contextualMenu (ContextualMenuExecutor (self, idx))
       }
     }
@@ -534,7 +534,7 @@ import Combine
         var idx = 0
         while idx < self.widgetCount {
           if self.selection.contains (self [proxyIndex: idx].widget.id) {
-            self [proxyIndex: idx].widget.translate (by: translation)
+            self [proxyIndex: idx].widget.orientedOrigin.mOrigin += translation
           }
           idx += 1
         }
@@ -553,7 +553,7 @@ import Combine
         var idx = 0
         while idx < self.widgetCount {
           if self.selection.contains (self [proxyIndex: idx].widget.id) {
-            self [proxyIndex: idx].widget.translate (by: translation)
+            self [proxyIndex: idx].widget.orientedOrigin.mOrigin += translation
           }
           idx += 1
         }
@@ -572,7 +572,7 @@ import Combine
         var idx = 0
         while idx < self.widgetCount {
           if self.selection.contains (self [proxyIndex: idx].widget.id) {
-            self [proxyIndex: idx].widget.translate (by: translation)
+            self [proxyIndex: idx].widget.orientedOrigin.mOrigin += translation
           }
           idx += 1
         }
@@ -591,7 +591,7 @@ import Combine
         var idx = 0
         while idx < self.widgetCount {
           if self.selection.contains (self [proxyIndex: idx].widget.id) {
-            self [proxyIndex: idx].widget.translate (by: translation)
+            self [proxyIndex: idx].widget.orientedOrigin.mOrigin += translation
           }
           idx += 1
         }

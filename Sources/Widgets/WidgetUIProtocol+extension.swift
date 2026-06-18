@@ -9,45 +9,6 @@ import SwiftUI
 public extension WidgetUIProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: Location test
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  func containsLocalPoint (_ inLocalPoint : CanariPoint) -> Bool {
-    return self.orientedOrigin.localOutline (containsLocalPoint: inLocalPoint)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: Limit Translation
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-//  func limitTranslation (_ ioTranslation : inout CanariPoint, _ inCanvasSize : CanariSize) {
-//    let r = self.orientedOrigin.globalBoundingRect
-//    let newTopRight = r.topRight + ioTranslation
-//    if newTopRight.x > inCanvasSize.width {
-//      ioTranslation.x -= newTopRight.x - inCanvasSize.width
-//    }
-//    if newTopRight.y > inCanvasSize.height {
-//      ioTranslation.y -= newTopRight.y - inCanvasSize.height
-//    }
-//    let newBottomLeft = r.bottomLeft + ioTranslation
-//    if newBottomLeft.x < .zero {
-//      ioTranslation.x -= newBottomLeft.x
-//    }
-//    if newBottomLeft.y < .zero {
-//      ioTranslation.y -= newBottomLeft.y
-//    }
-//  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: Translate
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  mutating func translate (by inTranslation : CanariPoint) {
-    self.orientedOrigin.mOrigin.x += inTranslation.x
-    self.orientedOrigin.mOrigin.y += inTranslation.y
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func drawFromGlobal (context ioContext : inout GraphicsContext,
                        scale inScale : Double,
