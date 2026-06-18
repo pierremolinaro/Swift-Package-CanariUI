@@ -27,7 +27,7 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (_ inWidgets : [any WidgetUIProtocol <WidgetTypesDescription>]) {
+  init (_ inWidgets : [any WidgetUIProtocol <WidgetTypesDescription>]) {
     self.id = UUID ()
     self.mUnGroupIsEnabled = true
     var vertices = [CanariPoint] ()
@@ -46,16 +46,6 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
       widget.orientedOrigin.withGlobalOutline { localOutline.unionInPlace ($0) }
     }
     self.orientedOrigin.setLocalOutline (localOutline)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public init (proxies inProxyArray : [WidgetProxy <WidgetTypesDescription>]) {
-    var array = [any WidgetUIProtocol <WidgetTypesDescription>] ()
-    for proxy in inProxyArray {
-      array.append (proxy.widget)
-    }
-    self.init (array)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

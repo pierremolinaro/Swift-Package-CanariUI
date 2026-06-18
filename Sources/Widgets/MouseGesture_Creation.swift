@@ -18,7 +18,7 @@ struct MouseGesture_Creation <WidgetTypesDescription : DocumentWidgetsDescriptio
                        widgetsManagerInterface inWidgetsManagerInterface : WidgetsUserInterface <WidgetTypesDescription>,
                        optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<WidgetTypesDescription>)?) {
     let newObject = self.objectCreator (inGeometry)
-    inWidgetsManagerInterface [widgetIndex: inWidgetsManagerInterface.count - 1] = newObject
+    inWidgetsManagerInterface [widgetIndex: inWidgetsManagerInterface.widgetCount - 1] = newObject
     inWidgetsManagerInterface.setSelection (withID: newObject.id)
   }
 
@@ -27,7 +27,7 @@ struct MouseGesture_Creation <WidgetTypesDescription : DocumentWidgetsDescriptio
   func onMouseUp (removeUndoGrouping inRemoveUndoGrouping : () -> Void,
                   userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
                   widgetsManagerInterface inWidgetsManagerInterface : WidgetsUserInterface <WidgetTypesDescription>) {
-    if inWidgetsManagerInterface [widgetIndex: inWidgetsManagerInterface.count - 1].isGraphicallyEmpty {
+    if inWidgetsManagerInterface [widgetIndex: inWidgetsManagerInterface.widgetCount - 1].isGraphicallyEmpty {
       inWidgetsManagerInterface.removeLast ()
       inWidgetsManagerInterface.clearSelection ()
       inRemoveUndoGrouping ()

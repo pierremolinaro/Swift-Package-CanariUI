@@ -23,7 +23,7 @@ struct MouseGesture_DragSelection <WidgetTypesDescription : DocumentWidgetsDescr
     )
     if translation != .zero {
       inBeginOrContinueUndoGrouping ()
-      for i in 0 ..< inWidgetsManagerInterface.count {
+      for i in 0 ..< inWidgetsManagerInterface.widgetCount {
         if inWidgetsManagerInterface.selection.contains (inWidgetsManagerInterface [widgetIndex: i].id) {
           inWidgetsManagerInterface [widgetIndex: i].translate (by: translation)
         }
