@@ -34,16 +34,16 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public subscript (widgetIndex inIndex : Int) -> any WidgetUIProtocol <WidgetTypesDescription> {
-    get { self.mWidgetsManager [widgetIndex: inIndex] }
-    set { self.mWidgetsManager [widgetIndex: inIndex] = newValue }
+  public subscript (proxyIndex inIndex : Int) -> WidgetProxy <WidgetTypesDescription> {
+    get { self.mWidgetsManager [proxyIndex: inIndex] }
+    set { self.mWidgetsManager [proxyIndex: inIndex] = newValue }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  subscript (widgetID inID : UUID) -> (any WidgetUIProtocol <WidgetTypesDescription>)? {
-    get { self.mWidgetsManager [widgetID: inID] }
-    set { self.mWidgetsManager [widgetID: inID] = newValue }
+  subscript (proxyID inID : UUID) -> (WidgetProxy <WidgetTypesDescription>)? {
+    get { self.mWidgetsManager [proxyID: inID] }
+    set { self.mWidgetsManager [proxyID: inID] = newValue }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -85,7 +85,7 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func append (_ inNewObject : any WidgetUIProtocol <WidgetTypesDescription>) {
+  public func append (_ inNewObject : WidgetProxy <WidgetTypesDescription>) {
     self.mWidgetsManager.append (inNewObject)
   }
 
@@ -136,23 +136,23 @@ import Combine
   //MARK: append and set selection to added object
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func appendAndSetSelection (_ inNewObject : any WidgetUIProtocol <WidgetTypesDescription>) {
+  public func appendAndSetSelection (_ inNewObject : WidgetProxy <WidgetTypesDescription>) {
     self.mWidgetsManager.append (inNewObject)
     self.mSelection.removeAll ()
-    self.mSelection.insert (inNewObject.id)
+    self.mSelection.insert (inNewObject.widget.id)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Object Creator
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func setObjectCreator (_ inNewCreator : @escaping (MouseGestureGeometryContext) -> any WidgetUIProtocol <WidgetTypesDescription>) {
+  public func setObjectCreator (_ inNewCreator : @escaping (MouseGestureGeometryContext) -> WidgetProxy <WidgetTypesDescription>) {
     self.mObjectCreator = inNewCreator
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private var mObjectCreator : ((MouseGestureGeometryContext) -> any WidgetUIProtocol <WidgetTypesDescription>)? = nil
+  private var mObjectCreator : ((MouseGestureGeometryContext) -> WidgetProxy <WidgetTypesDescription>)? = nil
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Draw
@@ -307,18 +307,18 @@ import Combine
     }
     if let widgetID = widgetUnderMouseID {
       if self.mSelection.contains (widgetID) { // option-click on a selected widget
-        let selectedArray = self.mWidgetsManager.widgetArray (fromSelection: self.mSelection)
+        let selectedArray = self.mWidgetsManager.proxyArray (fromSelection: self.mSelection)
         self.mSelection.removeAll ()
-        for widget in selectedArray {
-          if let newWidget = widget.duplicated () {
-            self.mWidgetsManager.append (newWidget)
+        for proxy in selectedArray {
+          if let newWidget = proxy.widget.duplicated () {
+            self.mWidgetsManager.append (WidgetProxy (newWidget))
             self.mSelection.insert (newWidget.id)
           }
         }
         return MouseGesture_DragSelection <WidgetTypesDescription> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
       }else{ // option-click on a non-selected widget
-        if let newWidget = self.mWidgetsManager [widgetID: widgetID]?.duplicated () {
-          self.mWidgetsManager.append (newWidget)
+        if let newWidget = self.mWidgetsManager [proxyID: widgetID]?.widget.duplicated () {
+          self.mWidgetsManager.append (WidgetProxy (newWidget))
           self.mSelection = [newWidget.id]
           return MouseGesture_DragSelection <WidgetTypesDescription> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
         }else{
@@ -327,9 +327,9 @@ import Combine
       }
     }else if let objectCreator = self.mObjectCreator {
       self.beginOrContinueUndoGrouping ()
-      let widget = objectCreator (inGeometry)
-      self.mWidgetsManager.append (widget)
-      self.mSelection = [widget.id]
+      let proxy = objectCreator (inGeometry)
+      self.mWidgetsManager.append (proxy)
+      self.mSelection = [proxy.widget.id]
       return MouseGesture_Creation <WidgetTypesDescription> (objectCreator: objectCreator)
     }else{
       return MouseGesture_Inactive <WidgetTypesDescription> ()
@@ -415,10 +415,10 @@ import Combine
   public func contextualMenu (at inUnalignedPoint : CanariPoint, scale inScale : Double) -> any View {
   //--- CMD + Mouse down in a knob of a selected object ?
     for idx in (0 ..< self.mWidgetsManager.count).reversed () {
-      let widget = self.mWidgetsManager [widgetIndex: idx]
-      if self.mSelection.contains (widget.id) {
-        for knob in widget.knobs {
-          if knob.contains (localPoint: widget.orientedOrigin.globalToLocal (inUnalignedPoint), scale: inScale) {
+      let proxy = self.mWidgetsManager [proxyIndex: idx]
+      if self.mSelection.contains (proxy.widget.id) {
+        for knob in proxy.widget.knobs {
+          if knob.contains (localPoint: proxy.widget.orientedOrigin.globalToLocal (inUnalignedPoint), scale: inScale) {
             if let menu = knob.menu {
               return menu (ContextualMenuExecutor (self, idx))
             }else{
@@ -430,9 +430,9 @@ import Combine
     }
   //--- CMD + Mouse down in a selected object ?
     for idx in (0 ..< self.mWidgetsManager.count).reversed () {
-      let widget = self.mWidgetsManager [widgetIndex: idx]
-      if self.mSelection.contains (widget.id), widget.containsLocalPoint (widget.orientedOrigin.globalToLocal (inUnalignedPoint)) {
-        return widget.contextualMenu (ContextualMenuExecutor (self, idx))
+      let proxy = self.mWidgetsManager [proxyIndex: idx]
+      if self.mSelection.contains (proxy.widget.id), proxy.widget.containsLocalPoint (proxy.widget.orientedOrigin.globalToLocal (inUnalignedPoint)) {
+        return proxy.widget.contextualMenu (ContextualMenuExecutor (self, idx))
       }
     }
   //---
@@ -514,7 +514,7 @@ import Combine
   public func backDeleteKeyAction () {
     var idx = 0
     while idx < self.mWidgetsManager.count {
-      if self.mSelection.contains (self.mWidgetsManager [widgetIndex: idx].id) {
+      if self.mSelection.contains (self.mWidgetsManager [proxyIndex: idx].widget.id) {
         self.mWidgetsManager.remove (at: idx)
       }else{
         idx += 1
@@ -533,8 +533,8 @@ import Combine
       if !translation.isZero {
         var idx = 0
         while idx < self.widgetCount {
-          if self.selection.contains (self [widgetIndex: idx].id) {
-            self [widgetIndex: idx].translate (by: translation)
+          if self.selection.contains (self [proxyIndex: idx].widget.id) {
+            self [proxyIndex: idx].widget.translate (by: translation)
           }
           idx += 1
         }
@@ -552,8 +552,8 @@ import Combine
       if !translation.isZero {
         var idx = 0
         while idx < self.widgetCount {
-          if self.selection.contains (self [widgetIndex: idx].id) {
-            self [widgetIndex: idx].translate (by: translation)
+          if self.selection.contains (self [proxyIndex: idx].widget.id) {
+            self [proxyIndex: idx].widget.translate (by: translation)
           }
           idx += 1
         }
@@ -571,8 +571,8 @@ import Combine
       if !translation.isZero {
         var idx = 0
         while idx < self.widgetCount {
-          if self.selection.contains (self [widgetIndex: idx].id) {
-            self [widgetIndex: idx].translate (by: translation)
+          if self.selection.contains (self [proxyIndex: idx].widget.id) {
+            self [proxyIndex: idx].widget.translate (by: translation)
           }
           idx += 1
         }
@@ -590,8 +590,8 @@ import Combine
       if !translation.isZero {
         var idx = 0
         while idx < self.widgetCount {
-          if self.selection.contains (self [widgetIndex: idx].id) {
-            self [widgetIndex: idx].translate (by: translation)
+          if self.selection.contains (self [proxyIndex: idx].widget.id) {
+            self [proxyIndex: idx].widget.translate (by: translation)
           }
           idx += 1
         }
@@ -646,7 +646,7 @@ import Combine
       if let decodedWidgets = try? decoder.decode ([WidgetProxy <WidgetTypesDescription>].self, from: string.data (using: .utf8)!) {
         self.mSelection.removeAll ()
         for proxy in decodedWidgets {
-          self.mWidgetsManager.append (proxy.widget)
+          self.mWidgetsManager.append (proxy)
           self.mSelection.insert (proxy.widget.id)
         }
       }
@@ -704,12 +704,12 @@ import Combine
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public override func performGroup () {
-    let selectedWidgets = self.mWidgetsManager.widgetArray (fromSelection: self.mSelection)
-    let widgetGroup = WidgetGroup <WidgetTypesDescription> (selectedWidgets)
-    for widget in selectedWidgets {
-      self.mWidgetsManager.remove (id: widget.id)
+    let selectedWidgets = self.mWidgetsManager.proxyArray (fromSelection: self.mSelection)
+    let widgetGroup = WidgetGroup <WidgetTypesDescription> (grouping: selectedWidgets)
+    for proxy in selectedWidgets {
+      self.mWidgetsManager.remove (id: proxy.widget.id)
     }
-    self.mWidgetsManager.append (widgetGroup)
+    self.mWidgetsManager.append (WidgetProxy (widgetGroup))
     self.mSelection = [widgetGroup.id]
   }
 
@@ -733,7 +733,7 @@ import Combine
         self.mWidgetsManager.replaceWidget (id: group.id, with: array)
         self.mSelection.remove (group.id)
         for p in array {
-          self.mSelection.insert (p.id)
+          self.mSelection.insert (p.widget.id)
         }
       }
     }
@@ -760,17 +760,17 @@ import Combine
   private func commonTypeForSelection () -> (any WidgetUIProtocol <WidgetTypesDescription>.Type)? {
     var result : (any WidgetUIProtocol <WidgetTypesDescription>.Type)? = nil
     for id in self.mSelection {
-      if let widget = self.mWidgetsManager [widgetID: id] {
+      if let proxy = self.mWidgetsManager [proxyID: id] {
         if let r = result {
-          if r != type (of: widget) {
+          if r != type (of: proxy.widget) {
             return nil
           }
         }else{
-          result = type (of: widget)
+          result = type (of: proxy.widget)
         }
       }
     }
-    return result // WidgetGroup <WidgetTypesDescription>.self
+    return result
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -19,7 +19,7 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   var mUnGroupIsEnabled : Bool
-  let mArray : [any WidgetUIProtocol <WidgetTypesDescription>] // at 0: back, at count - 1: front
+  let mArray : [WidgetProxy <WidgetTypesDescription>] // at 0: back, at count - 1: front
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -27,23 +27,23 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  init (_ inWidgets : [any WidgetUIProtocol <WidgetTypesDescription>]) {
+  init (grouping inProxys : [WidgetProxy <WidgetTypesDescription>]) {
     self.id = UUID ()
     self.mUnGroupIsEnabled = true
     var vertices = [CanariPoint] ()
-    for widget in inWidgets {
-      vertices += widget.orientedOrigin.globalBoundingRect.vertices
+    for proxy in inProxys {
+      vertices += proxy.widget.orientedOrigin.globalBoundingRect.vertices
     }
     let r = CanariRect (vertices)
-    self.mArray = inWidgets.map {
-      var widget = $0
+    self.mArray = inProxys.map {
+      var widget = $0.widget
       widget.translate (by: -r.center)
-      return widget
+      return WidgetProxy (widget)
     }
     self.orientedOrigin = CanariScaledOrientedOrigin (r.center, .zero, 1.0, false)
     var localOutline = CanariPath ()
-    for widget in self.mArray {
-      widget.orientedOrigin.withGlobalOutline { localOutline.unionInPlace ($0) }
+    for proxy in self.mArray {
+      proxy.widget.orientedOrigin.withGlobalOutline { localOutline.unionInPlace ($0) }
     }
     self.orientedOrigin.setLocalOutline (localOutline)
   }
@@ -59,17 +59,12 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
   public init (from inDecoder : Decoder) throws {
     self.id = UUID ()
     let container = try inDecoder.container (keyedBy: CodingKeys.self)
-    let proxyArray = try container.decode ([WidgetProxy <WidgetTypesDescription>].self, forKey: .array)
-    var array = [any WidgetUIProtocol <WidgetTypesDescription>] ()
-    for proxy in proxyArray {
-      array.append (proxy.widget)
-    }
-    self.mArray = array
+    self.mArray = try container.decode ([WidgetProxy <WidgetTypesDescription>].self, forKey: .array)
     self.mUnGroupIsEnabled = try container.decode (Bool.self, forKey: .unGroupIsEnabled)
     self.orientedOrigin = try container.decode (CanariScaledOrientedOrigin.self, forKey: .oo)
     var localOutline = CanariPath ()
-    for widget in array {
-      widget.orientedOrigin.withGlobalOutline { localOutline.unionInPlace ($0) }
+    for proxy in self.mArray {
+      proxy.widget.orientedOrigin.withGlobalOutline { localOutline.unionInPlace ($0) }
     }
     self.orientedOrigin.setLocalOutline (localOutline)
   }
@@ -78,11 +73,7 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
 
   public func encode (to inEncoder : Encoder) throws {
     var container = inEncoder.container (keyedBy: CodingKeys.self)
-    var proxyArray = [WidgetProxy <WidgetTypesDescription>] ()
-    for widget in self.mArray {
-      proxyArray.append (WidgetProxy (widget))
-    }
-    try container.encode (proxyArray, forKey: .array)
+    try container.encode (self.mArray, forKey: .array)
     try container.encode (self.mUnGroupIsEnabled, forKey: .unGroupIsEnabled)
     try container.encode (self.orientedOrigin, forKey: .oo)
   }
@@ -99,18 +90,7 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
 
   public func isEqual (to inOther : any WidgetUIProtocol <WidgetTypesDescription>) -> Bool {
     if let other = inOther as? WidgetGroup <WidgetTypesDescription> {
-      if (self.mArray.count != other.mArray.count)
-            || (self.orientedOrigin != other.orientedOrigin)
-            || (self.mUnGroupIsEnabled != other.mUnGroupIsEnabled) {
-        return false
-      }else{
-        for i in 0 ..< self.mArray.count {
-          if !self.mArray[i].isEqual (to: other.mArray[i]) {
-            return false
-          }
-        }
-        return true
-      }
+      return (self.id == other.id) && (self.mArray == other.mArray) && (self.mUnGroupIsEnabled == other.mUnGroupIsEnabled)
     }else{
       return false
     }
@@ -128,15 +108,11 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
 
   private init (_ inOrientedOrigin : CanariScaledOrientedOrigin,
                 _ inUnGroupIsEnabled : Bool,
-                _ inArray : [any WidgetUIProtocol <WidgetTypesDescription>]) {
+                _ inArray : [WidgetProxy <WidgetTypesDescription>]) {
     self.id = UUID ()
     self.orientedOrigin = inOrientedOrigin
     self.mUnGroupIsEnabled = inUnGroupIsEnabled
-    var newWidgetArray = [any WidgetUIProtocol <WidgetTypesDescription>] ()
-    for widget in inArray {
-      newWidgetArray.append (widget.duplicated ()!)
-    }
-    self.mArray = newWidgetArray
+    self.mArray = inArray
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -154,8 +130,8 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
                           hovered inHovered : Bool,
                           selected inSelected : Bool,
                           groupLevel inGroupLevel : UInt) {
-    for widget in self.mArray {
-      widget.drawFromGlobal (
+    for proxy in self.mArray {
+      proxy.widget.drawFromGlobal (
         context: &ioContext,
         scale: inScale,
         hovered: inHovered,
@@ -179,8 +155,8 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
 
   public var localAlignmentGuidePoints : [CanariPoint] {
     var points = [CanariPoint] ()
-    for widget in self.mArray {
-      points += widget.localAlignmentGuidePoints
+    for proxy in self.mArray {
+      points += proxy.widget.localAlignmentGuidePoints
     }
     return points
   }
@@ -189,11 +165,11 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
   //MARK: ungrouped array
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func ungroupedArray () -> [any WidgetUIProtocol <WidgetTypesDescription>] {
+  func ungroupedArray () -> [WidgetProxy <WidgetTypesDescription>] {
     return self.mArray.map {
-      var widget = $0
+      var widget = $0.widget
       widget.orientedOrigin.transformToGlobal (self.orientedOrigin)
-      return widget
+      return WidgetProxy (widget)
     }
   }
 

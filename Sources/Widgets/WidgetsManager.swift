@@ -45,15 +45,48 @@ public struct WidgetsManager <WidgetTypesDescription : DocumentWidgetsDescriptio
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public subscript (widgetIndex inIndex : Int) -> any WidgetUIProtocol <WidgetTypesDescription> {
-    get { self.mWidgetsArray [inIndex] }
-    set { self.mWidgetsArray [inIndex] = newValue }
+  func proxyArray (fromSelection inSelection : Set <UUID>) -> [WidgetProxy <WidgetTypesDescription>] {
+    var result = [WidgetProxy <WidgetTypesDescription>] ()
+    for widget in self.mWidgetsArray {
+      if inSelection.contains (widget.id) {
+        result.append (WidgetProxy (widget))
+      }
+    }
+    return result
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Subscripts
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public subscript (proxyIndex inIndex : Int) -> WidgetProxy <WidgetTypesDescription> {
+    get { WidgetProxy (self.mWidgetsArray [inIndex]) }
+    set { self.mWidgetsArray [inIndex] = newValue.widget }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func append (_ inNewObject : any WidgetUIProtocol <WidgetTypesDescription>) {
-    self.mWidgetsArray.append (inNewObject)
+  subscript (proxyID inID : UUID) -> (WidgetProxy <WidgetTypesDescription>)? {
+    get {
+      if let widget = self.mWidgetsArray.first ( where: { $0.id == inID } ) {
+        return WidgetProxy (widget)
+      }else{
+        return nil
+      }
+    }
+    set {
+      if let v = newValue, let idx = self.mWidgetsArray.firstIndex (where: { $0.id == inID } ) {
+        self.mWidgetsArray [idx] = v.widget
+      }
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Mutating functions
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  mutating func append (_ inNewObject : WidgetProxy <WidgetTypesDescription>) {
+    self.mWidgetsArray.append (inNewObject.widget)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -78,46 +111,11 @@ public struct WidgetsManager <WidgetTypesDescription : DocumentWidgetsDescriptio
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  subscript (widgetID inID : UUID) -> (any WidgetUIProtocol <WidgetTypesDescription>)? {
-    get { self.mWidgetsArray.first { $0.id == inID } }
-    set {
-      if let v = newValue, let idx = self.mWidgetsArray.firstIndex (where: { $0.id == inID } ) {
-        self.mWidgetsArray [idx] = v
-      }
-    }
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  func widgetArray (fromSelection inSelection : Set <UUID>) -> [any WidgetUIProtocol <WidgetTypesDescription>] {
-    var result = [any WidgetUIProtocol <WidgetTypesDescription>] ()
-    for widget in self.mWidgetsArray {
-      if inSelection.contains (widget.id) {
-        result.append (widget)
-      }
-    }
-    return result
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  func proxyArray (fromSelection inSelection : Set <UUID>) -> [WidgetProxy <WidgetTypesDescription>] {
-    var result = [WidgetProxy <WidgetTypesDescription>] ()
-    for widget in self.mWidgetsArray {
-      if inSelection.contains (widget.id) {
-        result.append (WidgetProxy (widget))
-      }
-    }
-    return result
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  mutating func replaceWidget (id inID : UUID, with inArray : [any WidgetUIProtocol <WidgetTypesDescription>]) {
+  mutating func replaceWidget (id inID : UUID, with inArray : [WidgetProxy <WidgetTypesDescription>]) {
     var idx = self.mWidgetsArray.firstIndex { $0.id == inID }!
     self.mWidgetsArray.remove (at: idx)
     for proxy in inArray {
-      self.mWidgetsArray.insert (proxy, at: idx)
+      self.mWidgetsArray.insert (proxy.widget, at: idx)
       idx += 1
     }
   }

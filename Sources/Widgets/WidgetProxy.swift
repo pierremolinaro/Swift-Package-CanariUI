@@ -10,7 +10,7 @@ public struct WidgetProxy <WidgetTypesDescription : DocumentWidgetsDescriptionPr
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public let widget : any WidgetUIProtocol <WidgetTypesDescription>
+  public var widget : any WidgetUIProtocol <WidgetTypesDescription>
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

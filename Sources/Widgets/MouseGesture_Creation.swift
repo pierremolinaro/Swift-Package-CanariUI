@@ -8,7 +8,7 @@ import SwiftUI
 
 struct MouseGesture_Creation <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : MouseGestureProtocol {
 
-  let objectCreator : (MouseGestureGeometryContext) -> any WidgetUIProtocol <WidgetTypesDescription>
+  let objectCreator : (MouseGestureGeometryContext) -> WidgetProxy <WidgetTypesDescription>
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -18,8 +18,8 @@ struct MouseGesture_Creation <WidgetTypesDescription : DocumentWidgetsDescriptio
                        widgetsManagerInterface inWidgetsManagerInterface : WidgetsUserInterface <WidgetTypesDescription>,
                        optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<WidgetTypesDescription>)?) {
     let newObject = self.objectCreator (inGeometry)
-    inWidgetsManagerInterface [widgetIndex: inWidgetsManagerInterface.widgetCount - 1] = newObject
-    inWidgetsManagerInterface.setSelection (withID: newObject.id)
+    inWidgetsManagerInterface [proxyIndex: inWidgetsManagerInterface.widgetCount - 1] = newObject
+    inWidgetsManagerInterface.setSelection (withID: newObject.widget.id)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -27,7 +27,7 @@ struct MouseGesture_Creation <WidgetTypesDescription : DocumentWidgetsDescriptio
   func onMouseUp (removeUndoGrouping inRemoveUndoGrouping : () -> Void,
                   userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
                   widgetsManagerInterface inWidgetsManagerInterface : WidgetsUserInterface <WidgetTypesDescription>) {
-    if inWidgetsManagerInterface [widgetIndex: inWidgetsManagerInterface.widgetCount - 1].isGraphicallyEmpty {
+    if inWidgetsManagerInterface [proxyIndex: inWidgetsManagerInterface.widgetCount - 1].widget.isGraphicallyEmpty {
       inWidgetsManagerInterface.removeLast ()
       inWidgetsManagerInterface.clearSelection ()
       inRemoveUndoGrouping ()
