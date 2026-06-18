@@ -123,7 +123,7 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private func selectedWidgetArray () -> [WidgetProxy <WidgetTypesDescription>] {
+  func selectedWidgetArray () -> [WidgetProxy <WidgetTypesDescription>] {
     self.mWidgetsManager.proxyArray (fromSelection: self.selection)
   }
 
@@ -753,33 +753,8 @@ import Combine
     if self.mSelection.isEmpty {
       Text ("Empty Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
     }else{
-      VStack {
-        InspectorOfCanariPointSet (
-          title : "Center",
-          pointSet: Set (self.selectedWidgetArray ().map { $0.widget.orientedOrigin.mOrigin }),
-          setterX: { for id in self.selection { self [proxyID: id]?.widget.orientedOrigin.mOrigin.x = $0 } },
-          setterY: { for id in self.selection { self [proxyID: id]?.widget.orientedOrigin.mOrigin.y = $0 } }
-        )
-        CanariElementInspector (title: "Angle", subTitle: "") {
-          EditorOfCanariAngleSet (
-            angleSet: Set (self.selectedWidgetArray ().map { $0.widget.orientedOrigin.mAngle }),
-            setter: { for id in self.selection { self [proxyID: id]?.widget.orientedOrigin.mAngle = $0 } }
-          )
-        }
-        CanariElementInspector (title: "Scale, Flip", subTitle: "") {
-          EditorOfScaleSet (
-            valueSet: Set (self.selectedWidgetArray ().map { $0.widget.orientedOrigin.mScale }),
-            setter: { for id in self.selection { self [proxyID: id]?.widget.orientedOrigin.mScale = $0 } }
-          )
-          InspectorOfBoolSet (
-            title: "Horizontal Flip",
-            valueSet: Set (self.selectedWidgetArray ().map { $0.widget.orientedOrigin.mHorizontalFlip }),
-            setter: { for id in self.selection { self [proxyID: id]?.widget.orientedOrigin.mHorizontalFlip = $0 } }
-          )
-        }
-        CanariElementInspector (title: "Enclosing Rectangle", subTitle: "") {
-          ViewerOfCanariRectSet (rectSet: Set (self.selectedWidgetArray ().map { $0.widget.orientedOrigin.globalBoundingRect }))
-        }
+      VStack (spacing: 1) {
+        InspectorOfCanariScaledOrientedOrigin (widgetsUserInterface: self)
         if let type = self.commonTypeForSelection () {
           Text (type.inspectorTitle).bold ()
           ScrollView (.vertical) {
