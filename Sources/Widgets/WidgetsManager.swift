@@ -10,46 +10,48 @@ public struct WidgetsManager <WidgetTypesDescription : DocumentWidgetsDescriptio
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private var mWidgetsArray : [any WidgetUIProtocol <WidgetTypesDescription>] // at 0: back, at count - 1: front
-//  private var mProxyArray : [WidgetProxy <WidgetTypesDescription>] // at 0: back, at count - 1: front
+//  private var mWidgetsArray : [any WidgetUIProtocol <WidgetTypesDescription>] // at 0: back, at count - 1: front
+  private var mProxyArray : [WidgetProxy <WidgetTypesDescription>] // at 0: back, at count - 1: front
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init () {
-    self.mWidgetsArray = []
+    self.mProxyArray = []
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var count : Int { self.mWidgetsArray.count }
+  var count : Int { self.mProxyArray.count }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public mutating func setWidgets (fromProxies inProxies : [WidgetProxy <WidgetTypesDescription>]) {
-    var widgetsArray = [any WidgetUIProtocol <WidgetTypesDescription>] ()
-    for proxy in inProxies {
-      widgetsArray.append (proxy.widget)
-    }
-    self.mWidgetsArray = widgetsArray
+//    var widgetsArray = [any WidgetUIProtocol <WidgetTypesDescription>] ()
+//    for proxy in inProxies {
+//      widgetsArray.append (proxy.widget)
+//    }
+//    self.mWidgetsArray = widgetsArray
+    self.mProxyArray = inProxies
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var proxyArray : [WidgetProxy <WidgetTypesDescription>] {
-    var array = [WidgetProxy <WidgetTypesDescription>] ()
-    for widget in self.mWidgetsArray {
-      array.append(WidgetProxy (widget))
-    }
-    return array
+//    var array = [WidgetProxy <WidgetTypesDescription>] ()
+//    for widget in self.mWidgetsArray {
+//      array.append(WidgetProxy (widget))
+//    }
+//    return array
+    return self.mProxyArray
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func proxyArray (fromSelection inSelection : Set <UUID>) -> [WidgetProxy <WidgetTypesDescription>] {
     var result = [WidgetProxy <WidgetTypesDescription>] ()
-    for widget in self.mWidgetsArray {
-      if inSelection.contains (widget.id) {
-        result.append (WidgetProxy (widget))
+    for proxy in self.mProxyArray {
+      if inSelection.contains (proxy.widget.id) {
+        result.append (proxy)
       }
     }
     return result
@@ -60,23 +62,19 @@ public struct WidgetsManager <WidgetTypesDescription : DocumentWidgetsDescriptio
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public subscript (proxyIndex inIndex : Int) -> WidgetProxy <WidgetTypesDescription> {
-    get { WidgetProxy (self.mWidgetsArray [inIndex]) }
-    set { self.mWidgetsArray [inIndex] = newValue.widget }
+    get { self.mProxyArray [inIndex] }
+    set { self.mProxyArray [inIndex] = newValue }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   subscript (proxyID inID : UUID) -> (WidgetProxy <WidgetTypesDescription>)? {
     get {
-      if let widget = self.mWidgetsArray.first ( where: { $0.id == inID } ) {
-        return WidgetProxy (widget)
-      }else{
-        return nil
-      }
+      self.mProxyArray.first { $0.widget.id == inID }
     }
     set {
-      if let v = newValue, let idx = self.mWidgetsArray.firstIndex (where: { $0.id == inID } ) {
-        self.mWidgetsArray [idx] = v.widget
+      if let v = newValue, let idx = self.mProxyArray.firstIndex (where: { $0.widget.id == inID } ) {
+        self.mProxyArray [idx] = v
       }
     }
   }
@@ -86,36 +84,36 @@ public struct WidgetsManager <WidgetTypesDescription : DocumentWidgetsDescriptio
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   mutating func append (_ inNewObject : WidgetProxy <WidgetTypesDescription>) {
-    self.mWidgetsArray.append (inNewObject.widget)
+    self.mProxyArray.append (inNewObject)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   mutating func removeLast () {
-    self.mWidgetsArray.removeLast ()
+    self.mProxyArray.removeLast ()
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   mutating func remove (at inIndex : Int) {
-    self.mWidgetsArray.remove (at: inIndex)
+    self.mProxyArray.remove (at: inIndex)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   mutating func remove (id inID : UUID) {
-    if let idx = self.mWidgetsArray.firstIndex (where: { $0.id == inID } ) {
-      self.mWidgetsArray.remove (at: idx)
+    if let idx = self.mProxyArray.firstIndex (where: { $0.widget.id == inID } ) {
+      self.mProxyArray.remove (at: idx)
     }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   mutating func replaceWidget (id inID : UUID, with inArray : [WidgetProxy <WidgetTypesDescription>]) {
-    var idx = self.mWidgetsArray.firstIndex { $0.id == inID }!
-    self.mWidgetsArray.remove (at: idx)
+    var idx = self.mProxyArray.firstIndex { $0.widget.id == inID }!
+    self.mProxyArray.remove (at: idx)
     for proxy in inArray {
-      self.mWidgetsArray.insert (proxy.widget, at: idx)
+      self.mProxyArray.insert (proxy, at: idx)
       idx += 1
     }
   }
@@ -126,26 +124,26 @@ public struct WidgetsManager <WidgetTypesDescription : DocumentWidgetsDescriptio
 
 //--------------------------------------------------------------------------------------------------
 
-extension WidgetsManager : Equatable {
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public static func == (_ inLeft : WidgetsManager <WidgetTypesDescription>,
-                         _ inRight : WidgetsManager <WidgetTypesDescription>) -> Bool { // Equatable
-    if inLeft.count != inRight.count {
-      return false
-    }else{
-      for i in 0 ..< inLeft.count {
-        if !inLeft.mWidgetsArray [i].isEqual (to: inRight.mWidgetsArray [i]) {
-          return false
-        }
-      }
-      return true
-    }
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-}
+//extension WidgetsManager : Equatable {
+//
+//  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//
+//  public static func == (_ inLeft : WidgetsManager <WidgetTypesDescription>,
+//                         _ inRight : WidgetsManager <WidgetTypesDescription>) -> Bool { // Equatable
+//    if inLeft.count != inRight.count {
+//      return false
+//    }else{
+//      for i in 0 ..< inLeft.count {
+//        if !inLeft.mWidgetsArray [i].isEqual (to: inRight.mWidgetsArray [i]) {
+//          return false
+//        }
+//      }
+//      return true
+//    }
+//  }
+//
+//  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//
+//}
 
 //--------------------------------------------------------------------------------------------------
