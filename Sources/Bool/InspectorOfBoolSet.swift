@@ -6,18 +6,22 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct Opt_Toggle : NSViewRepresentable {
+public struct InspectorOfBoolSet : NSViewRepresentable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @Binding private var mBinding : Bool?
+  private let mValueSet : Set <Bool>
   private let title : String
+  private let mSetter : (Bool) -> Void
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (_ inTitle : String, isOn : Binding <Bool?>) {
-    self._mBinding = isOn
+  public init (title inTitle : String,
+               valueSet inSet : Set <Bool>,
+               setter: @escaping (Bool) -> Void) {
+    self.mValueSet = inSet
     self.title = inTitle
+    self.mSetter = setter
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -37,7 +41,7 @@ public struct Opt_Toggle : NSViewRepresentable {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private func state () ->  NSControl.StateValue {
-    if let v = self.mBinding {
+    if let v = self.mValueSet.first, self.mValueSet.count == 1 {
       return v ? .on : .off
     }else{
       return .mixed
@@ -54,26 +58,26 @@ public struct Opt_Toggle : NSViewRepresentable {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func makeCoordinator () -> Self.Coordinator {
-    Self.Coordinator (value: self.$mBinding)
+    Self.Coordinator (setter: self.mSetter)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public final class Coordinator : NSObject {
-    private var mBinding : Binding<Bool?>
+    private let mSetter : (Bool) -> Void
 
-    init (value: Binding<Bool?>) {
-      self.mBinding = value
+    init (setter inSetter : @escaping (Bool) -> Void) {
+      self.mSetter = inSetter
     }
 
     @MainActor @objc func changed (_ sender : NSButton) {
       switch sender.state {
       case .on:
-        self.mBinding.wrappedValue = true
+        self.mSetter (true)
       case .off:
-        self.mBinding.wrappedValue = false
+        self.mSetter (false)
       case .mixed:
-        self.mBinding.wrappedValue = true
+        self.mSetter (true)
       default:
         break
       }

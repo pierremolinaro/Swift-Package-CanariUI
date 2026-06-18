@@ -177,6 +177,8 @@ public struct WidgetGroup <WidgetTypesDescription : DocumentWidgetsDescriptionPr
   //MARK: inspectorView
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public static var inspectorTitle : String { "Group" }
+
   public static func inspectorView (proxy inProxy : InspectorProxy <WidgetTypesDescription>) -> any View {
     WidgetGroupInspectorView (proxy: inProxy)
   }
@@ -204,88 +206,18 @@ fileprivate struct WidgetGroupInspectorView <WidgetTypesDescription : DocumentWi
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   var body : some View {
-    VStack {
-      Text ("Group").bold ()
-      Spacer ().frame (height: 16)
-      CanariElementInspector (title: "Ungrouping", subTitle: "") {
-        HStack {
-          Text ("Group count")
-          ViewerOfStringSet (Set (self.mProxy.arrayOf (\T.count).map { "\($0)" }) )
-        }
-        Opt_Toggle ("UnGrouping is enabled", isOn: self.mProxy [bindingFor: \T.mUnGroupIsEnabled])
-        Button ("Ungroup") { self.mProxy.performWidgetUserInterfaceAction { $0.performUngroup () } }.disabled (!self.canUngroup ())
+    CanariElementInspector (title: "Ungrouping", subTitle: "") {
+      HStack {
+        Text ("Group count")
+        ViewerOfStringSet (Set (self.mProxy.arrayOf (\T.count).map { "\($0)" }) )
       }
-      InspectorOfCanariPointSet (
-        title: "Center",
-        pointSet: self.mProxy.setOf (\T.orientedOrigin.mOrigin),
-        setterX: { newX in
-          self.mProxy.performWidgetAction { (widget : inout T) in
-            widget.orientedOrigin.mOrigin.x = newX
-          }
-        },
-        setterY: { newY in
-          self.mProxy.performWidgetAction { (widget : inout T) in
-            widget.orientedOrigin.mOrigin.y = newY
-          }
-        }
+      InspectorOfBoolSet (
+        title: "UnGrouping is enabled",
+        valueSet: self.mProxy.setOf (\T.mUnGroupIsEnabled),
+        setter: { self.mProxy.setProperty (\T.mUnGroupIsEnabled, $0) }
       )
-      CanariElementInspector (title: "Angle", subTitle: "") {
-        EditorOfCanariAngleSet (
-          angleSet: self.mProxy.setOf (\T.orientedOrigin.mAngle),
-          setter: { newAngle in
-            self.mProxy.performWidgetAction { (widget : inout T) in
-              widget.orientedOrigin.mAngle = newAngle
-            }
-          }
-        )
-      }
-      CanariElementInspector (title: "Scale", subTitle: "") {
-        EditorOfScaleSet (
-          valueSet: self.mProxy.setOf (\T.orientedOrigin.mScale),
-          setter: { newScale in
-            self.mProxy.performWidgetAction { (widget : inout T) in
-              widget.orientedOrigin.mScale = newScale
-            }
-          }
-        )
-      }
-      CanariElementInspector (title: "Enclosing Rectangle", subTitle: "") {
-        ViewerOfCanariRectSet (rectSet: self.mProxy.setOf (\T.orientedOrigin.globalBoundingRect))
-      }
-//      CanariElementInspector (title: "Center") {
-//        HStack {
-//          Spacer ()
-//          Form {
-//            SetOfCanariPointsEditor (
-//              pointSet: self.mProxy.setOf (\T.mCenter),
-//              setterX: { newX in
-//                self.mProxy.performWidgetAction { (widget : inout T) in
-//                  widget.mCenter = CanariPoint (x: newX, y: widget.mCenter.y)
-//                }
-//              },
-//              setterY: { newY in
-//                self.mProxy.performWidgetAction { (widget : inout T) in
-//                  widget.mCenter = CanariPoint (x: widget.mCenter.x, y: newY)
-//                }
-//              }
-//            )
-//          }
-//          Spacer ()
-//        }
-//      }
-//      CanariElementInspector (title: "Angle") {
-//        SetOfCanariAnglesEditor (
-//          angleSet: self.mProxy.setOf (\T.mAngle),
-//          setter: { newAngle in
-//            self.mProxy.performWidgetAction { (widget : inout T) in
-//              widget.mAngle = newAngle
-//            }
-//          },
-//          width: 64
-//        )
-//      }
-      Spacer ()
-    }.padding ()
+      Button ("Ungroup") { self.mProxy.performWidgetUserInterfaceAction { $0.performUngroup () } }.disabled (!self.canUngroup ())
+    }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

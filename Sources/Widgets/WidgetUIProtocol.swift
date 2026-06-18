@@ -50,6 +50,8 @@ public protocol WidgetUIProtocol <WidgetTypesDescription> : WidgetModelProtocol 
   //MARK: inspectorView
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  @MainActor static var inspectorTitle : String { get }
+
   @MainActor static func inspectorView (proxy inProxy : InspectorProxy <WidgetTypesDescription>) -> any View
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

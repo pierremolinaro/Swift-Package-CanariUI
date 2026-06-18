@@ -6,16 +6,13 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct WidgetProxy <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : Sendable {
+extension WidgetProxy : Equatable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var widget : any WidgetUIProtocol <WidgetTypesDescription>
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public init (_ inWidget : any WidgetUIProtocol <WidgetTypesDescription>) {
-    self.widget = inWidget
+  public static func == (_ inLeft : borrowing WidgetProxy <WidgetTypesDescription>,
+                         _ inRight : borrowing WidgetProxy <WidgetTypesDescription>) -> Bool {
+    inLeft.widget.isEqual (to: inRight.widget)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

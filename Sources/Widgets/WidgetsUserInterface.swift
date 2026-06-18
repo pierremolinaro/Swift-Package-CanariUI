@@ -123,6 +123,12 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  private func selectedWidgetArray () -> [WidgetProxy <WidgetTypesDescription>] {
+    self.mWidgetsManager.proxyArray (fromSelection: self.selection)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   private var mHoveredObject : UUID? = nil
   private var mSelectionUserRectangle : CanariRect? = nil
   public var selectionUserRectangle : CanariRect? { self.mSelectionUserRectangle }
@@ -746,12 +752,45 @@ import Combine
   @MainActor @ViewBuilder public func inspectorViewForCurrentSelection () -> some View {
     if self.mSelection.isEmpty {
       Text ("Empty Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
-    }else if let type = self.commonTypeForSelection () {
-      AnyView (type.inspectorView (proxy: InspectorProxy (self)).id (self.mSelection))
-    }else if self.mSelection.count > 1 {
-      Text ("Multiple Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
     }else{
-      Text ("Single Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
+      VStack {
+        InspectorOfCanariPointSet (
+          title : "Center",
+          pointSet: Set (self.selectedWidgetArray ().map { $0.widget.orientedOrigin.mOrigin }),
+          setterX: { for id in self.selection { self [proxyID: id]?.widget.orientedOrigin.mOrigin.x = $0 } },
+          setterY: { for id in self.selection { self [proxyID: id]?.widget.orientedOrigin.mOrigin.y = $0 } }
+        )
+        CanariElementInspector (title: "Angle", subTitle: "") {
+          EditorOfCanariAngleSet (
+            angleSet: Set (self.selectedWidgetArray ().map { $0.widget.orientedOrigin.mAngle }),
+            setter: { for id in self.selection { self [proxyID: id]?.widget.orientedOrigin.mAngle = $0 } }
+          )
+        }
+        CanariElementInspector (title: "Scale, Flip", subTitle: "") {
+          EditorOfScaleSet (
+            valueSet: Set (self.selectedWidgetArray ().map { $0.widget.orientedOrigin.mScale }),
+            setter: { for id in self.selection { self [proxyID: id]?.widget.orientedOrigin.mScale = $0 } }
+          )
+          InspectorOfBoolSet (
+            title: "Horizontal Flip",
+            valueSet: Set (self.selectedWidgetArray ().map { $0.widget.orientedOrigin.mHorizontalFlip }),
+            setter: { for id in self.selection { self [proxyID: id]?.widget.orientedOrigin.mHorizontalFlip = $0 } }
+          )
+        }
+        CanariElementInspector (title: "Enclosing Rectangle", subTitle: "") {
+          ViewerOfCanariRectSet (rectSet: Set (self.selectedWidgetArray ().map { $0.widget.orientedOrigin.globalBoundingRect }))
+        }
+        if let type = self.commonTypeForSelection () {
+          Text (type.inspectorTitle).bold ()
+          ScrollView (.vertical) {
+            AnyView (type.inspectorView (proxy: InspectorProxy (self)).id (self.mSelection))
+          }
+        }else if self.mSelection.count > 1 {
+          Text ("Multiple Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
+        }else{
+          Text ("Single Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
+        }
+      }.padding ()
     }
   }
 
@@ -778,19 +817,3 @@ import Combine
 }
 
 //--------------------------------------------------------------------------------------------------
-
-//extension Array : Equatable where Element == [any WidgetUIProtocol <any DocumentWidgetsDescriptionProtocol>] {
-//
-////  public static func == (inLeft : Self, inRight : Self) -> Bool {
-////    if inLeft.count != inRight.count {
-////      return false
-////    }else{
-////      for i in 0 ..< inLeft.count {
-////        if !inLeft [i].isEqual (to: inRight [i]) {
-////          return false
-////        }
-////      }
-////      return true
-////    }
-////  }
-//}

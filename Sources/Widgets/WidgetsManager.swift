@@ -26,22 +26,12 @@ public struct WidgetsManager <WidgetTypesDescription : DocumentWidgetsDescriptio
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public mutating func setWidgets (fromProxies inProxies : [WidgetProxy <WidgetTypesDescription>]) {
-//    var widgetsArray = [any WidgetUIProtocol <WidgetTypesDescription>] ()
-//    for proxy in inProxies {
-//      widgetsArray.append (proxy.widget)
-//    }
-//    self.mWidgetsArray = widgetsArray
     self.mProxyArray = inProxies
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var proxyArray : [WidgetProxy <WidgetTypesDescription>] {
-//    var array = [WidgetProxy <WidgetTypesDescription>] ()
-//    for widget in self.mWidgetsArray {
-//      array.append(WidgetProxy (widget))
-//    }
-//    return array
     return self.mProxyArray
   }
 
