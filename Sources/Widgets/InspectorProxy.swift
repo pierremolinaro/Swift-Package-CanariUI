@@ -20,13 +20,13 @@ public final class InspectorProxy <WidgetTypesDescription : DocumentWidgetsDescr
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @MainActor public subscript <T : WidgetUIProtocol <WidgetTypesDescription>, Value : Equatable & Sendable> (bindingFor inKeyPath : WritableKeyPath <T, Value>) -> Binding <Value?> {
+  @MainActor public subscript <T : DecoratorUIProtocol <WidgetTypesDescription>, Value : Equatable & Sendable> (bindingFor inKeyPath : WritableKeyPath <T, Value>) -> Binding <Value?> {
     let binding = Binding <Value?> (
       get: {
         var result : Value? = nil
         for id in self.mWidgetsUserInterface.selection {
-          if let widget = self.mWidgetsUserInterface [proxyID: id]?.widget as? T {
-            let property = widget [keyPath: inKeyPath]
+          if let decorator = self.mWidgetsUserInterface [proxyID: id]?.decorator as? T {
+            let property = decorator [keyPath: inKeyPath]
             if let r = result {
               if r != property {
                 return nil
@@ -41,9 +41,9 @@ public final class InspectorProxy <WidgetTypesDescription : DocumentWidgetsDescr
       set: {
         if let property = $0 {
           for id in self.mWidgetsUserInterface.selection {
-            if var v = self.mWidgetsUserInterface [proxyID: id]?.widget as? T {
+            if var v = self.mWidgetsUserInterface [proxyID: id]?.decorator as? T {
               v [keyPath: inKeyPath] = property
-              self.mWidgetsUserInterface [proxyID: id] = WidgetProxy (v)
+              self.mWidgetsUserInterface [proxyID: id] = CanariWidget (v)
             }
           }
         }
@@ -54,10 +54,10 @@ public final class InspectorProxy <WidgetTypesDescription : DocumentWidgetsDescr
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func optValueOf <T : WidgetUIProtocol <WidgetTypesDescription>, Value : Equatable> (_ inKeyPath : KeyPath <T, Value>) -> Value? {
+  public func optValueOf <T : DecoratorUIProtocol <WidgetTypesDescription>, Value : Equatable> (_ inKeyPath : KeyPath <T, Value>) -> Value? {
     var result : Value? = nil
     for id in self.mWidgetsUserInterface.selection {
-      if let v = self.mWidgetsUserInterface [proxyID: id]?.widget as? T {
+      if let v = self.mWidgetsUserInterface [proxyID: id]?.decorator as? T {
         let property = v [keyPath: inKeyPath]
         if let r = result {
           if r != property {
@@ -73,10 +73,10 @@ public final class InspectorProxy <WidgetTypesDescription : DocumentWidgetsDescr
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func setOf <T : WidgetUIProtocol <WidgetTypesDescription>, Value : Hashable> (_ inKeyPath : KeyPath <T, Value>) -> Set <Value> {
+  public func setOf <T : DecoratorUIProtocol <WidgetTypesDescription>, Value : Hashable> (_ inKeyPath : KeyPath <T, Value>) -> Set <Value> {
     var result = Set <Value> ()
     for id in self.mWidgetsUserInterface.selection {
-      if let v = self.mWidgetsUserInterface [proxyID: id]?.widget as? T {
+      if let v = self.mWidgetsUserInterface [proxyID: id]?.decorator as? T {
         let property = v [keyPath: inKeyPath]
         result.insert (property)
       }
@@ -86,17 +86,17 @@ public final class InspectorProxy <WidgetTypesDescription : DocumentWidgetsDescr
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func arrayOf <T : WidgetUIProtocol <WidgetTypesDescription>, Value : Hashable> (_ inKeyPath : KeyPath <T, Value>) -> [Value] {
+  public func arrayOf <T : DecoratorUIProtocol <WidgetTypesDescription>, Value : Hashable> (_ inKeyPath : KeyPath <T, Value>) -> [Value] {
     return Array (self.setOf (inKeyPath))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func setProperty <T : WidgetUIProtocol <WidgetTypesDescription>, Value> (_ inKeyPath : WritableKeyPath <T, Value>, _ inValue : Value) {
+  public func setProperty <T : DecoratorUIProtocol <WidgetTypesDescription>, Value> (_ inKeyPath : WritableKeyPath <T, Value>, _ inValue : Value) {
     for id in self.mWidgetsUserInterface.selection {
-      if var v = self.mWidgetsUserInterface [proxyID: id]?.widget as? T {
+      if var v = self.mWidgetsUserInterface [proxyID: id]?.decorator as? T {
         v [keyPath: inKeyPath] = inValue
-        self.mWidgetsUserInterface [proxyID: id] = WidgetProxy (v)
+        self.mWidgetsUserInterface [proxyID: id] = CanariWidget (v)
       }
     }
   }
@@ -109,11 +109,11 @@ public final class InspectorProxy <WidgetTypesDescription : DocumentWidgetsDescr
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func performWidgetAction <T : WidgetUIProtocol <WidgetTypesDescription> > (_ inAction : (inout T) -> Void) {
+  public func performWidgetAction <T : DecoratorUIProtocol <WidgetTypesDescription> > (_ inAction : (inout T) -> Void) {
     for id in self.mWidgetsUserInterface.selection {
-      if var widget = self.mWidgetsUserInterface [proxyID: id]?.widget as? T {
-        inAction (&widget)
-        self.mWidgetsUserInterface [proxyID: id] = WidgetProxy (widget)
+      if var decorator = self.mWidgetsUserInterface [proxyID: id]?.decorator as? T {
+        inAction (&decorator)
+        self.mWidgetsUserInterface [proxyID: id] = CanariWidget (decorator)
       }
     }
   }

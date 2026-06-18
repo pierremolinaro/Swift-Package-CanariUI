@@ -24,8 +24,8 @@ struct MouseGesture_DragSelection <WidgetTypesDescription : DocumentWidgetsDescr
     if translation != .zero {
       inBeginOrContinueUndoGrouping ()
       for i in 0 ..< inWidgetsManagerInterface.widgetCount {
-        if inWidgetsManagerInterface.selection.contains (inWidgetsManagerInterface [proxyIndex: i].widget.id) {
-          inWidgetsManagerInterface [proxyIndex: i].widget.orientedOrigin.mOrigin += translation
+        if inWidgetsManagerInterface.selection.contains (inWidgetsManagerInterface [proxyIndex: i].decorator.id) {
+          inWidgetsManagerInterface [proxyIndex: i].decorator.orientedOrigin.mOrigin += translation
         }
       }
       outOptionalNextState = MouseGesture_DragSelection (

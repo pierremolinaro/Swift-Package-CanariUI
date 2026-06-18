@@ -11,13 +11,13 @@ public struct WidgetKnob <WidgetTypesDescription : DocumentWidgetsDescriptionPro
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private let localCenter : CanariPoint
-  let dragWidgetKnobAction : (inout any WidgetUIProtocol <WidgetTypesDescription>, CanariPoint, Bool) -> Void
+  let dragWidgetKnobAction : (inout any DecoratorUIProtocol <WidgetTypesDescription>, CanariPoint, Bool) -> Void
   let menu : ((ContextualMenuExecutor <WidgetTypesDescription>) -> any View)?
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (localCenter inCenter : CanariPoint,
-               dragAction inKnobDragAction : @escaping (inout any WidgetUIProtocol <WidgetTypesDescription>, CanariPoint, Bool) -> Void,
+               dragAction inKnobDragAction : @escaping (inout any DecoratorUIProtocol <WidgetTypesDescription>, CanariPoint, Bool) -> Void,
                menu inMenu : ((ContextualMenuExecutor <WidgetTypesDescription>) -> any View)? = nil) {
     self.localCenter = inCenter
     self.dragWidgetKnobAction = inKnobDragAction

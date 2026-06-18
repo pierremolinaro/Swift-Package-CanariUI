@@ -1,24 +1,24 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 21/02/2026.
+//  Created by Pierre Molinaro on 27/03/2026.
 //--------------------------------------------------------------------------------------------------
 
 import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct WidgetProxy <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : Sendable {
+public protocol DecoratorModelProtocol <WidgetTypesDescription> : Identifiable, Sendable, Codable {
+
+  associatedtype WidgetTypesDescription : DocumentWidgetsDescriptionProtocol
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var widget : any WidgetUIProtocol <WidgetTypesDescription>
+  var id : UUID { get }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (_ inWidget : any WidgetUIProtocol <WidgetTypesDescription>) {
-    self.widget = inWidget
-  }
+  func duplicated () -> (any DecoratorUIProtocol <WidgetTypesDescription>)?
 
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 }
 

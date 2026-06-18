@@ -23,10 +23,10 @@ final class WidgetKnobAction <WidgetTypesDescription : DocumentWidgetsDescriptio
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func execute (_ inAction : (inout any WidgetUIProtocol <WidgetTypesDescription>) -> Void) {
-    var widget = self.mWidgetsUserInterface [proxyIndex: self.mWidgetIndex].widget
-    inAction (&widget)
-    self.mWidgetsUserInterface [proxyIndex: self.mWidgetIndex] = WidgetProxy (widget)
+  func execute (_ inAction : (inout any DecoratorUIProtocol <WidgetTypesDescription>) -> Void) {
+    var proxy = self.mWidgetsUserInterface [proxyIndex: self.mWidgetIndex]
+    inAction (&proxy.decorator)
+    self.mWidgetsUserInterface [proxyIndex: self.mWidgetIndex] = proxy
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

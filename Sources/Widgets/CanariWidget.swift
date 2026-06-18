@@ -6,13 +6,16 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-extension WidgetProxy : Equatable {
+public struct CanariWidget <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public static func == (_ inLeft : borrowing WidgetProxy <WidgetTypesDescription>,
-                         _ inRight : borrowing WidgetProxy <WidgetTypesDescription>) -> Bool {
-    inLeft.widget.isEqual (to: inRight.widget)
+  public var decorator : any DecoratorUIProtocol <WidgetTypesDescription>
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public init (_ inDecorator : any DecoratorUIProtocol <WidgetTypesDescription>) {
+    self.decorator = inDecorator
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

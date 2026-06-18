@@ -24,16 +24,16 @@ struct MouseGesture_SelectionRectangle <WidgetTypesDescription : DocumentWidgets
     var newSelection = self.startSelectionSet
     let shift = NSEvent.modifierFlags.contains (.shift)
     for proxy in inWidgetsManagerInterface.proxyArray {
-      if proxy.widget.orientedOrigin.globalOutlineIntersects (globalRect: selectionRectangle) {
+      if proxy.decorator.orientedOrigin.globalOutlineIntersects (globalRect: selectionRectangle) {
         if !shift {
-          newSelection.insert (proxy.widget.id)
-        }else if newSelection.contains (proxy.widget.id) {
-          newSelection.remove (proxy.widget.id)
+          newSelection.insert (proxy.decorator.id)
+        }else if newSelection.contains (proxy.decorator.id) {
+          newSelection.remove (proxy.decorator.id)
         }else{
-          newSelection.insert (proxy.widget.id)
+          newSelection.insert (proxy.decorator.id)
         }
       }else if !shift {
-        newSelection.remove (proxy.widget.id)
+        newSelection.remove (proxy.decorator.id)
       }
     }
     inWidgetsManagerInterface.setSelection (withIDs: newSelection)

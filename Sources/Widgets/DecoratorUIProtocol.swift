@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public protocol WidgetUIProtocol <WidgetTypesDescription> : WidgetModelProtocol {
+public protocol DecoratorUIProtocol <WidgetTypesDescription> : DecoratorModelProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Oriented Origin
@@ -24,7 +24,7 @@ public protocol WidgetUIProtocol <WidgetTypesDescription> : WidgetModelProtocol 
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func isEqual (to inOther : any WidgetUIProtocol <WidgetTypesDescription>) -> Bool
+  func isEqual (to inOther : any DecoratorUIProtocol <WidgetTypesDescription>) -> Bool
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

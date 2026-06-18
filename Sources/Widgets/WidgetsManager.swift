@@ -10,8 +10,8 @@ public struct WidgetsManager <WidgetTypesDescription : DocumentWidgetsDescriptio
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-//  private var mWidgetsArray : [any WidgetUIProtocol <WidgetTypesDescription>] // at 0: back, at count - 1: front
-  private var mProxyArray : [WidgetProxy <WidgetTypesDescription>] // at 0: back, at count - 1: front
+//  private var mWidgetsArray : [any DecoratorUIProtocol <WidgetTypesDescription>] // at 0: back, at count - 1: front
+  private var mProxyArray : [CanariWidget <WidgetTypesDescription>] // at 0: back, at count - 1: front
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -25,22 +25,22 @@ public struct WidgetsManager <WidgetTypesDescription : DocumentWidgetsDescriptio
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public mutating func setWidgets (fromProxies inProxies : [WidgetProxy <WidgetTypesDescription>]) {
+  public mutating func setWidgets (fromProxies inProxies : [CanariWidget <WidgetTypesDescription>]) {
     self.mProxyArray = inProxies
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var proxyArray : [WidgetProxy <WidgetTypesDescription>] {
+  public var proxyArray : [CanariWidget <WidgetTypesDescription>] {
     return self.mProxyArray
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func proxyArray (fromSelection inSelection : Set <UUID>) -> [WidgetProxy <WidgetTypesDescription>] {
-    var result = [WidgetProxy <WidgetTypesDescription>] ()
+  func proxyArray (fromSelection inSelection : Set <UUID>) -> [CanariWidget <WidgetTypesDescription>] {
+    var result = [CanariWidget <WidgetTypesDescription>] ()
     for proxy in self.mProxyArray {
-      if inSelection.contains (proxy.widget.id) {
+      if inSelection.contains (proxy.decorator.id) {
         result.append (proxy)
       }
     }
@@ -51,19 +51,19 @@ public struct WidgetsManager <WidgetTypesDescription : DocumentWidgetsDescriptio
   //MARK: Subscripts
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public subscript (proxyIndex inIndex : Int) -> WidgetProxy <WidgetTypesDescription> {
+  public subscript (proxyIndex inIndex : Int) -> CanariWidget <WidgetTypesDescription> {
     get { self.mProxyArray [inIndex] }
     set { self.mProxyArray [inIndex] = newValue }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  subscript (proxyID inID : UUID) -> (WidgetProxy <WidgetTypesDescription>)? {
+  subscript (proxyID inID : UUID) -> (CanariWidget <WidgetTypesDescription>)? {
     get {
-      self.mProxyArray.first { $0.widget.id == inID }
+      self.mProxyArray.first { $0.decorator.id == inID }
     }
     set {
-      if let v = newValue, let idx = self.mProxyArray.firstIndex (where: { $0.widget.id == inID } ) {
+      if let v = newValue, let idx = self.mProxyArray.firstIndex (where: { $0.decorator.id == inID } ) {
         self.mProxyArray [idx] = v
       }
     }
@@ -73,7 +73,7 @@ public struct WidgetsManager <WidgetTypesDescription : DocumentWidgetsDescriptio
   //MARK: Mutating functions
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func append (_ inNewObject : WidgetProxy <WidgetTypesDescription>) {
+  mutating func append (_ inNewObject : CanariWidget <WidgetTypesDescription>) {
     self.mProxyArray.append (inNewObject)
   }
 
@@ -92,15 +92,15 @@ public struct WidgetsManager <WidgetTypesDescription : DocumentWidgetsDescriptio
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   mutating func remove (id inID : UUID) {
-    if let idx = self.mProxyArray.firstIndex (where: { $0.widget.id == inID } ) {
+    if let idx = self.mProxyArray.firstIndex (where: { $0.decorator.id == inID } ) {
       self.mProxyArray.remove (at: idx)
     }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func replaceWidget (id inID : UUID, with inArray : [WidgetProxy <WidgetTypesDescription>]) {
-    var idx = self.mProxyArray.firstIndex { $0.widget.id == inID }!
+  mutating func replaceWidget (id inID : UUID, with inArray : [CanariWidget <WidgetTypesDescription>]) {
+    var idx = self.mProxyArray.firstIndex { $0.decorator.id == inID }!
     self.mProxyArray.remove (at: idx)
     for proxy in inArray {
       self.mProxyArray.insert (proxy, at: idx)

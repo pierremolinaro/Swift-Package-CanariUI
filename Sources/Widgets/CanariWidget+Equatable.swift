@@ -1,24 +1,21 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 27/03/2026.
+//  Created by Pierre Molinaro on 21/02/2026.
 //--------------------------------------------------------------------------------------------------
 
 import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public protocol WidgetModelProtocol <WidgetTypesDescription> : Identifiable, Sendable, Codable {
-
-  associatedtype WidgetTypesDescription : DocumentWidgetsDescriptionProtocol
+extension CanariWidget : Equatable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var id : UUID { get }
+  public static func == (_ inLeft : borrowing CanariWidget <WidgetTypesDescription>,
+                         _ inRight : borrowing CanariWidget <WidgetTypesDescription>) -> Bool {
+    inLeft.decorator.isEqual (to: inRight.decorator)
+  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  func duplicated () -> (any WidgetUIProtocol <WidgetTypesDescription>)?
-
- // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 }
 

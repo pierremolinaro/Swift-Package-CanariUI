@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-extension WidgetProxy : Codable {
+extension CanariWidget : Codable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Encoding, Decoding
@@ -17,15 +17,15 @@ extension WidgetProxy : Codable {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   nonisolated public init (from inDecoder : Decoder) throws {
-    var dictionary : [String : any WidgetUIProtocol.Type] = [:]
-    for (type, name) : (any WidgetUIProtocol.Type, String) in WidgetTypesDescription.widgetTypeArray {
+    var dictionary : [String : any DecoratorUIProtocol.Type] = [:]
+    for (type, name) : (any DecoratorUIProtocol.Type, String) in WidgetTypesDescription.widgetTypeArray {
       dictionary [name] = type
     }
     let container = try inDecoder.container (keyedBy: CodingKeys.self)
     let typeName = try container.decode (String.self, forKey: .type)
     if let type = dictionary [typeName] {
-      let widget : any WidgetUIProtocol = try container.decode (type, forKey: .value)
-      self.widget = widget as! any WidgetUIProtocol <WidgetTypesDescription>
+      let decorator : any DecoratorUIProtocol = try container.decode (type, forKey: .value)
+      self.decorator = decorator as! any DecoratorUIProtocol <WidgetTypesDescription>
     }else{
       throw DecodingError.dataCorruptedError (
         forKey: .type,
@@ -39,8 +39,8 @@ extension WidgetProxy : Codable {
 
   public nonisolated func encode (to inEncoder : Encoder) throws {
     var container = inEncoder.container (keyedBy: CodingKeys.self)
-    try container.encode (WidgetTypesDescription.documentEncodedTypeName (self.widget), forKey: .type)
-    try container.encode (self.widget, forKey: .value)
+    try container.encode (WidgetTypesDescription.documentEncodedTypeName (self.decorator), forKey: .type)
+    try container.encode (self.decorator, forKey: .value)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
