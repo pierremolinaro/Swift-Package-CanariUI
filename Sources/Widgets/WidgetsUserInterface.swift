@@ -85,8 +85,6 @@ import Combine
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: append
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func append (_ inNewObject : any WidgetUIProtocol <WidgetTypesDescription>) {
     self.mWidgetsManager.append (inNewObject)
@@ -98,6 +96,31 @@ import Combine
 
   private var mSelection = Set <UUID> ()
   public var selection : Set <UUID> { self.mSelection }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  func clearSelection () {
+    if !self.mSelection.isEmpty {
+      self.mSelection.removeAll ()
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  func setSelection (withID inID : UUID) {
+    if self.mSelection.count != 1, self.mSelection.first != inID {
+      self.mSelection.removeAll ()
+      self.mSelection.insert (inID)
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  func setSelection (withIDs inIDs : Set <UUID>) {
+    if self.mSelection != inIDs {
+      self.mSelection = inIDs
+    }
+  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -236,7 +259,6 @@ import Combine
       dragGestureState.onMouseDragged (
         geometry: inGeometry,
         beginOrContinueUndoGrouping: { self.beginOrContinueUndoGrouping () },
-        selection: &self.mSelection,
         userSelectionRectangle: &self.mSelectionUserRectangle,
         widgetsManagerInterface: self,
         optionalNextState: &optionalNextState
@@ -426,7 +448,6 @@ import Combine
     if let dragGestureState = self.mDragGestureState {
       dragGestureState.onMouseUp (
         removeUndoGrouping: { self.closeAndRemoveUndoGroupingActions () },
-        selection: &self.mSelection,
         userSelectionRectangle: &self.mSelectionUserRectangle,
         widgetsManagerInterface: self
       )

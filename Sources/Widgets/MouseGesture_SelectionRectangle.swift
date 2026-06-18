@@ -14,7 +14,6 @@ struct MouseGesture_SelectionRectangle <WidgetTypesDescription : DocumentWidgets
 
   func onMouseDragged (geometry inGeometry : MouseGestureGeometryContext,
                        beginOrContinueUndoGrouping inBeginOrContinueUndoGrouping : () -> Void,
-                       selection ioSelection : inout Set <UUID>,
                        userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
                        widgetsManagerInterface inWidgetsManagerInterface : WidgetsUserInterface <WidgetTypesDescription>,
                        optionalNextState outOptionalNextState : inout (any MouseGestureProtocol <WidgetTypesDescription>)?) {
@@ -22,27 +21,27 @@ struct MouseGesture_SelectionRectangle <WidgetTypesDescription : DocumentWidgets
     let selectionRectangle = CanariRect ([inGeometry.unalignedUserStartLocation, inGeometry.unalignedUserCurrentLocation])
     ioUserSelectionRectangle = selectionRectangle
   //--- Compute selection
-    ioSelection = self.startSelectionSet
+    var newSelection = self.startSelectionSet
     let shift = NSEvent.modifierFlags.contains (.shift)
     for widget in inWidgetsManagerInterface.widgets {
       if widget.orientedOrigin.globalOutlineIntersects (globalRect: selectionRectangle) {
         if !shift {
-          ioSelection.insert (widget.id)
-        }else if ioSelection.contains (widget.id) {
-          ioSelection.remove (widget.id)
+          newSelection.insert (widget.id)
+        }else if newSelection.contains (widget.id) {
+          newSelection.remove (widget.id)
         }else{
-          ioSelection.insert (widget.id)
+          newSelection.insert (widget.id)
         }
       }else if !shift {
-        ioSelection.remove (widget.id)
+        newSelection.remove (widget.id)
       }
     }
+    inWidgetsManagerInterface.setSelection (withIDs: newSelection)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func onMouseUp (removeUndoGrouping inRemoveUndoGrouping : () -> Void,
-                  selection ioSelection : inout Set <UUID>,
                   userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
                   widgetsManagerInterface inWidgetsManagerInterface : WidgetsUserInterface <WidgetTypesDescription>) {
     ioUserSelectionRectangle = nil

@@ -14,7 +14,6 @@ struct MouseGesture_DragSelection <WidgetTypesDescription : DocumentWidgetsDescr
 
   func onMouseDragged (geometry inGeometry : MouseGestureGeometryContext,
                        beginOrContinueUndoGrouping inBeginOrContinueUndoGrouping : () -> Void,
-                       selection ioSelection : inout Set <UUID>,
                        userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
                        widgetsManagerInterface inWidgetsManagerInterface : WidgetsUserInterface <WidgetTypesDescription>,
                        optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<WidgetTypesDescription>)?) {
@@ -25,7 +24,7 @@ struct MouseGesture_DragSelection <WidgetTypesDescription : DocumentWidgetsDescr
     if translation != .zero {
       inBeginOrContinueUndoGrouping ()
       for i in 0 ..< inWidgetsManagerInterface.count {
-        if ioSelection.contains (inWidgetsManagerInterface [widgetIndex: i].id) {
+        if inWidgetsManagerInterface.selection.contains (inWidgetsManagerInterface [widgetIndex: i].id) {
           inWidgetsManagerInterface [widgetIndex: i].translate (by: translation)
         }
       }
@@ -38,7 +37,6 @@ struct MouseGesture_DragSelection <WidgetTypesDescription : DocumentWidgetsDescr
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func onMouseUp (removeUndoGrouping inRemoveUndoGrouping : () -> Void,
-                  selection ioSelection : inout Set <UUID>,
                   userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
                   widgetsManagerInterface inWidgetsManagerInterface : WidgetsUserInterface <WidgetTypesDescription>) {
   }
