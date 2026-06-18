@@ -24,9 +24,9 @@ public final class ContextualMenuExecutor <WidgetTypesDescription : DocumentWidg
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func execute <T : WidgetUIProtocol <WidgetTypesDescription>> (_ inAction : (inout T) -> Void) {
-    if var widget = self.mWidgetsUserInterface [widget: self.mWidgetIndex] as? T {
+    if var widget = self.mWidgetsUserInterface [widgetIndex: self.mWidgetIndex] as? T {
       inAction (&widget)
-      self.mWidgetsUserInterface [widget: self.mWidgetIndex] = widget
+      self.mWidgetsUserInterface [widgetIndex: self.mWidgetIndex] = widget
     }
   }
 

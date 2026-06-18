@@ -18,23 +18,15 @@ struct MouseGesture_DragSelection <WidgetTypesDescription : DocumentWidgetsDescr
                        userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
                        widgetsManagerInterface inWidgetsManagerInterface : WidgetsUserInterface <WidgetTypesDescription>,
                        optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<WidgetTypesDescription>)?) {
-    var translation = inGeometry.alignedUserCurrentLocation - self.alignedCurrentPoint
-    var unselectedWidgetOutlines = [CanariPath] ()
-    for i in 0 ..< inWidgetsManagerInterface.count {
-      if !ioSelection.contains (inWidgetsManagerInterface [widget: i].id) {
-        unselectedWidgetOutlines.append (inWidgetsManagerInterface [widget: i].orientedOrigin.globalOutline)
-      }
-    }
-    for i in 0 ..< inWidgetsManagerInterface.count {
-      if ioSelection.contains (inWidgetsManagerInterface [widget: i].id) {
-        inWidgetsManagerInterface [widget: i].orientedOrigin.limitTranslationWithinCanvas (&translation, inGeometry.canvasSize, unselectedWidgetOutlines)
-      }
-    }
+    let translation = inWidgetsManagerInterface.validatedTranslation (
+      proposedValue: inGeometry.alignedUserCurrentLocation - self.alignedCurrentPoint,
+      canvasSize: inGeometry.canvasSize
+    )
     if translation != .zero {
       inBeginOrContinueUndoGrouping ()
       for i in 0 ..< inWidgetsManagerInterface.count {
-        if ioSelection.contains (inWidgetsManagerInterface [widget: i].id) {
-          inWidgetsManagerInterface [widget: i].translate (by: translation)
+        if ioSelection.contains (inWidgetsManagerInterface [widgetIndex: i].id) {
+          inWidgetsManagerInterface [widgetIndex: i].translate (by: translation)
         }
       }
       outOptionalNextState = MouseGesture_DragSelection (

@@ -164,11 +164,11 @@ public struct CanariScaledOrientedOrigin : Sendable, Equatable {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: Limit translation
+  //MARK: Validate translation
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func limitTranslationWithinCanvas (_ ioTranslation : inout CanariPoint,
-                                            _ inCanvasSize : CanariSize) {
+  public func validateTranslationWithinCanvas (_ ioTranslation : inout CanariPoint,
+                                               _ inCanvasSize : CanariSize) {
     let r = self.mOriginCenteredGlobalOutlineAndBoundingRect.boundingRect.moved (by: self.mOrigin)
     let newTopRight = r.topRight + ioTranslation
     if newTopRight.x > inCanvasSize.width {
@@ -188,10 +188,8 @@ public struct CanariScaledOrientedOrigin : Sendable, Equatable {
 
  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func limitTranslationWithinCanvas (_ ioTranslation : inout CanariPoint,
-                                            _ inCanvasSize : CanariSize,
-                                            _ inUnselectedWidgetOutlines : [CanariPath]) {
-    self.limitTranslationWithinCanvas (&ioTranslation, inCanvasSize)
+  public func validateTranslation (_ ioTranslation : inout CanariPoint,
+                                   relativeTo inUnselectedWidgetOutlines : [CanariPath]) {
     var idx = 0
     while !ioTranslation.isZero, idx < inUnselectedWidgetOutlines.count {
       let intersects = inUnselectedWidgetOutlines [idx].intersects (self.globalOutline.moved (by: ioTranslation))

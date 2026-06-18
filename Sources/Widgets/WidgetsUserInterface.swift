@@ -7,7 +7,7 @@ import Combine
 
 //--------------------------------------------------------------------------------------------------
 
-@Observable public final class WidgetsUserInterface <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : MenuCommands {
+@Observable open class WidgetsUserInterface <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : MenuCommands {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -35,16 +35,16 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public subscript (widget inIndex : Int) -> any WidgetUIProtocol <WidgetTypesDescription> {
-    get { self.mWidgetsManager [widget: inIndex] }
-    set { self.mWidgetsManager [widget: inIndex] = newValue }
+  public subscript (widgetIndex inIndex : Int) -> any WidgetUIProtocol <WidgetTypesDescription> {
+    get { self.mWidgetsManager [widgetIndex: inIndex] }
+    set { self.mWidgetsManager [widgetIndex: inIndex] = newValue }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  subscript (id inID : UUID) -> (any WidgetUIProtocol <WidgetTypesDescription>)? {
-    get { self.mWidgetsManager [id: inID] }
-    set { self.mWidgetsManager [id: inID] = newValue }
+  subscript (widgetID inID : UUID) -> (any WidgetUIProtocol <WidgetTypesDescription>)? {
+    get { self.mWidgetsManager [widgetID: inID] }
+    set { self.mWidgetsManager [widgetID: inID] = newValue }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -93,8 +93,11 @@ import Combine
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Selection
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private(set) var mSelection = Set <UUID> ()
+  private var mSelection = Set <UUID> ()
+  public var selection : Set <UUID> { self.mSelection }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -293,7 +296,7 @@ import Combine
         }
         return MouseGesture_DragSelection <WidgetTypesDescription> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
       }else{ // option-click on a non-selected widget
-        if let newWidget = self.mWidgetsManager [id: widgetID]?.duplicated () {
+        if let newWidget = self.mWidgetsManager [widgetID: widgetID]?.duplicated () {
           self.mWidgetsManager.append (newWidget)
           self.mSelection = [newWidget.id]
           return MouseGesture_DragSelection <WidgetTypesDescription> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
@@ -391,7 +394,7 @@ import Combine
   public func contextualMenu (at inUnalignedPoint : CanariPoint, scale inScale : Double) -> any View {
   //--- CMD + Mouse down in a knob of a selected object ?
     for idx in (0 ..< self.mWidgetsManager.count).reversed () {
-      let widget = self.mWidgetsManager [widget: idx]
+      let widget = self.mWidgetsManager [widgetIndex: idx]
       if self.mSelection.contains (widget.id) {
         for knob in widget.knobs {
           if knob.contains (localPoint: widget.orientedOrigin.globalToLocal (inUnalignedPoint), scale: inScale) {
@@ -406,7 +409,7 @@ import Combine
     }
   //--- CMD + Mouse down in a selected object ?
     for idx in (0 ..< self.mWidgetsManager.count).reversed () {
-      let widget = self.mWidgetsManager [widget: idx]
+      let widget = self.mWidgetsManager [widgetIndex: idx]
       if self.mSelection.contains (widget.id), widget.containsLocalPoint (widget.orientedOrigin.globalToLocal (inUnalignedPoint)) {
         return widget.contextualMenu (ContextualMenuExecutor (self, idx))
       }
@@ -491,7 +494,7 @@ import Combine
   public func backDeleteKeyAction () {
     var idx = 0
     while idx < self.mWidgetsManager.count {
-      if self.mSelection.contains (self.mWidgetsManager [widget: idx].id) {
+      if self.mSelection.contains (self.mWidgetsManager [widgetIndex: idx].id) {
         self.mWidgetsManager.remove (at: idx)
       }else{
         idx += 1
@@ -506,7 +509,16 @@ import Combine
     if let magneticGrid = inMagneticGrid {
       let shift = NSEvent.modifierFlags.contains (.shift)
       let t = CanariPoint (x: magneticGrid * (shift ? 10.0 : 1.0))
-      self.handleTranslation (expected: t, inCanvasSize)
+      let translation = self.validatedTranslation (proposedValue: t, canvasSize: inCanvasSize)
+      if !translation.isZero {
+        var idx = 0
+        while idx < self.count {
+          if self.selection.contains (self [widgetIndex: idx].id) {
+            self [widgetIndex: idx].translate (by: translation)
+          }
+          idx += 1
+        }
+      }
     }
   }
 
@@ -516,7 +528,16 @@ import Combine
     if let magneticGrid = inMagneticGrid {
       let shift = NSEvent.modifierFlags.contains (.shift)
       let t = CanariPoint (x: magneticGrid * (shift ? -10.0 : -1.0))
-      self.handleTranslation (expected: t, inCanvasSize)
+      let translation = self.validatedTranslation (proposedValue: t, canvasSize: inCanvasSize)
+      if !translation.isZero {
+        var idx = 0
+        while idx < self.count {
+          if self.selection.contains (self [widgetIndex: idx].id) {
+            self [widgetIndex: idx].translate (by: translation)
+          }
+          idx += 1
+        }
+      }
     }
   }
 
@@ -526,7 +547,16 @@ import Combine
     if let magneticGrid = inMagneticGrid {
       let shift = NSEvent.modifierFlags.contains (.shift)
       let t = CanariPoint (y: magneticGrid * (shift ? 10.0 : 1.0))
-      self.handleTranslation (expected: t, inCanvasSize)
+      let translation = self.validatedTranslation (proposedValue: t, canvasSize: inCanvasSize)
+      if !translation.isZero {
+        var idx = 0
+        while idx < self.count {
+          if self.selection.contains (self [widgetIndex: idx].id) {
+            self [widgetIndex: idx].translate (by: translation)
+          }
+          idx += 1
+        }
+      }
     }
   }
 
@@ -536,35 +566,26 @@ import Combine
     if let magneticGrid = inMagneticGrid {
       let shift = NSEvent.modifierFlags.contains (.shift)
       let t = CanariPoint (y: magneticGrid * (shift ? -10.0 : -1.0))
-      self.handleTranslation (expected: t, inCanvasSize)
+      let translation = self.validatedTranslation (proposedValue: t, canvasSize:  inCanvasSize)
+      if !translation.isZero {
+        var idx = 0
+        while idx < self.count {
+          if self.selection.contains (self [widgetIndex: idx].id) {
+            self [widgetIndex: idx].translate (by: translation)
+          }
+          idx += 1
+        }
+      }
     }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: Limit translation
+  //MARK: Validated translation
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func handleTranslation (expected inExpectedTranslation : CanariPoint,
-                                 _ inCanvasSize : CanariSize) {
-    var unselectedWidgetOutlines = [CanariPath] ()
-    for i in 0 ..< self.mWidgetsManager.count {
-      if !self.mSelection.contains (self.mWidgetsManager [widget: i].id) {
-        unselectedWidgetOutlines.append (self.mWidgetsManager [widget: i].orientedOrigin.globalOutline)
-      }
-    }
-    var translation = inExpectedTranslation
-    for i in 0 ..< self.mWidgetsManager.count {
-      if self.mSelection.contains (self.mWidgetsManager [widget: i].id) {
-        self.mWidgetsManager [widget: i].orientedOrigin.limitTranslationWithinCanvas (&translation, inCanvasSize, unselectedWidgetOutlines)
-      }
-    }
-    var idx = 0
-    while idx < self.mWidgetsManager.count {
-      if self.mSelection.contains (self.mWidgetsManager [widget: idx].id) {
-        self.mWidgetsManager [widget: idx].translate (by: translation)
-      }
-      idx += 1
-    }
+  open func validatedTranslation (proposedValue inProposedTranslation : CanariPoint,
+                                  canvasSize inCanvasSize : CanariSize) -> CanariPoint {
+    return inProposedTranslation
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -719,7 +740,7 @@ import Combine
   private func commonTypeForSelection () -> (any WidgetUIProtocol <WidgetTypesDescription>.Type)? {
     var result : (any WidgetUIProtocol <WidgetTypesDescription>.Type)? = nil
     for id in self.mSelection {
-      if let widget = self.mWidgetsManager [id: id] {
+      if let widget = self.mWidgetsManager [widgetID: id] {
         if let r = result {
           if r != type (of: widget) {
             return nil

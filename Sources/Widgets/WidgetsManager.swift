@@ -48,7 +48,7 @@ public struct WidgetsManager <WidgetTypesDescription : DocumentWidgetsDescriptio
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public subscript (widget inIndex : Int) -> any WidgetUIProtocol <WidgetTypesDescription> {
+  public subscript (widgetIndex inIndex : Int) -> any WidgetUIProtocol <WidgetTypesDescription> {
     get { self.mWidgetsArray [inIndex] }
     set { self.mWidgetsArray [inIndex] = newValue }
   }
@@ -81,7 +81,7 @@ public struct WidgetsManager <WidgetTypesDescription : DocumentWidgetsDescriptio
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  subscript (id inID : UUID) -> (any WidgetUIProtocol <WidgetTypesDescription>)? {
+  subscript (widgetID inID : UUID) -> (any WidgetUIProtocol <WidgetTypesDescription>)? {
     get { self.mWidgetsArray.first { $0.id == inID } }
     set {
       if let v = newValue, let idx = self.mWidgetsArray.firstIndex (where: { $0.id == inID } ) {

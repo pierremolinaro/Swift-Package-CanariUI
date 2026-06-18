@@ -11,7 +11,6 @@ public final class InspectorProxy <WidgetTypesDescription : DocumentWidgetsDescr
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private let mWidgetsUserInterface : WidgetsUserInterface <WidgetTypesDescription>
-//  private let mSelection : Set <UUID>
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -19,20 +18,14 @@ public final class InspectorProxy <WidgetTypesDescription : DocumentWidgetsDescr
     self.mWidgetsUserInterface = inWidgetsUserInterface
   }
 
-//  init (_ inWidgetsUserInterface : WidgetsUserInterface <WidgetTypesDescription>,
-//        _ inID : Set <UUID>) {
-//    self.mWidgetsUserInterface = inWidgetsUserInterface
-//    self.mSelection = inID
-//  }
-
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   @MainActor public subscript <T : WidgetUIProtocol <WidgetTypesDescription>, Value : Equatable & Sendable> (bindingFor inKeyPath : WritableKeyPath <T, Value>) -> Binding <Value?> {
     let binding = Binding <Value?> (
       get: {
         var result : Value? = nil
-        for id in self.mWidgetsUserInterface.mSelection {
-          if let v = self.mWidgetsUserInterface [id: id] as? T {
+        for id in self.mWidgetsUserInterface.selection {
+          if let v = self.mWidgetsUserInterface [widgetID: id] as? T {
             let property = v [keyPath: inKeyPath]
             if let r = result {
               if r != property {
@@ -47,10 +40,10 @@ public final class InspectorProxy <WidgetTypesDescription : DocumentWidgetsDescr
       },
       set: {
         if let property = $0 {
-          for id in self.mWidgetsUserInterface.mSelection {
-            if var v = self.mWidgetsUserInterface [id: id] as? T {
+          for id in self.mWidgetsUserInterface.selection {
+            if var v = self.mWidgetsUserInterface [widgetID: id] as? T {
               v [keyPath: inKeyPath] = property
-              self.mWidgetsUserInterface [id: id] = v
+              self.mWidgetsUserInterface [widgetID: id] = v
             }
           }
         }
@@ -63,8 +56,8 @@ public final class InspectorProxy <WidgetTypesDescription : DocumentWidgetsDescr
 
   public func optValueOf <T : WidgetUIProtocol <WidgetTypesDescription>, Value : Equatable> (_ inKeyPath : KeyPath <T, Value>) -> Value? {
     var result : Value? = nil
-    for id in self.mWidgetsUserInterface.mSelection {
-      if let v = self.mWidgetsUserInterface [id: id] as? T {
+    for id in self.mWidgetsUserInterface.selection {
+      if let v = self.mWidgetsUserInterface [widgetID: id] as? T {
         let property = v [keyPath: inKeyPath]
         if let r = result {
           if r != property {
@@ -82,8 +75,8 @@ public final class InspectorProxy <WidgetTypesDescription : DocumentWidgetsDescr
 
   public func setOf <T : WidgetUIProtocol <WidgetTypesDescription>, Value : Hashable> (_ inKeyPath : KeyPath <T, Value>) -> Set <Value> {
     var result = Set <Value> ()
-    for id in self.mWidgetsUserInterface.mSelection {
-      if let v = self.mWidgetsUserInterface [id: id] as? T {
+    for id in self.mWidgetsUserInterface.selection {
+      if let v = self.mWidgetsUserInterface [widgetID: id] as? T {
         let property = v [keyPath: inKeyPath]
         result.insert (property)
       }
@@ -100,10 +93,10 @@ public final class InspectorProxy <WidgetTypesDescription : DocumentWidgetsDescr
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func setProperty <T : WidgetUIProtocol <WidgetTypesDescription>, Value> (_ inKeyPath : WritableKeyPath <T, Value>, _ inValue : Value) {
-    for id in self.mWidgetsUserInterface.mSelection {
-      if var v = self.mWidgetsUserInterface [id: id] as? T {
+    for id in self.mWidgetsUserInterface.selection {
+      if var v = self.mWidgetsUserInterface [widgetID: id] as? T {
         v [keyPath: inKeyPath] = inValue
-        self.mWidgetsUserInterface [id: id] = v
+        self.mWidgetsUserInterface [widgetID: id] = v
       }
     }
   }
@@ -117,10 +110,10 @@ public final class InspectorProxy <WidgetTypesDescription : DocumentWidgetsDescr
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func performWidgetAction <T : WidgetUIProtocol <WidgetTypesDescription> > (_ inAction : (inout T) -> Void) {
-    for id in self.mWidgetsUserInterface.mSelection {
-      if var widget = self.mWidgetsUserInterface [id: id] as? T {
+    for id in self.mWidgetsUserInterface.selection {
+      if var widget = self.mWidgetsUserInterface [widgetID: id] as? T {
         inAction (&widget)
-        self.mWidgetsUserInterface [id: id] = widget
+        self.mWidgetsUserInterface [widgetID: id] = widget
       }
     }
   }

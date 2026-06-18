@@ -24,12 +24,12 @@ struct MouseGesture_DragKnob <WidgetTypesDescription : DocumentWidgetsDescriptio
     let translation = inGeometry.alignedUserCurrentLocation - self.alignedCurrentPoint
     if translation != .zero {
       inBeginOrContinueUndoGrouping ()
-      if var widget = inWidgetsManagerInterface [id: widgetID] {
+      if var widget = inWidgetsManagerInterface [widgetID: widgetID] {
         let localTranslation = CanariAffinity (scale: 1.0 / widget.orientedOrigin.mScale)
           .rotating (-widget.orientedOrigin.mAngle)
           .transforming (translation)
         self.dragWidgetKnobAction (&widget, localTranslation, self.optionKeyInitiallyOn)
-        inWidgetsManagerInterface [id: widgetID] = widget
+        inWidgetsManagerInterface [widgetID: widgetID] = widget
       }
       outOptionalNextState = MouseGesture_DragKnob (
         alignedCurrentPoint: inGeometry.alignedUserCurrentLocation,

@@ -7,7 +7,7 @@ import Observation
 
 //--------------------------------------------------------------------------------------------------
 
-@Observable public class MenuCommands {
+@Observable open class MenuCommands {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
