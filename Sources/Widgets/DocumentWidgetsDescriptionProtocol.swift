@@ -12,7 +12,7 @@ public protocol DocumentWidgetsDescriptionProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  nonisolated static var widgetTypeArray : [(any CanariDecoratorUIProtocol <WidgetTypesDescription>.Type, String)] { get }
+  nonisolated static var shapeTypeArray : [(any CanariShapeUIProtocol <WidgetTypesDescription>.Type, String)] { get }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -24,9 +24,9 @@ extension DocumentWidgetsDescriptionProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  static func documentEncodedTypeName (_ inDecorator : any CanariDecoratorUIProtocol) -> String {
-    let type = type (of: inDecorator)
-    for (widgetType, typeName) in Self.widgetTypeArray {
+  static func documentEncodedTypeName (_ inShape : any CanariShapeUIProtocol) -> String {
+    let type = type (of: inShape)
+    for (widgetType, typeName) in Self.shapeTypeArray {
       if widgetType == type {
         return typeName
       }

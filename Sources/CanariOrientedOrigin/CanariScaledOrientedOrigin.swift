@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariScaledOrientedOrigin : Sendable, Equatable {
+public struct CanariScaledOrientedOrigin : Sendable, Equatable, Codable, CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -276,6 +276,57 @@ public struct CanariScaledOrientedOrigin : Sendable, Equatable {
   public func globalToLocal (_ inCanvasPath : CanariPath) -> CanariPath {
     return inCanvasPath.transformed (by: self.mGlobalToLocalAffinity)
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Add location translation
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  mutating func addLocalTranslation (_ inLocalTranslation: CanariPoint) {
+    let affinity = CanariAffinity ()
+      .rotating (self.mAngle)
+      .scaling (self.mScale)
+    let globalTranslation = inLocalTranslation.transformed(by: affinity)
+    self.mOrigin += globalTranslation
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Codable
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public init (from inDecoder : any Decoder) throws { // Decodable
+    let container = try inDecoder.singleValueContainer ()
+    let string = try container.decode (String.self)
+    let components = string.split (separator: " ")
+    if components.count == 5,
+       let x = Int (components [0]),
+       let y = Int (components [1]),
+       let angle = Int (components [2]),
+       let scale = Double (components [3]),
+       let hFlip = Int (components [4]) {
+      self.init (
+        CanariPoint (x: .cu (x), y: .cu (y)),
+        CanariAngle (Double (angle) / 1000.0, in: .degrees),
+        scale,
+        hFlip != 0
+      )
+    }else {
+      throw DecodingError.dataCorruptedError (in: container, debugDescription: "Invalid oriented origin string")
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func encode (to inEncoder : any Encoder) throws { // Encodable
+    var container = inEncoder.singleValueContainer ()
+    let angle = Int ((self.mAngle.degrees * 1000.0).rounded ())
+    try container.encode ("\(self.mOrigin.x.cuValue) \(self.mOrigin.y.cuValue) \(angle) \(self.mScale) \(self.mHorizontalFlip ? 1 : 0)")
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: CustomStringConvertible
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public var description : String { "(\(self.mOrigin), \(self.mAngle), \(self.mScale), \(self.mHorizontalFlip))" }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

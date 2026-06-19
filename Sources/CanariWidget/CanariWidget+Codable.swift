@@ -17,15 +17,15 @@ extension CanariWidget : Codable {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   nonisolated public init (from inDecoder : Decoder) throws {
-    var dictionary : [String : any CanariDecoratorUIProtocol.Type] = [:]
-    for (type, name) : (any CanariDecoratorUIProtocol.Type, String) in WidgetTypesDescription.widgetTypeArray {
+    var dictionary : [String : any CanariShapeUIProtocol.Type] = [:]
+    for (type, name) : (any CanariShapeUIProtocol.Type, String) in WidgetTypesDescription.shapeTypeArray {
       dictionary [name] = type
     }
     let container = try inDecoder.container (keyedBy: CodingKeys.self)
     let typeName = try container.decode (String.self, forKey: .type)
     if let type = dictionary [typeName] {
-      let decorator : any CanariDecoratorUIProtocol = try container.decode (type, forKey: .value)
-      self.decorator = decorator as! any CanariDecoratorUIProtocol <WidgetTypesDescription>
+      let shape : any CanariShapeUIProtocol = try container.decode (type, forKey: .value)
+      self.shape = shape as! any CanariShapeUIProtocol <WidgetTypesDescription>
     }else{
       throw DecodingError.dataCorruptedError (
         forKey: .type,
@@ -39,8 +39,8 @@ extension CanariWidget : Codable {
 
   public nonisolated func encode (to inEncoder : Encoder) throws {
     var container = inEncoder.container (keyedBy: CodingKeys.self)
-    try container.encode (WidgetTypesDescription.documentEncodedTypeName (self.decorator), forKey: .type)
-    try container.encode (self.decorator, forKey: .value)
+    try container.encode (WidgetTypesDescription.documentEncodedTypeName (self.shape), forKey: .type)
+    try container.encode (self.shape, forKey: .value)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

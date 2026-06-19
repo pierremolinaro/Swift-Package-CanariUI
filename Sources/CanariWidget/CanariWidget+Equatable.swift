@@ -12,7 +12,7 @@ extension CanariWidget : Equatable {
 
   public static func == (_ inLeft : borrowing CanariWidget <WidgetTypesDescription>,
                          _ inRight : borrowing CanariWidget <WidgetTypesDescription>) -> Bool {
-    inLeft.decorator.isEqual (to: inRight.decorator)
+    inLeft.shape.isEqual (to: inRight.shape)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

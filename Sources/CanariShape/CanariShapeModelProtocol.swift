@@ -1,18 +1,24 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 14/06/2026.
+//  Created by Pierre Molinaro on 27/03/2026.
 //--------------------------------------------------------------------------------------------------
 
 import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-extension CanariScaledOrientedOrigin : CustomStringConvertible {
+public protocol CanariShapeModelProtocol <WidgetTypesDescription> : Identifiable, Sendable, Codable {
+
+  associatedtype WidgetTypesDescription : DocumentWidgetsDescriptionProtocol
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var description : String { "(\(self.mOrigin), \(self.mAngle), \(self.mScale))" }
+  var id : UUID { get }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  func duplicated () -> (any CanariShapeUIProtocol <WidgetTypesDescription>)?
+
+ // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 }
 

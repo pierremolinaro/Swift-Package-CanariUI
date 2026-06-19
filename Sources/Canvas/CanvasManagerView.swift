@@ -463,6 +463,8 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
     let alignedStart = unalignedStart.aligning (to: self.mContext.magneticGrid)
     let unalignedCurrent = self.unalignedUserPoint (inGeometry, fromLocationInContentView: inDragGestureValue.location)
     let alignedCurrent = unalignedCurrent.aligning (to: self.mContext.magneticGrid)
+    self.mAlignedHoverUserLocation = alignedCurrent
+    self.mUnalignedHoverUserLocation = unalignedCurrent
     let geometry = MouseGestureGeometryContext (
       unalignedUserStartLocation: unalignedStart,
       alignedUserStartLocation: alignedStart,

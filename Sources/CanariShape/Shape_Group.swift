@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariWidgetDecorator_Group <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : CanariDecoratorUIProtocol {
+public struct Shape_Group <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : CanariShapeUIProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -32,18 +32,18 @@ public struct CanariWidgetDecorator_Group <WidgetTypesDescription : DocumentWidg
     self.mUnGroupIsEnabled = true
     var vertices = [CanariPoint] ()
     for widget in inProxys {
-      vertices += widget.decorator.orientedOrigin.globalBoundingRect.vertices
+      vertices += widget.shape.orientedOrigin.globalBoundingRect.vertices
     }
     let r = CanariRect (vertices)
     self.mArray = inProxys.map {
-      var decorator = $0.decorator
-      decorator.orientedOrigin.mOrigin -= r.center
-      return CanariWidget (decorator)
+      var shape = $0.shape
+      shape.orientedOrigin.mOrigin -= r.center
+      return CanariWidget (shape)
     }
     self.orientedOrigin = CanariScaledOrientedOrigin (r.center, .zero, 1.0, false)
     var localOutline = CanariPath ()
     for widget in self.mArray {
-      widget.decorator.orientedOrigin.withGlobalOutline { localOutline.unionInPlace ($0) }
+      widget.shape.orientedOrigin.withGlobalOutline { localOutline.unionInPlace ($0) }
     }
     self.orientedOrigin.setLocalOutline (localOutline)
   }
@@ -64,7 +64,7 @@ public struct CanariWidgetDecorator_Group <WidgetTypesDescription : DocumentWidg
     self.orientedOrigin = try container.decode (CanariScaledOrientedOrigin.self, forKey: .oo)
     var localOutline = CanariPath ()
     for widget in self.mArray {
-      widget.decorator.orientedOrigin.withGlobalOutline { localOutline.unionInPlace ($0) }
+      widget.shape.orientedOrigin.withGlobalOutline { localOutline.unionInPlace ($0) }
     }
     self.orientedOrigin.setLocalOutline (localOutline)
   }
@@ -80,7 +80,7 @@ public struct CanariWidgetDecorator_Group <WidgetTypesDescription : DocumentWidg
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var knobs : [WidgetKnob <WidgetTypesDescription>] { [] }
+  public var shapeKnobs : [WidgetKnob <WidgetTypesDescription>] { [] }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -88,8 +88,8 @@ public struct CanariWidgetDecorator_Group <WidgetTypesDescription : DocumentWidg
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func isEqual (to inOther : any CanariDecoratorUIProtocol <WidgetTypesDescription>) -> Bool {
-    if let other = inOther as? CanariWidgetDecorator_Group <WidgetTypesDescription> {
+  public func isEqual (to inOther : any CanariShapeUIProtocol <WidgetTypesDescription>) -> Bool {
+    if let other = inOther as? Shape_Group <WidgetTypesDescription> {
       return (self.id == other.id) && (self.mArray == other.mArray) && (self.mUnGroupIsEnabled == other.mUnGroupIsEnabled)
     }else{
       return false
@@ -100,8 +100,8 @@ public struct CanariWidgetDecorator_Group <WidgetTypesDescription : DocumentWidg
   //MARK: duplicated
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func duplicated () -> (any CanariDecoratorUIProtocol <WidgetTypesDescription>)? {
-    return CanariWidgetDecorator_Group (self.orientedOrigin, self.mUnGroupIsEnabled, self.mArray)
+  public func duplicated () -> (any CanariShapeUIProtocol <WidgetTypesDescription>)? {
+    return Shape_Group (self.orientedOrigin, self.mUnGroupIsEnabled, self.mArray)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -131,19 +131,19 @@ public struct CanariWidgetDecorator_Group <WidgetTypesDescription : DocumentWidg
                           selected inSelected : Bool,
                           groupLevel inGroupLevel : UInt) {
     for widget in self.mArray {
-      ioContext.translate (by: widget.decorator.orientedOrigin.mOrigin)
-      ioContext.rotate (by: widget.decorator.orientedOrigin.mAngle)
-      ioContext.scale (by: widget.decorator.orientedOrigin.mScale, horizontalFlip: widget.decorator.orientedOrigin.mHorizontalFlip)
-      widget.decorator.drawWidget (
+      ioContext.translate (by: widget.shape.orientedOrigin.mOrigin)
+      ioContext.rotate (by: widget.shape.orientedOrigin.mAngle)
+      ioContext.scale (by: widget.shape.orientedOrigin.mScale, horizontalFlip: widget.shape.orientedOrigin.mHorizontalFlip)
+      widget.shape.drawWidget (
         context: &ioContext,
-        scale: inScale * widget.decorator.orientedOrigin.mScale,
+        scale: inScale * widget.shape.orientedOrigin.mScale,
         hovered: inHovered,
         selected: inSelected,
         groupLevel: inGroupLevel
       )
-      ioContext.scale (by: 1.0 / widget.decorator.orientedOrigin.mScale, horizontalFlip: widget.decorator.orientedOrigin.mHorizontalFlip)
-      ioContext.rotate (by: -widget.decorator.orientedOrigin.mAngle)
-      ioContext.translate (by: -widget.decorator.orientedOrigin.mOrigin)
+      ioContext.scale (by: 1.0 / widget.shape.orientedOrigin.mScale, horizontalFlip: widget.shape.orientedOrigin.mHorizontalFlip)
+      ioContext.rotate (by: -widget.shape.orientedOrigin.mAngle)
+      ioContext.translate (by: -widget.shape.orientedOrigin.mOrigin)
     }
     if inSelected || inHovered, inGroupLevel == 0 {
       self.orientedOrigin.withLocalBoundingRect {
@@ -162,7 +162,7 @@ public struct CanariWidgetDecorator_Group <WidgetTypesDescription : DocumentWidg
   public var localAlignmentGuidePoints : [CanariPoint] {
     var points = [CanariPoint] ()
     for widget in self.mArray {
-      points += widget.decorator.localAlignmentGuidePoints
+      points += widget.shape.localAlignmentGuidePoints
     }
     return points
   }
@@ -173,9 +173,9 @@ public struct CanariWidgetDecorator_Group <WidgetTypesDescription : DocumentWidg
 
   func ungroupedArray () -> [CanariWidget <WidgetTypesDescription>] {
     return self.mArray.map {
-      var decorator = $0.decorator
-      decorator.orientedOrigin.transformToGlobal (self.orientedOrigin)
-      return CanariWidget (decorator)
+      var shape = $0.shape
+      shape.orientedOrigin.transformToGlobal (self.orientedOrigin)
+      return CanariWidget (shape)
     }
   }
 
@@ -197,7 +197,7 @@ public struct CanariWidgetDecorator_Group <WidgetTypesDescription : DocumentWidg
 
 fileprivate struct WidgetGroupInspectorView <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : View {
 
-  typealias T = CanariWidgetDecorator_Group <WidgetTypesDescription>
+  typealias T = Shape_Group <WidgetTypesDescription>
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

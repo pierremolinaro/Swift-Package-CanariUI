@@ -20,13 +20,13 @@ public final class CanariInspectorProxy <WidgetTypesDescription : DocumentWidget
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @MainActor public subscript <T : CanariDecoratorUIProtocol <WidgetTypesDescription>, Value : Equatable & Sendable> (bindingFor inKeyPath : WritableKeyPath <T, Value>) -> Binding <Value?> {
+  @MainActor public subscript <T : CanariShapeUIProtocol <WidgetTypesDescription>, Value : Equatable & Sendable> (bindingFor inKeyPath : WritableKeyPath <T, Value>) -> Binding <Value?> {
     let binding = Binding <Value?> (
       get: {
         var result : Value? = nil
         for id in self.mWidgetsUserInterface.selection {
-          if let decorator = self.mWidgetsUserInterface [decoratorID: id]?.decorator as? T {
-            let property = decorator [keyPath: inKeyPath]
+          if let shape = self.mWidgetsUserInterface [shapeID: id]?.shape as? T {
+            let property = shape [keyPath: inKeyPath]
             if let r = result {
               if r != property {
                 return nil
@@ -41,9 +41,9 @@ public final class CanariInspectorProxy <WidgetTypesDescription : DocumentWidget
       set: {
         if let property = $0 {
           for id in self.mWidgetsUserInterface.selection {
-            if var v = self.mWidgetsUserInterface [decoratorID: id]?.decorator as? T {
+            if var v = self.mWidgetsUserInterface [shapeID: id]?.shape as? T {
               v [keyPath: inKeyPath] = property
-              self.mWidgetsUserInterface [decoratorID: id] = CanariWidget (v)
+              self.mWidgetsUserInterface [shapeID: id] = CanariWidget (v)
             }
           }
         }
@@ -54,10 +54,10 @@ public final class CanariInspectorProxy <WidgetTypesDescription : DocumentWidget
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func optValueOf <T : CanariDecoratorUIProtocol <WidgetTypesDescription>, Value : Equatable> (_ inKeyPath : KeyPath <T, Value>) -> Value? {
+  public func optValueOf <T : CanariShapeUIProtocol <WidgetTypesDescription>, Value : Equatable> (_ inKeyPath : KeyPath <T, Value>) -> Value? {
     var result : Value? = nil
     for id in self.mWidgetsUserInterface.selection {
-      if let v = self.mWidgetsUserInterface [decoratorID: id]?.decorator as? T {
+      if let v = self.mWidgetsUserInterface [shapeID: id]?.shape as? T {
         let property = v [keyPath: inKeyPath]
         if let r = result {
           if r != property {
@@ -73,10 +73,10 @@ public final class CanariInspectorProxy <WidgetTypesDescription : DocumentWidget
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func setOf <T : CanariDecoratorUIProtocol <WidgetTypesDescription>, Value : Hashable> (_ inKeyPath : KeyPath <T, Value>) -> Set <Value> {
+  public func setOf <T : CanariShapeUIProtocol <WidgetTypesDescription>, Value : Hashable> (_ inKeyPath : KeyPath <T, Value>) -> Set <Value> {
     var result = Set <Value> ()
     for id in self.mWidgetsUserInterface.selection {
-      if let v = self.mWidgetsUserInterface [decoratorID: id]?.decorator as? T {
+      if let v = self.mWidgetsUserInterface [shapeID: id]?.shape as? T {
         let property = v [keyPath: inKeyPath]
         result.insert (property)
       }
@@ -86,17 +86,17 @@ public final class CanariInspectorProxy <WidgetTypesDescription : DocumentWidget
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func arrayOf <T : CanariDecoratorUIProtocol <WidgetTypesDescription>, Value : Hashable> (_ inKeyPath : KeyPath <T, Value>) -> [Value] {
+  public func arrayOf <T : CanariShapeUIProtocol <WidgetTypesDescription>, Value : Hashable> (_ inKeyPath : KeyPath <T, Value>) -> [Value] {
     return Array (self.setOf (inKeyPath))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func setProperty <T : CanariDecoratorUIProtocol <WidgetTypesDescription>, Value> (_ inKeyPath : WritableKeyPath <T, Value>, _ inValue : Value) {
+  public func setProperty <T : CanariShapeUIProtocol <WidgetTypesDescription>, Value> (_ inKeyPath : WritableKeyPath <T, Value>, _ inValue : Value) {
     for id in self.mWidgetsUserInterface.selection {
-      if var v = self.mWidgetsUserInterface [decoratorID: id]?.decorator as? T {
+      if var v = self.mWidgetsUserInterface [shapeID: id]?.shape as? T {
         v [keyPath: inKeyPath] = inValue
-        self.mWidgetsUserInterface [decoratorID: id] = CanariWidget (v)
+        self.mWidgetsUserInterface [shapeID: id] = CanariWidget (v)
       }
     }
   }
@@ -109,11 +109,11 @@ public final class CanariInspectorProxy <WidgetTypesDescription : DocumentWidget
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func performWidgetAction <T : CanariDecoratorUIProtocol <WidgetTypesDescription> > (_ inAction : (inout T) -> Void) {
+  public func performWidgetAction <T : CanariShapeUIProtocol <WidgetTypesDescription> > (_ inAction : (inout T) -> Void) {
     for id in self.mWidgetsUserInterface.selection {
-      if var decorator = self.mWidgetsUserInterface [decoratorID: id]?.decorator as? T {
-        inAction (&decorator)
-        self.mWidgetsUserInterface [decoratorID: id] = CanariWidget (decorator)
+      if var shape = self.mWidgetsUserInterface [shapeID: id]?.shape as? T {
+        inAction (&shape)
+        self.mWidgetsUserInterface [shapeID: id] = CanariWidget (shape)
       }
     }
   }

@@ -10,12 +10,30 @@ public struct CanariWidget <WidgetTypesDescription : DocumentWidgetsDescriptionP
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var decorator : any CanariDecoratorUIProtocol <WidgetTypesDescription>
+  public var shape : any CanariShapeUIProtocol <WidgetTypesDescription>
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (_ inDecorator : any CanariDecoratorUIProtocol <WidgetTypesDescription>) {
-    self.decorator = inDecorator
+  public init (_ inShape : any CanariShapeUIProtocol <WidgetTypesDescription>) {
+    self.shape = inShape
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Knobs
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  var knobs : [WidgetKnob <WidgetTypesDescription>] {
+    var result = self.shape.shapeKnobs
+    result.append (WidgetKnob (dragAction: Self.dragCenterKnob))
+    return result
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  private static func dragCenterKnob (_ ioShape : inout any CanariShapeUIProtocol <WidgetTypesDescription>,
+                                      _ inLocalTranslation : CanariPoint,
+                                      _ inInitialOptionKeyOn : Bool) {
+    ioShape.orientedOrigin.addLocalTranslation (inLocalTranslation)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

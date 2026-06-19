@@ -11,7 +11,7 @@ struct MouseGesture_DragKnob <WidgetTypesDescription : DocumentWidgetsDescriptio
   let alignedCurrentPoint : CanariPoint
   let optionKeyInitiallyOn : Bool
   let widgetID : UUID
-  let dragWidgetKnobAction : (inout any CanariDecoratorUIProtocol <WidgetTypesDescription>, CanariPoint, Bool) -> Void
+  let dragWidgetKnobAction : (inout any CanariShapeUIProtocol <WidgetTypesDescription>, CanariPoint, Bool) -> Void
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -23,12 +23,16 @@ struct MouseGesture_DragKnob <WidgetTypesDescription : DocumentWidgetsDescriptio
     let translation = inGeometry.alignedUserCurrentLocation - self.alignedCurrentPoint
     if translation != .zero {
       inBeginOrContinueUndoGrouping ()
-      if var widget = inWidgetsManagerInterface [decoratorID: widgetID] {
-        let localTranslation = CanariAffinity (scale: 1.0 / widget.decorator.orientedOrigin.mScale)
-          .rotating (-widget.decorator.orientedOrigin.mAngle)
-          .transforming (translation)
-        self.dragWidgetKnobAction (&widget.decorator, localTranslation, self.optionKeyInitiallyOn)
-        inWidgetsManagerInterface [decoratorID: widgetID] = widget
+      if var widget = inWidgetsManagerInterface [shapeID: widgetID] {
+        let validatedGlobalTranslation = inWidgetsManagerInterface.validatedGlobalTranslation (
+          proposedValue: translation,
+          canvasSize: inGeometry.canvasSize
+        )
+        let localTranslation = CanariAffinity (scale: 1.0 / widget.shape.orientedOrigin.mScale)
+          .rotating (-widget.shape.orientedOrigin.mAngle)
+          .transforming (validatedGlobalTranslation)
+        self.dragWidgetKnobAction (&widget.shape, localTranslation, self.optionKeyInitiallyOn)
+        inWidgetsManagerInterface [shapeID: widgetID] = widget
       }
       outOptionalNextState = MouseGesture_DragKnob (
         alignedCurrentPoint: inGeometry.alignedUserCurrentLocation,

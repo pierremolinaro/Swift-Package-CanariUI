@@ -23,9 +23,9 @@ final class WidgetKnobAction <WidgetTypesDescription : DocumentWidgetsDescriptio
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func execute (_ inAction : (inout any CanariDecoratorUIProtocol <WidgetTypesDescription>) -> Void) {
+  func execute (_ inAction : (inout any CanariShapeUIProtocol <WidgetTypesDescription>) -> Void) {
     var widget = self.mWidgetsUserInterface [widgetIndex: self.mWidgetIndex]
-    inAction (&widget.decorator)
+    inAction (&widget.shape)
     self.mWidgetsUserInterface [widgetIndex: self.mWidgetIndex] = widget
   }
 

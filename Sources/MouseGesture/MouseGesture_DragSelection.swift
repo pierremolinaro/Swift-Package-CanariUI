@@ -17,15 +17,15 @@ struct MouseGesture_DragSelection <WidgetTypesDescription : DocumentWidgetsDescr
                        userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
                        widgetsManagerInterface inWidgetsManagerInterface : WidgetsUserInterface <WidgetTypesDescription>,
                        optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<WidgetTypesDescription>)?) {
-    let translation = inWidgetsManagerInterface.validatedTranslation (
+    let translation = inWidgetsManagerInterface.validatedGlobalTranslation (
       proposedValue: inGeometry.alignedUserCurrentLocation - self.alignedCurrentPoint,
       canvasSize: inGeometry.canvasSize
     )
     if translation != .zero {
       inBeginOrContinueUndoGrouping ()
       for i in 0 ..< inWidgetsManagerInterface.widgetCount {
-        if inWidgetsManagerInterface.selection.contains (inWidgetsManagerInterface [widgetIndex: i].decorator.id) {
-          inWidgetsManagerInterface [widgetIndex: i].decorator.orientedOrigin.mOrigin += translation
+        if inWidgetsManagerInterface.selection.contains (inWidgetsManagerInterface [widgetIndex: i].shape.id) {
+          inWidgetsManagerInterface [widgetIndex: i].shape.orientedOrigin.mOrigin += translation
         }
       }
       outOptionalNextState = MouseGesture_DragSelection (

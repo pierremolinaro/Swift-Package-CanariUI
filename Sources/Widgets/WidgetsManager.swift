@@ -45,12 +45,12 @@ public struct WidgetsManager <WidgetTypesDescription : DocumentWidgetsDescriptio
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  subscript (decoratorID inID : UUID) -> (CanariWidget <WidgetTypesDescription>)? {
+  subscript (shapeID inID : UUID) -> (CanariWidget <WidgetTypesDescription>)? {
     get {
-      self.mWidgetArray.first { $0.decorator.id == inID }
+      self.mWidgetArray.first { $0.shape.id == inID }
     }
     set {
-      if let v = newValue, let idx = self.mWidgetArray.firstIndex (where: { $0.decorator.id == inID } ) {
+      if let v = newValue, let idx = self.mWidgetArray.firstIndex (where: { $0.shape.id == inID } ) {
         self.mWidgetArray [idx] = v
       }
     }
@@ -79,7 +79,7 @@ public struct WidgetsManager <WidgetTypesDescription : DocumentWidgetsDescriptio
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   mutating func remove (id inID : UUID) {
-    if let idx = self.mWidgetArray.firstIndex (where: { $0.decorator.id == inID } ) {
+    if let idx = self.mWidgetArray.firstIndex (where: { $0.shape.id == inID } ) {
       self.mWidgetArray.remove (at: idx)
     }
   }
@@ -87,7 +87,7 @@ public struct WidgetsManager <WidgetTypesDescription : DocumentWidgetsDescriptio
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   mutating func replaceWidget (id inID : UUID, with inArray : [CanariWidget <WidgetTypesDescription>]) {
-    var idx = self.mWidgetArray.firstIndex { $0.decorator.id == inID }!
+    var idx = self.mWidgetArray.firstIndex { $0.shape.id == inID }!
     self.mWidgetArray.remove (at: idx)
     for widget in inArray {
       self.mWidgetArray.insert (widget, at: idx)

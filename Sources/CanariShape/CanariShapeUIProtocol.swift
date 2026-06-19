@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public protocol CanariDecoratorUIProtocol <WidgetTypesDescription> : CanariDecoratorModelProtocol {
+public protocol CanariShapeUIProtocol <WidgetTypesDescription> : CanariShapeModelProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Oriented Origin
@@ -16,7 +16,7 @@ public protocol CanariDecoratorUIProtocol <WidgetTypesDescription> : CanariDecor
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var knobs : [WidgetKnob <WidgetTypesDescription>] { get }
+  var shapeKnobs : [WidgetKnob <WidgetTypesDescription>] { get }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -24,7 +24,7 @@ public protocol CanariDecoratorUIProtocol <WidgetTypesDescription> : CanariDecor
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func isEqual (to inOther : any CanariDecoratorUIProtocol <WidgetTypesDescription>) -> Bool
+  func isEqual (to inOther : any CanariShapeUIProtocol <WidgetTypesDescription>) -> Bool
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

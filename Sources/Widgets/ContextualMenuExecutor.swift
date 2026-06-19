@@ -23,11 +23,11 @@ public final class ContextualMenuExecutor <WidgetTypesDescription : DocumentWidg
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func execute <T : CanariDecoratorUIProtocol <WidgetTypesDescription>> (_ inAction : (inout T) -> Void) {
+  public func execute <T : CanariShapeUIProtocol <WidgetTypesDescription>> (_ inAction : (inout T) -> Void) {
     var widget = self.mWidgetsUserInterface [widgetIndex: self.mWidgetIndex]
-    if var decorator = widget.decorator as? T {
-      inAction (&decorator)
-      widget.decorator = decorator
+    if var shape = widget.shape as? T {
+      inAction (&shape)
+      widget.shape = shape
       self.mWidgetsUserInterface [widgetIndex: self.mWidgetIndex] = widget
     }
   }
