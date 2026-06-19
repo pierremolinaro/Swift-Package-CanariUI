@@ -21,6 +21,12 @@ public struct CanariPath : Equatable, CustomStringConvertible, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  private init (cgPath inCGPath : CGPath) {
+    self.mPath = Path (inCGPath)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public init (rect inRect : CanariRect,
                angle inAngle : CanariAngle = .zero,
                around inRotationCenter : CanariRotationCenter = .center) {
@@ -283,6 +289,18 @@ public struct CanariPath : Equatable, CustomStringConvertible, Sendable {
       }
     }
     return path
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func flattened (threshold inThreshold : Double) -> CanariPath {
+    CanariPath (cgPath: self.mPath.cgPath.flattened (threshold: inThreshold))
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func forEach (_ inBody : (Path.Element) -> Void) {
+    self.mPath.forEach (inBody)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

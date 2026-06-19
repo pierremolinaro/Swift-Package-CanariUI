@@ -255,6 +255,12 @@ public struct CanariScaledOrientedOrigin : Sendable, Equatable, Codable, CustomS
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public func localToGlobal (_ inLocalPath : CanariPath) -> CanariPath {
+    return inLocalPath.transformed (by: self.mLocalToGlobalAffinity)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public func localToGlobal (_ inPointSet : [CanariPoint]) -> Set <CanariPoint> {
     var result = Set <CanariPoint> ()
     for p in inPointSet {
