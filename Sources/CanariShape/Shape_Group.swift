@@ -19,11 +19,11 @@ public struct Shape_Group <WidgetTypesDescription : DocumentWidgetsDescriptionPr
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   var mUnGroupIsEnabled : Bool
-  let mArray : [CanariWidget <WidgetTypesDescription>] // at 0: back, at count - 1: front
+  public let mArray : [CanariWidget <WidgetTypesDescription>] // at 0: back, at count - 1: front
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var count : Int { self.mArray.count }
+  public var count : Int { self.mArray.count }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
