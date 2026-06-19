@@ -1,14 +1,17 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 15/09/2025.
+//  Created by Pierre Molinaro on 14/03/2026.
 //--------------------------------------------------------------------------------------------------
 
 import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-struct MouseGesture_SelectionRectangle <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : MouseGestureProtocol {
+struct MouseGesture_DragKnob <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : MouseGestureProtocol {
 
-  let startSelectionSet : Set <UUID>
+  let alignedCurrentPoint : CanariPoint
+  let optionKeyInitiallyOn : Bool
+  let widgetID : UUID
+  let dragWidgetKnobAction : (inout any CanariDecoratorUIProtocol <WidgetTypesDescription>, CanariPoint, Bool) -> Void
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -16,27 +19,24 @@ struct MouseGesture_SelectionRectangle <WidgetTypesDescription : DocumentWidgets
                        beginOrContinueUndoGrouping inBeginOrContinueUndoGrouping : () -> Void,
                        userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
                        widgetsManagerInterface inWidgetsManagerInterface : WidgetsUserInterface <WidgetTypesDescription>,
-                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol <WidgetTypesDescription>)?) {
-  //--- Update selection rectangle
-    let selectionRectangle = CanariRect ([inGeometry.unalignedUserStartLocation, inGeometry.unalignedUserCurrentLocation])
-    ioUserSelectionRectangle = selectionRectangle
-  //--- Compute selection
-    var newSelection = self.startSelectionSet
-    let shift = NSEvent.modifierFlags.contains (.shift)
-    for proxy in inWidgetsManagerInterface.proxyArray {
-      if proxy.decorator.orientedOrigin.globalOutlineIntersects (globalRect: selectionRectangle) {
-        if !shift {
-          newSelection.insert (proxy.decorator.id)
-        }else if newSelection.contains (proxy.decorator.id) {
-          newSelection.remove (proxy.decorator.id)
-        }else{
-          newSelection.insert (proxy.decorator.id)
-        }
-      }else if !shift {
-        newSelection.remove (proxy.decorator.id)
+                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<WidgetTypesDescription>)?) {
+    let translation = inGeometry.alignedUserCurrentLocation - self.alignedCurrentPoint
+    if translation != .zero {
+      inBeginOrContinueUndoGrouping ()
+      if var widget = inWidgetsManagerInterface [decoratorID: widgetID] {
+        let localTranslation = CanariAffinity (scale: 1.0 / widget.decorator.orientedOrigin.mScale)
+          .rotating (-widget.decorator.orientedOrigin.mAngle)
+          .transforming (translation)
+        self.dragWidgetKnobAction (&widget.decorator, localTranslation, self.optionKeyInitiallyOn)
+        inWidgetsManagerInterface [decoratorID: widgetID] = widget
       }
+      outOptionalNextState = MouseGesture_DragKnob (
+        alignedCurrentPoint: inGeometry.alignedUserCurrentLocation,
+        optionKeyInitiallyOn: self.optionKeyInitiallyOn,
+        widgetID: self.widgetID,
+        dragWidgetKnobAction: self.dragWidgetKnobAction
+      )
     }
-    inWidgetsManagerInterface.setSelection (withIDs: newSelection)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -44,7 +44,6 @@ struct MouseGesture_SelectionRectangle <WidgetTypesDescription : DocumentWidgets
   func onMouseUp (removeUndoGrouping inRemoveUndoGrouping : () -> Void,
                   userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
                   widgetsManagerInterface inWidgetsManagerInterface : WidgetsUserInterface <WidgetTypesDescription>) {
-    ioUserSelectionRectangle = nil
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

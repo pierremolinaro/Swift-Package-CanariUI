@@ -34,16 +34,16 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public subscript (proxyIndex inIndex : Int) -> CanariWidget <WidgetTypesDescription> {
-    get { self.mWidgetsManager [proxyIndex: inIndex] }
-    set { self.mWidgetsManager [proxyIndex: inIndex] = newValue }
+  public subscript (widgetIndex inIndex : Int) -> CanariWidget <WidgetTypesDescription> {
+    get { self.mWidgetsManager [widgetIndex: inIndex] }
+    set { self.mWidgetsManager [widgetIndex: inIndex] = newValue }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  subscript (proxyID inID : UUID) -> (CanariWidget <WidgetTypesDescription>)? {
-    get { self.mWidgetsManager [proxyID: inID] }
-    set { self.mWidgetsManager [proxyID: inID] = newValue }
+  subscript (decoratorID inID : UUID) -> (CanariWidget <WidgetTypesDescription>)? {
+    get { self.mWidgetsManager [decoratorID: inID] }
+    set { self.mWidgetsManager [decoratorID: inID] = newValue }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -54,7 +54,7 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var proxyArray : [CanariWidget <WidgetTypesDescription>] { self.mWidgetsManager.proxyArray }
+  public var widgetArray : [CanariWidget <WidgetTypesDescription>] { self.mWidgetsManager.widgetArray }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -63,7 +63,7 @@ import Combine
       return false
     }else{
       for i in 0 ..< self.widgetCount {
-        if !self.proxyArray [i].decorator.isEqual (to: inWidgets [i].decorator) {
+        if !self.widgetArray [i].decorator.isEqual (to: inWidgets [i].decorator) {
           return false
         }
       }
@@ -73,8 +73,8 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func setWidgets (fromProxies inProxies : [CanariWidget <WidgetTypesDescription>]) {
-    self.mWidgetsManager.setWidgets (fromProxies: inProxies)
+  public func setWidgets (_ inWidgets : [CanariWidget <WidgetTypesDescription>]) {
+    self.mWidgetsManager.setWidgets (inWidgets)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -118,7 +118,14 @@ import Combine
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func selectedWidgetArray () -> [CanariWidget <WidgetTypesDescription>] {
-    self.mWidgetsManager.proxyArray (fromSelection: self.selection)
+    var result = [CanariWidget <WidgetTypesDescription>] ()
+    for widget in self.widgetArray {
+      if self.selection.contains (widget.decorator.id) {
+        result.append (widget)
+      }
+    }
+    return result
+//    self.mWidgetsManager.widgetArray (fromSelection2: self.selection)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -164,27 +171,54 @@ import Combine
     enterTracing ("widgets.user.interface.draw") ; defer { exitTracing ("widgets.user.interface.draw") }
     ioContext.scale (by: inScale)
   //--- Draw widgets
-    for proxy in self.mWidgetsManager.proxyArray {
-      proxy.decorator.drawFromGlobal (
+    for widget in self.widgetArray {
+      ioContext.translate (by: widget.decorator.orientedOrigin.mOrigin)
+      ioContext.rotate (by: widget.decorator.orientedOrigin.mAngle)
+      ioContext.scale (by: widget.decorator.orientedOrigin.mScale, horizontalFlip: widget.decorator.orientedOrigin.mHorizontalFlip)
+      let scale = inScale * widget.decorator.orientedOrigin.mScale
+      let hovered = widget.decorator.id == self.mHoveredObject
+      let selected = self.mSelection.contains (widget.decorator.id)
+      widget.decorator.orientedOrigin.withLocalOutline {
+        self.drawWidgetBackground (
+          context: &ioContext,
+          scale: scale,
+          hovered: hovered,
+          selected : selected,
+          localOutline: $0
+        )
+      }
+      widget.decorator.drawWidget (
         context: &ioContext,
-        scale: inScale * proxy.decorator.orientedOrigin.mScale,
-        hovered: proxy.decorator.id == self.mHoveredObject,
-        selected: self.mSelection.contains (proxy.decorator.id),
+        scale: scale,
+        hovered: hovered,
+        selected: selected,
         groupLevel: 0
       )
+      widget.decorator.orientedOrigin.withLocalOutline {
+        self.drawWidgetForeground (
+          context: &ioContext,
+          scale: scale,
+          hovered: hovered,
+          selected : selected,
+          localOutline: $0
+        )
+      }
+      ioContext.scale (by: 1.0 / widget.decorator.orientedOrigin.mScale, horizontalFlip: widget.decorator.orientedOrigin.mHorizontalFlip)
+      ioContext.rotate (by: -widget.decorator.orientedOrigin.mAngle)
+      ioContext.translate (by: -widget.decorator.orientedOrigin.mOrigin)
     }
   //--- Get alignment points
     var selectedObjetsAlignmentPoints = Set <CanariPoint> ()
-    for proxy in self.mWidgetsManager.proxyArray {
-      if self.mSelection.contains (proxy.decorator.id) {
-        selectedObjetsAlignmentPoints.formUnion (proxy.decorator.orientedOrigin.localToGlobal (proxy.decorator.localAlignmentGuidePoints))
+    for widget in self.widgetArray {
+      if self.mSelection.contains (widget.decorator.id) {
+        selectedObjetsAlignmentPoints.formUnion (widget.decorator.orientedOrigin.localToGlobal (widget.decorator.localAlignmentGuidePoints))
       }
     }
   //--- Draw alignment guides
     for p in selectedObjetsAlignmentPoints {
-      for proxy in self.mWidgetsManager.proxyArray {
-        if !self.mSelection.contains (proxy.decorator.id) {
-          for q in proxy.decorator.orientedOrigin.localToGlobal (proxy.decorator.localAlignmentGuidePoints) {
+      for widget in self.widgetArray {
+        if !self.mSelection.contains (widget.decorator.id) {
+          for q in widget.decorator.orientedOrigin.localToGlobal (widget.decorator.localAlignmentGuidePoints) {
             if p.x == q.x, p.y != q.y { // Vertical guide
               var path = CanariPath ()
               path.move (to: p)
@@ -201,29 +235,47 @@ import Combine
       }
     }
   //--- Draw knobs
-    for proxy in self.mWidgetsManager.proxyArray {
-      if self.mSelection.contains (proxy.decorator.id), !proxy.decorator.knobs.isEmpty {
-        ioContext.translate (by: proxy.decorator.orientedOrigin.mOrigin)
-        ioContext.rotate (by: proxy.decorator.orientedOrigin.mAngle)
-        ioContext.scale (by: proxy.decorator.orientedOrigin.mScale)
-        for knob in proxy.decorator.knobs {
+    for widget in self.widgetArray {
+      if self.mSelection.contains (widget.decorator.id), !widget.decorator.knobs.isEmpty {
+        ioContext.translate (by: widget.decorator.orientedOrigin.mOrigin)
+        ioContext.rotate (by: widget.decorator.orientedOrigin.mAngle)
+        ioContext.scale (by: widget.decorator.orientedOrigin.mScale)
+        for knob in widget.decorator.knobs {
           let inside : Bool
           if let p = inHoverUserLocationPoint {
             inside = knob.contains (
-              localPoint: proxy.decorator.orientedOrigin.globalToLocal (p),
+              localPoint: widget.decorator.orientedOrigin.globalToLocal (p),
               scale: inScale
             )
           }else{
             inside = false
           }
-          knob.drawKnob (context: &ioContext, inside: inside, scale: inScale * proxy.decorator.orientedOrigin.mScale)
+          knob.drawKnob (context: &ioContext, inside: inside, scale: inScale * widget.decorator.orientedOrigin.mScale)
         }
-        ioContext.scale (by: 1.0 / proxy.decorator.orientedOrigin.mScale)
-        ioContext.rotate (by: -proxy.decorator.orientedOrigin.mAngle)
-        ioContext.translate (by: -proxy.decorator.orientedOrigin.mOrigin)
+        ioContext.scale (by: 1.0 / widget.decorator.orientedOrigin.mScale)
+        ioContext.rotate (by: -widget.decorator.orientedOrigin.mAngle)
+        ioContext.translate (by: -widget.decorator.orientedOrigin.mOrigin)
       }
     }
     ioContext.scale (by: 1.0 / inScale)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  open func drawWidgetBackground (context ioContext : inout GraphicsContext,
+                                  scale inScale : Double,
+                                  hovered inHovered : Bool,
+                                  selected inSelected : Bool,
+                                  localOutline inLocalOutline : CanariPath) {
+   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  open func drawWidgetForeground (context ioContext : inout GraphicsContext,
+                                  scale inScale : Double,
+                                  hovered inHovered : Bool,
+                                  selected inSelected : Bool,
+                                  localOutline inLocalOutline : CanariPath) {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -232,9 +284,9 @@ import Combine
 
   public func hoverTracking (at inPoint : CanariPoint) {
     enterTracing ("widgets.user.interface.hover.tracking") ; defer { exitTracing ("widgets.user.interface.hover.tracking") }
-    for proxy in self.mWidgetsManager.proxyArray.reversed () {
-      if proxy.decorator.orientedOrigin.localOutline (containsLocalPoint: proxy.decorator.orientedOrigin.globalToLocal (inPoint)) {
-        self.mHoveredObject = proxy.decorator.id
+    for widget in self.widgetArray.reversed () {
+      if widget.decorator.orientedOrigin.localOutline (containsLocalPoint: widget.decorator.orientedOrigin.globalToLocal (inPoint)) {
+        self.mHoveredObject = widget.decorator.id
         return
       }
     }
@@ -283,14 +335,14 @@ import Combine
 
   @MainActor private func mouseDownWithOptionKey (geometry inGeometry : MouseGestureGeometryContext) -> any MouseGestureProtocol<WidgetTypesDescription> {
   //--- Mouse down in a knob of a selected object ?
-    for proxy in self.mWidgetsManager.proxyArray.reversed () {
-      if self.mSelection.contains (proxy.decorator.id) {
-        for knob in proxy.decorator.knobs {
-          if knob.contains (localPoint: proxy.decorator.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation), scale: inGeometry.scale) {
+    for widget in self.widgetArray.reversed () {
+      if self.mSelection.contains (widget.decorator.id) {
+        for knob in widget.decorator.knobs {
+          if knob.contains (localPoint: widget.decorator.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation), scale: inGeometry.scale) {
             return MouseGesture_DragKnob <WidgetTypesDescription> (
               alignedCurrentPoint: inGeometry.alignedUserStartLocation,
               optionKeyInitiallyOn: true,
-              widgetID: proxy.decorator.id,
+              widgetID: widget.decorator.id,
               dragWidgetKnobAction: knob.dragWidgetKnobAction
             )
           }
@@ -299,25 +351,25 @@ import Combine
     }
 
     var widgetUnderMouseID : UUID? = nil
-    for proxy in self.mWidgetsManager.proxyArray.reversed () {
-      if proxy.decorator.orientedOrigin.localOutline (containsLocalPoint: proxy.decorator.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
-        widgetUnderMouseID = proxy.decorator.id
+    for widget in self.widgetArray.reversed () {
+      if widget.decorator.orientedOrigin.localOutline (containsLocalPoint: widget.decorator.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
+        widgetUnderMouseID = widget.decorator.id
         break
       }
     }
     if let widgetID = widgetUnderMouseID {
       if self.mSelection.contains (widgetID) { // option-click on a selected widget
-        let selectedArray = self.mWidgetsManager.proxyArray (fromSelection: self.mSelection)
+        let selectedArray = self.selectedWidgetArray ()
         self.mSelection.removeAll ()
-        for proxy in selectedArray {
-          if let newWidget = proxy.decorator.duplicated () {
+        for widget in selectedArray {
+          if let newWidget = widget.decorator.duplicated () {
             self.mWidgetsManager.append (CanariWidget (newWidget))
             self.mSelection.insert (newWidget.id)
           }
         }
         return MouseGesture_DragSelection <WidgetTypesDescription> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
       }else{ // option-click on a non-selected widget
-        if let newWidget = self.mWidgetsManager [proxyID: widgetID]?.decorator.duplicated () {
+        if let newWidget = self.mWidgetsManager [decoratorID: widgetID]?.decorator.duplicated () {
           self.mWidgetsManager.append (CanariWidget (newWidget))
           self.mSelection = [newWidget.id]
           return MouseGesture_DragSelection <WidgetTypesDescription> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
@@ -327,9 +379,9 @@ import Combine
       }
     }else if let objectCreator = self.mObjectCreator {
       self.beginOrContinueUndoGrouping ()
-      let proxy = objectCreator (inGeometry)
-      self.mWidgetsManager.append (proxy)
-      self.mSelection = [proxy.decorator.id]
+      let widget = objectCreator (inGeometry)
+      self.mWidgetsManager.append (widget)
+      self.mSelection = [widget.decorator.id]
       return MouseGesture_Creation <WidgetTypesDescription> (objectCreator: objectCreator)
     }else{
       return MouseGesture_Inactive <WidgetTypesDescription> ()
@@ -356,9 +408,9 @@ import Combine
 
   private func mouseDown_shiftKey (geometry inGeometry : MouseGestureGeometryContext) -> any MouseGestureProtocol <WidgetTypesDescription> {
     var widgetUnderMouseID : UUID? = nil
-    for proxy in self.mWidgetsManager.proxyArray.reversed () {
-      if proxy.decorator.orientedOrigin.localOutline (containsLocalPoint:proxy.decorator.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
-        widgetUnderMouseID = proxy.decorator.id
+    for widget in self.widgetArray.reversed () {
+      if widget.decorator.orientedOrigin.localOutline (containsLocalPoint:widget.decorator.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
+        widgetUnderMouseID = widget.decorator.id
         break
       }
     }
@@ -378,14 +430,14 @@ import Combine
 
   private func mouseDown_noKey (geometry inGeometry : MouseGestureGeometryContext) -> any MouseGestureProtocol <WidgetTypesDescription> {
   //--- Mouse down in a knob of a selected object ?
-    for proxy in self.mWidgetsManager.proxyArray.reversed () {
-      if self.mSelection.contains (proxy.decorator.id) {
-        for knob in proxy.decorator.knobs {
-          if knob.contains (localPoint: proxy.decorator.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation), scale: inGeometry.scale) {
+    for widget in self.widgetArray.reversed () {
+      if self.mSelection.contains (widget.decorator.id) {
+        for knob in widget.decorator.knobs {
+          if knob.contains (localPoint: widget.decorator.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation), scale: inGeometry.scale) {
             return MouseGesture_DragKnob <WidgetTypesDescription> (
               alignedCurrentPoint: inGeometry.alignedUserStartLocation,
               optionKeyInitiallyOn: false,
-              widgetID: proxy.decorator.id,
+              widgetID: widget.decorator.id,
               dragWidgetKnobAction: knob.dragWidgetKnobAction
             )
           }
@@ -393,15 +445,15 @@ import Combine
       }
     }
   //--- Mouse down in a selected object ?
-    for proxy in self.mWidgetsManager.proxyArray.reversed () {
-      if self.mSelection.contains (proxy.decorator.id), proxy.decorator.orientedOrigin.localOutline (containsLocalPoint:proxy.decorator.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
+    for widget in self.widgetArray.reversed () {
+      if self.mSelection.contains (widget.decorator.id), widget.decorator.orientedOrigin.localOutline (containsLocalPoint:widget.decorator.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
         return MouseGesture_DragSelection <WidgetTypesDescription> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
       }
     }
   //--- Mouse down in a non selected object ?
-    for proxy in self.mWidgetsManager.proxyArray.reversed () {
-      if proxy.decorator.orientedOrigin.localOutline (containsLocalPoint:proxy.decorator.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
-        self.mSelection = [proxy.decorator.id]
+    for widget in self.widgetArray.reversed () {
+      if widget.decorator.orientedOrigin.localOutline (containsLocalPoint:widget.decorator.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
+        self.mSelection = [widget.decorator.id]
         return MouseGesture_DragSelection <WidgetTypesDescription> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
       }
     }
@@ -415,10 +467,10 @@ import Combine
   public func contextualMenu (at inUnalignedPoint : CanariPoint, scale inScale : Double) -> any View {
   //--- CMD + Mouse down in a knob of a selected object ?
     for idx in (0 ..< self.mWidgetsManager.count).reversed () {
-      let proxy = self.mWidgetsManager [proxyIndex: idx]
-      if self.mSelection.contains (proxy.decorator.id) {
-        for knob in proxy.decorator.knobs {
-          if knob.contains (localPoint: proxy.decorator.orientedOrigin.globalToLocal (inUnalignedPoint), scale: inScale) {
+      let widget = self.mWidgetsManager [widgetIndex: idx]
+      if self.mSelection.contains (widget.decorator.id) {
+        for knob in widget.decorator.knobs {
+          if knob.contains (localPoint: widget.decorator.orientedOrigin.globalToLocal (inUnalignedPoint), scale: inScale) {
             if let menu = knob.menu {
               return menu (ContextualMenuExecutor (self, idx))
             }else{
@@ -430,9 +482,9 @@ import Combine
     }
   //--- CMD + Mouse down in a selected object ?
     for idx in (0 ..< self.mWidgetsManager.count).reversed () {
-      let proxy = self.mWidgetsManager [proxyIndex: idx]
-      if self.mSelection.contains (proxy.decorator.id), proxy.decorator.orientedOrigin.localOutline (containsLocalPoint:proxy.decorator.orientedOrigin.globalToLocal (inUnalignedPoint)) {
-        return proxy.decorator.contextualMenu (ContextualMenuExecutor (self, idx))
+      let widget = self.mWidgetsManager [widgetIndex: idx]
+      if self.mSelection.contains (widget.decorator.id), widget.decorator.orientedOrigin.localOutline (containsLocalPoint:widget.decorator.orientedOrigin.globalToLocal (inUnalignedPoint)) {
+        return widget.decorator.contextualMenu (ContextualMenuExecutor (self, idx))
       }
     }
   //---
@@ -514,7 +566,7 @@ import Combine
   public func backDeleteKeyAction () {
     var idx = 0
     while idx < self.mWidgetsManager.count {
-      if self.mSelection.contains (self.mWidgetsManager [proxyIndex: idx].decorator.id) {
+      if self.mSelection.contains (self.mWidgetsManager [widgetIndex: idx].decorator.id) {
         self.mWidgetsManager.remove (at: idx)
       }else{
         idx += 1
@@ -533,8 +585,8 @@ import Combine
       if !translation.isZero {
         var idx = 0
         while idx < self.widgetCount {
-          if self.selection.contains (self [proxyIndex: idx].decorator.id) {
-            self [proxyIndex: idx].decorator.orientedOrigin.mOrigin += translation
+          if self.selection.contains (self [widgetIndex: idx].decorator.id) {
+            self [widgetIndex: idx].decorator.orientedOrigin.mOrigin += translation
           }
           idx += 1
         }
@@ -552,8 +604,8 @@ import Combine
       if !translation.isZero {
         var idx = 0
         while idx < self.widgetCount {
-          if self.selection.contains (self [proxyIndex: idx].decorator.id) {
-            self [proxyIndex: idx].decorator.orientedOrigin.mOrigin += translation
+          if self.selection.contains (self [widgetIndex: idx].decorator.id) {
+            self [widgetIndex: idx].decorator.orientedOrigin.mOrigin += translation
           }
           idx += 1
         }
@@ -571,8 +623,8 @@ import Combine
       if !translation.isZero {
         var idx = 0
         while idx < self.widgetCount {
-          if self.selection.contains (self [proxyIndex: idx].decorator.id) {
-            self [proxyIndex: idx].decorator.orientedOrigin.mOrigin += translation
+          if self.selection.contains (self [widgetIndex: idx].decorator.id) {
+            self [widgetIndex: idx].decorator.orientedOrigin.mOrigin += translation
           }
           idx += 1
         }
@@ -590,8 +642,8 @@ import Combine
       if !translation.isZero {
         var idx = 0
         while idx < self.widgetCount {
-          if self.selection.contains (self [proxyIndex: idx].decorator.id) {
-            self [proxyIndex: idx].decorator.orientedOrigin.mOrigin += translation
+          if self.selection.contains (self [widgetIndex: idx].decorator.id) {
+            self [widgetIndex: idx].decorator.orientedOrigin.mOrigin += translation
           }
           idx += 1
         }
@@ -617,7 +669,7 @@ import Combine
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public override func performCopy () {
-    let selectedProxies = self.mWidgetsManager.proxyArray (fromSelection: self.mSelection)
+    let selectedProxies = self.selectedWidgetArray ()
     let encoder = JSONEncoder ()
     if let data = try? encoder.encode (selectedProxies), let str = String (data: data, encoding: .utf8) {
     //--- Pasteboard
@@ -645,9 +697,9 @@ import Combine
       let decoder = JSONDecoder ()
       if let decodedWidgets = try? decoder.decode ([CanariWidget <WidgetTypesDescription>].self, from: string.data (using: .utf8)!) {
         self.mSelection.removeAll ()
-        for proxy in decodedWidgets {
-          self.mWidgetsManager.append (proxy)
-          self.mSelection.insert (proxy.decorator.id)
+        for widget in decodedWidgets {
+          self.mWidgetsManager.append (widget)
+          self.mSelection.insert (widget.decorator.id)
         }
       }
     }
@@ -655,28 +707,28 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public override var selectAllIsEnabled : Bool { !self.mWidgetsManager.proxyArray.isEmpty }
+  public override var selectAllIsEnabled : Bool { !self.widgetArray.isEmpty }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public override func performSelectAll () {
-    for proxy in self.mWidgetsManager.proxyArray {
-      self.mSelection.insert (proxy.decorator.id)
+    for widget in self.widgetArray {
+      self.mSelection.insert (widget.decorator.id)
     }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
- public  override var deleteIsEnabled : Bool { !self.mWidgetsManager.proxyArray.isEmpty }
+ public  override var deleteIsEnabled : Bool { !self.widgetArray.isEmpty }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public override func performDelete () {
     let selection = self.mSelection
     self.mSelection.removeAll ()
-    for proxy in self.mWidgetsManager.proxyArray {
-      if selection.contains (proxy.decorator.id) {
-        self.mWidgetsManager.remove (id: proxy.decorator.id)
+    for widget in self.widgetArray {
+      if selection.contains (widget.decorator.id) {
+        self.mWidgetsManager.remove (id: widget.decorator.id)
       }
     }
   }
@@ -704,10 +756,10 @@ import Combine
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public override func performGroup () {
-    let selectedWidgets = self.mWidgetsManager.proxyArray (fromSelection: self.mSelection)
+    let selectedWidgets = self.selectedWidgetArray ()
     let widgetGroup = CanariWidgetDecorator_Group <WidgetTypesDescription> (grouping: selectedWidgets)
-    for proxy in selectedWidgets {
-      self.mWidgetsManager.remove (id: proxy.decorator.id)
+    for widget in selectedWidgets {
+      self.mWidgetsManager.remove (id: widget.decorator.id)
     }
     self.mWidgetsManager.append (CanariWidget (widgetGroup))
     self.mSelection = [widgetGroup.id]
@@ -716,8 +768,8 @@ import Combine
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public override var ungroupIsEnabled : Bool {
-    for proxy in self.mWidgetsManager.proxyArray {
-      if self.mSelection.contains (proxy.decorator.id), let w = proxy.decorator as? CanariWidgetDecorator_Group <WidgetTypesDescription>, w.mUnGroupIsEnabled {
+    for widget in self.widgetArray {
+      if self.mSelection.contains (widget.decorator.id), let w = widget.decorator as? CanariWidgetDecorator_Group <WidgetTypesDescription>, w.mUnGroupIsEnabled {
         return true
       }
     }
@@ -727,8 +779,8 @@ import Combine
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public override func performUngroup () {
-    for proxy in self.mWidgetsManager.proxyArray {
-      if self.mSelection.contains (proxy.decorator.id), let group = proxy.decorator as? CanariWidgetDecorator_Group <WidgetTypesDescription>, group.mUnGroupIsEnabled {
+    for widget in self.widgetArray {
+      if self.mSelection.contains (widget.decorator.id), let group = widget.decorator as? CanariWidgetDecorator_Group <WidgetTypesDescription>, group.mUnGroupIsEnabled {
         let array = group.ungroupedArray ()
         self.mWidgetsManager.replaceWidget (id: group.id, with: array)
         self.mSelection.remove (group.id)
@@ -752,7 +804,7 @@ import Combine
         if let type = self.commonTypeForSelection () {
           Text (type.inspectorTitle).bold ()
           ScrollView (.vertical) {
-            AnyView (type.inspectorView (proxy: InspectorProxy (self)).id (self.mSelection))
+            AnyView (type.inspectorView (proxy: CanariInspectorProxy (self)).id (self.mSelection))
           }
         }else if self.mSelection.count > 1 {
           Text ("Multiple Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
@@ -765,16 +817,16 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private func commonTypeForSelection () -> (any DecoratorUIProtocol <WidgetTypesDescription>.Type)? {
-    var result : (any DecoratorUIProtocol <WidgetTypesDescription>.Type)? = nil
+  private func commonTypeForSelection () -> (any CanariDecoratorUIProtocol <WidgetTypesDescription>.Type)? {
+    var result : (any CanariDecoratorUIProtocol <WidgetTypesDescription>.Type)? = nil
     for id in self.mSelection {
-      if let proxy = self.mWidgetsManager [proxyID: id] {
+      if let widget = self.mWidgetsManager [decoratorID: id] {
         if let r = result {
-          if r != type (of: proxy.decorator) {
+          if r != type (of: widget.decorator) {
             return nil
           }
         }else{
-          result = type (of: proxy.decorator)
+          result = type (of: widget.decorator)
         }
       }
     }

@@ -6,9 +6,9 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-struct MouseGesture_Creation <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : MouseGestureProtocol {
+struct MouseGesture_SelectionRectangle <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : MouseGestureProtocol {
 
-  let objectCreator : (MouseGestureGeometryContext) -> CanariWidget <WidgetTypesDescription>
+  let startSelectionSet : Set <UUID>
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -16,10 +16,27 @@ struct MouseGesture_Creation <WidgetTypesDescription : DocumentWidgetsDescriptio
                        beginOrContinueUndoGrouping inBeginOrContinueUndoGrouping : () -> Void,
                        userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
                        widgetsManagerInterface inWidgetsManagerInterface : WidgetsUserInterface <WidgetTypesDescription>,
-                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<WidgetTypesDescription>)?) {
-    let newObject = self.objectCreator (inGeometry)
-    inWidgetsManagerInterface [proxyIndex: inWidgetsManagerInterface.widgetCount - 1] = newObject
-    inWidgetsManagerInterface.setSelection (withID: newObject.decorator.id)
+                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol <WidgetTypesDescription>)?) {
+  //--- Update selection rectangle
+    let selectionRectangle = CanariRect ([inGeometry.unalignedUserStartLocation, inGeometry.unalignedUserCurrentLocation])
+    ioUserSelectionRectangle = selectionRectangle
+  //--- Compute selection
+    var newSelection = self.startSelectionSet
+    let shift = NSEvent.modifierFlags.contains (.shift)
+    for widget in inWidgetsManagerInterface.widgetArray {
+      if widget.decorator.orientedOrigin.globalOutlineIntersects (globalRect: selectionRectangle) {
+        if !shift {
+          newSelection.insert (widget.decorator.id)
+        }else if newSelection.contains (widget.decorator.id) {
+          newSelection.remove (widget.decorator.id)
+        }else{
+          newSelection.insert (widget.decorator.id)
+        }
+      }else if !shift {
+        newSelection.remove (widget.decorator.id)
+      }
+    }
+    inWidgetsManagerInterface.setSelection (withIDs: newSelection)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -27,11 +44,7 @@ struct MouseGesture_Creation <WidgetTypesDescription : DocumentWidgetsDescriptio
   func onMouseUp (removeUndoGrouping inRemoveUndoGrouping : () -> Void,
                   userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
                   widgetsManagerInterface inWidgetsManagerInterface : WidgetsUserInterface <WidgetTypesDescription>) {
-    if inWidgetsManagerInterface [proxyIndex: inWidgetsManagerInterface.widgetCount - 1].decorator.isGraphicallyEmpty {
-      inWidgetsManagerInterface.removeLast ()
-      inWidgetsManagerInterface.clearSelection ()
-      inRemoveUndoGrouping ()
-    }
+    ioUserSelectionRectangle = nil
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -39,3 +52,4 @@ struct MouseGesture_Creation <WidgetTypesDescription : DocumentWidgetsDescriptio
 }
 
 //--------------------------------------------------------------------------------------------------
+

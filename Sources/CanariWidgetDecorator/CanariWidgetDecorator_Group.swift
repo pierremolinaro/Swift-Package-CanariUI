@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariWidgetDecorator_Group <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : DecoratorUIProtocol {
+public struct CanariWidgetDecorator_Group <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : CanariDecoratorUIProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -31,8 +31,8 @@ public struct CanariWidgetDecorator_Group <WidgetTypesDescription : DocumentWidg
     self.id = UUID ()
     self.mUnGroupIsEnabled = true
     var vertices = [CanariPoint] ()
-    for proxy in inProxys {
-      vertices += proxy.decorator.orientedOrigin.globalBoundingRect.vertices
+    for widget in inProxys {
+      vertices += widget.decorator.orientedOrigin.globalBoundingRect.vertices
     }
     let r = CanariRect (vertices)
     self.mArray = inProxys.map {
@@ -42,8 +42,8 @@ public struct CanariWidgetDecorator_Group <WidgetTypesDescription : DocumentWidg
     }
     self.orientedOrigin = CanariScaledOrientedOrigin (r.center, .zero, 1.0, false)
     var localOutline = CanariPath ()
-    for proxy in self.mArray {
-      proxy.decorator.orientedOrigin.withGlobalOutline { localOutline.unionInPlace ($0) }
+    for widget in self.mArray {
+      widget.decorator.orientedOrigin.withGlobalOutline { localOutline.unionInPlace ($0) }
     }
     self.orientedOrigin.setLocalOutline (localOutline)
   }
@@ -63,8 +63,8 @@ public struct CanariWidgetDecorator_Group <WidgetTypesDescription : DocumentWidg
     self.mUnGroupIsEnabled = try container.decode (Bool.self, forKey: .unGroupIsEnabled)
     self.orientedOrigin = try container.decode (CanariScaledOrientedOrigin.self, forKey: .oo)
     var localOutline = CanariPath ()
-    for proxy in self.mArray {
-      proxy.decorator.orientedOrigin.withGlobalOutline { localOutline.unionInPlace ($0) }
+    for widget in self.mArray {
+      widget.decorator.orientedOrigin.withGlobalOutline { localOutline.unionInPlace ($0) }
     }
     self.orientedOrigin.setLocalOutline (localOutline)
   }
@@ -88,7 +88,7 @@ public struct CanariWidgetDecorator_Group <WidgetTypesDescription : DocumentWidg
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func isEqual (to inOther : any DecoratorUIProtocol <WidgetTypesDescription>) -> Bool {
+  public func isEqual (to inOther : any CanariDecoratorUIProtocol <WidgetTypesDescription>) -> Bool {
     if let other = inOther as? CanariWidgetDecorator_Group <WidgetTypesDescription> {
       return (self.id == other.id) && (self.mArray == other.mArray) && (self.mUnGroupIsEnabled == other.mUnGroupIsEnabled)
     }else{
@@ -100,7 +100,7 @@ public struct CanariWidgetDecorator_Group <WidgetTypesDescription : DocumentWidg
   //MARK: duplicated
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func duplicated () -> (any DecoratorUIProtocol <WidgetTypesDescription>)? {
+  public func duplicated () -> (any CanariDecoratorUIProtocol <WidgetTypesDescription>)? {
     return CanariWidgetDecorator_Group (self.orientedOrigin, self.mUnGroupIsEnabled, self.mArray)
   }
 
@@ -130,16 +130,22 @@ public struct CanariWidgetDecorator_Group <WidgetTypesDescription : DocumentWidg
                           hovered inHovered : Bool,
                           selected inSelected : Bool,
                           groupLevel inGroupLevel : UInt) {
-    for proxy in self.mArray {
-      proxy.decorator.drawFromGlobal (
+    for widget in self.mArray {
+      ioContext.translate (by: widget.decorator.orientedOrigin.mOrigin)
+      ioContext.rotate (by: widget.decorator.orientedOrigin.mAngle)
+      ioContext.scale (by: widget.decorator.orientedOrigin.mScale, horizontalFlip: widget.decorator.orientedOrigin.mHorizontalFlip)
+      widget.decorator.drawWidget (
         context: &ioContext,
-        scale: inScale,
+        scale: inScale * widget.decorator.orientedOrigin.mScale,
         hovered: inHovered,
         selected: inSelected,
-        groupLevel: inGroupLevel + 1
+        groupLevel: inGroupLevel
       )
+      ioContext.scale (by: 1.0 / widget.decorator.orientedOrigin.mScale, horizontalFlip: widget.decorator.orientedOrigin.mHorizontalFlip)
+      ioContext.rotate (by: -widget.decorator.orientedOrigin.mAngle)
+      ioContext.translate (by: -widget.decorator.orientedOrigin.mOrigin)
     }
-    if inSelected, inGroupLevel == 0 {
+    if inSelected || inHovered, inGroupLevel == 0 {
       self.orientedOrigin.withLocalBoundingRect {
         ioContext.stroke (
           CanariPath (rect: $0),
@@ -155,8 +161,8 @@ public struct CanariWidgetDecorator_Group <WidgetTypesDescription : DocumentWidg
 
   public var localAlignmentGuidePoints : [CanariPoint] {
     var points = [CanariPoint] ()
-    for proxy in self.mArray {
-      points += proxy.decorator.localAlignmentGuidePoints
+    for widget in self.mArray {
+      points += widget.decorator.localAlignmentGuidePoints
     }
     return points
   }
@@ -179,8 +185,8 @@ public struct CanariWidgetDecorator_Group <WidgetTypesDescription : DocumentWidg
 
   public static var inspectorTitle : String { "Group" }
 
-  public static func inspectorView (proxy inProxy : InspectorProxy <WidgetTypesDescription>) -> any View {
-    WidgetGroupInspectorView (proxy: inProxy)
+  public static func inspectorView (proxy inProxy : CanariInspectorProxy <WidgetTypesDescription>) -> any View {
+    WidgetGroupInspectorView (widget: inProxy)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -195,11 +201,11 @@ fileprivate struct WidgetGroupInspectorView <WidgetTypesDescription : DocumentWi
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @State private var mProxy : InspectorProxy <WidgetTypesDescription>
+  @State private var mProxy : CanariInspectorProxy <WidgetTypesDescription>
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  init (proxy inProxy : InspectorProxy <WidgetTypesDescription>) {
+  init (widget inProxy : CanariInspectorProxy <WidgetTypesDescription>) {
     self.mProxy = inProxy
   }
 

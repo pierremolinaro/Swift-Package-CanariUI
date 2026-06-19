@@ -12,10 +12,7 @@ public protocol DocumentWidgetsDescriptionProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  nonisolated static var widgetTypeArray : [(any DecoratorUIProtocol <WidgetTypesDescription>.Type, String)] { get }
-
-//  @MainActor static func limitTranslation (_ ioTranslation : inout CanariPoint, _ inCanvasSize : CanariSize)
-//  static func limitTranslation2 ()
+  nonisolated static var widgetTypeArray : [(any CanariDecoratorUIProtocol <WidgetTypesDescription>.Type, String)] { get }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -27,8 +24,8 @@ extension DocumentWidgetsDescriptionProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  static func documentEncodedTypeName (_ inDecorator : any DecoratorUIProtocol) -> String {
-    let type = type(of: inDecorator)
+  static func documentEncodedTypeName (_ inDecorator : any CanariDecoratorUIProtocol) -> String {
+    let type = type (of: inDecorator)
     for (widgetType, typeName) in Self.widgetTypeArray {
       if widgetType == type {
         return typeName

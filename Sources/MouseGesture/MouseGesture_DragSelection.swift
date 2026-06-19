@@ -1,17 +1,14 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 14/03/2026.
+//  Created by Pierre Molinaro on 15/09/2025.
 //--------------------------------------------------------------------------------------------------
 
 import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-struct MouseGesture_DragKnob <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : MouseGestureProtocol {
+struct MouseGesture_DragSelection <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : MouseGestureProtocol {
 
   let alignedCurrentPoint : CanariPoint
-  let optionKeyInitiallyOn : Bool
-  let widgetID : UUID
-  let dragWidgetKnobAction : (inout any DecoratorUIProtocol <WidgetTypesDescription>, CanariPoint, Bool) -> Void
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -20,21 +17,19 @@ struct MouseGesture_DragKnob <WidgetTypesDescription : DocumentWidgetsDescriptio
                        userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
                        widgetsManagerInterface inWidgetsManagerInterface : WidgetsUserInterface <WidgetTypesDescription>,
                        optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<WidgetTypesDescription>)?) {
-    let translation = inGeometry.alignedUserCurrentLocation - self.alignedCurrentPoint
+    let translation = inWidgetsManagerInterface.validatedTranslation (
+      proposedValue: inGeometry.alignedUserCurrentLocation - self.alignedCurrentPoint,
+      canvasSize: inGeometry.canvasSize
+    )
     if translation != .zero {
       inBeginOrContinueUndoGrouping ()
-      if var proxy = inWidgetsManagerInterface [proxyID: widgetID] {
-        let localTranslation = CanariAffinity (scale: 1.0 / proxy.decorator.orientedOrigin.mScale)
-          .rotating (-proxy.decorator.orientedOrigin.mAngle)
-          .transforming (translation)
-        self.dragWidgetKnobAction (&proxy.decorator, localTranslation, self.optionKeyInitiallyOn)
-        inWidgetsManagerInterface [proxyID: widgetID] = proxy
+      for i in 0 ..< inWidgetsManagerInterface.widgetCount {
+        if inWidgetsManagerInterface.selection.contains (inWidgetsManagerInterface [widgetIndex: i].decorator.id) {
+          inWidgetsManagerInterface [widgetIndex: i].decorator.orientedOrigin.mOrigin += translation
+        }
       }
-      outOptionalNextState = MouseGesture_DragKnob (
-        alignedCurrentPoint: inGeometry.alignedUserCurrentLocation,
-        optionKeyInitiallyOn: self.optionKeyInitiallyOn,
-        widgetID: self.widgetID,
-        dragWidgetKnobAction: self.dragWidgetKnobAction
+      outOptionalNextState = MouseGesture_DragSelection (
+        alignedCurrentPoint: inGeometry.alignedUserCurrentLocation
       )
     }
   }
@@ -51,4 +46,3 @@ struct MouseGesture_DragKnob <WidgetTypesDescription : DocumentWidgetsDescriptio
 }
 
 //--------------------------------------------------------------------------------------------------
-

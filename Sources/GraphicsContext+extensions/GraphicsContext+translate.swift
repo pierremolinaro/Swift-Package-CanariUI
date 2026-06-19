@@ -1,24 +1,26 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 27/03/2026.
+//  Created by Pierre Molinaro on 31/03/2026.
 //--------------------------------------------------------------------------------------------------
 
 import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public protocol DecoratorModelProtocol <WidgetTypesDescription> : Identifiable, Sendable, Codable {
-
-  associatedtype WidgetTypesDescription : DocumentWidgetsDescriptionProtocol
+public extension GraphicsContext {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var id : UUID { get }
+  mutating func translateBy (x inX : CanariLength, y inY : CanariLength) {
+    self.translateBy (x: inX.pxValue, y: inY.pxValue)
+  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func duplicated () -> (any DecoratorUIProtocol <WidgetTypesDescription>)?
+  mutating func translate (by inPoint : CanariPoint) {
+    self.translateBy (x: inPoint.x, y: inPoint.y)
+  }
 
- // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 }
 

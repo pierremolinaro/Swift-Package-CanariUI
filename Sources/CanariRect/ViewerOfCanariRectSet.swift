@@ -45,12 +45,12 @@ public struct ViewerOfCanariRectSet : View {
       .anchorPreference (key: CentersKey.self, value: .center) { ["top" : $0] }
     }
     .backgroundPreferenceValue (CentersKey.self) { anchors in
-      GeometryReader { proxy in
+      GeometryReader { widget in
         let shape = Path { path in
-          let top = proxy [anchors ["top"]!].y
-          let left = proxy [anchors ["left"]!].x
-          let right = proxy [anchors ["right"]!].x
-          let bottom = proxy [anchors ["bottom"]!].y
+          let top = widget [anchors ["top"]!].y
+          let left = widget [anchors ["left"]!].x
+          let right = widget [anchors ["right"]!].x
+          let bottom = widget [anchors ["bottom"]!].y
           path.addRect (CGRect (origin: CGPoint (x: left, y: top), size: CGSize (width: right - left, height: bottom - top)))
         }
         ZStack {

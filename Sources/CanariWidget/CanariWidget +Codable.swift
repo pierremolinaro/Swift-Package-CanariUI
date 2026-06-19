@@ -17,15 +17,15 @@ extension CanariWidget : Codable {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   nonisolated public init (from inDecoder : Decoder) throws {
-    var dictionary : [String : any DecoratorUIProtocol.Type] = [:]
-    for (type, name) : (any DecoratorUIProtocol.Type, String) in WidgetTypesDescription.widgetTypeArray {
+    var dictionary : [String : any CanariDecoratorUIProtocol.Type] = [:]
+    for (type, name) : (any CanariDecoratorUIProtocol.Type, String) in WidgetTypesDescription.widgetTypeArray {
       dictionary [name] = type
     }
     let container = try inDecoder.container (keyedBy: CodingKeys.self)
     let typeName = try container.decode (String.self, forKey: .type)
     if let type = dictionary [typeName] {
-      let decorator : any DecoratorUIProtocol = try container.decode (type, forKey: .value)
-      self.decorator = decorator as! any DecoratorUIProtocol <WidgetTypesDescription>
+      let decorator : any CanariDecoratorUIProtocol = try container.decode (type, forKey: .value)
+      self.decorator = decorator as! any CanariDecoratorUIProtocol <WidgetTypesDescription>
     }else{
       throw DecodingError.dataCorruptedError (
         forKey: .type,

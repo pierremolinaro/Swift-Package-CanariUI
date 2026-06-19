@@ -10,24 +10,6 @@ public extension GraphicsContext {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func translateBy (x inX : CanariLength, y inY : CanariLength) {
-    self.translateBy (x: inX.pxValue, y: inY.pxValue)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  mutating func translate (by inPoint : CanariPoint) {
-    self.translateBy (x: inPoint.x, y: inPoint.y)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  mutating func rotate (by inAngle : CanariAngle) {
-    self.rotate (by: Angle.radians (inAngle.radians))
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
   mutating func scale (by inScale : Double, horizontalFlip inHorizontalFlip : Bool = false) {
     self.scaleBy (x: inHorizontalFlip ? -inScale : inScale, y: inScale)
   }

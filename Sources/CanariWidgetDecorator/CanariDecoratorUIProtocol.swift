@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public protocol DecoratorUIProtocol <WidgetTypesDescription> : DecoratorModelProtocol {
+public protocol CanariDecoratorUIProtocol <WidgetTypesDescription> : CanariDecoratorModelProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Oriented Origin
@@ -24,7 +24,7 @@ public protocol DecoratorUIProtocol <WidgetTypesDescription> : DecoratorModelPro
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func isEqual (to inOther : any DecoratorUIProtocol <WidgetTypesDescription>) -> Bool
+  func isEqual (to inOther : any CanariDecoratorUIProtocol <WidgetTypesDescription>) -> Bool
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -52,7 +52,7 @@ public protocol DecoratorUIProtocol <WidgetTypesDescription> : DecoratorModelPro
 
   @MainActor static var inspectorTitle : String { get }
 
-  @MainActor static func inspectorView (proxy inProxy : InspectorProxy <WidgetTypesDescription>) -> any View
+  @MainActor static func inspectorView (proxy inProxy : CanariInspectorProxy <WidgetTypesDescription>) -> any View
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

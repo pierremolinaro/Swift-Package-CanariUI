@@ -29,25 +29,25 @@ struct InspectorOfCanariScaledOrientedOrigin <WidgetTypesDescription : DocumentW
     ExpandableInspectorOfCanariPointSet (
       title : "Center",
       pointSet: Set (self.mWidgetsUserInterface.selectedWidgetArray ().map { $0.decorator.orientedOrigin.mOrigin }),
-      setterX: { for id in self.mWidgetsUserInterface.selection { self.mWidgetsUserInterface [proxyID: id]?.decorator.orientedOrigin.mOrigin.x = $0 } },
-      setterY: { for id in self.mWidgetsUserInterface.selection { self.mWidgetsUserInterface [proxyID: id]?.decorator.orientedOrigin.mOrigin.y = $0 } },
+      setterX: { for id in self.mWidgetsUserInterface.selection { self.mWidgetsUserInterface [decoratorID: id]?.decorator.orientedOrigin.mOrigin.x = $0 } },
+      setterY: { for id in self.mWidgetsUserInterface.selection { self.mWidgetsUserInterface [decoratorID: id]?.decorator.orientedOrigin.mOrigin.y = $0 } },
       isExpanded: self.$mCenterInspectorIsExpanded
     )
     CanariElementExpandableInspector (title: "Angle", subTitle: "", isExpanded: self.$mAngleInspectorIsExpanded) {
       EditorOfCanariAngleSet (
         angleSet: Set (self.mWidgetsUserInterface.selectedWidgetArray ().map { $0.decorator.orientedOrigin.mAngle }),
-        setter: { for id in self.mWidgetsUserInterface.selection { self.mWidgetsUserInterface [proxyID: id]?.decorator.orientedOrigin.mAngle = $0 } }
+        setter: { for id in self.mWidgetsUserInterface.selection { self.mWidgetsUserInterface [decoratorID: id]?.decorator.orientedOrigin.mAngle = $0 } }
       )
     }
     CanariElementExpandableInspector (title: "Scale, Flip", subTitle: "", isExpanded: self.$mScaleInspectorIsExpanded) {
       EditorOfScaleSet (
         valueSet: Set (self.mWidgetsUserInterface.selectedWidgetArray ().map { $0.decorator.orientedOrigin.mScale }),
-        setter: { for id in self.mWidgetsUserInterface.selection { self.mWidgetsUserInterface [proxyID: id]?.decorator.orientedOrigin.mScale = $0 } }
+        setter: { for id in self.mWidgetsUserInterface.selection { self.mWidgetsUserInterface [decoratorID: id]?.decorator.orientedOrigin.mScale = $0 } }
       )
       InspectorOfBoolSet (
         title: "Horizontal Flip",
         valueSet: Set (self.mWidgetsUserInterface.selectedWidgetArray ().map { $0.decorator.orientedOrigin.mHorizontalFlip }),
-        setter: { for id in self.mWidgetsUserInterface.selection { self.mWidgetsUserInterface [proxyID: id]?.decorator.orientedOrigin.mHorizontalFlip = $0 } }
+        setter: { for id in self.mWidgetsUserInterface.selection { self.mWidgetsUserInterface [decoratorID: id]?.decorator.orientedOrigin.mHorizontalFlip = $0 } }
       )
     }
     CanariElementExpandableInspector (title: "Enclosing Rectangle", subTitle: "", isExpanded: self.$mBoundingRectInspectorIsExpanded) {

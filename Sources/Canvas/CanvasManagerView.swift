@@ -78,7 +78,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
 
   @ViewBuilder public var body : some View {
     HStack (spacing: 0) {
-      ScrollViewReader { proxy in
+      ScrollViewReader { widget in
         GeometryReader { geometry in
           ScrollView ([.horizontal, .vertical]) {
             VStack (spacing: 0.0) {
@@ -125,7 +125,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
           }
         }
         .defaultScrollAnchor (.topLeading) // Aligne le contenu en haut à gauche
-        .onAppear { proxy.scrollTo (ANCHOR_FOR_INITIAL_SCROLL, anchor: .bottomLeading) }
+        .onAppear { widget.scrollTo (ANCHOR_FOR_INITIAL_SCROLL, anchor: .bottomLeading) }
       }
       .onAppear {
         self.mWidgetsUserInterface.setUndoManager (self.undoManager)

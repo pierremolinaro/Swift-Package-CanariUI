@@ -1,21 +1,17 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 21/02/2026.
+//  Created by Pierre Molinaro on 31/03/2026.
 //--------------------------------------------------------------------------------------------------
 
 import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariWidget <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : Sendable {
+public extension GraphicsContext {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var decorator : any DecoratorUIProtocol <WidgetTypesDescription>
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public init (_ inDecorator : any DecoratorUIProtocol <WidgetTypesDescription>) {
-    self.decorator = inDecorator
+  mutating func rotate (by inAngle : CanariAngle) {
+    self.rotate (by: Angle.radians (inAngle.radians))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
