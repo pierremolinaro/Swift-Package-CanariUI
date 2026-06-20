@@ -50,7 +50,11 @@ struct InspectorOfCanariScaledOrientedOrigin <WidgetTypesDescription : DocumentW
       )
     }
     CanariElementExpandableInspector (title: "Enclosing Rectangle", subTitle: "", isExpanded: self.$mBoundingRectInspectorIsExpanded) {
-      ViewerOfCanariRectSet (rectSet: Set (self.mWidgetsUserInterface.selectedWidgetArray ().map { $0.shape.orientedOrigin.globalBoundingRect }))
+      ViewerOfCanariRectSet (
+        rectSet: Set (self.mWidgetsUserInterface.selectedWidgetArray ().map { $0.shape.orientedOrigin.globalBoundingRect }),
+        unit: .mm,
+        fractionDigits: 2
+      )
     }
   }
 
