@@ -64,6 +64,10 @@ public struct CanariLength : CustomStringConvertible, Hashable, Comparable, Send
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public static var max : CanariLength { CanariLength (.max, in: .cu) }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public init (adding inA : CanariLength, _ inB : CanariLength) {
     self.cuValue = inA.cuValue + inB.cuValue
   }
