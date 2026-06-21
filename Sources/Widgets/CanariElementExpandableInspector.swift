@@ -11,18 +11,21 @@ public struct CanariElementExpandableInspector <Content> : View where Content : 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private let mTitle : String
-  private let mSubTitle : String
+  private let mExpandedSubTitle : String
+  private let mCollapsedSubTitle : String
   private let mContent : () -> Content
   @Binding private var mIsExpanded : Bool
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (title inTitle : String,
-               subTitle inSubTitle : String,
+               expandedSubtitle inExpandedSubTitle : String = "",
+               collapsedSubtitle inCollapsedSubTitle : String = "",
                isExpanded inIsExpanded : Binding <Bool>,
                @ViewBuilder content : @escaping () -> Content) {
     self.mTitle = inTitle
-    self.mSubTitle = inSubTitle
+    self.mExpandedSubTitle = inExpandedSubTitle
+    self.mCollapsedSubTitle = inCollapsedSubTitle
     self._mIsExpanded = inIsExpanded
     self.mContent = content
   }
@@ -36,8 +39,10 @@ public struct CanariElementExpandableInspector <Content> : View where Content : 
       HStack {
         Text (self.mTitle).bold ()
         Spacer ()
-        if !self.mSubTitle.isEmpty, self.mIsExpanded {
-          Text (self.mSubTitle)
+        if self.mIsExpanded {
+          Text (self.mExpandedSubTitle)
+        }else{
+          Text (self.mCollapsedSubTitle)
         }
       }
     }

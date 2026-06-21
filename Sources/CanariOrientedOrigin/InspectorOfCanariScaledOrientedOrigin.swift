@@ -32,13 +32,13 @@ struct InspectorOfCanariScaledOrientedOrigin <WidgetTypesDescription : DocumentW
       setterY: { for id in self.mWidgetsUserInterface.selection { self.mWidgetsUserInterface [shapeID: id]?.shape.orientedOrigin.mOrigin.y = $0 } },
       isExpanded: self.$mCenterInspectorIsExpanded
     )
-    CanariElementExpandableInspector (title: "Angle", subTitle: "", isExpanded: self.$mAngleInspectorIsExpanded) {
+    CanariElementExpandableInspector (title: "Angle", isExpanded: self.$mAngleInspectorIsExpanded) {
       EditorOfCanariAngleSet (
         angleSet: Set (self.mWidgetsUserInterface.selectedWidgetArray ().map { $0.shape.orientedOrigin.mAngle }),
         setter: { for id in self.mWidgetsUserInterface.selection { self.mWidgetsUserInterface [shapeID: id]?.shape.orientedOrigin.mAngle = $0 } }
       )
     }
-    CanariElementExpandableInspector (title: "Scale, Flip", subTitle: "", isExpanded: self.$mScaleInspectorIsExpanded) {
+    CanariElementExpandableInspector (title: "Scale, Flip", isExpanded: self.$mScaleInspectorIsExpanded) {
       EditorOfScaleSet (
         valueSet: Set (self.mWidgetsUserInterface.selectedWidgetArray ().map { $0.shape.orientedOrigin.mScale }),
         setter: { for id in self.mWidgetsUserInterface.selection { self.mWidgetsUserInterface [shapeID: id]?.shape.orientedOrigin.mScale = $0 } }
@@ -49,7 +49,7 @@ struct InspectorOfCanariScaledOrientedOrigin <WidgetTypesDescription : DocumentW
         setter: { for id in self.mWidgetsUserInterface.selection { self.mWidgetsUserInterface [shapeID: id]?.shape.orientedOrigin.mHorizontalFlip = $0 } }
       )
     }
-    CanariElementExpandableInspector (title: "Enclosing Rectangle", subTitle: "", isExpanded: self.$mBoundingRectInspectorIsExpanded) {
+    CanariElementExpandableInspector (title: "Enclosing Rectangle", isExpanded: self.$mBoundingRectInspectorIsExpanded) {
       ViewerOfCanariRectSet (
         rectSet: Set (self.mWidgetsUserInterface.selectedWidgetArray ().map { $0.shape.orientedOrigin.globalBoundingRect }),
         unit: .mm,

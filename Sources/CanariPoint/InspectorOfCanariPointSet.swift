@@ -37,7 +37,7 @@ public struct InspectorOfCanariPointSet : View {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var body : some View {
-    CanariElementInspector (title: "Center", subTitle: "cm") {
+    CanariElementInspector (title: "Center", expandedSubtitle: "cm") {
       HStack {
         Spacer ()
         Form {

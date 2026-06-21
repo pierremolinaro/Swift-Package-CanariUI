@@ -212,7 +212,7 @@ fileprivate struct WidgetGroupInspectorView <WidgetTypesDescription : DocumentWi
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   var body : some View {
-    CanariElementInspector (title: "Ungrouping", subTitle: "") {
+    CanariElementInspector (title: "Ungrouping") {
       HStack {
         Text ("Group count")
         ViewerOfStringSet (Set (self.mProxy.arrayOf (\T.count).map { "\($0)" }) )
