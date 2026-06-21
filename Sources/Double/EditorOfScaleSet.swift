@@ -31,10 +31,6 @@ public struct EditorOfScaleSet : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-//  private var mFactor : Double { sqrt (sqrt (2.0)) }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
   public var body : some View {
     HStack (spacing: 0) {
       TextField (

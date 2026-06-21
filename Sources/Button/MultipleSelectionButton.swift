@@ -1,30 +1,30 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 04/06/2026.
+//  Created by Pierre Molinaro on 21/06/2026.
 //--------------------------------------------------------------------------------------------------
 
 import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct ViewerOfOptionalString : View {
+public struct MultipleSelectionButton : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private let mText : String?
+  private let mAction : @MainActor () -> Void
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (_ inText : String?) {
-    self.mText = inText
+  public init (value inAction : @escaping @MainActor () -> Void) {
+    self.mAction = inAction
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var body : some View {
-    if let text = self.mText {
-      Text (text)
-    }else{
+    HStack {
       Text (MULTIPLE_VALUES_MARK)
+      Button ("", systemImage: "arrowtriangle.down.square") { self.mAction () }
+      .labelStyle (.iconOnly)
     }
   }
 
@@ -33,3 +33,4 @@ public struct ViewerOfOptionalString : View {
 }
 
 //--------------------------------------------------------------------------------------------------
+
