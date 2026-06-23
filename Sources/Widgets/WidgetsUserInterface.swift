@@ -794,7 +794,7 @@ import Combine
   //MARK: Inspector view
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @MainActor @ViewBuilder public func inspectorViewForCurrentSelection () -> some View {
+  @MainActor @ViewBuilder public func inspectorViewForSelectedShapes () -> some View {
     if self.mSelection.isEmpty {
       Text ("Empty Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
     }else{

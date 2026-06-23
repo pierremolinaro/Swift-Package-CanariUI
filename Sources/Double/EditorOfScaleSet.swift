@@ -60,7 +60,7 @@ public struct EditorOfScaleSet : View {
         self.mSetter (self.mDoubleValue! * self.mFactor.value)
       } onDecrement: {
         self.mSetter (self.mDoubleValue! / self.mFactor.value)
-      }.help (self.mFactor.value.str3f).isHidden (self.mDoubleValue == nil).controlSize (.small)
+      }.help (self.mFactor.value.str3f).hiddenWhen (self.mDoubleValue == nil).controlSize (.small)
       .overlay {
         if self.mValueArray.count > 1 {
           Menu ("") {

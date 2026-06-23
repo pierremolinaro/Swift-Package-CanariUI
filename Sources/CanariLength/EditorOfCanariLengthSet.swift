@@ -72,7 +72,7 @@ struct EditorOfCanariLengthSet : View {
         self.mSetter (CanariLength (self.mDoubleValue!, in: self.mUnit) + self.mUnit.length)
       } onDecrement: {
         self.mSetter (CanariLength (self.mDoubleValue!, in: self.mUnit) - self.mUnit.length)
-      }.help (self.mUnit.unitString).isHidden (self.mDoubleValue == nil).controlSize (.small)
+      }.help (self.mUnit.unitString).hiddenWhen (self.mDoubleValue == nil).controlSize (.small)
       .overlay {
         if self.mLengthArray.count > 1 {
           Menu ("") {
@@ -88,14 +88,14 @@ struct EditorOfCanariLengthSet : View {
         self.mSetter (CanariLength (self.mDoubleValue!, in: self.mUnit) + self.mUnit.length / 10.0)
       } onDecrement: {
         self.mSetter (CanariLength (self.mDoubleValue!, in: self.mUnit) - self.mUnit.length / 10.0)
-      }.help (self.mUnit.unitString + "/10").isHidden (self.mDoubleValue == nil).controlSize (.small)
+      }.help (self.mUnit.unitString + "/10").hiddenWhen (self.mDoubleValue == nil).controlSize (.small)
       Stepper {
         EmptyView ()
       } onIncrement: {
         self.mSetter (CanariLength (self.mDoubleValue!, in: self.mUnit) + self.mUnit.length / 100.0)
       } onDecrement: {
         self.mSetter (CanariLength (self.mDoubleValue!, in: self.mUnit) - self.mUnit.length / 100.0)
-      }.help (self.mUnit.unitString + "/100").isHidden (self.mDoubleValue == nil).controlSize (.small)
+      }.help (self.mUnit.unitString + "/100").hiddenWhen (self.mDoubleValue == nil).controlSize (.small)
     }
   }
 

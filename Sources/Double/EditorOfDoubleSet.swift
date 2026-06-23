@@ -68,7 +68,7 @@ public struct EditorOfDoubles : View {
         self.mSetter (self.mDoubleValue! * self.mFactor)
       } onDecrement: {
         self.mSetter (self.mDoubleValue! / self.mFactor)
-      }.help ("\(self.mFactor)").isHidden (self.mDoubleValue == nil).controlSize (.small)
+      }.help ("\(self.mFactor)").hiddenWhen (self.mDoubleValue == nil).controlSize (.small)
       .overlay {
         if self.mValueArray.count > 1 {
           Menu ("") {

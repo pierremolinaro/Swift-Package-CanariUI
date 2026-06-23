@@ -59,7 +59,7 @@ public struct EditorOfCanariAngleSet : View {
 //        self.mSetter (CanariAngle (self.mDoubleValue!, in: .degrees) + .degrees (10))
 //      } onDecrement: {
 //        self.mSetter (CanariAngle (self.mDoubleValue!, in: .degrees) - .degrees (10))
-//      }.help ("10°").isHidden (self.mDoubleValue == nil).controlSize (.small)
+//      }.help ("10°").hiddenWhen (self.mDoubleValue == nil).controlSize (.small)
 //      .overlay {
 //        if self.mAngleArray.count > 1 {
 //          Menu ("") {
@@ -75,7 +75,7 @@ public struct EditorOfCanariAngleSet : View {
         self.mSetter (CanariAngle (self.mDoubleValue!, in: .degrees) + .degrees (1))
       } onDecrement: {
         self.mSetter (CanariAngle (self.mDoubleValue!, in: .degrees) - .degrees (1))
-      }.help ("± 1°").isHidden (self.mDoubleValue == nil).controlSize (.small)
+      }.help ("± 1°").hiddenWhen (self.mDoubleValue == nil).controlSize (.small)
       .overlay {
         if self.mAngleArray.count > 1 {
           Menu ("") {
@@ -91,7 +91,7 @@ public struct EditorOfCanariAngleSet : View {
         self.mSetter (CanariAngle (self.mDoubleValue!, in: .degrees) + .degrees (0.1))
       } onDecrement: {
         self.mSetter (CanariAngle (self.mDoubleValue!, in: .degrees) - .degrees (0.1))
-      }.help ("± 0.1°").isHidden (self.mDoubleValue == nil).controlSize (.small)
+      }.help ("± 0.1°").hiddenWhen (self.mDoubleValue == nil).controlSize (.small)
       VStack (spacing: 0) {
         ControlGroup ("") {
           Button ("0°", systemImage: "arrow.right") { self.mSetter (.zero) }.labelsHidden().help ("0°")

@@ -8,7 +8,7 @@ public extension View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @ViewBuilder func isHidden (_ inHidden : Bool) -> some View {
+  @ViewBuilder func hiddenWhen (_ inHidden : Bool) -> some View {
     if inHidden {
       self.hidden ()
     }else{
