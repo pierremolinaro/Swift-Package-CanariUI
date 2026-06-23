@@ -29,36 +29,53 @@ public struct ViewerOfCanariRectSet : View {
   public var body : some View {
     VStack {
       ViewerOfOptionalString (self.maxY?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
-      .background (Rectangle ().fill (.white))
-      .anchorPreference (key: CentersKey.self, value: .center) { ["bottom" : $0] }
+//      .background (Rectangle ().fill (.quinary))
+      .anchorPreference (key: CentersKey.self, value: .bounds) { ["bottom" : $0] }
       HStack {
         ViewerOfOptionalString (self.minX?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
-        .background (Rectangle ().fill (.white))
-        .anchorPreference (key: CentersKey.self, value: .center) { ["left" : $0] }
+//        .background (Rectangle ().fill (.quaternary))
+        .anchorPreference (key: CentersKey.self, value: .bounds) { ["left" : $0] }
         Spacer ()
         ViewerOfOptionalString (self.maxX?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
-        .background (Rectangle ().fill (.white))
-        .anchorPreference (key: CentersKey.self, value: .center) { ["right" : $0] }
+ //       .background (Rectangle ().fill (.white))
+        .anchorPreference (key: CentersKey.self, value: .bounds) { ["right" : $0] }
       }
       ViewerOfOptionalString (self.minY?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
-      .background (Rectangle ().fill (.white))
-      .anchorPreference (key: CentersKey.self, value: .center) { ["top" : $0] }
+//      .background (Rectangle ().fill (.white))
+      .anchorPreference (key: CentersKey.self, value: .bounds) { ["top" : $0] }
     }
     .backgroundPreferenceValue (CentersKey.self) { anchors in
       GeometryReader { widget in
-        let shape = Path { path in
-          let top = widget [anchors ["top"]!].y
-          let left = widget [anchors ["left"]!].x
-          let right = widget [anchors ["right"]!].x
-          let bottom = widget [anchors ["bottom"]!].y
-          path.addRect (CGRect (origin: CGPoint (x: left, y: top), size: CGSize (width: right - left, height: bottom - top)))
-        }
-        ZStack {
-          shape.fill (.gray.opacity (0.1))
-          shape.stroke (style: StrokeStyle(lineWidth: 1, lineCap: .round, lineJoin: .round))
-        }
+        let top : CGRect = widget [anchors ["top"]!]
+        let left = widget [anchors ["left"]!]
+        let right = widget [anchors ["right"]!]
+        let bottom = widget [anchors ["bottom"]!]
+        let path = self.rect (top: top, left: left, bottom: bottom, right: right)
+        path.stroke (style: StrokeStyle(lineWidth: 1, lineCap: .round, lineJoin: .round))
       }
     }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  private func rect (top inTop : CGRect,
+                     left inLeft : CGRect,
+                     bottom inBottom : CGRect,
+                     right inRight : CGRect) -> Path {
+    var path = Path ()
+    path.move (to: CGPoint (x: inTop.minX - 2.0, y: inTop.midY))
+    path.addLine (to: CGPoint (x: inLeft.midX, y: inTop.midY))
+    path.addLine (to: CGPoint (x: inLeft.midX, y: inLeft.maxY))
+    path.move (to: CGPoint (x: inTop.maxX + 2.0, y: inTop.midY))
+    path.addLine (to: CGPoint (x: inRight.midX, y: inTop.midY))
+    path.addLine (to: CGPoint (x: inRight.midX, y: inRight.maxY))
+    path.move (to: CGPoint (x: inRight.midX, y: inRight.minY))
+    path.addLine (to: CGPoint (x: inRight.midX, y: inBottom.midY))
+    path.addLine (to: CGPoint (x: inBottom.maxX + 2.0, y: inBottom.midY))
+    path.move (to: CGPoint (x: inBottom.minX - 2.0, y: inBottom.midY))
+    path.addLine (to: CGPoint (x: inLeft.midX, y: inBottom.midY))
+    path.addLine (to: CGPoint (x: inLeft.midX, y: inLeft.minY))
+    return path
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -167,12 +184,12 @@ fileprivate struct CentersKey : PreferenceKey {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  static let defaultValue : [String: Anchor<CGPoint>] = [:]
+  static let defaultValue : [String: Anchor<CGRect>] = [:]
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  static func reduce (value: inout [String : Anchor<CGPoint>],
-                      nextValue: () -> [String : Anchor<CGPoint>]) {
+  static func reduce (value: inout [String : Anchor<CGRect>],
+                      nextValue: () -> [String : Anchor<CGRect>]) {
     value.merge(nextValue()) { _, new in new }
   }
 
