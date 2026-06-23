@@ -8,15 +8,15 @@ import PackageDescription
 //------------------------------------------------------------------------------
 
 let package = Package (
-  name: "CanariGeometry",
+  name: "CanariUI",
   platforms: [.macOS ("26.0")],
   products: [
-    .library (name: "CanariGeometry", targets: ["CanariGeometry"]),
+    .library (name: "CanariUI", targets: ["CanariUI"]),
   ],
   dependencies: [],
   targets: [
     .target (
-      name: "CanariGeometry",
+      name: "CanariUI",
       dependencies: [],
    //   swiftSettings: [.defaultIsolation (MainActor.self)]
     ),
