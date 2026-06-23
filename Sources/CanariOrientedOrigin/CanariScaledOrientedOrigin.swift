@@ -74,6 +74,11 @@ public struct CanariScaledOrientedOrigin : Sendable, Equatable, Codable, CustomS
     self.computeAffinities ()
   }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public init () {
+    self.init (.zero, .zero, 1.0, false)
+  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -210,6 +215,17 @@ public struct CanariScaledOrientedOrigin : Sendable, Equatable, Codable, CustomS
     self.mAngle += inGlobalOrientedOrigin.mAngle
     self.mScale *= inGlobalOrientedOrigin.mScale
     self.mHorizontalFlip = self.mHorizontalFlip != inGlobalOrientedOrigin.mHorizontalFlip
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func transforming (toGlobal inGlobalOrientedOrigin : Self) -> Self {
+    var result = self
+    result.mOrigin = inGlobalOrientedOrigin.localToGlobal (self.mOrigin)
+    result.mAngle += inGlobalOrientedOrigin.mAngle
+    result.mScale *= inGlobalOrientedOrigin.mScale
+    result.mHorizontalFlip = result.mHorizontalFlip != inGlobalOrientedOrigin.mHorizontalFlip
+    return result
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

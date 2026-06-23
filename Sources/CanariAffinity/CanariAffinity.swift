@@ -285,9 +285,7 @@ public struct CanariAffinity : CustomStringConvertible, Sendable, Equatable {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func transforming (_ inPath : CanariPath) -> CanariPath {
-    var result = CanariPath ()
-    result.mPath = inPath.mPath.applying (self.cgAffineTransform)
-    return result
+    return inPath.transformed (by: self)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

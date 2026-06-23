@@ -8,7 +8,6 @@ import Combine
 //--------------------------------------------------------------------------------------------------
 
 fileprivate let BACK_DELETE_KEY_EQ = KeyEquivalent (Character (Unicode.Scalar (0x7F)!))
-//fileprivate let PASTEBOARD_TYPE = NSPasteboard.PasteboardType (rawValue: Bundle.main.bundleIdentifier! + ".widgets")
 fileprivate let DEBUG_COLOR = Color.clear // red.opacity (0.15)
 fileprivate let ANCHOR_FOR_INITIAL_SCROLL = "bottom.left.for.initial.scroll"
 
@@ -19,6 +18,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private let mBackgroundViewBuilder : (BackgroundViewContext) -> any View
+  private let mDrawOverlay : (_ ioContext : inout GraphicsContext) -> Void
   private let mTopHorizontalRulerViewBuilder : (HorizontalRulerViewContext) -> any View
   private let mLeftVerticalRulerViewBuilder : (VerticalRulerViewContext) -> any View
   private let mBottomHorizontalRulerViewBuilder : (HorizontalRulerViewContext) -> any View
@@ -50,6 +50,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
         canvasScale inScale : Binding <Double>,
         alignedHoverUserLocation inAlignedHoverUserLocation : Binding <CanariPoint?>,
         widgetsUserInterface inWidgetsUserInterface : WidgetsUserInterface <WidgetTypesDescription>,
+        drawOverlay inDrawOverlay : @escaping (_ ioContext : inout GraphicsContext) -> Void,
         backgroundViewBuilder inBackgroundViewBuilder : @escaping (BackgroundViewContext) -> any View,
         leftVerticalRulerViewBuilder inLeftVerticalRulerViewBuilder : @escaping (VerticalRulerViewContext) -> any View,
         topHorizontalRulerViewBuilder inTopHorizontalRulerViewBuilder : @escaping (HorizontalRulerViewContext) -> any View,
@@ -67,6 +68,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
       height: inContext.canvasSize.height + inContext.margins.top + inContext.margins.bottom
     )
     self.mBackgroundViewBuilder = inBackgroundViewBuilder
+    self.mDrawOverlay = inDrawOverlay
     self.mLeftVerticalRulerViewBuilder = inLeftVerticalRulerViewBuilder
     self.mRightVerticalRulerViewBuilder = inRightVerticalRulerViewBuilder
     self.mBottomHorizontalRulerViewBuilder = inBottomHorizontalRulerViewBuilder
@@ -361,6 +363,9 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
         )
         context.scaleBy (x: 1.0, y: -1.0)
         self.mWidgetsUserInterface.draw (context: &context, hoverUserLocationPoint: self.mUnalignedHoverUserLocation, scale: self.mCanvasScale)
+        context.scaleBy (x: self.mCanvasScale, y: self.mCanvasScale)
+        self.mDrawOverlay (&context)
+        context.scaleBy (x: 1.0 / self.mCanvasScale, y: 1.0 / self.mCanvasScale)
       }
     }
   //--- Observing modifier key changing

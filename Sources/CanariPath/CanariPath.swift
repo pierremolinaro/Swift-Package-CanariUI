@@ -10,7 +10,7 @@ public struct CanariPath : Equatable, CustomStringConvertible, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var mPath : Path
+  private var mPath : Path
   var swiftuiPath : Path { self.mPath }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -91,7 +91,7 @@ public struct CanariPath : Equatable, CustomStringConvertible, Sendable {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public mutating func addPath (_ inPath : CanariPath) {
-    self.mPath.addPath (inPath.swiftuiPath)
+    self.mPath.addPath (inPath.mPath)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -220,6 +220,10 @@ public struct CanariPath : Equatable, CustomStringConvertible, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public var isEmpty : Bool { self.mPath.isEmpty }
+  
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public func intersects (_ inRect : CanariRect) -> Bool {
   //--- BIZARRE ! le code avec Path renvoie toujours une intersection non vide !!!
 //    let r = Path (inRect.pxValue)
@@ -236,6 +240,14 @@ public struct CanariPath : Equatable, CustomStringConvertible, Sendable {
   //--- On utilise aussi un CGPath
     let intersection = self.mPath.cgPath.intersection (inPath.mPath.cgPath)
     return !intersection.isEmpty
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func lineIntersection (_ inPath : CanariPath) -> CanariPath {
+  //--- On utilise aussi un CGPath
+    let cgIntersection = self.mPath.cgPath.lineIntersection (inPath.mPath.cgPath)
+    return CanariPath (cgPath: cgIntersection)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

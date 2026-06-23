@@ -90,7 +90,10 @@ public struct Shape_Group <WidgetTypesDescription : DocumentWidgetsDescriptionPr
 
   public func isEqual (to inOther : any CanariShapeUIProtocol <WidgetTypesDescription>) -> Bool {
     if let other = inOther as? Shape_Group <WidgetTypesDescription> {
-      return (self.id == other.id) && (self.mArray == other.mArray) && (self.mUnGroupIsEnabled == other.mUnGroupIsEnabled)
+      return (self.id == other.id)
+          && (self.orientedOrigin == other.orientedOrigin)
+          && (self.mUnGroupIsEnabled == other.mUnGroupIsEnabled)
+          && (self.mArray == other.mArray)
     }else{
       return false
     }
