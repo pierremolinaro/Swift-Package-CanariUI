@@ -26,6 +26,15 @@ public struct CanariStrokeStyle : Equatable, CanariCodableByString, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public init (lineWidth inLineWidth : CanariLength) {
+    self.lineCapStyle = .round
+    self.lineJoinStyle = .round
+    self.lineWidth = inLineWidth
+    self.miterLimit = CanariLength.px (10.0)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public init (scanner inScanner : Scanner, _ ioOk : inout Bool) {
     if let v = CGLineCap (rawValue: Int32 (scanner: inScanner, &ioOk)) {
       self.lineCapStyle = v
@@ -76,7 +85,7 @@ public struct CanariStrokeStyle : Equatable, CanariCodableByString, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var strokeStyle : StrokeStyle {
+  public var swiftui : StrokeStyle {
     StrokeStyle (
       lineWidth: self.lineWidth.pxValue,
       lineCap: self.lineCapStyle,

@@ -140,9 +140,13 @@ public struct CanariScaledOrientedOrigin : Sendable, Equatable, Codable, CustomS
 
   public func globalOutlineIntersects (globalRect inGlobalRect : CanariRect) -> Bool {
     let globalRect = inGlobalRect.moved (by: -self.mOrigin)
-    return self.mOriginCenteredGlobalOutlineAndBoundingRect.boundingRect.intersects (globalRect)
-            &&
-           self.mOriginCenteredGlobalOutlineAndBoundingRect.path.intersects (globalRect)
+    if self.mOriginCenteredGlobalOutlineAndBoundingRect.boundingRect.isEmpty {
+      return self.mOriginCenteredGlobalOutlineAndBoundingRect.path.intersectsLines (of: globalRect)
+    }else{
+      return self.mOriginCenteredGlobalOutlineAndBoundingRect.boundingRect.intersects (globalRect)
+              &&
+             self.mOriginCenteredGlobalOutlineAndBoundingRect.path.intersects (globalRect)
+    }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -60,6 +60,19 @@ public struct CanariPath : Equatable, CustomStringConvertible, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public init (points inPoints : [CanariPoint], isClosed inIsClosed : Bool) {
+    self.init ()
+    self.move (to: inPoints [0])
+    for i in 1 ..< inPoints.count {
+      self.addLine (to: inPoints [i])
+    }
+    if inIsClosed {
+      self.close ()
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public init (ellipse inRect : CanariRect) {
     self.mPath = Path (ellipseIn: inRect.pxValue)
   }
@@ -200,6 +213,23 @@ public struct CanariPath : Equatable, CustomStringConvertible, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public func stroked (with inLineWidth : CanariLength) -> CanariPath {
+    let style = CanariStrokeStyle (lineWidth: inLineWidth)
+    var result = CanariPath ()
+    result.mPath = self.mPath.strokedPath (style.swiftui)
+    return result
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func stroked (with inStyle : CanariStrokeStyle) -> CanariPath {
+    var result = CanariPath ()
+    result.mPath = self.mPath.strokedPath (inStyle.swiftui)
+    return result
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public var xMirrored : Self {
     self.transformed (by: CanariAffinity (scale: 1.0, horizontalFlip: true))
   }
@@ -236,6 +266,18 @@ public struct CanariPath : Equatable, CustomStringConvertible, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public func intersectsLines (of inRect : CanariRect) -> Bool {
+  //--- BIZARRE ! le code avec Path renvoie toujours une intersection non vide !!!
+//    let r = Path (inRect.pxValue)
+//    let intersection = self.mPath.intersection (r)
+  //--- Alors, on utilise un CGPath, et là, c'est ok
+    let r = unsafe CGPath (rect: inRect.pxValue, transform: nil)
+    let intersection = self.mPath.cgPath.lineIntersection (r)
+    return !intersection.isEmpty
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public func intersects (_ inPath : CanariPath) -> Bool {
   //--- On utilise aussi un CGPath
     let intersection = self.mPath.cgPath.intersection (inPath.mPath.cgPath)
@@ -247,6 +289,14 @@ public struct CanariPath : Equatable, CustomStringConvertible, Sendable {
   public func lineIntersection (_ inPath : CanariPath) -> CanariPath {
   //--- On utilise aussi un CGPath
     let cgIntersection = self.mPath.cgPath.lineIntersection (inPath.mPath.cgPath)
+    return CanariPath (cgPath: cgIntersection)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func intersection (_ inPath : CanariPath) -> CanariPath {
+  //--- On utilise aussi un CGPath
+    let cgIntersection = self.mPath.cgPath.intersection (inPath.mPath.cgPath)
     return CanariPath (cgPath: cgIntersection)
   }
 

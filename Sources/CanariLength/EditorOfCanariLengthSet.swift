@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-struct EditorOfCanariLengthSet : View {
+public struct EditorOfCanariLengthSet : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -20,12 +20,12 @@ struct EditorOfCanariLengthSet : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  init (lengthSet inLengthSet : Set <CanariLength>,
-        setter inSetter: @escaping (CanariLength) -> Void,
-        unit inUnit : CanariLength.Unit = .cm,
-        fractionDigits inFractionDigits : Int = 2,
-        width inWidth : CGFloat,
-        displayUnit inDisplayUnit : Bool) {
+  public init (lengthSet inLengthSet : Set <CanariLength>,
+               setter inSetter: @escaping (CanariLength) -> Void,
+               unit inUnit : CanariLength.Unit = .cm,
+               fractionDigits inFractionDigits : Int = 2,
+               width inWidth : CGFloat,
+               displayUnit inDisplayUnit : Bool) {
     self.mLengthArray = Array (inLengthSet).sorted ()
     if inLengthSet.count == 1, let v = inLengthSet.first {
       self.mDoubleValue = v.value (in: inUnit)
@@ -41,7 +41,7 @@ struct EditorOfCanariLengthSet : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var body : some View {
+  public var body : some View {
     HStack (spacing: 0) {
       TextField (
         "",

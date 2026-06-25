@@ -13,7 +13,7 @@ public extension GraphicsContext {
   func stroke (_ inPath : CanariPath,
                with inShading : GraphicsContext.Shading,
                style inStyle : CanariStrokeStyle) {
-    self.stroke (inPath.swiftuiPath, with: inShading, style: inStyle.strokeStyle)
+    self.stroke (inPath.swiftuiPath, with: inShading, style: inStyle.swiftui)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -21,7 +21,8 @@ public extension GraphicsContext {
   func stroke (_ inPath : CanariPath,
                with inShading : GraphicsContext.Shading,
                lineWidth inLineWidth : CanariLength) {
-    self.stroke (inPath.swiftuiPath, with: inShading, lineWidth: inLineWidth.pxValue)
+    let style = CanariStrokeStyle (lineWidth: inLineWidth)
+    self.stroke (inPath.swiftuiPath, with: inShading, style: style.swiftui)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
