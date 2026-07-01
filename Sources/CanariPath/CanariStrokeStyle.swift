@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariStrokeStyle : Equatable, CanariCodableByString, Sendable {
+public struct CanariStrokeStyle : Equatable, CanariCodableByString {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

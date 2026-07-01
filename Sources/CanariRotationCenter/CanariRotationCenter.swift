@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public enum CanariRotationCenter : UInt, CustomStringConvertible, Sendable, Codable {
+public enum CanariRotationCenter : UInt, CustomStringConvertible, Codable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

@@ -8,7 +8,7 @@ import Foundation
 //  struct CanariSize
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariSize : Hashable, CustomStringConvertible, Sendable, RawRepresentable {
+public struct CanariSize : Hashable, CustomStringConvertible, RawRepresentable {
 
   public typealias RawValue = String // RawRepresentable
 

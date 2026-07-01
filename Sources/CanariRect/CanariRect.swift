@@ -8,7 +8,7 @@ import Foundation
 //  struct CanariRect
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariRect : Hashable, CustomStringConvertible, Sendable, Codable {
+public struct CanariRect : Hashable, CustomStringConvertible, Codable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

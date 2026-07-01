@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public protocol CanariShapeModelProtocol <WidgetTypesDescription> : Identifiable, Sendable, Codable {
+public protocol CanariShapeModelProtocol <WidgetTypesDescription> : Identifiable, Codable {
 
   associatedtype WidgetTypesDescription : DocumentWidgetsDescriptionProtocol
 

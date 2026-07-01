@@ -20,7 +20,7 @@ public final class CanariInspectorProxy <WidgetTypesDescription : DocumentWidget
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @MainActor public subscript <T : CanariShapeUIProtocol <WidgetTypesDescription>, Value : Equatable & Sendable> (bindingFor inKeyPath : WritableKeyPath <T, Value>) -> Binding <Value?> {
+  @MainActor public subscript <T : CanariShapeUIProtocol <WidgetTypesDescription>, Value : Equatable> (bindingFor inKeyPath : WritableKeyPath <T, Value>) -> Binding <Value?> {
     let binding = Binding <Value?> (
       get: {
         var result : Value? = nil

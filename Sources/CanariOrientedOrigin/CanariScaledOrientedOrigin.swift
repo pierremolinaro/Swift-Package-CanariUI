@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariScaledOrientedOrigin : Sendable, Equatable, Codable, CustomStringConvertible {
+public struct CanariScaledOrientedOrigin : Equatable, Codable, CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

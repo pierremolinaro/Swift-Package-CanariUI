@@ -7,7 +7,6 @@ import SwiftUI
 //--------------------------------------------------------------------------------------------------
 
 public struct CanariRGBColor : Codable,
-                               Sendable,
                                Hashable,
                                RawRepresentable,
                                CanariCodableByString,
