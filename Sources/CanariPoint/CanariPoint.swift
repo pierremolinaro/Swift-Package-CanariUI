@@ -156,9 +156,9 @@ public struct CanariPoint : Hashable, CustomStringConvertible, Sendable {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public static func distance (_ inLeft : CanariPoint, _ inRight : CanariPoint) -> CanariLength {
-    let dxMM = (inLeft.x - inRight.x).mmValue
-    let dyMM = (inLeft.y - inRight.y).mmValue
-    return .mm (sqrt (dxMM * dxMM + dyMM * dyMM))
+    let dx = Double ((inLeft.x - inRight.x).cuValue)
+    let dy = Double ((inLeft.y - inRight.y).cuValue)
+    return .cu (sqrt (dx * dx + dy * dy))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

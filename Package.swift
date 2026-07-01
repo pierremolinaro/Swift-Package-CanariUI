@@ -18,7 +18,10 @@ let package = Package (
     .target (
       name: "CanariUI",
       dependencies: [],
-   //   swiftSettings: [.defaultIsolation (MainActor.self)]
+    ),
+    .testTarget (
+      name: "SegmentIntersection",
+      dependencies: ["CanariUI"],
     ),
   ]
 )

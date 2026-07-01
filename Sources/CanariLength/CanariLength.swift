@@ -123,7 +123,7 @@ public struct CanariLength : CustomStringConvertible, Hashable, Comparable, Send
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func aligning (to inUnit : CanariLength?) -> CanariLength {
-    if let unit = inUnit {
+    if let unit = inUnit, !unit.isZero {
       return .cu ((self.cuValue + unit.cuValue / 2) / unit.cuValue) * unit.cuValue
     }else{
       return self
