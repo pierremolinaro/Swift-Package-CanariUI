@@ -6,7 +6,7 @@ import Foundation
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariAffinity : CustomStringConvertible, Sendable, Equatable {
+public nonisolated struct CanariAffinity : CustomStringConvertible, Equatable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -152,7 +152,7 @@ public struct CanariAffinity : CustomStringConvertible, Sendable, Equatable {
        [ 0  1  0 ]
        [ 0  0  1 ]
   */
-  public static let identity = CanariAffinity ()
+  @MainActor public static let identity = CanariAffinity ()
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   /**
