@@ -27,6 +27,12 @@ public struct CanariPath : Equatable, Sendable, CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  private init (swiftuiPath inPath : Path) {
+    self.mPath = inPath
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public init (rect inRect : CanariRect,
                angle inAngle : CanariAngle = .zero,
                around inRotationCenter : CanariRotationCenter = .center) {
@@ -99,6 +105,13 @@ public struct CanariPath : Equatable, Sendable, CustomStringConvertible {
 
   public mutating func move (toX inX : Double, toY inY : Double) {
     self.mPath.move (to: CGPoint (x: inX, y: inY))
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public mutating func addSegment (_ inSegment : CanariSegment) {
+    self.move (to: inSegment.start)
+    self.addLine (to: inSegment.end)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -606,6 +619,10 @@ public struct CanariPath : Equatable, Sendable, CustomStringConvertible {
       .translating (x: .zero, y: -midY)
     self.transformInPlace (by: af)
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func normalized () -> CanariPath { CanariPath (swiftuiPath: self.mPath.normalized ()) }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
