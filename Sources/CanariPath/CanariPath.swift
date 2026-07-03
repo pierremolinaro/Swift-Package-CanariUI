@@ -134,6 +134,20 @@ public struct CanariPath : Equatable, Sendable, CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public mutating func addArrow (to inPoint : CanariPoint, length inLength : CanariLength) {
+    if let startPoint = self.currentCanariPoint, inPoint != startPoint {
+      let angle = startPoint.angle (to: inPoint)
+      self.addLine (to: inPoint)
+      let p1 = inPoint + CanariPoint (length: inLength, angle: angle + .degrees (135))
+      self.addLine (to: p1)
+      let p2 = inPoint + CanariPoint (length: inLength, angle: angle - .degrees (135))
+      self.move (to: p2)
+      self.addLine (to: inPoint)
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public mutating func addLine (to inPoint : CGPoint) {
     self.mPath.addLine (to: inPoint)
   }

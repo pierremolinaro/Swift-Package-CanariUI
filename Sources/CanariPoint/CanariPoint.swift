@@ -126,8 +126,14 @@ public struct CanariPoint : Hashable, CustomStringConvertible, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var cmValue : String {
-    unsafe String (format: "%.3f", self.x.cmValue) + ", " + String (format: "%.3f", self.y.cmValue)
+  public var cmString : String {
+    unsafe String (format: "%.3f", self.x.cmValue) + " cm, " + String (format: "%.3f", self.y.cmValue) + " cm"
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public var mmString : String {
+    unsafe String (format: "%.3f", self.x.mmValue) + " mm, " + String (format: "%.3f", self.y.mmValue) + " mm"
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
