@@ -104,7 +104,7 @@ public struct CanariPoint : Hashable, CustomStringConvertible, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func distance (to inPoint : CanariPoint) -> CanariLength {
+  public func distance (to inPoint : CanariPoint) -> CanariLength {
     let dx = (self.x - inPoint.x).cuValue
     let dy = (self.y - inPoint.y).cuValue
     return .cu (sqrt (Double (dx * dx + dy * dy)))
@@ -112,10 +112,10 @@ public struct CanariPoint : Hashable, CustomStringConvertible, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func squareOfDistance (to inPoint : CanariPoint) -> Double {
-    let dx = (self.x - inPoint.x).pxValue
-    let dy = (self.y - inPoint.y).pxValue
-    return dx * dx + dy * dy
+  public func squareOfCuDistance (to inPoint : CanariPoint) -> UInt {
+    let dx = (self.x - inPoint.x).cuValue
+    let dy = (self.y - inPoint.y).cuValue
+    return UInt (dx * dx + dy * dy)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -161,11 +161,11 @@ public struct CanariPoint : Hashable, CustomStringConvertible, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public static func distance (_ inLeft : CanariPoint, _ inRight : CanariPoint) -> CanariLength {
-    let dx = Double ((inLeft.x - inRight.x).cuValue)
-    let dy = Double ((inLeft.y - inRight.y).cuValue)
-    return .cu (sqrt (dx * dx + dy * dy))
-  }
+//  public static func distance (_ inLeft : CanariPoint, _ inRight : CanariPoint) -> CanariLength {
+//    let dx = Double ((inLeft.x - inRight.x).cuValue)
+//    let dy = Double ((inLeft.y - inRight.y).cuValue)
+//    return .cu (sqrt (dx * dx + dy * dy))
+//  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

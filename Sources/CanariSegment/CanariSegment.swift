@@ -47,7 +47,7 @@ public struct CanariSegment : Equatable, CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var length : CanariLength { CanariPoint.distance (self.start, self.end) }
+  var length : CanariLength { self.start.distance (to: self.end) }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -226,7 +226,7 @@ public struct CanariSegment : Equatable, CustomStringConvertible {
     let yAB = (self.end.y - self.start.y).cuValue
     let h = Double (xAP * xAB + yAP * yAB) / Double (xAB * xAB + yAB * yAB)
     let H = self.start + h * CanariPoint (x: .cu (xAB), y: .cu (yAB))
-    let distance = CanariPoint.distance (inPoint, H)
+    let distance = inPoint.distance (to: H)
     return PointStatus (point: H, distance: distance, h: h)
   }
 
@@ -243,18 +243,21 @@ public struct CanariSegment : Equatable, CustomStringConvertible {
 
   public struct OverlappingResult {
     public let intersection : CanariSegment?
-    public let remaining : [CanariSegment]
+    public let remaining0 : CanariSegment?
+    public let remaining1 : CanariSegment?
 
-    init (_ inIntersection : CanariSegment?, _ inRemaining : [CanariSegment?]) {
+    init (_ inIntersection : CanariSegment?,
+          _ inRemaining0 : CanariSegment?,
+          _ inRemaining1 : CanariSegment?) {
       self.intersection = inIntersection
-      var array = [CanariSegment] ()
-      for optSegment in inRemaining {
-        if let s = optSegment {
-          array.append (s)
-        }
-      }
-      self.remaining = array
+      self.remaining0 = inRemaining0
+      self.remaining1 = inRemaining1
     }
+
+//    init (_ inIntersection : CanariSegment?, _ inRemaining : CanariSegment) {
+//      self.intersection = inIntersection
+//      self.remaining = [inRemaining]
+//    }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -262,38 +265,55 @@ public struct CanariSegment : Equatable, CustomStringConvertible {
   public func test (_ inSegmentCD : CanariSegment,
                     forOverlapping inDistance : CanariLength) -> OverlappingResult {
     let segmentAB = self
-  //--- Indentical ?
+  //--- Solve trivial cases
+    if segmentAB.end.x < inSegmentCD.start.x {
+      return OverlappingResult (nil, inSegmentCD, nil)
+    }
+    if inSegmentCD.end.x < segmentAB.start.x {
+      return OverlappingResult (nil, inSegmentCD, nil)
+    }
+    let minY_AB = min (segmentAB.start.y, segmentAB.end.y)
+    let maxY_CD = max (inSegmentCD.start.y, inSegmentCD.end.y)
+    if maxY_CD < minY_AB {
+      return OverlappingResult (nil, inSegmentCD, nil)
+    }
+    let minY_CD = min (inSegmentCD.start.y, inSegmentCD.end.y)
+    let maxY_AB = max (segmentAB.start.y, segmentAB.end.y)
+    if maxY_AB < minY_CD {
+      return OverlappingResult (nil, inSegmentCD, nil)
+    }
+  //--- Identical ?
     if segmentAB == inSegmentCD {
-      return OverlappingResult (inSegmentCD, [])
+      return OverlappingResult (inSegmentCD, nil, nil)
     }
   //--- C is between A and B
     if segmentAB.contains (point: inSegmentCD.start, distance: inDistance) {
       if segmentAB.contains (point: inSegmentCD.end, distance: inDistance) {
       //--- D is between A and B --> remove CD
-        return OverlappingResult (inSegmentCD, [])
+        return OverlappingResult (inSegmentCD, nil, nil)
       }
       if inSegmentCD.contains (point: segmentAB.end, distance: inDistance) {
       //--- B is between C and D --> intersection is BC, remaining BD
         let optSegmentBC = CanariSegment (start: segmentAB.end, end: inSegmentCD.start)
         let optSegmentBD = CanariSegment (start: segmentAB.end, end: inSegmentCD.end)
-        return OverlappingResult (optSegmentBC, [optSegmentBD])
+        return OverlappingResult (optSegmentBC, optSegmentBD, nil)
       }else{
-        return OverlappingResult (nil, [inSegmentCD])
+        return OverlappingResult (nil, inSegmentCD, nil)
       }
     }
   //--- D is between A and B
     if segmentAB.contains (point: inSegmentCD.start, distance: inDistance) {
       if segmentAB.contains (point: inSegmentCD.end, distance: inDistance) { // § déjà traité
       //--- D is between A and B --> remove CD
-        return OverlappingResult (inSegmentCD, [])
+        return OverlappingResult (inSegmentCD, nil, nil)
       }
       if inSegmentCD.contains (point: segmentAB.end, distance: inDistance) {
       //--- B is between C and D --> intersection is BC, remaining BD
         let optSegmentBC = CanariSegment (start: segmentAB.end, end: inSegmentCD.start)
         let optSegmentBD = CanariSegment (start: segmentAB.end, end: inSegmentCD.end)
-        return OverlappingResult (optSegmentBC, [optSegmentBD])
+        return OverlappingResult (optSegmentBC, optSegmentBD, nil)
       }else{
-        return OverlappingResult (nil, [inSegmentCD])
+        return OverlappingResult (nil, inSegmentCD, nil)
       }
     }
   //--- A is between C and D
@@ -303,16 +323,16 @@ public struct CanariSegment : Equatable, CustomStringConvertible {
       //--- D between A and B : intersection is AD, remaining is AC
         let optSegmentAD = CanariSegment (start: segmentAB.start, end: inSegmentCD.end)
         let optSegmentAC = CanariSegment (start: segmentAB.start, end: inSegmentCD.start)
-       return OverlappingResult (optSegmentAD, [optSegmentAC])
+       return OverlappingResult (optSegmentAD, optSegmentAC, nil)
       }
       if inSegmentCD.contains (point: segmentAB.end, distance: inDistance) {
       //--- B between C and D : intersection is AB, remaining AC and BD
         let optSegmentAC = CanariSegment (start: segmentAB.start, end: inSegmentCD.start)
         let optSegmentBD = CanariSegment (start: segmentAB.end, end: inSegmentCD.end)
-        return OverlappingResult (segmentAB, [optSegmentAC, optSegmentBD])
+        return OverlappingResult (segmentAB, optSegmentAC, optSegmentBD)
       }
     }
-    return OverlappingResult (nil, [inSegmentCD])
+    return OverlappingResult (nil, inSegmentCD, nil)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -8,7 +8,7 @@ import Foundation
 //  struct CanvasMargins
 //--------------------------------------------------------------------------------------------------
 
-public struct CanvasMargins : Codable, CustomStringConvertible, Equatable {
+public struct CanvasMargins : Codable, CustomStringConvertible, Equatable, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
