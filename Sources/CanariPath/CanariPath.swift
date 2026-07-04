@@ -21,7 +21,16 @@ public struct CanariPath : Equatable, Sendable, CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private init (cgPath inCGPath : CGPath) {
+  public init (_ inCanariPathArray : [CanariPath]) {
+    self.init ()
+    for path in inCanariPathArray {
+      self.addPath (path)
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  internal init (cgPath inCGPath : CGPath) {
     self.mPath = Path (inCGPath)
   }
 
@@ -281,50 +290,44 @@ public struct CanariPath : Equatable, Sendable, CustomStringConvertible {
   
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func intersects (_ inRect : CanariRect) -> Bool {
-  //--- BIZARRE ! le code avec Path renvoie toujours une intersection non vide !!!
-//    let r = Path (inRect.pxValue)
-//    let intersection = self.mPath.intersection (r)
-  //--- Alors, on utilise un CGPath, et là, c'est ok
-    let r = unsafe CGPath (rect: inRect.pxValue, transform: nil)
-    let intersection = self.mPath.cgPath.intersection (r)
-    return !intersection.isEmpty
+  public func separatedOpenPathAndClosedPaths () -> (CanariPath, [CanariPath]) {
+    var openPath = CanariPath ()
+    var closedPathArray = [CanariPath] ()
+    var currentPath = CanariPath ()
+    var startPoint = CGPoint ()
+    self.mPath.forEach {
+      switch $0 {
+      case .move (to: let p) :
+        if !currentPath.isEmpty {
+          openPath.addPath (currentPath)
+          currentPath = CanariPath ()
+        }
+        currentPath.move (to: p)
+        startPoint = p
+      case .line (to: let p):
+        currentPath.addLine (to: p)
+      case .closeSubpath :
+        currentPath.close ()
+        closedPathArray.append (currentPath)
+        currentPath = CanariPath ()
+        currentPath.move (to: startPoint)
+      case .curve (let target, let ctrl1, let ctrl2) :
+        currentPath.addCurve (to: target, control1: ctrl1, control2: ctrl2)
+      case .quadCurve (let target, let ctrl) :
+        currentPath.addQuadCurve (to: target, control: ctrl)
+      }
+    }
+    if !currentPath.isEmpty {
+      openPath.addPath (currentPath)
+    }
+    return (openPath, closedPathArray)
   }
 
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func intersectsLines (of inRect : CanariRect) -> Bool {
-  //--- BIZARRE ! le code avec Path renvoie toujours une intersection non vide !!!
-//    let r = Path (inRect.pxValue)
-//    let intersection = self.mPath.intersection (r)
-  //--- Alors, on utilise un CGPath, et là, c'est ok
-    let r = unsafe CGPath (rect: inRect.pxValue, transform: nil)
-    let intersection = self.mPath.cgPath.lineIntersection (r)
-    return !intersection.isEmpty
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public func intersects (_ inPath : CanariPath) -> Bool {
-  //--- On utilise aussi un CGPath
-    let intersection = self.mPath.cgPath.intersection (inPath.mPath.cgPath)
-    return !intersection.isEmpty
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public func lineIntersection (_ inPath : CanariPath) -> CanariPath {
-  //--- On utilise aussi un CGPath
-    let cgIntersection = self.mPath.cgPath.lineIntersection (inPath.mPath.cgPath)
-    return CanariPath (cgPath: cgIntersection)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public func intersection (_ inPath : CanariPath) -> CanariPath {
-  //--- On utilise aussi un CGPath
-    let cgIntersection = self.mPath.cgPath.intersection (inPath.mPath.cgPath)
-    return CanariPath (cgPath: cgIntersection)
+  public func pathOutside (closedPath inClosedPath : CanariPath) -> CanariPath {
+    let path = self.mPath.cgPath.lineSubtracting (inClosedPath.mPath.cgPath, using: .winding)
+    return CanariPath (cgPath: path)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -401,7 +404,6 @@ public struct CanariPath : Equatable, Sendable, CustomStringConvertible {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var boundingRect : CanariRect {
-//    enterTracing ("path.bounding.rect") ; defer { exitTracing ("path.bounding.rect") }
     return self.mPath.isEmpty ? CanariRect () : CanariRect (px: self.mPath.boundingRect)
   }
 
@@ -636,7 +638,15 @@ public struct CanariPath : Equatable, Sendable, CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func normalized () -> CanariPath { CanariPath (swiftuiPath: self.mPath.normalized ()) }
+  public func nonZeroNormalized () -> CanariPath {
+    CanariPath (swiftuiPath: self.mPath.normalized (eoFill: false))
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func evenOddNormalized () -> CanariPath {
+    CanariPath (swiftuiPath: self.mPath.normalized (eoFill: true))
+  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
