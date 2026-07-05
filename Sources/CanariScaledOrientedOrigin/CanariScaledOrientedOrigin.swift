@@ -119,7 +119,7 @@ public struct CanariScaledOrientedOrigin : Equatable, Codable, CustomStringConve
   //--- § À optimiser
     var originCenteredLocalOutline = self.mOriginCenteredLocalOutline
     let stroked = originCenteredLocalOutline.stroked (with: .px (1.0))
-    originCenteredLocalOutline.unionInPlace (stroked)
+    originCenteredLocalOutline.unionInPlaceUsingNonZeroRule (stroked)
     return originCenteredLocalOutline.contains (inLocalPoint)
  //   return self.mOriginCenteredLocalOutline.contains (inLocalPoint)
   }
@@ -148,8 +148,8 @@ public struct CanariScaledOrientedOrigin : Equatable, Codable, CustomStringConve
   //--- § À optimiser
     var originCenteredGlobalOutline = self.mOriginCenteredGlobalOutlineAndBoundingRect.path
     let stroked = originCenteredGlobalOutline.stroked (with: .px (1.0))
-    originCenteredGlobalOutline.unionInPlace (stroked)
-    return originCenteredGlobalOutline.intersects (globalRect)
+    originCenteredGlobalOutline.unionInPlaceUsingNonZeroRule (stroked)
+    return originCenteredGlobalOutline.intersectsUsingNonZeroRule (globalRect)
 //    if self.mOriginCenteredGlobalOutlineAndBoundingRect.boundingRect.isEmpty {
 //      return self.mOriginCenteredGlobalOutlineAndBoundingRect.path.intersectsLines (of: globalRect)
 //    }else{
@@ -211,7 +211,7 @@ public struct CanariScaledOrientedOrigin : Equatable, Codable, CustomStringConve
                                    relativeTo inUnselectedWidgetOutlines : [CanariPath]) {
     var idx = 0
     while !ioTranslation.isZero, idx < inUnselectedWidgetOutlines.count {
-      let intersects = inUnselectedWidgetOutlines [idx].intersects (self.globalOutline.moved (by: ioTranslation))
+      let intersects = inUnselectedWidgetOutlines [idx].intersectsUsingNonZeroRule (self.globalOutline.moved (by: ioTranslation))
       if intersects {
         ioTranslation *= 0.5
       }else{

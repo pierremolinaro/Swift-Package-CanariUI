@@ -8,7 +8,7 @@ import PackageDescription
 
 let package = Package (
   name: "CanariUI",
-  platforms: [.macOS ("26.0")],
+  platforms: [.macOS ("26")],
   products: [
     .library (name: "CanariUI", targets: ["CanariUI"]),
   ],

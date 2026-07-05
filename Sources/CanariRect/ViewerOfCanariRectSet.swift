@@ -30,21 +30,21 @@ public struct ViewerOfCanariRectSet : View {
     VStack {
       ViewerOfOptionalString (self.maxY?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
 //      .background (Rectangle ().fill (.quinary))
-      .anchorPreference (key: CentersKey.self, value: .bounds) { ["bottom" : $0] }
+      .anchorPreference (key: RectanglePrefKey.self, value: .bounds) { ["bottom" : $0] }
       HStack {
         ViewerOfOptionalString (self.minX?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
 //        .background (Rectangle ().fill (.quaternary))
-        .anchorPreference (key: CentersKey.self, value: .bounds) { ["left" : $0] }
+        .anchorPreference (key: RectanglePrefKey.self, value: .bounds) { ["left" : $0] }
         Spacer ()
         ViewerOfOptionalString (self.maxX?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
  //       .background (Rectangle ().fill (.white))
-        .anchorPreference (key: CentersKey.self, value: .bounds) { ["right" : $0] }
+        .anchorPreference (key: RectanglePrefKey.self, value: .bounds) { ["right" : $0] }
       }
       ViewerOfOptionalString (self.minY?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
 //      .background (Rectangle ().fill (.white))
-      .anchorPreference (key: CentersKey.self, value: .bounds) { ["top" : $0] }
+      .anchorPreference (key: RectanglePrefKey.self, value: .bounds) { ["top" : $0] }
     }
-    .backgroundPreferenceValue (CentersKey.self) { anchors in
+    .backgroundPreferenceValue (RectanglePrefKey.self) { anchors in
       GeometryReader { widget in
         let top : CGRect = widget [anchors ["top"]!]
         let left = widget [anchors ["left"]!]
@@ -180,7 +180,7 @@ public struct ViewerOfCanariRectSet : View {
 
 //--------------------------------------------------------------------------------------------------
 
-fileprivate struct CentersKey : PreferenceKey {
+fileprivate struct RectanglePrefKey : PreferenceKey {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -190,7 +190,7 @@ fileprivate struct CentersKey : PreferenceKey {
 
   static func reduce (value: inout [String : Anchor<CGRect>],
                       nextValue: () -> [String : Anchor<CGRect>]) {
-    value.merge(nextValue()) { _, new in new }
+    value.merge (nextValue ()) { _, new in new }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

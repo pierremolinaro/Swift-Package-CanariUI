@@ -1,8 +1,8 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 04/07/2026.
+//  Created by Pierre Molinaro on 05/07/2026.
 //--------------------------------------------------------------------------------------------------
 
-import AppKit
+import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
@@ -10,30 +10,35 @@ public extension CanariPath {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func subtractInPlaceUsingNonZeroRule (_ inPath : CanariPath) {
-    let r = self.swiftuiPath.cgPath.subtracting (inPath.swiftuiPath.cgPath, using: .winding)
-    self = CanariPath (cgPath: r)
+  mutating func unionInPlaceUsingNonZeroRule (_ inPath : CanariPath) {
+    var path : Path = self.swiftuiPath
+    path = path.union (inPath.swiftuiPath, eoFill: false)
+    self = CanariPath (swiftuiPath: path)
+  }
+
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  mutating func unionInPlaceUsingEvenOddRule (_ inPath : CanariPath) {
+    var path : Path = self.swiftuiPath
+    path = path.union (inPath.swiftuiPath, eoFill: true)
+    self = CanariPath (swiftuiPath: path)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func subtractInPlaceUsingEvenOddRule (_ inPath : CanariPath) {
-    let r = self.swiftuiPath.cgPath.subtracting (inPath.swiftuiPath.cgPath, using: .evenOdd)
-    self = CanariPath (cgPath: r)
+  func unioningUsingNonZeroRule (_ inPath : CanariPath) -> CanariPath {
+    var path : Path = self.swiftuiPath
+    path = path.union (inPath.swiftuiPath, eoFill: false)
+    return CanariPath (swiftuiPath: path)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func subtractingUsingNonZeroRule (_ inPath : CanariPath) -> CanariPath {
-    let r = self.swiftuiPath.cgPath.subtracting (inPath.swiftuiPath.cgPath, using: .winding)
-    return CanariPath (cgPath: r)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  func subtractingUsingEvenOddRule (_ inPath : CanariPath) -> CanariPath {
-    let r = self.swiftuiPath.cgPath.subtracting (inPath.swiftuiPath.cgPath, using: .evenOdd)
-    return CanariPath (cgPath: r)
+  mutating func unioningUsingEvenOddRule (_ inPath : CanariPath) -> CanariPath {
+    var path : Path = self.swiftuiPath
+    path = path.union (inPath.swiftuiPath, eoFill: true)
+    return CanariPath (swiftuiPath: path)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -41,4 +46,5 @@ public extension CanariPath {
 }
 
 //--------------------------------------------------------------------------------------------------
+
 

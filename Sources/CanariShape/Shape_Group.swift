@@ -43,7 +43,7 @@ public struct Shape_Group <WidgetTypesDescription : DocumentWidgetsDescriptionPr
     self.orientedOrigin = CanariScaledOrientedOrigin (r.center, .zero, 1.0, false)
     var localOutline = CanariPath ()
     for widget in self.mArray {
-      widget.shape.orientedOrigin.withGlobalOutline { localOutline.unionInPlace ($0) }
+      widget.shape.orientedOrigin.withGlobalOutline { localOutline.unionInPlaceUsingNonZeroRule ($0) }
     }
     self.orientedOrigin.setLocalOutline (localOutline)
   }
@@ -64,7 +64,7 @@ public struct Shape_Group <WidgetTypesDescription : DocumentWidgetsDescriptionPr
     self.orientedOrigin = try container.decode (CanariScaledOrientedOrigin.self, forKey: .oo)
     var localOutline = CanariPath ()
     for widget in self.mArray {
-      widget.shape.orientedOrigin.withGlobalOutline { localOutline.unionInPlace ($0) }
+      widget.shape.orientedOrigin.withGlobalOutline { localOutline.unionInPlaceUsingNonZeroRule ($0) }
     }
     self.orientedOrigin.setLocalOutline (localOutline)
   }

@@ -36,7 +36,7 @@ public struct CanariPath : Equatable, Sendable, CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private init (swiftuiPath inPath : Path) {
+  internal init (swiftuiPath inPath : Path) {
     self.mPath = inPath
   }
 
@@ -393,12 +393,6 @@ public struct CanariPath : Equatable, Sendable, CustomStringConvertible {
 
   public func forEach (_ inBody : (Path.Element) -> Void) {
     self.mPath.forEach (inBody)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public mutating func unionInPlace (_ inPath : CanariPath) {
-    self.mPath = self.mPath.union (inPath.mPath)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

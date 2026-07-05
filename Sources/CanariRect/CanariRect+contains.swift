@@ -1,33 +1,39 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 04/07/2026.
+//  Created by Pierre Molinaro on 20/12/2025.
 //--------------------------------------------------------------------------------------------------
 
-import AppKit
+import Foundation
 
 //--------------------------------------------------------------------------------------------------
+//  struct CanariRect
+//--------------------------------------------------------------------------------------------------
 
-extension CanariPath {
+public extension CanariRect {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func separatedComponentsUsingNonZero () -> [CanariPath] {
-    let components = self.swiftuiPath.cgPath.componentsSeparated (using: .winding)
-    var result = [CanariPath] ()
-    for p in components {
-      result.append (CanariPath (cgPath: p))
+   func contains (_ inPoint : CanariPoint) -> Bool {
+    var result = inPoint.x >= self.minX
+    if result {
+      result = inPoint.x <= self.maxX
+    }
+    if result {
+      result = inPoint.y >= self.minY
+    }
+    if result {
+      result = inPoint.y <= self.maxY
     }
     return result
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func separatedComponentsUsingEvenOdd () -> [CanariPath] {
-    let components = self.swiftuiPath.cgPath.componentsSeparated (using: .evenOdd)
-    var result = [CanariPath] ()
-    for p in components {
-      result.append (CanariPath (cgPath: p))
-    }
-    return result
+  func contains (_ inRect : CanariRect) -> Bool {
+    let contains = (self.minX <= inRect.minX)
+      && (self.maxX >= inRect.maxX)
+      && (self.minY <= inRect.minY)
+      && (self.maxY >= inRect.maxY)
+    return contains
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

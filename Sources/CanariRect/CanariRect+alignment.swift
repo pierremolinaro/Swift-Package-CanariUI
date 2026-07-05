@@ -1,33 +1,25 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 04/07/2026.
+//  Created by Pierre Molinaro on 20/12/2025.
 //--------------------------------------------------------------------------------------------------
 
-import AppKit
+import Foundation
 
 //--------------------------------------------------------------------------------------------------
+//  struct CanariRect
+//--------------------------------------------------------------------------------------------------
 
-extension CanariPath {
+public extension CanariRect {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func separatedComponentsUsingNonZero () -> [CanariPath] {
-    let components = self.swiftuiPath.cgPath.componentsSeparated (using: .winding)
-    var result = [CanariPath] ()
-    for p in components {
-      result.append (CanariPath (cgPath: p))
-    }
-    return result
+  func isAligned (_ inUnit : CanariLength) -> Bool {
+    return self.origin.isAligned (inUnit) && self.size.isAligned (inUnit)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func separatedComponentsUsingEvenOdd () -> [CanariPath] {
-    let components = self.swiftuiPath.cgPath.componentsSeparated (using: .evenOdd)
-    var result = [CanariPath] ()
-    for p in components {
-      result.append (CanariPath (cgPath: p))
-    }
-    return result
+  func aligning (to inUnit : CanariLength?) -> Self {
+    return Self (origin: self.origin.aligning (to: inUnit), size: self.size.aligning (to: inUnit))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
