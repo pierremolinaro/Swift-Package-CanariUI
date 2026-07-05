@@ -6,13 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariRGBColor : Codable,
-                               Hashable,
-                               RawRepresentable,
-                               CanariCodableByString,
-                               CustomStringConvertible {
-
-  public typealias RawValue = String // RawRepresentable
+public struct CanariRGBColor : Hashable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -82,83 +76,6 @@ public struct CanariRGBColor : Codable,
   public static var blue   : CanariRGBColor { .init (red: 000, green: 000, blue: 255) }
   public static var orange : CanariRGBColor { .init (red: 251, green: 176, blue: 039) }
   public static var green  : CanariRGBColor { .init (red: 000, green: 128, blue: 000) }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: Codable
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public init (from inDecoder : any Decoder) throws { // Decodable
-    let container = try inDecoder.singleValueContainer ()
-    let string = try container.decode (String.self)
-    let components = string.split (separator: " ")
-    if components.count == 3,
-       let red = UInt8 (components [0]),
-       let green = UInt8 (components [1]),
-       let blue = UInt8 (components [2]) {
-      self.red = red
-      self.green = green
-      self.blue = blue
-    }else {
-      throw DecodingError.dataCorruptedError (in: container, debugDescription: "Invalid color string")
-    }
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public func encode (to inEncoder : any Encoder) throws { // Encodable
-    var container = inEncoder.singleValueContainer ()
-    try container.encode ("\(self.red) \(self.green) \(self.blue)")
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: RawRepresentable
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public var rawValue : String { // RawRepresentable
-    return "\(self.red) \(self.green) \(self.blue)"
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public init? (rawValue inRawValue : String) { // RawRepresentable
-    let components = inRawValue.split (separator: " ")
-    if components.count == 3,
-       let red = UInt8 (components[0]),
-       let green = UInt8 (components[1]),
-       let blue = UInt8 (components[2]) {
-      self.init (red: red, green: green, blue: blue)
-    }else{
-      return nil
-    }
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: CanariCodableByString
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public init (scanner inScanner : Scanner, _ ioOk : inout Bool) {
-    if ioOk {
-      let red = UInt8 (scanner: inScanner, &ioOk)
-      let green = UInt8 (scanner: inScanner, &ioOk)
-      let blue = UInt8 (scanner: inScanner, &ioOk)
-      self = CanariRGBColor (red: red, green: green, blue: blue)
-    }else{
-      ioOk = false
-      self = CanariRGBColor.black
-    }
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public func canariCodableEncodedString () -> String {
-    return "\(self.red) \(self.green) \(self.blue)"
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public var description : String {
-    return "\(self.red) \(self.green) \(self.blue)"
-  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

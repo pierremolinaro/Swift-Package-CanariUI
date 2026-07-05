@@ -76,26 +76,26 @@ public struct RightVerticalRulerView_cm : View {
         enterTracing ("right.vertical.ruler.view.body") ; defer { exitTracing ("right.vertical.ruler.view.body") }
         var path = CanariPath ()
         for indexAndY in self.mArray_cm {
-           path.move (toX: .zero, toY: indexAndY.y)
+           path.addMove (toX: .zero, toY: indexAndY.y)
            path.addLine (toX: self.mContext.rulerSize.width / 2.0, toY: indexAndY.y)
         }
         for y in self.mArray_mm {
-           path.move (toX: .zero, toY: y)
+           path.addMove (toX: .zero, toY: y)
            path.addLine (toX: self.mContext.rulerSize.width / 6.0, toY: y)
         }
         for y in self.mArray_5mm {
-           path.move (toX: .zero, toY: y)
+           path.addMove (toX: .zero, toY: y)
            path.addLine (toX: self.mContext.rulerSize.width / 3.0, toY: y)
         }
         context.stroke (path, with: .color (.gray), lineWidth: .px (1))
         path = CanariPath ()
-        path.move (toX: .zero, toY: .zero)
+        path.addMove (toX: .zero, toY: .zero)
         path.addLine (toX: .zero, toY: self.mContext.rulerSize.height)
         context.stroke (path, with: .color (.black), lineWidth: .px (1))
         if let hy = self.mContext.hoverLocationY {
           var path = CanariPath ()
           let y = (self.mContext.contentHeight - self.mContext.bottomMargin - hy - self.mContext.scrollY) * self.mContext.scale + self.mContext.originOffsetY
-          path.move (toX: .zero, toY: y)
+          path.addMove (toX: .zero, toY: y)
           path.addLine (toX: self.mContext.rulerSize.width, toY: y)
           context.stroke (path, with: .color (.black), lineWidth: .px (1))
         }

@@ -1,28 +1,33 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 18/09/2025.
+//  Created by Pierre Molinaro on 04/07/2026.
 //--------------------------------------------------------------------------------------------------
 
 import AppKit
 
 //--------------------------------------------------------------------------------------------------
 
-extension UInt8 : CanariCodableByString {
+extension CanariPath {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (scanner inScanner : Scanner, _ ioOk : inout Bool) {
-    if ioOk, let v = inScanner.scanUInt64 (), v <= UInt8.max {
-      self = UInt8 (v)
-    }else{
-      ioOk = false
-      self = .zero
+  public func separatedComponentsUsingNonZero () -> [CanariPath] {
+    let components = self.mPath.cgPath.componentsSeparated (using: .winding)
+    var result = [CanariPath] ()
+    for p in components {
+      result.append (CanariPath (cgPath: p))
     }
+    return result
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func canariCodableEncodedString () -> String {
-    return "\(self)"
+  public func separatedComponentsUsingEvenOdd () -> [CanariPath] {
+    let components = self.mPath.cgPath.componentsSeparated (using: .evenOdd)
+    var result = [CanariPath] ()
+    for p in components {
+      result.append (CanariPath (cgPath: p))
+    }
+    return result
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

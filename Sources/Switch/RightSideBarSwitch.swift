@@ -1,28 +1,28 @@
-//--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 18/09/2025.
-//--------------------------------------------------------------------------------------------------
-
-import AppKit
-
+//  Created by Pierre Molinaro on 01/04/2026.
 //--------------------------------------------------------------------------------------------------
 
-extension UInt8 : CanariCodableByString {
+import SwiftUI
+
+//--------------------------------------------------------------------------------------------------
+
+public struct RightSideBarSwitch : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (scanner inScanner : Scanner, _ ioOk : inout Bool) {
-    if ioOk, let v = inScanner.scanUInt64 (), v <= UInt8.max {
-      self = UInt8 (v)
-    }else{
-      ioOk = false
-      self = .zero
-    }
+  @Binding private var mValue : Bool
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public init (isOn inValue : Binding <Bool>) {
+    self._mValue = inValue
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func canariCodableEncodedString () -> String {
-    return "\(self)"
+  @ViewBuilder public var body : some View {
+    Button (action: { self.mValue.toggle () }) {
+      Image (systemName: "sidebar.right").imageScale (.large)
+    }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

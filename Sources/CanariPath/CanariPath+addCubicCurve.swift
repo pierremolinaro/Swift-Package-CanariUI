@@ -1,28 +1,27 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 18/09/2025.
+//  Created by Pierre Molinaro on 02/06/2026.
 //--------------------------------------------------------------------------------------------------
 
 import AppKit
 
 //--------------------------------------------------------------------------------------------------
 
-extension UInt8 : CanariCodableByString {
+public extension CanariPath {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (scanner inScanner : Scanner, _ ioOk : inout Bool) {
-    if ioOk, let v = inScanner.scanUInt64 (), v <= UInt8.max {
-      self = UInt8 (v)
-    }else{
-      ioOk = false
-      self = .zero
-    }
+  mutating func addCubicCurve (to inPoint : CanariPoint,
+                               control1 inCtrl1 : CanariPoint,
+                               control2 inCtrl2 : CanariPoint) {
+    self.mPath.addCurve (to: inPoint.pxValue, control1: inCtrl1.pxValue, control2: inCtrl2.pxValue)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func canariCodableEncodedString () -> String {
-    return "\(self)"
+  mutating func addCubicCurve (to inPoint : CGPoint,
+                               control1 inCtrl1 : CGPoint,
+                               control2 inCtrl2 : CGPoint) {
+    self.mPath.addCurve (to: inPoint, control1: inCtrl1, control2: inCtrl2)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -68,9 +68,9 @@ public struct CanariScaledOrientedOrigin : Equatable, Codable, CustomStringConve
     self.mAngle = inAngle
     self.mScale = inScale
     self.mHorizontalFlip = inHorizontalFlip
-    self.mOriginCenteredLocalOutline = .init ()
-    self.mOriginCenteredLocalBoundingRect = .init ()
-    self.mOriginCenteredGlobalOutlineAndBoundingRect = .init ()
+    self.mOriginCenteredLocalOutline = CanariPath ()
+    self.mOriginCenteredLocalBoundingRect = CanariRect ()
+    self.mOriginCenteredGlobalOutlineAndBoundingRect = CanariPathWithBoundingRect ()
     self.computeAffinities ()
   }
 
@@ -93,7 +93,7 @@ public struct CanariScaledOrientedOrigin : Equatable, Codable, CustomStringConve
   private mutating func computeOriginCenteredGlobalOutlineAndBoundingRect () {
     let affinity = CanariAffinity (rotation: self.mAngle)
           .scaling (self.mScale, horizontalFlip: self.mHorizontalFlip)
-    let path = self.mOriginCenteredLocalOutline.transformed (by: affinity)
+    let path = self.mOriginCenteredLocalOutline.transformed (using: affinity)
     self.mOriginCenteredGlobalOutlineAndBoundingRect = CanariPathWithBoundingRect (path: path)
   }
 
@@ -120,7 +120,7 @@ public struct CanariScaledOrientedOrigin : Equatable, Codable, CustomStringConve
     var originCenteredLocalOutline = self.mOriginCenteredLocalOutline
     let stroked = originCenteredLocalOutline.stroked (with: .px (1.0))
     originCenteredLocalOutline.unionInPlaceUsingNonZeroRule (stroked)
-    return originCenteredLocalOutline.contains (inLocalPoint)
+    return originCenteredLocalOutline.containsUsingNonZeroRule (inLocalPoint)
  //   return self.mOriginCenteredLocalOutline.contains (inLocalPoint)
   }
 
@@ -129,7 +129,7 @@ public struct CanariScaledOrientedOrigin : Equatable, Codable, CustomStringConve
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func withGlobalOutline (action inAction : (CanariPath) -> Void) {
-    inAction (self.mOriginCenteredGlobalOutlineAndBoundingRect.path.moved (by: self.mOrigin))
+    inAction (self.mOriginCenteredGlobalOutlineAndBoundingRect.path.translated (by: self.mOrigin))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -138,7 +138,7 @@ public struct CanariScaledOrientedOrigin : Equatable, Codable, CustomStringConve
     let af = CanariAffinity ()
       .scaling (1.0 / self.mScale, horizontalFlip: self.mHorizontalFlip)
       .rotating (-self.mAngle)
-    inAction (self.mOriginCenteredGlobalOutlineAndBoundingRect.path.transformed (by: af))
+    inAction (self.mOriginCenteredGlobalOutlineAndBoundingRect.path.transformed (using: af))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -162,7 +162,7 @@ public struct CanariScaledOrientedOrigin : Equatable, Codable, CustomStringConve
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var globalOutline : CanariPath {
-    self.mOriginCenteredGlobalOutlineAndBoundingRect.path.moved (by: self.mOrigin)
+    self.mOriginCenteredGlobalOutlineAndBoundingRect.path.translated (by: self.mOrigin)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -179,7 +179,7 @@ public struct CanariScaledOrientedOrigin : Equatable, Codable, CustomStringConve
     let af = CanariAffinity ()
       .scaling (1.0 / self.mScale, horizontalFlip: self.mHorizontalFlip)
       .rotating (-self.mAngle)
-    inAction (CanariPath (rect: self.mOriginCenteredGlobalOutlineAndBoundingRect.boundingRect).transformed (by: af))
+    inAction (CanariPath (rect: self.mOriginCenteredGlobalOutlineAndBoundingRect.boundingRect).transformed (using: af))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -211,7 +211,7 @@ public struct CanariScaledOrientedOrigin : Equatable, Codable, CustomStringConve
                                    relativeTo inUnselectedWidgetOutlines : [CanariPath]) {
     var idx = 0
     while !ioTranslation.isZero, idx < inUnselectedWidgetOutlines.count {
-      let intersects = inUnselectedWidgetOutlines [idx].intersectsUsingNonZeroRule (self.globalOutline.moved (by: ioTranslation))
+      let intersects = inUnselectedWidgetOutlines [idx].intersectsUsingNonZeroRule (self.globalOutline.translated (by: ioTranslation))
       if intersects {
         ioTranslation *= 0.5
       }else{
@@ -280,13 +280,13 @@ public struct CanariScaledOrientedOrigin : Equatable, Codable, CustomStringConve
 
   public func localToGlobal (_ inLocalRect : CanariRect) -> CanariPath {
     let path = CanariPath (rect: inLocalRect)
-    return path.transformed (by: self.mLocalToGlobalAffinity)
+    return path.transformed (using: self.mLocalToGlobalAffinity)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func localToGlobal (_ inLocalPath : CanariPath) -> CanariPath {
-    return inLocalPath.transformed (by: self.mLocalToGlobalAffinity)
+    return inLocalPath.transformed (using: self.mLocalToGlobalAffinity)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -310,7 +310,7 @@ public struct CanariScaledOrientedOrigin : Equatable, Codable, CustomStringConve
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func globalToLocal (_ inCanvasPath : CanariPath) -> CanariPath {
-    return inCanvasPath.transformed (by: self.mGlobalToLocalAffinity)
+    return inCanvasPath.transformed (using: self.mGlobalToLocalAffinity)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

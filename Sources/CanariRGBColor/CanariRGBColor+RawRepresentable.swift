@@ -1,33 +1,35 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 04/07/2026.
+//  Created by Pierre Molinaro on 08/08/2025.
 //--------------------------------------------------------------------------------------------------
 
-import AppKit
+import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-extension CanariPath {
+extension CanariRGBColor : RawRepresentable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func separatedComponentsUsingNonZero () -> [CanariPath] {
-    let components = self.swiftuiPath.cgPath.componentsSeparated (using: .winding)
-    var result = [CanariPath] ()
-    for p in components {
-      result.append (CanariPath (cgPath: p))
-    }
-    return result
+  public typealias RawValue = String // RawRepresentable
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public var rawValue : String { // RawRepresentable
+    return "\(self.red) \(self.green) \(self.blue)"
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func separatedComponentsUsingEvenOdd () -> [CanariPath] {
-    let components = self.swiftuiPath.cgPath.componentsSeparated (using: .evenOdd)
-    var result = [CanariPath] ()
-    for p in components {
-      result.append (CanariPath (cgPath: p))
+  public init? (rawValue inRawValue : String) { // RawRepresentable
+    let components = inRawValue.split (separator: " ")
+    if components.count == 3,
+       let red = UInt8 (components[0]),
+       let green = UInt8 (components[1]),
+       let blue = UInt8 (components[2]) {
+      self.init (red: red, green: green, blue: blue)
+    }else{
+      return nil
     }
-    return result
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

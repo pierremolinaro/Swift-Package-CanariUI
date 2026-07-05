@@ -53,7 +53,7 @@ public struct CanariSegment : Equatable, CustomStringConvertible {
 
   var path : CanariPath {
     var result = CanariPath ()
-    result.move (to: self.start)
+    result.addMove (to: self.start)
     result.addLine (to: self.end)
     return result
   }

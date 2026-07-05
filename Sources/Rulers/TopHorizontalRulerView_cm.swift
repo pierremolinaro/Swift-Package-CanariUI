@@ -75,27 +75,27 @@ public struct TopHorizontalRulerView_cm : View {
         enterTracing ("top.horizontal.ruler.view.canvas") ; defer { exitTracing ("top.horizontal.ruler.view.canvas") }
         var path = CanariPath ()
         for indexAndX in self.mArray_cm {
-           path.move (toX: indexAndX.x, toY: self.mContext.rulerSize.height)
+           path.addMove (toX: indexAndX.x, toY: self.mContext.rulerSize.height)
            path.addLine (toX: indexAndX.x, toY: self.mContext.rulerSize.height / 2.0)
         }
         for x in self.mArray_mm {
-           path.move (toX: x, toY: self.mContext.rulerSize.height)
+           path.addMove (toX: x, toY: self.mContext.rulerSize.height)
            path.addLine (toX: x, toY: self.mContext.rulerSize.height * 5.0 / 6.0)
         }
         for x in self.mArray_5mm {
-           path.move (toX: x, toY: self.mContext.rulerSize.height)
+           path.addMove (toX: x, toY: self.mContext.rulerSize.height)
            path.addLine (toX: x, toY: self.mContext.rulerSize.height * 2.0 / 3.0)
         }
         context.stroke (path, with: .color (.gray), lineWidth: .px (1))
         path = CanariPath ()
-        path.move (toX: .zero, toY: self.mContext.rulerSize.height)
+        path.addMove (toX: .zero, toY: self.mContext.rulerSize.height)
         path.addLine (toX: self.mContext.contentWidth * self.mContext.scale, toY: self.mContext.rulerSize.height)
         context.stroke (path, with: .color (.black), lineWidth: .px (1))
       //--- Hover location
        if let hx = self.mContext.hoverLocationX {
           var path = CanariPath ()
           let x = (hx + self.mContext.leftMargin - self.mContext.scrollX) * self.mContext.scale + self.mContext.originOffsetX
-          path.move (toX: x, toY: .zero)
+          path.addMove (toX: x, toY: .zero)
           path.addLine (toX: x, toY: self.mContext.rulerSize.height)
           context.stroke (path, with: .color (.black), lineWidth: .px (1))
         }

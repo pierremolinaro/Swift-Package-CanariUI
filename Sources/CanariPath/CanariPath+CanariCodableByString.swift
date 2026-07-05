@@ -16,7 +16,7 @@ extension CanariPath : CanariCodableByString {
     while ioOk, !inScanner.isAtEnd {
       if inScanner.scanString ("M") != nil { // Move
         current += CanariPoint (scanner: inScanner, &ioOk)
-        self.move (to: current)
+        self.addMove (to: current)
       }else if inScanner.scanString ("L") != nil { // Line
         current += CanariPoint (scanner: inScanner, &ioOk)
         self.addLine (to: current)
@@ -24,7 +24,7 @@ extension CanariPath : CanariCodableByString {
         let target = current + CanariPoint (scanner: inScanner, &ioOk)
         let c1 = current + CanariPoint (scanner: inScanner, &ioOk)
         let c2 = current + CanariPoint (scanner: inScanner, &ioOk)
-        self.addCurve (to: target, control1: c1, control2: c2)
+        self.addCubicCurve (to: target, control1: c1, control2: c2)
         current = target
       }else if ioOk, inScanner.scanString ("Q") != nil { // Quadratic
         let target = current + CanariPoint (scanner: inScanner, &ioOk)
@@ -32,7 +32,7 @@ extension CanariPath : CanariCodableByString {
         self.addQuadCurve (to: target, control: c)
         current = target
       }else if ioOk, inScanner.scanString ("Z") != nil { // Close
-        self.close ()
+        self.addClosePath ()
       }
     }
   }
@@ -42,7 +42,7 @@ extension CanariPath : CanariCodableByString {
   public func canariCodableEncodedString () -> String {
     var s = ""
     var current = CanariPoint.zero
-    self.swiftuiPath.forEach {
+    self.mPath.forEach {
       switch $0 {
       case .closeSubpath :
         s += "Z"

@@ -220,12 +220,12 @@ import Combine
           for q in widget.shape.orientedOrigin.localToGlobal (widget.shape.localAlignmentGuidePoints) {
             if p.x == q.x, p.y != q.y { // Vertical guide
               var path = CanariPath ()
-              path.move (to: p)
+              path.addMove (to: p)
               path.addLine (to: q)
               ioContext.stroke (path, with: .color (.orange), lineWidth: .px (1) / inScale)
             }else if p.y == q.y, p.x != q.x { // Horizontal guide
               var path = CanariPath ()
-              path.move (to: p)
+              path.addMove (to: p)
               path.addLine (to: q)
               ioContext.stroke (path, with: .color (.orange), lineWidth: .px (1) / inScale)
             }

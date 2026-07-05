@@ -1,28 +1,31 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 18/09/2025.
+//  Created by Pierre Molinaro on 08/08/2025.
 //--------------------------------------------------------------------------------------------------
 
-import AppKit
+import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-extension UInt8 : CanariCodableByString {
+extension CanariRGBColor : CanariCodableByString {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (scanner inScanner : Scanner, _ ioOk : inout Bool) {
-    if ioOk, let v = inScanner.scanUInt64 (), v <= UInt8.max {
-      self = UInt8 (v)
+    if ioOk {
+      let red = UInt8 (scanner: inScanner, &ioOk)
+      let green = UInt8 (scanner: inScanner, &ioOk)
+      let blue = UInt8 (scanner: inScanner, &ioOk)
+      self = CanariRGBColor (red: red, green: green, blue: blue)
     }else{
       ioOk = false
-      self = .zero
+      self = CanariRGBColor.black
     }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func canariCodableEncodedString () -> String {
-    return "\(self)"
+    return "\(self.red) \(self.green) \(self.blue)"
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

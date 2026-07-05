@@ -75,26 +75,26 @@ public struct LeftVerticalRulerView_cm : View {
         enterTracing ("left.vertical.ruler.view.body") ; defer { exitTracing ("left.vertical.ruler.view.body") }
         var path = CanariPath ()
         for indexAndY in self.array_cm {
-           path.move (toX: self.mContext.rulerSize.width / 2.0, toY: indexAndY.y)
+           path.addMove (toX: self.mContext.rulerSize.width / 2.0, toY: indexAndY.y)
            path.addLine (toX: self.mContext.rulerSize.width, toY: indexAndY.y)
         }
         for y in self.array_mm {
-           path.move (toX: 5.0 * self.mContext.rulerSize.width / 6.0, toY: y)
+           path.addMove (toX: 5.0 * self.mContext.rulerSize.width / 6.0, toY: y)
            path.addLine (toX: self.mContext.rulerSize.width, toY: y)
         }
         for y in self.array_5mm {
-           path.move (toX: 2.0 * self.mContext.rulerSize.width / 3.0, toY: y)
+           path.addMove (toX: 2.0 * self.mContext.rulerSize.width / 3.0, toY: y)
            path.addLine (toX: self.mContext.rulerSize.width, toY: y)
         }
         context.stroke (path, with: .color (.gray), lineWidth: .px (1))
         path = CanariPath ()
-        path.move (toX: self.mContext.rulerSize.width, toY: .zero)
+        path.addMove (toX: self.mContext.rulerSize.width, toY: .zero)
         path.addLine (toX: self.mContext.rulerSize.width, toY: self.mContext.rulerSize.height)
         context.stroke (path, with: .color (.black), lineWidth: .px (1))
         if let hy = self.mContext.hoverLocationY {
           var path = CanariPath ()
           let y = (self.mContext.contentHeight - self.mContext.bottomMargin - hy - self.mContext.scrollY) * self.mContext.scale + self.mContext.originOffsetY
-          path.move (toX: .zero, toY: y)
+          path.addMove (toX: .zero, toY: y)
           path.addLine (toX: self.mContext.rulerSize.width, toY: y)
           context.stroke (path, with: .color (.black), lineWidth: .px (1))
         }

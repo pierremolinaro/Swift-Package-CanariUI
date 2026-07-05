@@ -11,8 +11,8 @@ public extension CanariPath {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   mutating func unionInPlaceUsingNonZeroRule (_ inPath : CanariPath) {
-    var path : Path = self.swiftuiPath
-    path = path.union (inPath.swiftuiPath, eoFill: false)
+    var path : Path = self.mPath
+    path = path.union (inPath.mPath, eoFill: false)
     self = CanariPath (swiftuiPath: path)
   }
 
@@ -20,24 +20,24 @@ public extension CanariPath {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   mutating func unionInPlaceUsingEvenOddRule (_ inPath : CanariPath) {
-    var path : Path = self.swiftuiPath
-    path = path.union (inPath.swiftuiPath, eoFill: true)
+    var path : Path = self.mPath
+    path = path.union (inPath.mPath, eoFill: true)
     self = CanariPath (swiftuiPath: path)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func unioningUsingNonZeroRule (_ inPath : CanariPath) -> CanariPath {
-    var path : Path = self.swiftuiPath
-    path = path.union (inPath.swiftuiPath, eoFill: false)
+    var path : Path = self.mPath
+    path = path.union (inPath.mPath, eoFill: false)
     return CanariPath (swiftuiPath: path)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   mutating func unioningUsingEvenOddRule (_ inPath : CanariPath) -> CanariPath {
-    var path : Path = self.swiftuiPath
-    path = path.union (inPath.swiftuiPath, eoFill: true)
+    var path : Path = self.mPath
+    path = path.union (inPath.mPath, eoFill: true)
     return CanariPath (swiftuiPath: path)
   }
 

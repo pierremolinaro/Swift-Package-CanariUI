@@ -285,7 +285,7 @@ public nonisolated struct CanariAffinity : CustomStringConvertible, Equatable {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func transforming (_ inPath : CanariPath) -> CanariPath {
-    return inPath.transformed (by: self)
+    return inPath.transformed (using: self)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

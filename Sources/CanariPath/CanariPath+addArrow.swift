@@ -1,28 +1,25 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 18/09/2025.
+//  Created by Pierre Molinaro on 02/06/2026.
 //--------------------------------------------------------------------------------------------------
 
 import AppKit
 
 //--------------------------------------------------------------------------------------------------
 
-extension UInt8 : CanariCodableByString {
+public extension CanariPath {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (scanner inScanner : Scanner, _ ioOk : inout Bool) {
-    if ioOk, let v = inScanner.scanUInt64 (), v <= UInt8.max {
-      self = UInt8 (v)
-    }else{
-      ioOk = false
-      self = .zero
+  mutating func addArrow (to inPoint : CanariPoint, length inLength : CanariLength) {
+    if let startPoint = self.currentCanariPoint, inPoint != startPoint {
+      let angle = startPoint.angle (to: inPoint)
+      self.addLine (to: inPoint)
+      let p1 = inPoint + CanariPoint (length: inLength, angle: angle + .degrees (135))
+      self.addLine (to: p1)
+      let p2 = inPoint + CanariPoint (length: inLength, angle: angle - .degrees (135))
+      self.addMove (to: p2)
+      self.addLine (to: inPoint)
     }
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public func canariCodableEncodedString () -> String {
-    return "\(self)"
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
