@@ -24,7 +24,7 @@ struct MouseGesture_SelectionRectangle <WidgetTypesDescription : DocumentWidgets
     var newSelection = self.startSelectionSet
     let shift = NSEvent.modifierFlags.contains (.shift)
     for widget in inWidgetsManagerInterface.widgetArray {
-      if widget.shape.orientedOrigin.globalOutlineIntersects (globalRect: selectionRectangle) {
+      if widget.shape.orientedOrigin.globalOutlineIntersects (mouseGestureGlobalRect: selectionRectangle) {
         if !shift {
           newSelection.insert (widget.shape.id)
         }else if newSelection.contains (widget.shape.id) {

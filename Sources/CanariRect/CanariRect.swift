@@ -166,6 +166,16 @@ public struct CanariRect : Hashable, CustomStringConvertible, Codable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public func contains (_ inRect : CanariRect) -> Bool {
+    let contains = (self.minX <= inRect.minX)
+      && (self.maxX >= inRect.maxX)
+      && (self.minY <= inRect.minY)
+      && (self.maxY >= inRect.maxY)
+    return contains
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public func intersects (_ inRect : CanariRect) -> Bool {
     let minX = max (self.minX, inRect.minX)
     let maxX = min (self.maxX, inRect.maxX)

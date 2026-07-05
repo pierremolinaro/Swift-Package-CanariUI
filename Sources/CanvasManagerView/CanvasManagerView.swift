@@ -18,6 +18,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private let mBackgroundViewBuilder : (BackgroundViewContext) -> any View
+  private let mDrawBackGround : (_ ioContext : inout GraphicsContext) -> Void
   private let mDrawOverlay : (_ ioContext : inout GraphicsContext) -> Void
   private let mTopHorizontalRulerViewBuilder : (HorizontalRulerViewContext) -> any View
   private let mLeftVerticalRulerViewBuilder : (VerticalRulerViewContext) -> any View
@@ -50,6 +51,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
         canvasScale inScale : Binding <Double>,
         alignedHoverUserLocation inAlignedHoverUserLocation : Binding <CanariPoint?>,
         widgetsUserInterface inWidgetsUserInterface : WidgetsUserInterface <WidgetTypesDescription>,
+        drawBackGround inDrawBackGround : @escaping (_ ioContext : inout GraphicsContext) -> Void,
         drawOverlay inDrawOverlay : @escaping (_ ioContext : inout GraphicsContext) -> Void,
         backgroundViewBuilder inBackgroundViewBuilder : @escaping (BackgroundViewContext) -> any View,
         leftVerticalRulerViewBuilder inLeftVerticalRulerViewBuilder : @escaping (VerticalRulerViewContext) -> any View,
@@ -68,6 +70,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
       height: inContext.canvasSize.height + inContext.margins.top + inContext.margins.bottom
     )
     self.mBackgroundViewBuilder = inBackgroundViewBuilder
+    self.mDrawBackGround = inDrawBackGround
     self.mDrawOverlay = inDrawOverlay
     self.mLeftVerticalRulerViewBuilder = inLeftVerticalRulerViewBuilder
     self.mRightVerticalRulerViewBuilder = inRightVerticalRulerViewBuilder
@@ -362,7 +365,13 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
           y: .px (size.height) - self.mContext.margins.bottom * self.mCanvasScale - self.contentOverHeight (inGeometry) / 2.0
         )
         context.scaleBy (x: 1.0, y: -1.0)
+      //--- BackGround
+        context.scaleBy (x: self.mCanvasScale, y: self.mCanvasScale)
+        self.mDrawBackGround (&context)
+        context.scaleBy (x: 1.0 / self.mCanvasScale, y: 1.0 / self.mCanvasScale)
+      //--- Shapes
         self.mWidgetsUserInterface.draw (context: &context, hoverUserLocationPoint: self.mUnalignedHoverUserLocation, scale: self.mCanvasScale)
+      //--- Overlay
         context.scaleBy (x: self.mCanvasScale, y: self.mCanvasScale)
         self.mDrawOverlay (&context)
         context.scaleBy (x: 1.0 / self.mCanvasScale, y: 1.0 / self.mCanvasScale)

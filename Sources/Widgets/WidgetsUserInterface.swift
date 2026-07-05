@@ -284,7 +284,7 @@ import Combine
   public func hoverTracking (at inPoint : CanariPoint) {
     enterTracing ("widgets.user.interface.hover.tracking") ; defer { exitTracing ("widgets.user.interface.hover.tracking") }
     for widget in self.widgetArray.reversed () {
-      if widget.shape.orientedOrigin.localOutline (containsLocalPoint: widget.shape.orientedOrigin.globalToLocal (inPoint)) {
+      if widget.shape.orientedOrigin.localOutline (containsLocalPointForMouseGesture: widget.shape.orientedOrigin.globalToLocal (inPoint)) {
         self.mHoveredObject = widget.shape.id
         return
       }
@@ -351,7 +351,7 @@ import Combine
 
     var widgetUnderMouseID : UUID? = nil
     for widget in self.widgetArray.reversed () {
-      if widget.shape.orientedOrigin.localOutline (containsLocalPoint: widget.shape.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
+      if widget.shape.orientedOrigin.localOutline (containsLocalPointForMouseGesture: widget.shape.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
         widgetUnderMouseID = widget.shape.id
         break
       }
@@ -408,7 +408,7 @@ import Combine
   private func mouseDown_shiftKey (geometry inGeometry : MouseGestureGeometryContext) -> any MouseGestureProtocol <WidgetTypesDescription> {
     var widgetUnderMouseID : UUID? = nil
     for widget in self.widgetArray.reversed () {
-      if widget.shape.orientedOrigin.localOutline (containsLocalPoint:widget.shape.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
+      if widget.shape.orientedOrigin.localOutline (containsLocalPointForMouseGesture:widget.shape.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
         widgetUnderMouseID = widget.shape.id
         break
       }
@@ -445,13 +445,14 @@ import Combine
     }
   //--- Mouse down in a selected object ?
     for widget in self.widgetArray.reversed () {
-      if self.mSelection.contains (widget.shape.id), widget.shape.orientedOrigin.localOutline (containsLocalPoint:widget.shape.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
+      if self.mSelection.contains (widget.shape.id), widget.shape.orientedOrigin.localOutline (containsLocalPointForMouseGesture:widget.shape.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
         return MouseGesture_DragSelection <WidgetTypesDescription> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
       }
     }
   //--- Mouse down in a non selected object ?
     for widget in self.widgetArray.reversed () {
-      if widget.shape.orientedOrigin.localOutline (containsLocalPoint:widget.shape.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
+      let localPoint = widget.shape.orientedOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)
+      if widget.shape.orientedOrigin.localOutline (containsLocalPointForMouseGesture: localPoint) {
         self.mSelection = [widget.shape.id]
         return MouseGesture_DragSelection <WidgetTypesDescription> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
       }
@@ -482,7 +483,7 @@ import Combine
   //--- CMD + Mouse down in a selected object ?
     for idx in (0 ..< self.mWidgetsManager.count).reversed () {
       let widget = self.mWidgetsManager [widgetIndex: idx]
-      if self.mSelection.contains (widget.shape.id), widget.shape.orientedOrigin.localOutline (containsLocalPoint:widget.shape.orientedOrigin.globalToLocal (inUnalignedPoint)) {
+      if self.mSelection.contains (widget.shape.id), widget.shape.orientedOrigin.localOutline (containsLocalPointForMouseGesture: widget.shape.orientedOrigin.globalToLocal (inUnalignedPoint)) {
         return widget.shape.contextualMenu (ContextualMenuExecutor (self, idx))
       }
     }

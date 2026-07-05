@@ -115,8 +115,13 @@ public struct CanariScaledOrientedOrigin : Equatable, Codable, CustomStringConve
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func localOutline (containsLocalPoint inLocalPoint : CanariPoint) -> Bool {
-    return self.mOriginCenteredLocalOutline.contains (inLocalPoint)
+  public func localOutline (containsLocalPointForMouseGesture inLocalPoint : CanariPoint) -> Bool {
+  //--- § À optimiser
+    var originCenteredLocalOutline = self.mOriginCenteredLocalOutline
+    let stroked = originCenteredLocalOutline.stroked (with: .px (1.0))
+    originCenteredLocalOutline.unionInPlace (stroked)
+    return originCenteredLocalOutline.contains (inLocalPoint)
+ //   return self.mOriginCenteredLocalOutline.contains (inLocalPoint)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -138,15 +143,20 @@ public struct CanariScaledOrientedOrigin : Equatable, Codable, CustomStringConve
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func globalOutlineIntersects (globalRect inGlobalRect : CanariRect) -> Bool {
+  public func globalOutlineIntersects (mouseGestureGlobalRect inGlobalRect : CanariRect) -> Bool {
     let globalRect = inGlobalRect.moved (by: -self.mOrigin)
-    if self.mOriginCenteredGlobalOutlineAndBoundingRect.boundingRect.isEmpty {
-      return self.mOriginCenteredGlobalOutlineAndBoundingRect.path.intersectsLines (of: globalRect)
-    }else{
-      return self.mOriginCenteredGlobalOutlineAndBoundingRect.boundingRect.intersects (globalRect)
-              &&
-             self.mOriginCenteredGlobalOutlineAndBoundingRect.path.intersects (globalRect)
-    }
+  //--- § À optimiser
+    var originCenteredGlobalOutline = self.mOriginCenteredGlobalOutlineAndBoundingRect.path
+    let stroked = originCenteredGlobalOutline.stroked (with: .px (1.0))
+    originCenteredGlobalOutline.unionInPlace (stroked)
+    return originCenteredGlobalOutline.intersects (globalRect)
+//    if self.mOriginCenteredGlobalOutlineAndBoundingRect.boundingRect.isEmpty {
+//      return self.mOriginCenteredGlobalOutlineAndBoundingRect.path.intersectsLines (of: globalRect)
+//    }else{
+//      return self.mOriginCenteredGlobalOutlineAndBoundingRect.boundingRect.intersects (globalRect)
+//              &&
+//             self.mOriginCenteredGlobalOutlineAndBoundingRect.path.intersects (globalRect)
+//    }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
