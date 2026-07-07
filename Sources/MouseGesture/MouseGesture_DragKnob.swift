@@ -11,7 +11,7 @@ struct MouseGesture_DragKnob <ShapeTypesDescription : DocumentShapesDescriptionP
   let alignedCurrentPoint : CanariPoint
   let optionKeyInitiallyOn : Bool
   let shapeID : UUID
-  let dragKnobAction : (inout CanariScaledOrientedOrigin, inout any CanariShapeUIProtocol <ShapeTypesDescription>, CanariPoint, Bool) -> Void
+  let dragKnobAction : (inout CanariShapeRoot <ShapeTypesDescription>, CanariPoint, Bool) -> Void
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -28,12 +28,10 @@ struct MouseGesture_DragKnob <ShapeTypesDescription : DocumentShapesDescriptionP
           proposedValue: translation,
           canvasSize: inGeometry.canvasSize
         )
-        let localTranslation = CanariAffinity (scale: 1.0 / shape.orientedOrigin.mScale)
-          .rotating (-shape.orientedOrigin.mAngle)
+        let localTranslation = CanariAffinity (scale: 1.0 / shape.mOrigin.mScale)
+          .rotating (-shape.mOrigin.mAngle)
           .transforming (validatedGlobalTranslation)
-        var origin = shape.orientedOrigin // §
-        self.dragKnobAction (&origin, &shape.shape, localTranslation, self.optionKeyInitiallyOn)
-        shape.orientedOrigin = origin
+        self.dragKnobAction (&shape, localTranslation, self.optionKeyInitiallyOn)
         inShapesManagerInterface [shapeID: self.shapeID] = shape
       }
       outOptionalNextState = MouseGesture_DragKnob (

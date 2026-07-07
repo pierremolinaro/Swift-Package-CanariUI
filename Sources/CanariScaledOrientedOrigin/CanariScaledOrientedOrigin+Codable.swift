@@ -36,7 +36,7 @@ extension CanariScaledOrientedOrigin : Codable {
   public func encode (to inEncoder : any Encoder) throws { // Encodable
     var container = inEncoder.singleValueContainer ()
     let angle = Int ((self.mAngle.degrees * 1000.0).rounded ())
-    try container.encode ("\(self.mOrigin.x.cuValue) \(self.mOrigin.y.cuValue) \(angle) \(self.mScale) \(self.mHorizontalFlip ? 1 : 0)")
+    try container.encode ("\(self.mPoint.x.cuValue) \(self.mPoint.y.cuValue) \(angle) \(self.mScale) \(self.mHorizontalFlip ? 1 : 0)")
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

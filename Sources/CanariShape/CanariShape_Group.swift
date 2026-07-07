@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariShape_Group <ShapeTypesDescription : DocumentShapesDescriptionProtocol> : CanariShapeUIProtocol {
+public struct CanariShape_Group <ShapeTypesDescription : DocumentShapesDescriptionProtocol> : CanariShapeDecorationUIProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -17,7 +17,7 @@ public struct CanariShape_Group <ShapeTypesDescription : DocumentShapesDescripti
   public var localOutlinePath : CanariPath {
     var result = CanariPath ()
     for shape in self.mArray {
-      shape.orientedOrigin.withGlobalOutline { result.unionInPlaceUsingNonZeroRule ($0) }
+      shape.mOrigin.withGlobalOutline { result.unionInPlaceUsingNonZeroRule ($0) }
     }
     return result
   }
@@ -25,7 +25,7 @@ public struct CanariShape_Group <ShapeTypesDescription : DocumentShapesDescripti
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   var mUnGroupIsEnabled : Bool
-  public let mArray : [CanariBaseShape <ShapeTypesDescription>] // at 0: back, at count - 1: front
+  public let mArray : [CanariShapeRoot <ShapeTypesDescription>] // at 0: back, at count - 1: front
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -33,18 +33,18 @@ public struct CanariShape_Group <ShapeTypesDescription : DocumentShapesDescripti
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  init (grouping inShapeArray : [CanariBaseShape <ShapeTypesDescription>]) {
+  init (grouping inShapeArray : [CanariShapeRoot <ShapeTypesDescription>]) {
     self.id = UUID ()
     self.mUnGroupIsEnabled = true
     var vertices = [CanariPoint] ()
     for shape in inShapeArray {
-      vertices += shape.orientedOrigin.globalBoundingRect.vertices
+      vertices += shape.mOrigin.globalBoundingRect.vertices
     }
     let r = CanariRect (vertices)
     self.mArray = inShapeArray.map {
-      var origin = $0.orientedOrigin
-      origin.mOrigin -= r.center
-      return CanariBaseShape (origin, $0.shape)
+      var origin = $0.mOrigin
+      origin.mPoint -= r.center
+      return CanariShapeRoot (origin, $0.mDecoration)
     }
   }
 
@@ -59,7 +59,7 @@ public struct CanariShape_Group <ShapeTypesDescription : DocumentShapesDescripti
   public init (from inDecoder : Decoder) throws {
     self.id = UUID ()
     let container = try inDecoder.container (keyedBy: CodingKeys.self)
-    self.mArray = try container.decode ([CanariBaseShape <ShapeTypesDescription>].self, forKey: .array)
+    self.mArray = try container.decode ([CanariShapeRoot <ShapeTypesDescription>].self, forKey: .array)
     self.mUnGroupIsEnabled = try container.decode (Bool.self, forKey: .unGroupIsEnabled)
   }
 
@@ -81,7 +81,7 @@ public struct CanariShape_Group <ShapeTypesDescription : DocumentShapesDescripti
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func isEqual (to inOther : any CanariShapeUIProtocol <ShapeTypesDescription>) -> Bool {
+  public func isEqual (to inOther : any CanariShapeDecorationUIProtocol <ShapeTypesDescription>) -> Bool {
     if let other = inOther as? CanariShape_Group <ShapeTypesDescription> {
       return (self.id == other.id)
           && (self.mUnGroupIsEnabled == other.mUnGroupIsEnabled)
@@ -95,14 +95,14 @@ public struct CanariShape_Group <ShapeTypesDescription : DocumentShapesDescripti
   //MARK: duplicated
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func duplicated () -> (any CanariShapeUIProtocol <ShapeTypesDescription>)? {
+  public func duplicated () -> (any CanariShapeDecorationUIProtocol <ShapeTypesDescription>)? {
     CanariShape_Group (self.mUnGroupIsEnabled, self.mArray)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private init (_ inUnGroupIsEnabled : Bool,
-                _ inArray : [CanariBaseShape <ShapeTypesDescription>]) {
+                _ inArray : [CanariShapeRoot <ShapeTypesDescription>]) {
     self.id = UUID ()
     self.mUnGroupIsEnabled = inUnGroupIsEnabled
     self.mArray = inArray
@@ -124,22 +124,22 @@ public struct CanariShape_Group <ShapeTypesDescription : DocumentShapesDescripti
                           selected inSelected : Bool,
                           groupLevel inGroupLevel : UInt) {
     for shape in self.mArray {
-      ioContext.translate (by: shape.orientedOrigin.mOrigin)
-      ioContext.rotate (by: shape.orientedOrigin.mAngle)
-      ioContext.scale (by: shape.orientedOrigin.mScale, horizontalFlip: shape.orientedOrigin.mHorizontalFlip)
-      shape.shape.drawShape (
+      ioContext.translate (by: shape.mOrigin.mPoint)
+      ioContext.rotate (by: shape.mOrigin.mAngle)
+      ioContext.scale (by: shape.mOrigin.mScale, horizontalFlip: shape.mOrigin.mHorizontalFlip)
+      shape.mDecoration.drawShape (
         context: &ioContext,
-        canvasScale: inCanvasScale * shape.orientedOrigin.mScale,
+        canvasScale: inCanvasScale * shape.mOrigin.mScale,
         hovered: inHovered,
         selected: inSelected,
         groupLevel: inGroupLevel
       )
-      ioContext.scale (by: 1.0 / shape.orientedOrigin.mScale, horizontalFlip: shape.orientedOrigin.mHorizontalFlip)
-      ioContext.rotate (by: -shape.orientedOrigin.mAngle)
-      ioContext.translate (by: -shape.orientedOrigin.mOrigin)
+      ioContext.scale (by: 1.0 / shape.mOrigin.mScale, horizontalFlip: shape.mOrigin.mHorizontalFlip)
+      ioContext.rotate (by: -shape.mOrigin.mAngle)
+      ioContext.translate (by: -shape.mOrigin.mPoint)
     }
     if inSelected || inHovered, inGroupLevel == 0 {
-//  §    self.orientedOrigin.withLocalBoundingRect {
+//  §    self.mOrigin.withLocalBoundingRect {
 //        ioContext.stroke (
 //          CanariPath (rect: $0),
 //          with: .color (.black), lineWidth: .px (0.5) / inScale
@@ -155,7 +155,7 @@ public struct CanariShape_Group <ShapeTypesDescription : DocumentShapesDescripti
   public var localAlignmentGuidePoints : [CanariPoint] {
     var points = [CanariPoint] ()
     for shape in self.mArray {
-      points += shape.shape.localAlignmentGuidePoints
+      points += shape.mDecoration.localAlignmentGuidePoints
     }
     return points
   }
@@ -164,11 +164,11 @@ public struct CanariShape_Group <ShapeTypesDescription : DocumentShapesDescripti
   //MARK: ungrouped array
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func ungroupedArray (_ inGroupOrigin : CanariScaledOrientedOrigin) -> [CanariBaseShape <ShapeTypesDescription>] {
+  func ungroupedArray (_ inGroupOrigin : CanariScaledOrientedOrigin) -> [CanariShapeRoot <ShapeTypesDescription>] {
     return self.mArray.map {
-      var origin = $0.orientedOrigin
+      var origin = $0.mOrigin
       origin.transformToGlobal (inGroupOrigin)
-      return CanariBaseShape (origin, $0.shape)
+      return CanariShapeRoot (origin, $0.mDecoration)
     }
   }
 

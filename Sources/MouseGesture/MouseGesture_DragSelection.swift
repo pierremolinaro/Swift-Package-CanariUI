@@ -24,8 +24,8 @@ struct MouseGesture_DragSelection <ShapeTypesDescription : DocumentShapesDescrip
     if translation != .zero {
       inBeginOrContinueUndoGrouping ()
       for i in 0 ..< inShapesManagerInterface.shapeCount {
-        if inShapesManagerInterface.selection.contains (inShapesManagerInterface [shapeIndex: i].shape.id) {
-          inShapesManagerInterface [shapeIndex: i].orientedOrigin.mOrigin += translation
+        if inShapesManagerInterface.selection.contains (inShapesManagerInterface [shapeIndex: i].mDecoration.id) {
+          inShapesManagerInterface [shapeIndex: i].mOrigin.mPoint += translation
         }
       }
       outOptionalNextState = MouseGesture_DragSelection (

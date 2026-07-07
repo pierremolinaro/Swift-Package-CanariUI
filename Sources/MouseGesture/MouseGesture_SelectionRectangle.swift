@@ -24,16 +24,16 @@ struct MouseGesture_SelectionRectangle <ShapeTypesDescription : DocumentShapesDe
     var newSelection = self.startSelectionSet
     let shift = NSEvent.modifierFlags.contains (.shift)
     for shape in inShapesManagerInterface.shapeArray {
-      if shape.orientedOrigin.globalOutlineIntersects (mouseGestureGlobalRect: selectionRectangle) {
+      if shape.mOrigin.globalOutlineIntersects (mouseGestureGlobalRect: selectionRectangle) {
         if !shift {
-          newSelection.insert (shape.shape.id)
-        }else if newSelection.contains (shape.shape.id) {
-          newSelection.remove (shape.shape.id)
+          newSelection.insert (shape.mDecoration.id)
+        }else if newSelection.contains (shape.mDecoration.id) {
+          newSelection.remove (shape.mDecoration.id)
         }else{
-          newSelection.insert (shape.shape.id)
+          newSelection.insert (shape.mDecoration.id)
         }
       }else if !shift {
-        newSelection.remove (shape.shape.id)
+        newSelection.remove (shape.mDecoration.id)
       }
     }
     inShapesManagerInterface.setSelection (withIDs: newSelection)

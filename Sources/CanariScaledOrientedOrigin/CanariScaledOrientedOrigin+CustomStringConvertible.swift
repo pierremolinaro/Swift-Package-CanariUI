@@ -10,7 +10,7 @@ extension CanariScaledOrientedOrigin : CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var description : String { "(\(self.mOrigin), \(self.mAngle), \(self.mScale), \(self.mHorizontalFlip))" }
+  public var description : String { "(\(self.mPoint), \(self.mAngle), \(self.mScale), \(self.mHorizontalFlip))" }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

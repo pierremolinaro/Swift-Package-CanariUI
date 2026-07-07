@@ -8,7 +8,7 @@ import SwiftUI
 
 struct MouseGesture_Creation <ShapeTypesDescription : DocumentShapesDescriptionProtocol> : MouseGestureProtocol {
 
-  let objectCreator : (MouseGestureGeometryContext) -> CanariBaseShape <ShapeTypesDescription>
+  let objectCreator : (MouseGestureGeometryContext) -> CanariShapeRoot <ShapeTypesDescription>
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -19,7 +19,7 @@ struct MouseGesture_Creation <ShapeTypesDescription : DocumentShapesDescriptionP
                        optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<ShapeTypesDescription>)?) {
     let newObject = self.objectCreator (inGeometry)
     inShapesManagerInterface [shapeIndex: inShapesManagerInterface.shapeCount - 1] = newObject
-    inShapesManagerInterface.setSelection (withID: newObject.shape.id)
+    inShapesManagerInterface.setSelection (withID: newObject.mDecoration.id)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -27,7 +27,7 @@ struct MouseGesture_Creation <ShapeTypesDescription : DocumentShapesDescriptionP
   func onMouseUp (removeUndoGrouping inRemoveUndoGrouping : () -> Void,
                   userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
                   shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <ShapeTypesDescription>) {
-    if inShapesManagerInterface [shapeIndex: inShapesManagerInterface.shapeCount - 1].shape.isGraphicallyEmpty {
+    if inShapesManagerInterface [shapeIndex: inShapesManagerInterface.shapeCount - 1].mDecoration.isGraphicallyEmpty {
       inShapesManagerInterface.removeLast ()
       inShapesManagerInterface.clearSelection ()
       inRemoveUndoGrouping ()

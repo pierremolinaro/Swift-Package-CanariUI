@@ -19,13 +19,13 @@ public struct ShapeKnob <ShapeTypesDescription : DocumentShapesDescriptionProtoc
 
   private let localCenter : CanariPoint
   private let shape : Shape
-  let dragKnobAction : (inout CanariScaledOrientedOrigin, inout any CanariShapeUIProtocol <ShapeTypesDescription>, CanariPoint, Bool) -> Void
+  let dragKnobAction : (inout CanariShapeRoot <ShapeTypesDescription>, CanariPoint, Bool) -> Void
   let menu : ((ContextualMenuExecutor <ShapeTypesDescription>) -> any View)?
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (localCenter inCenter : CanariPoint,
-               dragAction inKnobDragAction : @escaping (inout CanariScaledOrientedOrigin, inout any CanariShapeUIProtocol <ShapeTypesDescription>, CanariPoint, Bool) -> Void,
+               dragAction inKnobDragAction : @escaping (inout CanariShapeRoot <ShapeTypesDescription>, CanariPoint, Bool) -> Void,
                menu inMenu : ((ContextualMenuExecutor <ShapeTypesDescription>) -> any View)? = nil) {
     self.localCenter = inCenter
     self.shape = .circle
@@ -35,7 +35,7 @@ public struct ShapeKnob <ShapeTypesDescription : DocumentShapesDescriptionProtoc
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (dragAction inKnobDragAction : @escaping (inout CanariScaledOrientedOrigin, inout any CanariShapeUIProtocol <ShapeTypesDescription>, CanariPoint, Bool) -> Void,
+  public init (dragAction inKnobDragAction : @escaping (inout CanariShapeRoot <ShapeTypesDescription>, CanariPoint, Bool) -> Void,
                menu inMenu : ((ContextualMenuExecutor <ShapeTypesDescription>) -> any View)? = nil) {
     self.localCenter = .zero
     self.shape = .rect

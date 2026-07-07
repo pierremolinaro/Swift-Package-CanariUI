@@ -10,7 +10,7 @@ public struct ShapeArrayManager <ShapeTypesDescription : DocumentShapesDescripti
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private var mShapeArray : [CanariBaseShape <ShapeTypesDescription>] // at 0: back, at count - 1: front
+  private var mShapeArray : [CanariShapeRoot <ShapeTypesDescription>] // at 0: back, at count - 1: front
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -24,13 +24,13 @@ public struct ShapeArrayManager <ShapeTypesDescription : DocumentShapesDescripti
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public mutating func setShapes (_ inShapes : [CanariBaseShape <ShapeTypesDescription>]) {
+  public mutating func setShapes (_ inShapes : [CanariShapeRoot <ShapeTypesDescription>]) {
     self.mShapeArray = inShapes
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var shapeArray : [CanariBaseShape <ShapeTypesDescription>] {
+  public var shapeArray : [CanariShapeRoot <ShapeTypesDescription>] {
     return self.mShapeArray
   }
 
@@ -38,19 +38,19 @@ public struct ShapeArrayManager <ShapeTypesDescription : DocumentShapesDescripti
   //MARK: Subscripts
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public subscript (shapeIndex inIndex : Int) -> CanariBaseShape <ShapeTypesDescription> {
+  public subscript (shapeIndex inIndex : Int) -> CanariShapeRoot <ShapeTypesDescription> {
     get { self.mShapeArray [inIndex] }
     set { self.mShapeArray [inIndex] = newValue }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  subscript (shapeID inID : UUID) -> (CanariBaseShape <ShapeTypesDescription>)? {
+  subscript (shapeID inID : UUID) -> (CanariShapeRoot <ShapeTypesDescription>)? {
     get {
-      self.mShapeArray.first { $0.shape.id == inID }
+      self.mShapeArray.first { $0.mDecoration.id == inID }
     }
     set {
-      if let v = newValue, let idx = self.mShapeArray.firstIndex (where: { $0.shape.id == inID } ) {
+      if let v = newValue, let idx = self.mShapeArray.firstIndex (where: { $0.mDecoration.id == inID } ) {
         self.mShapeArray [idx] = v
       }
     }
@@ -60,7 +60,7 @@ public struct ShapeArrayManager <ShapeTypesDescription : DocumentShapesDescripti
   //MARK: Mutating functions
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func append (_ inNewObject : CanariBaseShape <ShapeTypesDescription>) {
+  mutating func append (_ inNewObject : CanariShapeRoot <ShapeTypesDescription>) {
     self.mShapeArray.append (inNewObject)
   }
 
@@ -79,15 +79,15 @@ public struct ShapeArrayManager <ShapeTypesDescription : DocumentShapesDescripti
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   mutating func remove (id inID : UUID) {
-    if let idx = self.mShapeArray.firstIndex (where: { $0.shape.id == inID } ) {
+    if let idx = self.mShapeArray.firstIndex (where: { $0.mDecoration.id == inID } ) {
       self.mShapeArray.remove (at: idx)
     }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func replaceShape (withID inID : UUID, by inArray : [CanariBaseShape <ShapeTypesDescription>]) {
-    var idx = self.mShapeArray.firstIndex { $0.shape.id == inID }!
+  mutating func replaceShape (withID inID : UUID, by inArray : [CanariShapeRoot <ShapeTypesDescription>]) {
+    var idx = self.mShapeArray.firstIndex { $0.mDecoration.id == inID }!
     self.mShapeArray.remove (at: idx)
     for widget in inArray {
       self.mShapeArray.insert (widget, at: idx)

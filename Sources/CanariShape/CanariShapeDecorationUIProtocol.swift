@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public protocol CanariShapeUIProtocol <ShapeTypesDescription> : CanariShapeModelProtocol {
+public protocol CanariShapeDecorationUIProtocol <ShapeTypesDescription> : CanariShapeDecorationModelProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -18,7 +18,7 @@ public protocol CanariShapeUIProtocol <ShapeTypesDescription> : CanariShapeModel
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func isEqual (to inOther : any CanariShapeUIProtocol <ShapeTypesDescription>) -> Bool
+  func isEqual (to inOther : any CanariShapeDecorationUIProtocol <ShapeTypesDescription>) -> Bool
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

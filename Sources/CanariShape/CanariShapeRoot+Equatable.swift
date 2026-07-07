@@ -1,26 +1,21 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 27/03/2026.
+//  Created by Pierre Molinaro on 21/02/2026.
 //--------------------------------------------------------------------------------------------------
 
 import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public protocol CanariShapeModelProtocol <ShapeTypesDescription> : Identifiable, Sendable, Codable {
-
-  associatedtype ShapeTypesDescription : DocumentShapesDescriptionProtocol
+extension CanariShapeRoot : Equatable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var id : UUID { get }
-
-  var localOutlinePath : CanariPath { get }
+  public static func == (_ inLeft  : CanariShapeRoot <ShapeTypesDescription>,
+                         _ inRight : CanariShapeRoot <ShapeTypesDescription>) -> Bool {
+    (inLeft.mOrigin == inRight.mOrigin) && inLeft.mDecoration.isEqual (to: inRight.mDecoration)
+  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  func duplicated () -> (any CanariShapeUIProtocol <ShapeTypesDescription>)?
-
- // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 }
 

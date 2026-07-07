@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-extension CanariBaseShape : Codable {
+extension CanariShapeRoot : Codable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Encoding, Decoding
@@ -17,18 +17,18 @@ extension CanariBaseShape : Codable {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   nonisolated public init (from inDecoder : Decoder) throws {
-    var dictionary : [String : any CanariShapeUIProtocol.Type] = [:]
-    for (type, name) : (any CanariShapeUIProtocol.Type, String) in ShapeTypesDescription.shapeTypeArray {
+    var dictionary : [String : any CanariShapeDecorationUIProtocol.Type] = [:]
+    for (type, name) : (any CanariShapeDecorationUIProtocol.Type, String) in ShapeTypesDescription.shapeTypeArray {
       dictionary [name] = type
     }
     let container = try inDecoder.container (keyedBy: CodingKeys.self)
-    self.orientedOrigin = try container.decode (CanariScaledOrientedOrigin.self, forKey: .oo)
+    self.mOrigin = try container.decode (CanariScaledOrientedOrigin.self, forKey: .oo)
     let typeName = try container.decode (String.self, forKey: .type)
     if let type = dictionary [typeName] {
-      let shape : any CanariShapeUIProtocol = try container.decode (type, forKey: .value)
-      self.shape = shape as! any CanariShapeUIProtocol <ShapeTypesDescription>
-      let localOutlinePath = self.shape.localOutlinePath
-      self.orientedOrigin.setLocalOutline (localOutlinePath)
+      let shape : any CanariShapeDecorationUIProtocol = try container.decode (type, forKey: .value)
+      self.mDecoration = shape as! any CanariShapeDecorationUIProtocol <ShapeTypesDescription>
+      let localOutlinePath = self.mDecoration.localOutlinePath
+      self.mOrigin.setLocalOutline (localOutlinePath)
     }else{
       throw DecodingError.dataCorruptedError (
         forKey: .type,
@@ -42,9 +42,9 @@ extension CanariBaseShape : Codable {
 
   public nonisolated func encode (to inEncoder : Encoder) throws {
     var container = inEncoder.container (keyedBy: CodingKeys.self)
-    try container.encode (ShapeTypesDescription.documentEncodedTypeName (self.shape), forKey: .type)
-    try container.encode (self.orientedOrigin, forKey: .oo)
-    try container.encode (self.shape, forKey: .value)
+    try container.encode (ShapeTypesDescription.documentEncodedTypeName (self.mDecoration), forKey: .type)
+    try container.encode (self.mOrigin, forKey: .oo)
+    try container.encode (self.mDecoration, forKey: .value)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
