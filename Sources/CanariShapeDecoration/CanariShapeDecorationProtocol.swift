@@ -1,12 +1,24 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 21/02/2026.
+//  Created by Pierre Molinaro on 27/03/2026.
 //--------------------------------------------------------------------------------------------------
 
 import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public protocol CanariShapeDecorationUIProtocol <ShapeTypesDescription> : CanariShapeDecorationModelProtocol {
+public protocol CanariShapeDecorationProtocol <ShapeTypesDescription> : Identifiable, Sendable, Codable {
+
+  associatedtype ShapeTypesDescription : DocumentShapesDescriptionProtocol
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  var id : UUID { get }
+
+  var localOutlinePath : CanariPath { get }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  func duplicated () -> (any CanariShapeDecorationProtocol <ShapeTypesDescription>)?
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -18,7 +30,7 @@ public protocol CanariShapeDecorationUIProtocol <ShapeTypesDescription> : Canari
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func isEqual (to inOther : any CanariShapeDecorationUIProtocol <ShapeTypesDescription>) -> Bool
+  func isEqual (to inOther : any CanariShapeDecorationProtocol <ShapeTypesDescription>) -> Bool
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -29,10 +41,10 @@ public protocol CanariShapeDecorationUIProtocol <ShapeTypesDescription> : Canari
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func drawShape (context ioContext : inout GraphicsContext,
-                   canvasScale inCanvasScale : Double,
-                   hovered inHovered : Bool,
-                   selected inSelected : Bool,
-                   groupLevel inGroupLevel : UInt)
+                  canvasScale inCanvasScale : Double,
+                  hovered inHovered : Bool,
+                  selected inSelected : Bool,
+                  groupLevel inGroupLevel : UInt)
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: AlignmentGuidePoints
@@ -48,7 +60,7 @@ public protocol CanariShapeDecorationUIProtocol <ShapeTypesDescription> : Canari
 
   @MainActor static func inspectorView (proxy inProxy : CanariInspectorProxy <ShapeTypesDescription>) -> any View
 
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 }
 

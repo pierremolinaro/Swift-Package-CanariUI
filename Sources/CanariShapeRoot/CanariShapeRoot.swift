@@ -18,7 +18,7 @@ public nonisolated struct CanariShapeRoot <ShapeTypesDescription : DocumentShape
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var mDecoration : any CanariShapeDecorationUIProtocol <ShapeTypesDescription> {
+  public var mDecoration : any CanariShapeDecorationProtocol <ShapeTypesDescription> {
     didSet {
       self.mOrigin.setLocalOutline (self.mDecoration.localOutlinePath)
     }
@@ -27,7 +27,7 @@ public nonisolated struct CanariShapeRoot <ShapeTypesDescription : DocumentShape
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (_ inOrientedOrigin : CanariScaledOrientedOrigin,
-               _ inDecoration : any CanariShapeDecorationUIProtocol <ShapeTypesDescription>) {
+               _ inDecoration : any CanariShapeDecorationProtocol <ShapeTypesDescription>) {
     self.mOrigin = inOrientedOrigin
     self.mDecoration = inDecoration
     self.mOrigin.setLocalOutline (self.mDecoration.localOutlinePath)

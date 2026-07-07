@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariShape_Group <ShapeTypesDescription : DocumentShapesDescriptionProtocol> : CanariShapeDecorationUIProtocol {
+public struct CanariShape_Group <ShapeTypesDescription : DocumentShapesDescriptionProtocol> : CanariShapeDecorationProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -81,7 +81,7 @@ public struct CanariShape_Group <ShapeTypesDescription : DocumentShapesDescripti
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func isEqual (to inOther : any CanariShapeDecorationUIProtocol <ShapeTypesDescription>) -> Bool {
+  public func isEqual (to inOther : any CanariShapeDecorationProtocol <ShapeTypesDescription>) -> Bool {
     if let other = inOther as? CanariShape_Group <ShapeTypesDescription> {
       return (self.id == other.id)
           && (self.mUnGroupIsEnabled == other.mUnGroupIsEnabled)
@@ -95,7 +95,7 @@ public struct CanariShape_Group <ShapeTypesDescription : DocumentShapesDescripti
   //MARK: duplicated
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func duplicated () -> (any CanariShapeDecorationUIProtocol <ShapeTypesDescription>)? {
+  public func duplicated () -> (any CanariShapeDecorationProtocol <ShapeTypesDescription>)? {
     CanariShape_Group (self.mUnGroupIsEnabled, self.mArray)
   }
 

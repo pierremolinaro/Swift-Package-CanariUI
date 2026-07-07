@@ -12,7 +12,7 @@ public protocol DocumentShapesDescriptionProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  nonisolated static var shapeTypeArray : [(any CanariShapeDecorationUIProtocol <ShapeTypesDescription>.Type, String)] { get }
+  nonisolated static var shapeTypeArray : [(any CanariShapeDecorationProtocol <ShapeTypesDescription>.Type, String)] { get }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -24,7 +24,7 @@ extension DocumentShapesDescriptionProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  static func documentEncodedTypeName (_ inShape : any CanariShapeDecorationUIProtocol) -> String {
+  static func documentEncodedTypeName (_ inShape : any CanariShapeDecorationProtocol) -> String {
     let type = type (of: inShape)
     for (shapeType, typeName) in Self.shapeTypeArray {
       if shapeType == type {

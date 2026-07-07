@@ -23,7 +23,7 @@ public final class ContextualMenuExecutor <ShapeTypesDescription : DocumentShape
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func execute <T : CanariShapeDecorationUIProtocol <ShapeTypesDescription>> (_ inAction : (inout T) -> Void) {
+  public func execute <T : CanariShapeDecorationProtocol <ShapeTypesDescription>> (_ inAction : (inout T) -> Void) {
     var shape = self.mShapesUserInterface [shapeIndex: self.mShapeIndex]
     if var decoration = shape.mDecoration as? T {
       inAction (&decoration)

@@ -822,8 +822,8 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private func commonTypeForSelection () -> (any CanariShapeDecorationUIProtocol <ShapeTypesDescription>.Type)? {
-    var result : (any CanariShapeDecorationUIProtocol <ShapeTypesDescription>.Type)? = nil
+  private func commonTypeForSelection () -> (any CanariShapeDecorationProtocol <ShapeTypesDescription>.Type)? {
+    var result : (any CanariShapeDecorationProtocol <ShapeTypesDescription>.Type)? = nil
     for id in self.mSelection {
       if let shape = self.mShapeArrayManager [shapeID: id] {
         if let r = result {
