@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariScaledOrientedOrigin : Equatable, Codable, CustomStringConvertible {
+public struct CanariScaledOrientedOrigin : Equatable, Codable, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -357,12 +357,6 @@ public struct CanariScaledOrientedOrigin : Equatable, Codable, CustomStringConve
     let angle = Int ((self.mAngle.degrees * 1000.0).rounded ())
     try container.encode ("\(self.mOrigin.x.cuValue) \(self.mOrigin.y.cuValue) \(angle) \(self.mScale) \(self.mHorizontalFlip ? 1 : 0)")
   }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: CustomStringConvertible
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public var description : String { "(\(self.mOrigin), \(self.mAngle), \(self.mScale), \(self.mHorizontalFlip))" }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

@@ -11,13 +11,13 @@ public extension CanariPath {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func normalizedUsingNonZeroRule () -> CanariPath {
-    CanariPath (swiftuiPath: self.mPath.normalized (eoFill: false))
+    CanariPath (cgPath: self.mPath.cgPath.normalized (using: .winding))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func normalizedUsingEvenOddRule () -> CanariPath {
-    CanariPath (swiftuiPath: self.mPath.normalized (eoFill: true))
+    CanariPath (cgPath: self.mPath.cgPath.normalized (using: .evenOdd))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

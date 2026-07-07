@@ -1,37 +1,36 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 23/06/2026.
+//  Created by Pierre Molinaro on 08/08/2025.
 //--------------------------------------------------------------------------------------------------
 
 import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariSingleElementInspector <Content> : View where Content : View {
+extension CanariRGBAColor : RawRepresentable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private let mTitle : String
-  private let mContent : () -> Content
+  public typealias RawValue = String // RawRepresentable
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (title inTitle : String,
-               @ViewBuilder content : @escaping () -> Content) {
-    self.mTitle = inTitle
-    self.mContent = content
+  public init? (rawValue inRawValue : String) { // RawRepresentable
+    let components = inRawValue.split (separator: " ")
+    if components.count == 4,
+       let red = UInt8 (components[0]),
+       let green = UInt8 (components[1]),
+       let blue = UInt8 (components[2]),
+       let alpha = UInt8 (components[4]) {
+      self.init (red: red, green: green, blue: blue, alpha: alpha)
+    }else{
+      return nil
+    }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var body : some View {
-    HStack {
-      Text (self.mTitle).bold ()
-      Spacer ()
-      self.mContent ()
-    }
-    .padding (6.0)
-    .frame (maxWidth: .infinity)
-    .background (RoundedRectangle(cornerRadius: 8.0).fill(.quinary))
+  public var rawValue : String { // RawRepresentable
+    return "\(self.red) \(self.green) \(self.blue) \(self.alpha)"
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -1,23 +1,20 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 02/06/2026.
+//  Created by Pierre Molinaro on 20/09/2024.
 //--------------------------------------------------------------------------------------------------
 
-import AppKit
+import Foundation
 
 //--------------------------------------------------------------------------------------------------
 
-public extension CanariPath {
+extension CanariAffinity : CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func containsUsingNonZeroRule (_ inP : CanariPoint) -> Bool {
-    return self.mPath.cgPath.contains (inP.pxValue, using: .winding)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  func containsUsingEvenOddRule (_ inP : CanariPoint) -> Bool {
-    return self.mPath.cgPath.contains (inP.pxValue, using: .evenOdd)
+  public var description : String {
+    var s = "m11: \(self.mAffineTransform.m11), m12: \(self.mAffineTransform.m12)"
+    s += " m21: \(self.mAffineTransform.m21), m22: \(self.mAffineTransform.m22)"
+    s += " tX: \(self.mAffineTransform.tX), tY: \(self.mAffineTransform.tY)"
+    return s
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

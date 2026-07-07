@@ -10,7 +10,7 @@ public extension CanariPath {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func addArrow (to inPoint : CanariPoint, length inLength : CanariLength) {
+  mutating func addArrow (to inPoint : CanariPoint, arrowhead inLength : CanariLength) {
     if let startPoint = self.currentCanariPoint, inPoint != startPoint {
       let angle = startPoint.angle (to: inPoint)
       self.addLine (to: inPoint)

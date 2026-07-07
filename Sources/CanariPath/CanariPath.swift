@@ -124,6 +124,7 @@ public struct CanariPath : Equatable, Sendable {
     var openPath = CanariPath ()
     var closedPathArray = [CanariPath] ()
     var currentPath = CanariPath ()
+    var currentPathIsEmpty = true
     var startPoint = CGPoint ()
     self.mPath.forEach {
       switch $0 {
@@ -136,18 +137,22 @@ public struct CanariPath : Equatable, Sendable {
         startPoint = p
       case .line (to: let p):
         currentPath.addLine (to: p)
+        currentPathIsEmpty = false
+      case .curve (let target, let ctrl1, let ctrl2) :
+        currentPath.addCubicCurve (to: target, control1: ctrl1, control2: ctrl2)
+        currentPathIsEmpty = false
+      case .quadCurve (let target, let ctrl) :
+        currentPath.addQuadCurve (to: target, control: ctrl)
+        currentPathIsEmpty = false
       case .closeSubpath :
         currentPath.addClosePath ()
         closedPathArray.append (currentPath)
         currentPath = CanariPath ()
         currentPath.addMove (to: startPoint)
-      case .curve (let target, let ctrl1, let ctrl2) :
-        currentPath.addCubicCurve (to: target, control1: ctrl1, control2: ctrl2)
-      case .quadCurve (let target, let ctrl) :
-        currentPath.addQuadCurve (to: target, control: ctrl)
+        currentPathIsEmpty = true
       }
     }
-    if !currentPath.isEmpty {
+    if !currentPathIsEmpty {
       openPath.addPath (currentPath)
     }
     return (openPath, closedPathArray)

@@ -1,24 +1,32 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 02/06/2026.
+//  Created by Pierre Molinaro on 19/09/2025.
 //--------------------------------------------------------------------------------------------------
 
 import AppKit
 
 //--------------------------------------------------------------------------------------------------
 
-public extension CanariPath {
+extension CanariLength : Codable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func containsUsingNonZeroRule (_ inP : CanariPoint) -> Bool {
-    return self.mPath.cgPath.contains (inP.pxValue, using: .winding)
+  public init (from inDecoder : any Decoder) throws { // Decodable
+    let container = try inDecoder.singleValueContainer ()
+    let string = try container.decode (String.self)
+    if let v = Int (string) {
+      self.cuValue = v
+    }else {
+      throw DecodingError.dataCorruptedError (in: container, debugDescription: "Invalid rectangle string")
+    }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func containsUsingEvenOddRule (_ inP : CanariPoint) -> Bool {
-    return self.mPath.cgPath.contains (inP.pxValue, using: .evenOdd)
+  public func encode (to inEncoder : any Encoder) throws { // Encodable
+    var container = inEncoder.singleValueContainer ()
+    try container.encode ("\(self.cuValue)")
   }
+
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

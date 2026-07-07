@@ -1,23 +1,17 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 02/06/2026.
+//  Created by Pierre Molinaro on 08/08/2025.
 //--------------------------------------------------------------------------------------------------
 
-import AppKit
+import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public extension CanariPath {
+extension CanariRGBAColor : CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func containsUsingNonZeroRule (_ inP : CanariPoint) -> Bool {
-    return self.mPath.cgPath.contains (inP.pxValue, using: .winding)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  func containsUsingEvenOddRule (_ inP : CanariPoint) -> Bool {
-    return self.mPath.cgPath.contains (inP.pxValue, using: .evenOdd)
+  public var description : String {
+    return "\(self.red) \(self.green) \(self.blue) \(self.alpha)"
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

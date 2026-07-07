@@ -1,23 +1,32 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 02/06/2026.
+//  Created by Pierre Molinaro on 08/08/2025.
 //--------------------------------------------------------------------------------------------------
 
-import AppKit
+import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public extension CanariPath {
+extension CanariRGBAColor : CanariCodableByString {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func containsUsingNonZeroRule (_ inP : CanariPoint) -> Bool {
-    return self.mPath.cgPath.contains (inP.pxValue, using: .winding)
+  public init (scanner inScanner : Scanner, _ ioOk : inout Bool) {
+    if ioOk {
+      let red = UInt8 (scanner: inScanner, &ioOk)
+      let green = UInt8 (scanner: inScanner, &ioOk)
+      let blue = UInt8 (scanner: inScanner, &ioOk)
+      let alpha = UInt8 (scanner: inScanner, &ioOk)
+      self = CanariRGBAColor (red: red, green: green, blue: blue, alpha: alpha)
+    }else{
+      ioOk = false
+      self = CanariRGBAColor.black
+    }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func containsUsingEvenOddRule (_ inP : CanariPoint) -> Bool {
-    return self.mPath.cgPath.contains (inP.pxValue, using: .evenOdd)
+  public func canariCodableEncodedString () -> String {
+    return "\(self.red) \(self.green) \(self.blue) \(self.alpha)"
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

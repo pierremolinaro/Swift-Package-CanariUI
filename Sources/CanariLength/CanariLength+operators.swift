@@ -21,7 +21,7 @@ public func += (_ ioLeft : inout CanariLength, _ inRight : CanariLength) {
 //--------------------------------------------------------------------------------------------------
 
 public prefix func - (_ inOperand : CanariLength) -> CanariLength {
-  return inOperand.multipliedBy (int: -1)
+  return inOperand.multipliedBy (-1)
 }
 
 //--------------------------------------------------------------------------------------------------

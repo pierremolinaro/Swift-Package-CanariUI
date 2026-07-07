@@ -8,7 +8,7 @@ import SwiftUI
 // Computing bounding rect is costly, using this struct enables computing it once
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariPathWithBoundingRect : Equatable {
+public struct CanariPathWithBoundingRect : Equatable, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

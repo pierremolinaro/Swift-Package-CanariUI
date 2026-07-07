@@ -40,7 +40,7 @@ public struct ExpandableInspectorOfCanariPointSet : View {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var body : some View {
-    CanariElementExpandableInspector (title: "Center", expandedSubtitle: "cm", isExpanded: self.$mIsExpanded) {
+    CanariExpandableInspectorView (title: "Center", expandedSubtitle: "cm", isExpanded: self.$mIsExpanded) {
       HStack {
         Spacer ()
         Form {

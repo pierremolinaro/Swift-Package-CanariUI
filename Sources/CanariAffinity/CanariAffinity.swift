@@ -6,11 +6,11 @@ import Foundation
 
 //--------------------------------------------------------------------------------------------------
 
-public nonisolated struct CanariAffinity : CustomStringConvertible, Equatable {
+public nonisolated struct CanariAffinity : Equatable, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private var mAffineTransform : AffineTransform
+  internal var mAffineTransform : AffineTransform
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   /**
@@ -236,18 +236,6 @@ public nonisolated struct CanariAffinity : CustomStringConvertible, Equatable {
 
   public mutating func prepend (_ inTransform : CanariAffinity) {
     self.mAffineTransform.prepend (inTransform.mAffineTransform)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  /**
-    A textual representation of this instance.
-  */
-  
-  public var description : String { // CustomStringConvertible protocol
-    var s = "m11: \(self.mAffineTransform.m11), m12: \(self.mAffineTransform.m12)"
-    s += " m21: \(self.mAffineTransform.m21), m22: \(self.mAffineTransform.m22)"
-    s += " tX: \(self.mAffineTransform.tX), tY: \(self.mAffineTransform.tY)"
-    return s
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

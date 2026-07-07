@@ -6,9 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariRGBAColor : Codable, Equatable, RawRepresentable, CanariCodableByString, CustomStringConvertible {
-
-  public typealias RawValue = String // RawRepresentable
+public struct CanariRGBAColor : Equatable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -69,87 +67,6 @@ public struct CanariRGBAColor : Codable, Equatable, RawRepresentable, CanariCoda
   public static var blue   : CanariRGBAColor { .init (red: 000, green: 000, blue: 255, alpha: 255) }
   public static var orange : CanariRGBAColor { .init (red: 251, green: 176, blue: 039, alpha: 255) }
   public static var green  : CanariRGBAColor { .init (red: 000, green: 128, blue: 000, alpha: 255) }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: Codable
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public init (from inDecoder : any Decoder) throws { // Decodable
-    let container = try inDecoder.singleValueContainer ()
-    let string = try container.decode (String.self)
-    let components = string.split (separator: " ")
-    if components.count == 4,
-       let red = UInt8 (components [0]),
-       let green = UInt8 (components [1]),
-       let blue = UInt8 (components [2]),
-       let alpha = UInt8 (components [3]) {
-      self.red = red
-      self.green = green
-      self.blue = blue
-      self.alpha = alpha
-    }else {
-      throw DecodingError.dataCorruptedError (in: container, debugDescription: "Invalid color string")
-    }
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public func encode (to inEncoder : any Encoder) throws { // Encodable
-    var container = inEncoder.singleValueContainer ()
-    try container.encode ("\(self.red) \(self.green) \(self.blue) \(self.alpha)")
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: RawRepresentable
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public var rawValue : String { // RawRepresentable
-    return "\(self.red) \(self.green) \(self.blue) \(self.alpha)"
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public init? (rawValue inRawValue : String) { // RawRepresentable
-    let components = inRawValue.split (separator: " ")
-    if components.count == 4,
-       let red = UInt8 (components[0]),
-       let green = UInt8 (components[1]),
-       let blue = UInt8 (components[2]),
-       let alpha = UInt8 (components[4]) {
-      self.init (red: red, green: green, blue: blue, alpha: alpha)
-    }else{
-      return nil
-    }
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: CanariCodableByString
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public init (scanner inScanner : Scanner, _ ioOk : inout Bool) {
-    if ioOk {
-      let red = UInt8 (scanner: inScanner, &ioOk)
-      let green = UInt8 (scanner: inScanner, &ioOk)
-      let blue = UInt8 (scanner: inScanner, &ioOk)
-      let alpha = UInt8 (scanner: inScanner, &ioOk)
-      self = CanariRGBAColor (red: red, green: green, blue: blue, alpha: alpha)
-    }else{
-      ioOk = false
-      self = CanariRGBAColor.black
-    }
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public func canariCodableEncodedString () -> String {
-    return "\(self.red) \(self.green) \(self.blue) \(self.alpha)"
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public var description : String {
-    return "\(self.red) \(self.green) \(self.blue) \(self.alpha)"
-  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

@@ -1,23 +1,37 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 02/06/2026.
+//  Created by Pierre Molinaro on 23/06/2026.
 //--------------------------------------------------------------------------------------------------
 
-import AppKit
+import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public extension CanariPath {
+public struct CanariInspectorView <Content : View> : View { // where Content : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func containsUsingNonZeroRule (_ inP : CanariPoint) -> Bool {
-    return self.mPath.cgPath.contains (inP.pxValue, using: .winding)
+  private let mTitle : String
+  private let mContent : () -> Content
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public init (title inTitle : String,
+               @ViewBuilder content : @escaping () -> Content) {
+    self.mTitle = inTitle
+    self.mContent = content
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func containsUsingEvenOddRule (_ inP : CanariPoint) -> Bool {
-    return self.mPath.cgPath.contains (inP.pxValue, using: .evenOdd)
+  public var body : some View {
+    HStack {
+      Text (self.mTitle).bold ()
+      Spacer ()
+      self.mContent ()
+    }
+    .padding (6.0)
+    .frame (maxWidth: .infinity)
+    .background (RoundedRectangle(cornerRadius: 8.0).fill(.quinary))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

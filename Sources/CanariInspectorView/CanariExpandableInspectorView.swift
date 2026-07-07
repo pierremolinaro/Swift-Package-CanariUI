@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariElementInspector <Content> : View where Content : View {
+public struct CanariExpandableInspectorView <Content : View> : View { // where Content : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -14,17 +14,19 @@ public struct CanariElementInspector <Content> : View where Content : View {
   private let mExpandedSubTitle : String
   private let mCollapsedSubTitle : String
   private let mContent : () -> Content
-  @State private var mIsExpanded = true
+  @Binding private var mIsExpanded : Bool
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (title inTitle : String,
                expandedSubtitle inExpandedSubTitle : String = "",
                collapsedSubtitle inCollapsedSubTitle : String = "",
+               isExpanded inIsExpanded : Binding <Bool>,
                @ViewBuilder content : @escaping () -> Content) {
     self.mTitle = inTitle
     self.mExpandedSubTitle = inExpandedSubTitle
     self.mCollapsedSubTitle = inCollapsedSubTitle
+    self._mIsExpanded = inIsExpanded
     self.mContent = content
   }
 
