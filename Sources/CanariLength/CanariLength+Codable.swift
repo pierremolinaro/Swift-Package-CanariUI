@@ -27,7 +27,6 @@ extension CanariLength : Codable {
     try container.encode ("\(self.cuValue)")
   }
 
-
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 }
