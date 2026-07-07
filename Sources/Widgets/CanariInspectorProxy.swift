@@ -6,26 +6,26 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public final class CanariInspectorProxy <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> {
+public final class CanariInspectorProxy <ShapeTypesDescription : DocumentShapesDescriptionProtocol> {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private let mWidgetsUserInterface : WidgetsUserInterface <WidgetTypesDescription>
+  private let mShapesUserInterface : ShapesUserInterface <ShapeTypesDescription>
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  init (_ inWidgetsUserInterface : WidgetsUserInterface <WidgetTypesDescription>) {
-    self.mWidgetsUserInterface = inWidgetsUserInterface
+  init (_ inShapesUserInterface : ShapesUserInterface <ShapeTypesDescription>) {
+    self.mShapesUserInterface = inShapesUserInterface
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @MainActor public subscript <T : CanariShapeUIProtocol <WidgetTypesDescription>, Value : Equatable> (bindingFor inKeyPath : WritableKeyPath <T, Value>) -> Binding <Value?> {
+  @MainActor public subscript <T : CanariShapeUIProtocol <ShapeTypesDescription>, Value : Equatable> (bindingFor inKeyPath : WritableKeyPath <T, Value>) -> Binding <Value?> {
     let binding = Binding <Value?> (
       get: {
         var result : Value? = nil
-        for id in self.mWidgetsUserInterface.selection {
-          if let shape = self.mWidgetsUserInterface [shapeID: id]?.shape as? T {
+        for id in self.mShapesUserInterface.selection {
+          if let shape = self.mShapesUserInterface [shapeID: id]?.shape as? T {
             let property = shape [keyPath: inKeyPath]
             if let r = result {
               if r != property {
@@ -40,10 +40,11 @@ public final class CanariInspectorProxy <WidgetTypesDescription : DocumentWidget
       },
       set: {
         if let property = $0 {
-          for id in self.mWidgetsUserInterface.selection {
-            if var v = self.mWidgetsUserInterface [shapeID: id]?.shape as? T {
+          for id in self.mShapesUserInterface.selection {
+            if let shape = self.mShapesUserInterface [shapeID: id],
+                    var v = shape.shape as? T {
               v [keyPath: inKeyPath] = property
-              self.mWidgetsUserInterface [shapeID: id] = CanariBaseShape (v)
+              self.mShapesUserInterface [shapeID: id] = CanariBaseShape (shape.orientedOrigin, v)
             }
           }
         }
@@ -54,10 +55,10 @@ public final class CanariInspectorProxy <WidgetTypesDescription : DocumentWidget
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func optValueOf <T : CanariShapeUIProtocol <WidgetTypesDescription>, Value : Equatable> (_ inKeyPath : KeyPath <T, Value>) -> Value? {
+  public func optValueOf <T : CanariShapeUIProtocol <ShapeTypesDescription>, Value : Equatable> (_ inKeyPath : KeyPath <T, Value>) -> Value? {
     var result : Value? = nil
-    for id in self.mWidgetsUserInterface.selection {
-      if let v = self.mWidgetsUserInterface [shapeID: id]?.shape as? T {
+    for id in self.mShapesUserInterface.selection {
+      if let v = self.mShapesUserInterface [shapeID: id]?.shape as? T {
         let property = v [keyPath: inKeyPath]
         if let r = result {
           if r != property {
@@ -73,10 +74,10 @@ public final class CanariInspectorProxy <WidgetTypesDescription : DocumentWidget
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func setOf <T : CanariShapeUIProtocol <WidgetTypesDescription>, Value : Hashable> (_ inKeyPath : KeyPath <T, Value>) -> Set <Value> {
+  public func setOf <T : CanariShapeUIProtocol <ShapeTypesDescription>, Value : Hashable> (_ inKeyPath : KeyPath <T, Value>) -> Set <Value> {
     var result = Set <Value> ()
-    for id in self.mWidgetsUserInterface.selection {
-      if let v = self.mWidgetsUserInterface [shapeID: id]?.shape as? T {
+    for id in self.mShapesUserInterface.selection {
+      if let v = self.mShapesUserInterface [shapeID: id]?.shape as? T {
         let property = v [keyPath: inKeyPath]
         result.insert (property)
       }
@@ -86,34 +87,34 @@ public final class CanariInspectorProxy <WidgetTypesDescription : DocumentWidget
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func arrayOf <T : CanariShapeUIProtocol <WidgetTypesDescription>, Value : Hashable> (_ inKeyPath : KeyPath <T, Value>) -> [Value] {
+  public func arrayOf <T : CanariShapeUIProtocol <ShapeTypesDescription>, Value : Hashable> (_ inKeyPath : KeyPath <T, Value>) -> [Value] {
     return Array (self.setOf (inKeyPath))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func setProperty <T : CanariShapeUIProtocol <WidgetTypesDescription>, Value> (_ inKeyPath : WritableKeyPath <T, Value>, _ inValue : Value) {
-    for id in self.mWidgetsUserInterface.selection {
-      if var v = self.mWidgetsUserInterface [shapeID: id]?.shape as? T {
+  public func setProperty <T : CanariShapeUIProtocol <ShapeTypesDescription>, Value> (_ inKeyPath : WritableKeyPath <T, Value>, _ inValue : Value) {
+    for id in self.mShapesUserInterface.selection {
+      if let shape = self.mShapesUserInterface [shapeID: id], var v = shape.shape as? T {
         v [keyPath: inKeyPath] = inValue
-        self.mWidgetsUserInterface [shapeID: id] = CanariBaseShape (v)
+        self.mShapesUserInterface [shapeID: id] = CanariBaseShape (shape.orientedOrigin, v)
       }
     }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func performWidgetUserInterfaceAction (_ inAction : (WidgetsUserInterface <WidgetTypesDescription>) -> Void) {
-    inAction (self.mWidgetsUserInterface)
+  public func performUserInterfaceAction (_ inAction : (ShapesUserInterface <ShapeTypesDescription>) -> Void) {
+    inAction (self.mShapesUserInterface)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func performWidgetAction <T : CanariShapeUIProtocol <WidgetTypesDescription> > (_ inAction : (inout T) -> Void) {
-    for id in self.mWidgetsUserInterface.selection {
-      if var shape = self.mWidgetsUserInterface [shapeID: id]?.shape as? T {
-        inAction (&shape)
-        self.mWidgetsUserInterface [shapeID: id] = CanariBaseShape (shape)
+  public func performAction <T : CanariShapeUIProtocol <ShapeTypesDescription> > (_ inAction : (inout T) -> Void) {
+    for id in self.mShapesUserInterface.selection {
+      if let shape = self.mShapesUserInterface [shapeID: id], var s = shape.shape as? T {
+        inAction (&s)
+        self.mShapesUserInterface [shapeID: id] = CanariBaseShape (shape.orientedOrigin, s)
       }
     }
   }

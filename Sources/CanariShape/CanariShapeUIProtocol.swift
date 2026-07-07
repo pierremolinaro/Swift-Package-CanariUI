@@ -6,25 +6,19 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public protocol CanariShapeUIProtocol <WidgetTypesDescription> : CanariShapeModelProtocol {
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: Oriented Origin
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  var orientedOrigin : CanariScaledOrientedOrigin { get set }
+public protocol CanariShapeUIProtocol <ShapeTypesDescription> : CanariShapeModelProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var shapeKnobs : [WidgetKnob <WidgetTypesDescription>] { get }
+  var shapeKnobs : [ShapeKnob <ShapeTypesDescription>] { get }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func contextualMenu (_ inExecutor : ContextualMenuExecutor <WidgetTypesDescription>) -> any View
+  func contextualMenu (_ inExecutor : ContextualMenuExecutor <ShapeTypesDescription>) -> any View
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func isEqual (to inOther : any CanariShapeUIProtocol <WidgetTypesDescription>) -> Bool
+  func isEqual (to inOther : any CanariShapeUIProtocol <ShapeTypesDescription>) -> Bool
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -34,8 +28,8 @@ public protocol CanariShapeUIProtocol <WidgetTypesDescription> : CanariShapeMode
   //MARK: Draw
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func drawWidget (context ioContext : inout GraphicsContext,
-                   scale inScale : Double,
+  func drawShape (context ioContext : inout GraphicsContext,
+                   canvasScale inCanvasScale : Double,
                    hovered inHovered : Bool,
                    selected inSelected : Bool,
                    groupLevel inGroupLevel : UInt)
@@ -52,7 +46,7 @@ public protocol CanariShapeUIProtocol <WidgetTypesDescription> : CanariShapeMode
 
   @MainActor static var inspectorTitle : String { get }
 
-  @MainActor static func inspectorView (proxy inProxy : CanariInspectorProxy <WidgetTypesDescription>) -> any View
+  @MainActor static func inspectorView (proxy inProxy : CanariInspectorProxy <ShapeTypesDescription>) -> any View
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-struct MouseGesture_SelectionRectangle <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : MouseGestureProtocol {
+struct MouseGesture_SelectionRectangle <ShapeTypesDescription : DocumentShapesDescriptionProtocol> : MouseGestureProtocol {
 
   let startSelectionSet : Set <UUID>
 
@@ -15,35 +15,35 @@ struct MouseGesture_SelectionRectangle <WidgetTypesDescription : DocumentWidgets
   func onMouseDragged (geometry inGeometry : MouseGestureGeometryContext,
                        beginOrContinueUndoGrouping inBeginOrContinueUndoGrouping : () -> Void,
                        userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                       widgetsManagerInterface inWidgetsManagerInterface : WidgetsUserInterface <WidgetTypesDescription>,
-                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol <WidgetTypesDescription>)?) {
+                       shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <ShapeTypesDescription>,
+                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol <ShapeTypesDescription>)?) {
   //--- Update selection rectangle
     let selectionRectangle = CanariRect ([inGeometry.unalignedUserStartLocation, inGeometry.unalignedUserCurrentLocation])
     ioUserSelectionRectangle = selectionRectangle
   //--- Compute selection
     var newSelection = self.startSelectionSet
     let shift = NSEvent.modifierFlags.contains (.shift)
-    for widget in inWidgetsManagerInterface.widgetArray {
-      if widget.shape.orientedOrigin.globalOutlineIntersects (mouseGestureGlobalRect: selectionRectangle) {
+    for shape in inShapesManagerInterface.shapeArray {
+      if shape.orientedOrigin.globalOutlineIntersects (mouseGestureGlobalRect: selectionRectangle) {
         if !shift {
-          newSelection.insert (widget.shape.id)
-        }else if newSelection.contains (widget.shape.id) {
-          newSelection.remove (widget.shape.id)
+          newSelection.insert (shape.shape.id)
+        }else if newSelection.contains (shape.shape.id) {
+          newSelection.remove (shape.shape.id)
         }else{
-          newSelection.insert (widget.shape.id)
+          newSelection.insert (shape.shape.id)
         }
       }else if !shift {
-        newSelection.remove (widget.shape.id)
+        newSelection.remove (shape.shape.id)
       }
     }
-    inWidgetsManagerInterface.setSelection (withIDs: newSelection)
+    inShapesManagerInterface.setSelection (withIDs: newSelection)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func onMouseUp (removeUndoGrouping inRemoveUndoGrouping : () -> Void,
                   userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                  widgetsManagerInterface inWidgetsManagerInterface : WidgetsUserInterface <WidgetTypesDescription>) {
+                  shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <ShapeTypesDescription>) {
     ioUserSelectionRectangle = nil
   }
 

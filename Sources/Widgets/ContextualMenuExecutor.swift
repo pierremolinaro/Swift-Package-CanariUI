@@ -6,29 +6,29 @@ import Foundation
 
 //--------------------------------------------------------------------------------------------------
 
-public final class ContextualMenuExecutor <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> {
+public final class ContextualMenuExecutor <ShapeTypesDescription : DocumentShapesDescriptionProtocol> {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private let mWidgetsUserInterface : WidgetsUserInterface <WidgetTypesDescription>
-  private let mWidgetIndex : Int
+  private let mShapesUserInterface : ShapesUserInterface <ShapeTypesDescription>
+  private let mShapeIndex : Int
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  init (_ inWidgetsUserInterface : WidgetsUserInterface <WidgetTypesDescription>,
+  init (_ inShapesUserInterface : ShapesUserInterface <ShapeTypesDescription>,
         _ inIndex : Int) {
-    self.mWidgetsUserInterface = inWidgetsUserInterface
-    self.mWidgetIndex = inIndex
+    self.mShapesUserInterface = inShapesUserInterface
+    self.mShapeIndex = inIndex
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func execute <T : CanariShapeUIProtocol <WidgetTypesDescription>> (_ inAction : (inout T) -> Void) {
-    var widget = self.mWidgetsUserInterface [widgetIndex: self.mWidgetIndex]
+  public func execute <T : CanariShapeUIProtocol <ShapeTypesDescription>> (_ inAction : (inout T) -> Void) {
+    var widget = self.mShapesUserInterface [shapeIndex: self.mShapeIndex]
     if var shape = widget.shape as? T {
       inAction (&shape)
       widget.shape = shape
-      self.mWidgetsUserInterface [widgetIndex: self.mWidgetIndex] = widget
+      self.mShapesUserInterface [shapeIndex: self.mShapeIndex] = widget
     }
   }
 

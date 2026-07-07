@@ -6,25 +6,25 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-protocol MouseGestureProtocol <WidgetTypesDescription> {
+protocol MouseGestureProtocol <ShapeTypesDescription> {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  associatedtype WidgetTypesDescription : DocumentWidgetsDescriptionProtocol
+  associatedtype ShapeTypesDescription : DocumentShapesDescriptionProtocol
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func onMouseDragged (geometry inGeometry : MouseGestureGeometryContext,
                        beginOrContinueUndoGrouping inBeginOrContinueUndoGrouping : () -> Void,
                        userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                       widgetsManagerInterface inWidgetsManagerInterface : WidgetsUserInterface <WidgetTypesDescription>,
-                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<WidgetTypesDescription>)?)
+                       shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <ShapeTypesDescription>,
+                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<ShapeTypesDescription>)?)
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func onMouseUp (removeUndoGrouping inRemoveUndoGrouping : () -> Void,
                   userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                  widgetsManagerInterface inWidgetsManagerInterface : WidgetsUserInterface <WidgetTypesDescription>)
+                  shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <ShapeTypesDescription>)
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

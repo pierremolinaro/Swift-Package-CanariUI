@@ -10,9 +10,9 @@ extension CanariBaseShape : Equatable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public static func == (_ inLeft : borrowing CanariBaseShape <WidgetTypesDescription>,
-                         _ inRight : borrowing CanariBaseShape <WidgetTypesDescription>) -> Bool {
-    inLeft.shape.isEqual (to: inRight.shape)
+  public static func == (_ inLeft  : CanariBaseShape <ShapeTypesDescription>,
+                         _ inRight : CanariBaseShape <ShapeTypesDescription>) -> Bool {
+    (inLeft.orientedOrigin == inRight.orientedOrigin) && inLeft.shape.isEqual (to: inRight.shape)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

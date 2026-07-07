@@ -6,13 +6,13 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public protocol DocumentWidgetsDescriptionProtocol {
+public protocol DocumentShapesDescriptionProtocol {
 
-  associatedtype WidgetTypesDescription : DocumentWidgetsDescriptionProtocol
+  associatedtype ShapeTypesDescription : DocumentShapesDescriptionProtocol
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  nonisolated static var shapeTypeArray : [(any CanariShapeUIProtocol <WidgetTypesDescription>.Type, String)] { get }
+  nonisolated static var shapeTypeArray : [(any CanariShapeUIProtocol <ShapeTypesDescription>.Type, String)] { get }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -20,14 +20,14 @@ public protocol DocumentWidgetsDescriptionProtocol {
 
 //--------------------------------------------------------------------------------------------------
 
-extension DocumentWidgetsDescriptionProtocol {
+extension DocumentShapesDescriptionProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   static func documentEncodedTypeName (_ inShape : any CanariShapeUIProtocol) -> String {
     let type = type (of: inShape)
-    for (widgetType, typeName) in Self.shapeTypeArray {
-      if widgetType == type {
+    for (shapeType, typeName) in Self.shapeTypeArray {
+      if shapeType == type {
         return typeName
       }
     }

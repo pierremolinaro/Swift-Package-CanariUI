@@ -6,11 +6,11 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-struct InspectorOfCanariScaledOrientedOrigin <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : View {
+struct InspectorOfCanariScaledOrientedOrigin <ShapeTypesDescription : DocumentShapesDescriptionProtocol> : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @State private var mWidgetsUserInterface : WidgetsUserInterface <WidgetTypesDescription>
+  @State private var mShapesUserInterface : ShapesUserInterface <ShapeTypesDescription>
   @AppStorage("angle.inspector.expanded") private var mAngleInspectorIsExpanded = true
   @AppStorage("scale.inspector.expanded") private var mScaleInspectorIsExpanded = true
   @AppStorage("bounding.rect.inspector.expanded") private var mBoundingRectInspectorIsExpanded = true
@@ -18,8 +18,8 @@ struct InspectorOfCanariScaledOrientedOrigin <WidgetTypesDescription : DocumentW
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  init (widgetsUserInterface inWidgetsUserInterface : WidgetsUserInterface <WidgetTypesDescription>) {
-    self.mWidgetsUserInterface = inWidgetsUserInterface
+  init (shapesUserInterface inShapesUserInterface : ShapesUserInterface <ShapeTypesDescription>) {
+    self.mShapesUserInterface = inShapesUserInterface
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -27,31 +27,31 @@ struct InspectorOfCanariScaledOrientedOrigin <WidgetTypesDescription : DocumentW
   @ViewBuilder var body : some View {
     ExpandableInspectorOfCanariPointSet (
       title : "Center",
-      pointSet: Set (self.mWidgetsUserInterface.selectedWidgetArray ().map { $0.shape.orientedOrigin.mOrigin }),
-      setterX: { for id in self.mWidgetsUserInterface.selection { self.mWidgetsUserInterface [shapeID: id]?.shape.orientedOrigin.mOrigin.x = $0 } },
-      setterY: { for id in self.mWidgetsUserInterface.selection { self.mWidgetsUserInterface [shapeID: id]?.shape.orientedOrigin.mOrigin.y = $0 } },
+      pointSet: Set (self.mShapesUserInterface.selectedShapeArray ().map { $0.orientedOrigin.mOrigin }),
+      setterX: { for id in self.mShapesUserInterface.selection { self.mShapesUserInterface [shapeID: id]?.orientedOrigin.mOrigin.x = $0 } },
+      setterY: { for id in self.mShapesUserInterface.selection { self.mShapesUserInterface [shapeID: id]?.orientedOrigin.mOrigin.y = $0 } },
       isExpanded: self.$mCenterInspectorIsExpanded
     )
     CanariExpandableInspectorView (title: "Angle", isExpanded: self.$mAngleInspectorIsExpanded) {
       EditorOfCanariAngleSet (
-        angleSet: Set (self.mWidgetsUserInterface.selectedWidgetArray ().map { $0.shape.orientedOrigin.mAngle }),
-        setter: { for id in self.mWidgetsUserInterface.selection { self.mWidgetsUserInterface [shapeID: id]?.shape.orientedOrigin.mAngle = $0 } }
+        angleSet: Set (self.mShapesUserInterface.selectedShapeArray ().map { $0.orientedOrigin.mAngle }),
+        setter: { for id in self.mShapesUserInterface.selection { self.mShapesUserInterface [shapeID: id]?.orientedOrigin.mAngle = $0 } }
       )
     }
     CanariExpandableInspectorView (title: "Scale, Flip", isExpanded: self.$mScaleInspectorIsExpanded) {
       EditorOfScaleSet (
-        valueSet: Set (self.mWidgetsUserInterface.selectedWidgetArray ().map { $0.shape.orientedOrigin.mScale }),
-        setter: { for id in self.mWidgetsUserInterface.selection { self.mWidgetsUserInterface [shapeID: id]?.shape.orientedOrigin.mScale = $0 } }
+        valueSet: Set (self.mShapesUserInterface.selectedShapeArray ().map { $0.orientedOrigin.mScale }),
+        setter: { for id in self.mShapesUserInterface.selection { self.mShapesUserInterface [shapeID: id]?.orientedOrigin.mScale = $0 } }
       )
       InspectorOfBoolSet (
         title: "Horizontal Flip",
-        valueSet: Set (self.mWidgetsUserInterface.selectedWidgetArray ().map { $0.shape.orientedOrigin.mHorizontalFlip }),
-        setter: { for id in self.mWidgetsUserInterface.selection { self.mWidgetsUserInterface [shapeID: id]?.shape.orientedOrigin.mHorizontalFlip = $0 } }
+        valueSet: Set (self.mShapesUserInterface.selectedShapeArray ().map { $0.orientedOrigin.mHorizontalFlip }),
+        setter: { for id in self.mShapesUserInterface.selection { self.mShapesUserInterface [shapeID: id]?.orientedOrigin.mHorizontalFlip = $0 } }
       )
     }
     CanariExpandableInspectorView (title: "Enclosing Rectangle", isExpanded: self.$mBoundingRectInspectorIsExpanded) {
       ViewerOfCanariRectSet (
-        rectSet: Set (self.mWidgetsUserInterface.selectedWidgetArray ().map { $0.shape.orientedOrigin.globalBoundingRect }),
+        rectSet: Set (self.mShapesUserInterface.selectedShapeArray ().map { $0.orientedOrigin.globalBoundingRect }),
         unit: .mm,
         fractionDigits: 2
       )

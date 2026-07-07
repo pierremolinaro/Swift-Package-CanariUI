@@ -6,30 +6,30 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-struct MouseGesture_Creation <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : MouseGestureProtocol {
+struct MouseGesture_Creation <ShapeTypesDescription : DocumentShapesDescriptionProtocol> : MouseGestureProtocol {
 
-  let objectCreator : (MouseGestureGeometryContext) -> CanariBaseShape <WidgetTypesDescription>
+  let objectCreator : (MouseGestureGeometryContext) -> CanariBaseShape <ShapeTypesDescription>
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func onMouseDragged (geometry inGeometry : MouseGestureGeometryContext,
                        beginOrContinueUndoGrouping inBeginOrContinueUndoGrouping : () -> Void,
                        userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                       widgetsManagerInterface inWidgetsManagerInterface : WidgetsUserInterface <WidgetTypesDescription>,
-                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<WidgetTypesDescription>)?) {
+                       shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <ShapeTypesDescription>,
+                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<ShapeTypesDescription>)?) {
     let newObject = self.objectCreator (inGeometry)
-    inWidgetsManagerInterface [widgetIndex: inWidgetsManagerInterface.widgetCount - 1] = newObject
-    inWidgetsManagerInterface.setSelection (withID: newObject.shape.id)
+    inShapesManagerInterface [shapeIndex: inShapesManagerInterface.shapeCount - 1] = newObject
+    inShapesManagerInterface.setSelection (withID: newObject.shape.id)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func onMouseUp (removeUndoGrouping inRemoveUndoGrouping : () -> Void,
                   userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                  widgetsManagerInterface inWidgetsManagerInterface : WidgetsUserInterface <WidgetTypesDescription>) {
-    if inWidgetsManagerInterface [widgetIndex: inWidgetsManagerInterface.widgetCount - 1].shape.isGraphicallyEmpty {
-      inWidgetsManagerInterface.removeLast ()
-      inWidgetsManagerInterface.clearSelection ()
+                  shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <ShapeTypesDescription>) {
+    if inShapesManagerInterface [shapeIndex: inShapesManagerInterface.shapeCount - 1].shape.isGraphicallyEmpty {
+      inShapesManagerInterface.removeLast ()
+      inShapesManagerInterface.clearSelection ()
       inRemoveUndoGrouping ()
     }
   }

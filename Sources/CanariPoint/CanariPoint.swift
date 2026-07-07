@@ -8,7 +8,7 @@ import AppKit
 //  struct CanariPoint
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariPoint : Hashable, CustomStringConvertible, Sendable {
+public struct CanariPoint : Hashable, CustomStringConvertible, Sendable, Equatable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

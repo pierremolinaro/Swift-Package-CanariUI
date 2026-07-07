@@ -6,34 +6,50 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public nonisolated struct CanariBaseShape <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : Sendable {
+public nonisolated struct CanariBaseShape <ShapeTypesDescription : DocumentShapesDescriptionProtocol> : Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var shape : any CanariShapeUIProtocol <WidgetTypesDescription>
+  public var orientedOrigin : CanariScaledOrientedOrigin {
+    didSet {
+      self.orientedOrigin.setLocalOutline (self.shape.localOutlinePath)
+    }
+  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (_ inShape : any CanariShapeUIProtocol <WidgetTypesDescription>) {
+  public var shape : any CanariShapeUIProtocol <ShapeTypesDescription> {
+    didSet {
+      self.orientedOrigin.setLocalOutline (self.shape.localOutlinePath)
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public init (_ inOrientedOrigin : CanariScaledOrientedOrigin,
+               _ inShape : any CanariShapeUIProtocol <ShapeTypesDescription>) {
+    self.orientedOrigin = inOrientedOrigin
     self.shape = inShape
+    self.orientedOrigin.setLocalOutline (self.shape.localOutlinePath)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Knobs
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var knobs : [WidgetKnob <WidgetTypesDescription>] {
+  var knobs : [ShapeKnob <ShapeTypesDescription>] {
     var result = self.shape.shapeKnobs
-    result.append (WidgetKnob (dragAction: Self.dragCenterKnob))
+    result.append (ShapeKnob (dragAction: Self.dragCenterKnob))
     return result
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private static func dragCenterKnob (_ ioShape : inout any CanariShapeUIProtocol <WidgetTypesDescription>,
+  private static func dragCenterKnob (_ ioOrientedOrigin : inout CanariScaledOrientedOrigin,
+                                      _ ioShape : inout any CanariShapeUIProtocol <ShapeTypesDescription>,
                                       _ inLocalTranslation : CanariPoint,
                                       _ inInitialOptionKeyOn : Bool) {
-    ioShape.orientedOrigin.addLocalTranslation (inLocalTranslation)
+    ioOrientedOrigin.addLocalTranslation (inLocalTranslation)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

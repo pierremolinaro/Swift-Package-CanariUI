@@ -6,17 +6,19 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public protocol CanariShapeModelProtocol <WidgetTypesDescription> : Identifiable, Sendable, Codable {
+public protocol CanariShapeModelProtocol <ShapeTypesDescription> : Identifiable, Sendable, Codable {
 
-  associatedtype WidgetTypesDescription : DocumentWidgetsDescriptionProtocol
+  associatedtype ShapeTypesDescription : DocumentShapesDescriptionProtocol
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   var id : UUID { get }
 
+  var localOutlinePath : CanariPath { get }
+
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func duplicated () -> (any CanariShapeUIProtocol <WidgetTypesDescription>)?
+  func duplicated () -> (any CanariShapeUIProtocol <ShapeTypesDescription>)?
 
  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct WidgetKnob <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> {
+public struct ShapeKnob <ShapeTypesDescription : DocumentShapesDescriptionProtocol> {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -19,27 +19,27 @@ public struct WidgetKnob <WidgetTypesDescription : DocumentWidgetsDescriptionPro
 
   private let localCenter : CanariPoint
   private let shape : Shape
-  let dragWidgetKnobAction : (inout any CanariShapeUIProtocol <WidgetTypesDescription>, CanariPoint, Bool) -> Void
-  let menu : ((ContextualMenuExecutor <WidgetTypesDescription>) -> any View)?
+  let dragKnobAction : (inout CanariScaledOrientedOrigin, inout any CanariShapeUIProtocol <ShapeTypesDescription>, CanariPoint, Bool) -> Void
+  let menu : ((ContextualMenuExecutor <ShapeTypesDescription>) -> any View)?
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (localCenter inCenter : CanariPoint,
-               dragAction inKnobDragAction : @escaping (inout any CanariShapeUIProtocol <WidgetTypesDescription>, CanariPoint, Bool) -> Void,
-               menu inMenu : ((ContextualMenuExecutor <WidgetTypesDescription>) -> any View)? = nil) {
+               dragAction inKnobDragAction : @escaping (inout CanariScaledOrientedOrigin, inout any CanariShapeUIProtocol <ShapeTypesDescription>, CanariPoint, Bool) -> Void,
+               menu inMenu : ((ContextualMenuExecutor <ShapeTypesDescription>) -> any View)? = nil) {
     self.localCenter = inCenter
     self.shape = .circle
-    self.dragWidgetKnobAction = inKnobDragAction
+    self.dragKnobAction = inKnobDragAction
     self.menu = inMenu
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (dragAction inKnobDragAction : @escaping (inout any CanariShapeUIProtocol <WidgetTypesDescription>, CanariPoint, Bool) -> Void,
-               menu inMenu : ((ContextualMenuExecutor <WidgetTypesDescription>) -> any View)? = nil) {
+  public init (dragAction inKnobDragAction : @escaping (inout CanariScaledOrientedOrigin, inout any CanariShapeUIProtocol <ShapeTypesDescription>, CanariPoint, Bool) -> Void,
+               menu inMenu : ((ContextualMenuExecutor <ShapeTypesDescription>) -> any View)? = nil) {
     self.localCenter = .zero
     self.shape = .rect
-    self.dragWidgetKnobAction = inKnobDragAction
+    self.dragKnobAction = inKnobDragAction
     self.menu = inMenu
   }
 

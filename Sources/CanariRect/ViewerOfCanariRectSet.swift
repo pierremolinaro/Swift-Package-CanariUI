@@ -45,11 +45,11 @@ public struct ViewerOfCanariRectSet : View {
       .anchorPreference (key: RectanglePrefKey.self, value: .bounds) { ["top" : $0] }
     }
     .backgroundPreferenceValue (RectanglePrefKey.self) { anchors in
-      GeometryReader { widget in
-        let top : CGRect = widget [anchors ["top"]!]
-        let left = widget [anchors ["left"]!]
-        let right = widget [anchors ["right"]!]
-        let bottom = widget [anchors ["bottom"]!]
+      GeometryReader { geometry in
+        let top : CGRect = geometry [anchors ["top"]!]
+        let left = geometry [anchors ["left"]!]
+        let right = geometry [anchors ["right"]!]
+        let bottom = geometry [anchors ["bottom"]!]
         let path = self.rect (top: top, left: left, bottom: bottom, right: right)
         path.stroke (style: StrokeStyle(lineWidth: 1, lineCap: .round, lineJoin: .round))
       }

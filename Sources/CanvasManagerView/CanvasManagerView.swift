@@ -13,7 +13,7 @@ fileprivate let ANCHOR_FOR_INITIAL_SCROLL = "bottom.left.for.initial.scroll"
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : View {
+public struct CanvasManagerView <ShapeTypesDescription : DocumentShapesDescriptionProtocol> : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -42,7 +42,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @State private var mWidgetsUserInterface : WidgetsUserInterface <WidgetTypesDescription>
+  @State private var mShapesUserInterface : ShapesUserInterface <ShapeTypesDescription>
   @Environment(\.undoManager) private var undoManager
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -50,7 +50,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
   public init (context inContext : CanvasManagerViewContext,
         canvasScale inScale : Binding <Double>,
         alignedHoverUserLocation inAlignedHoverUserLocation : Binding <CanariPoint?>,
-        widgetsUserInterface inWidgetsUserInterface : WidgetsUserInterface <WidgetTypesDescription>,
+        shapesUserInterface inShapesUserInterface : ShapesUserInterface <ShapeTypesDescription>,
         drawBackGround inDrawBackGround : @escaping (_ ioContext : inout GraphicsContext) -> Void,
         drawOverlay inDrawOverlay : @escaping (_ ioContext : inout GraphicsContext) -> Void,
         backgroundViewBuilder inBackgroundViewBuilder : @escaping (BackgroundViewContext) -> any View,
@@ -63,7 +63,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
     self._mCanvasScale = inScale
     self._mAlignedHoverUserLocation = inAlignedHoverUserLocation
     self.mContext = inContext
-    self.mWidgetsUserInterface = inWidgetsUserInterface
+    self.mShapesUserInterface = inShapesUserInterface
     self.mDroppedFilesHandler = inDroppedFilesHandler
     self.mContentSizeWithMargins = CanariSize (
       width: inContext.canvasSize.width + inContext.margins.left + inContext.margins.right,
@@ -83,7 +83,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
 
   @ViewBuilder public var body : some View {
     HStack (spacing: 0) {
-      ScrollViewReader { widget in
+      ScrollViewReader { readerProxy in
         GeometryReader { geometry in
           ScrollView ([.horizontal, .vertical]) {
             VStack (spacing: 0.0) {
@@ -130,10 +130,10 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
           }
         }
         .defaultScrollAnchor (.topLeading) // Aligne le contenu en haut à gauche
-        .onAppear { widget.scrollTo (ANCHOR_FOR_INITIAL_SCROLL, anchor: .bottomLeading) }
+        .onAppear { readerProxy.scrollTo (ANCHOR_FOR_INITIAL_SCROLL, anchor: .bottomLeading) }
       }
       .onAppear {
-        self.mWidgetsUserInterface.setUndoManager (self.undoManager)
+        self.mShapesUserInterface.setUndoManager (self.undoManager)
       }
     }
   }
@@ -370,7 +370,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
         self.mDrawBackGround (&context)
         context.scaleBy (x: 1.0 / self.mCanvasScale, y: 1.0 / self.mCanvasScale)
       //--- Shapes
-        self.mWidgetsUserInterface.draw (context: &context, hoverUserLocationPoint: self.mUnalignedHoverUserLocation, scale: self.mCanvasScale)
+        self.mShapesUserInterface.draw (context: &context, hoverUserLocationPoint: self.mUnalignedHoverUserLocation, scale: self.mCanvasScale)
       //--- Overlay
         context.scaleBy (x: self.mCanvasScale, y: self.mCanvasScale)
         self.mDrawOverlay (&context)
@@ -388,7 +388,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
   //--- Mouse down / dragging tracking
     .gesture (DragGesture (minimumDistance: 0) // 0 : nécessaire pour détecter un mouseDown
       .onChanged { dragGestureValue in self.mouseDownOrMouseDragged (inGeometry, dragGestureValue) }
-      .onEnded { dragGestureValue in self.mWidgetsUserInterface.mouseDraggedEnded () }
+      .onEnded { dragGestureValue in self.mShapesUserInterface.mouseDraggedEnded () }
     )
   //--- Indispensable pour Key Press et focusedValue
     .focusable ()
@@ -401,7 +401,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
     .onKeyPress (.downArrow, phases: [.down, .repeat]) { _ in return self.downArrowKeyAction () }
     .onKeyPress (.escape, phases: [.down]) { _ in return self.escapeKeyAction () }
   //--- Pasteboard commands
-    .focusedValue (\.menuCommands, self.mWidgetsUserInterface)
+    .focusedValue (\.menuCommands, self.mShapesUserInterface)
   //--- Magnify Gesture
   // https://stackoverflow.com/questions/70934112/swiftui-magnificationgesture-not-working-properly-on-mac
     .contentShape (Rectangle ()) // Indispensable pour que le MagnifyGesture réponde
@@ -447,12 +447,12 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
     case .active (let location) :
       let p = self.alignedUserPoint (inGeometry, fromLocationInContentView: location)
       self.mAlignedHoverUserLocation = p
-      self.mWidgetsUserInterface.hoverTracking (at: p)
+      self.mShapesUserInterface.hoverTracking (at: p)
       self.mUnalignedHoverUserLocation = self.unalignedUserPoint (inGeometry, fromLocationInContentView: location)
     case .ended :
       self.mAlignedHoverUserLocation = nil
       self.mUnalignedHoverUserLocation = nil
-      self.mWidgetsUserInterface.hoverTrackingEnded ()
+      self.mShapesUserInterface.hoverTrackingEnded ()
     }
   }
 
@@ -462,7 +462,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
 
   @ViewBuilder private func editorContextualMenu () -> some View {
     if let p = self.mUnalignedHoverUserLocation {
-      AnyView (self.mWidgetsUserInterface.contextualMenu (at: p, scale: self.mCanvasScale))
+      AnyView (self.mShapesUserInterface.contextualMenu (at: p, scale: self.mCanvasScale))
     }else{
       EmptyView ()
     }
@@ -489,7 +489,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
       canvasSize: self.mContext.canvasSize
     )
     self.mAlignedHoverUserLocation = alignedCurrent
-    self.mWidgetsUserInterface.mouseDownOrMouseDragged (geometry: geometry)
+    self.mShapesUserInterface.mouseDownOrMouseDragged (geometry: geometry)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -513,7 +513,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   @ViewBuilder private func userSelectionRectangleDisplay (_ inGeometry : GeometryProxy) -> some View {
-    if let r = self.mWidgetsUserInterface.selectionUserRectangle, !r.isEmpty {
+    if let r = self.mShapesUserInterface.selectionUserRectangle, !r.isEmpty {
       Rectangle ()
       .fill (.gray.opacity (0.2))
       .stroke (.gray, lineWidth: 1.0)
@@ -531,7 +531,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
 
   private func escapeKeyAction () -> KeyPress.Result {
     DispatchQueue.main.async {
-      self.mWidgetsUserInterface.escapeKeyAction ()
+      self.mShapesUserInterface.escapeKeyAction ()
     }
     return .handled
   }
@@ -540,7 +540,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
 
   private func backDeleteKeyAction () -> KeyPress.Result {
     DispatchQueue.main.async {
-      self.mWidgetsUserInterface.backDeleteKeyAction ()
+      self.mShapesUserInterface.backDeleteKeyAction ()
     }
     return .handled
   }
@@ -549,7 +549,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
 
   private func rightArrowKeyAction () -> KeyPress.Result {
     DispatchQueue.main.async {
-      self.mWidgetsUserInterface.rightArrowKeyAction (magneticGrid: self.mContext.magneticGrid, self.mContext.canvasSize)
+      self.mShapesUserInterface.rightArrowKeyAction (magneticGrid: self.mContext.magneticGrid, self.mContext.canvasSize)
     }
     return .handled
   }
@@ -558,7 +558,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
 
   private func leftArrowKeyAction () -> KeyPress.Result {
     DispatchQueue.main.async {
-      self.mWidgetsUserInterface.leftArrowKeyAction (magneticGrid: self.mContext.magneticGrid, self.mContext.canvasSize)
+      self.mShapesUserInterface.leftArrowKeyAction (magneticGrid: self.mContext.magneticGrid, self.mContext.canvasSize)
     }
     return .handled
   }
@@ -567,7 +567,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
 
   private func upArrowKeyAction () -> KeyPress.Result {
     DispatchQueue.main.async {
-      self.mWidgetsUserInterface.upArrowKeyAction (magneticGrid: self.mContext.magneticGrid, self.mContext.canvasSize)
+      self.mShapesUserInterface.upArrowKeyAction (magneticGrid: self.mContext.magneticGrid, self.mContext.canvasSize)
     }
     return .handled
   }
@@ -576,7 +576,7 @@ public struct CanvasManagerView <WidgetTypesDescription : DocumentWidgetsDescrip
 
   private func downArrowKeyAction () -> KeyPress.Result {
     DispatchQueue.main.async {
-      self.mWidgetsUserInterface.downArrowKeyAction (magneticGrid: self.mContext.magneticGrid, self.mContext.canvasSize)
+      self.mShapesUserInterface.downArrowKeyAction (magneticGrid: self.mContext.magneticGrid, self.mContext.canvasSize)
     }
     return .handled
   }
