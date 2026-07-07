@@ -43,7 +43,7 @@ public final class CanariInspectorProxy <WidgetTypesDescription : DocumentWidget
           for id in self.mWidgetsUserInterface.selection {
             if var v = self.mWidgetsUserInterface [shapeID: id]?.shape as? T {
               v [keyPath: inKeyPath] = property
-              self.mWidgetsUserInterface [shapeID: id] = CanariWidget (v)
+              self.mWidgetsUserInterface [shapeID: id] = CanariBaseShape (v)
             }
           }
         }
@@ -96,7 +96,7 @@ public final class CanariInspectorProxy <WidgetTypesDescription : DocumentWidget
     for id in self.mWidgetsUserInterface.selection {
       if var v = self.mWidgetsUserInterface [shapeID: id]?.shape as? T {
         v [keyPath: inKeyPath] = inValue
-        self.mWidgetsUserInterface [shapeID: id] = CanariWidget (v)
+        self.mWidgetsUserInterface [shapeID: id] = CanariBaseShape (v)
       }
     }
   }
@@ -113,7 +113,7 @@ public final class CanariInspectorProxy <WidgetTypesDescription : DocumentWidget
     for id in self.mWidgetsUserInterface.selection {
       if var shape = self.mWidgetsUserInterface [shapeID: id]?.shape as? T {
         inAction (&shape)
-        self.mWidgetsUserInterface [shapeID: id] = CanariWidget (shape)
+        self.mWidgetsUserInterface [shapeID: id] = CanariBaseShape (shape)
       }
     }
   }

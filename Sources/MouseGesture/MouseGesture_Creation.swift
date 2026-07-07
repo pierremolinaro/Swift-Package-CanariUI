@@ -8,7 +8,7 @@ import SwiftUI
 
 struct MouseGesture_Creation <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : MouseGestureProtocol {
 
-  let objectCreator : (MouseGestureGeometryContext) -> CanariWidget <WidgetTypesDescription>
+  let objectCreator : (MouseGestureGeometryContext) -> CanariBaseShape <WidgetTypesDescription>
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

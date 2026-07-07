@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public nonisolated struct CanariWidget <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : Sendable {
+public nonisolated struct CanariBaseShape <WidgetTypesDescription : DocumentWidgetsDescriptionProtocol> : Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

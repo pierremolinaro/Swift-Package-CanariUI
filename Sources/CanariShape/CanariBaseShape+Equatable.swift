@@ -6,12 +6,12 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-extension CanariWidget : Equatable {
+extension CanariBaseShape : Equatable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public static func == (_ inLeft : borrowing CanariWidget <WidgetTypesDescription>,
-                         _ inRight : borrowing CanariWidget <WidgetTypesDescription>) -> Bool {
+  public static func == (_ inLeft : borrowing CanariBaseShape <WidgetTypesDescription>,
+                         _ inRight : borrowing CanariBaseShape <WidgetTypesDescription>) -> Bool {
     inLeft.shape.isEqual (to: inRight.shape)
   }
 

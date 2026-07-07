@@ -26,7 +26,7 @@ import Combine
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: CanariWidget array
+  //MARK: CanariBaseShape array
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private var mWidgetsManager = WidgetsManager <WidgetTypesDescription> ()
@@ -34,14 +34,14 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public subscript (widgetIndex inIndex : Int) -> CanariWidget <WidgetTypesDescription> {
+  public subscript (widgetIndex inIndex : Int) -> CanariBaseShape <WidgetTypesDescription> {
     get { self.mWidgetsManager [widgetIndex: inIndex] }
     set { self.mWidgetsManager [widgetIndex: inIndex] = newValue }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  subscript (shapeID inID : UUID) -> (CanariWidget <WidgetTypesDescription>)? {
+  subscript (shapeID inID : UUID) -> (CanariBaseShape <WidgetTypesDescription>)? {
     get { self.mWidgetsManager [shapeID: inID] }
     set { self.mWidgetsManager [shapeID: inID] = newValue }
   }
@@ -54,11 +54,11 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var widgetArray : [CanariWidget <WidgetTypesDescription>] { self.mWidgetsManager.widgetArray }
+  public var widgetArray : [CanariBaseShape <WidgetTypesDescription>] { self.mWidgetsManager.widgetArray }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func contentsIsExactly (_ inWidgets : [CanariWidget <WidgetTypesDescription>]) -> Bool {
+  public func contentsIsExactly (_ inWidgets : [CanariBaseShape <WidgetTypesDescription>]) -> Bool {
     if self.widgetCount != inWidgets.count {
       return false
     }else{
@@ -73,13 +73,13 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func setWidgets (_ inWidgets : [CanariWidget <WidgetTypesDescription>]) {
+  public func setWidgets (_ inWidgets : [CanariBaseShape <WidgetTypesDescription>]) {
     self.mWidgetsManager.setWidgets (inWidgets)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func append (_ inNewObject : CanariWidget <WidgetTypesDescription>) {
+  public func append (_ inNewObject : CanariBaseShape <WidgetTypesDescription>) {
     self.mWidgetsManager.append (inNewObject)
   }
 
@@ -117,8 +117,8 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func selectedWidgetArray () -> [CanariWidget <WidgetTypesDescription>] {
-    var result = [CanariWidget <WidgetTypesDescription>] ()
+  func selectedWidgetArray () -> [CanariBaseShape <WidgetTypesDescription>] {
+    var result = [CanariBaseShape <WidgetTypesDescription>] ()
     for widget in self.widgetArray {
       if self.selection.contains (widget.shape.id) {
         result.append (widget)
@@ -142,7 +142,7 @@ import Combine
   //MARK: append and set selection to added object
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func appendAndSetSelection (_ inNewObject : CanariWidget <WidgetTypesDescription>) {
+  public func appendAndSetSelection (_ inNewObject : CanariBaseShape <WidgetTypesDescription>) {
     self.mWidgetsManager.append (inNewObject)
     self.mSelection.removeAll ()
     self.mSelection.insert (inNewObject.shape.id)
@@ -152,13 +152,13 @@ import Combine
   //MARK: Object Creator
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func setObjectCreator (_ inNewCreator : @escaping (MouseGestureGeometryContext) -> CanariWidget <WidgetTypesDescription>) {
+  public func setObjectCreator (_ inNewCreator : @escaping (MouseGestureGeometryContext) -> CanariBaseShape <WidgetTypesDescription>) {
     self.mObjectCreator = inNewCreator
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private var mObjectCreator : ((MouseGestureGeometryContext) -> CanariWidget <WidgetTypesDescription>)? = nil
+  private var mObjectCreator : ((MouseGestureGeometryContext) -> CanariBaseShape <WidgetTypesDescription>)? = nil
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Draw
@@ -362,14 +362,14 @@ import Combine
         self.mSelection.removeAll ()
         for widget in selectedArray {
           if let newWidget = widget.shape.duplicated () {
-            self.mWidgetsManager.append (CanariWidget (newWidget))
+            self.mWidgetsManager.append (CanariBaseShape (newWidget))
             self.mSelection.insert (newWidget.id)
           }
         }
         return MouseGesture_DragSelection <WidgetTypesDescription> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
       }else{ // option-click on a non-selected widget
         if let newWidget = self.mWidgetsManager [shapeID: widgetID]?.shape.duplicated () {
-          self.mWidgetsManager.append (CanariWidget (newWidget))
+          self.mWidgetsManager.append (CanariBaseShape (newWidget))
           self.mSelection = [newWidget.id]
           return MouseGesture_DragSelection <WidgetTypesDescription> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
         }else{
@@ -695,7 +695,7 @@ import Combine
     let pb = NSPasteboard.general
     if let string = pb.string (forType: self.mPasteboardType) {
       let decoder = JSONDecoder ()
-      if let decodedWidgets = try? decoder.decode ([CanariWidget <WidgetTypesDescription>].self, from: string.data (using: .utf8)!) {
+      if let decodedWidgets = try? decoder.decode ([CanariBaseShape <WidgetTypesDescription>].self, from: string.data (using: .utf8)!) {
         self.mSelection.removeAll ()
         for widget in decodedWidgets {
           self.mWidgetsManager.append (widget)
@@ -750,18 +750,18 @@ import Combine
 
   public override var groupIsEnabled : Bool {
     (self.mSelection.count > 1)
-    && (WidgetTypesDescription.shapeTypeArray.first { $0.0 == Shape_Group <WidgetTypesDescription>.self } != nil)
+    && (WidgetTypesDescription.shapeTypeArray.first { $0.0 == CanariShape_Group <WidgetTypesDescription>.self } != nil)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public override func performGroup () {
     let selectedWidgets = self.selectedWidgetArray ()
-    let widgetGroup = Shape_Group <WidgetTypesDescription> (grouping: selectedWidgets)
+    let widgetGroup = CanariShape_Group <WidgetTypesDescription> (grouping: selectedWidgets)
     for widget in selectedWidgets {
       self.mWidgetsManager.remove (id: widget.shape.id)
     }
-    self.mWidgetsManager.append (CanariWidget (widgetGroup))
+    self.mWidgetsManager.append (CanariBaseShape (widgetGroup))
     self.mSelection = [widgetGroup.id]
   }
 
@@ -769,7 +769,7 @@ import Combine
 
   public override var ungroupIsEnabled : Bool {
     for widget in self.widgetArray {
-      if self.mSelection.contains (widget.shape.id), let w = widget.shape as? Shape_Group <WidgetTypesDescription>, w.mUnGroupIsEnabled {
+      if self.mSelection.contains (widget.shape.id), let w = widget.shape as? CanariShape_Group <WidgetTypesDescription>, w.mUnGroupIsEnabled {
         return true
       }
     }
@@ -780,7 +780,7 @@ import Combine
 
   public override func performUngroup () {
     for widget in self.widgetArray {
-      if self.mSelection.contains (widget.shape.id), let group = widget.shape as? Shape_Group <WidgetTypesDescription>, group.mUnGroupIsEnabled {
+      if self.mSelection.contains (widget.shape.id), let group = widget.shape as? CanariShape_Group <WidgetTypesDescription>, group.mUnGroupIsEnabled {
         let array = group.ungroupedArray ()
         self.mWidgetsManager.replaceWidget (id: group.id, with: array)
         self.mSelection.remove (group.id)
