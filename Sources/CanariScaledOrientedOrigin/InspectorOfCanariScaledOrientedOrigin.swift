@@ -6,11 +6,11 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-struct InspectorOfCanariScaledOrientedOrigin <ShapeTypesDescription : DocumentShapesDescriptionProtocol> : View {
+struct InspectorOfCanariScaledOrientedOrigin <SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @State private var mShapesUserInterface : ShapesUserInterface <ShapeTypesDescription>
+  @State private var mShapesUserInterface : ShapesUserInterface <SHAPE_TYPES_DESCRIPTION>
   @AppStorage("angle.inspector.expanded") private var mAngleInspectorIsExpanded = true
   @AppStorage("scale.inspector.expanded") private var mScaleInspectorIsExpanded = true
   @AppStorage("bounding.rect.inspector.expanded") private var mBoundingRectInspectorIsExpanded = true
@@ -18,7 +18,7 @@ struct InspectorOfCanariScaledOrientedOrigin <ShapeTypesDescription : DocumentSh
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  init (shapesUserInterface inShapesUserInterface : ShapesUserInterface <ShapeTypesDescription>) {
+  init (shapesUserInterface inShapesUserInterface : ShapesUserInterface <SHAPE_TYPES_DESCRIPTION>) {
     self.mShapesUserInterface = inShapesUserInterface
   }
 

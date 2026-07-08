@@ -13,7 +13,7 @@ fileprivate let ANCHOR_FOR_INITIAL_SCROLL = "bottom.left.for.initial.scroll"
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanvasManagerView <ShapeTypesDescription : DocumentShapesDescriptionProtocol> : View {
+public struct CanvasManagerView <SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -42,7 +42,7 @@ public struct CanvasManagerView <ShapeTypesDescription : DocumentShapesDescripti
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @State private var mShapesUserInterface : ShapesUserInterface <ShapeTypesDescription>
+  @State private var mShapesUserInterface : ShapesUserInterface <SHAPE_TYPES_DESCRIPTION>
   @Environment(\.undoManager) private var undoManager
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -50,7 +50,7 @@ public struct CanvasManagerView <ShapeTypesDescription : DocumentShapesDescripti
   public init (context inContext : CanvasManagerViewContext,
         canvasScale inScale : Binding <Double>,
         alignedHoverUserLocation inAlignedHoverUserLocation : Binding <CanariPoint?>,
-        shapesUserInterface inShapesUserInterface : ShapesUserInterface <ShapeTypesDescription>,
+        shapesUserInterface inShapesUserInterface : ShapesUserInterface <SHAPE_TYPES_DESCRIPTION>,
         drawBackGround inDrawBackGround : @escaping (_ ioContext : inout GraphicsContext) -> Void,
         drawOverlay inDrawOverlay : @escaping (_ ioContext : inout GraphicsContext) -> Void,
         backgroundViewBuilder inBackgroundViewBuilder : @escaping (BackgroundViewContext) -> any View,

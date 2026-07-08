@@ -6,11 +6,11 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct ShapeArrayManager <ShapeTypesDescription : DocumentShapesDescriptionProtocol> {
+public struct ShapeArrayManager <SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private var mShapeArray : [CanariShapeRoot <ShapeTypesDescription>] // at 0: back, at count - 1: front
+  private var mShapeArray : [CanariShapeRoot <SHAPE_TYPES_DESCRIPTION>] // at 0: back, at count - 1: front
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -24,13 +24,13 @@ public struct ShapeArrayManager <ShapeTypesDescription : DocumentShapesDescripti
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public mutating func setShapes (_ inShapes : [CanariShapeRoot <ShapeTypesDescription>]) {
+  public mutating func setShapes (_ inShapes : [CanariShapeRoot <SHAPE_TYPES_DESCRIPTION>]) {
     self.mShapeArray = inShapes
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var shapeArray : [CanariShapeRoot <ShapeTypesDescription>] {
+  public var shapeArray : [CanariShapeRoot <SHAPE_TYPES_DESCRIPTION>] {
     return self.mShapeArray
   }
 
@@ -38,19 +38,19 @@ public struct ShapeArrayManager <ShapeTypesDescription : DocumentShapesDescripti
   //MARK: Subscripts
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public subscript (shapeIndex inIndex : Int) -> CanariShapeRoot <ShapeTypesDescription> {
+  public subscript (shapeIndex inIndex : Int) -> CanariShapeRoot <SHAPE_TYPES_DESCRIPTION> {
     get { self.mShapeArray [inIndex] }
     set { self.mShapeArray [inIndex] = newValue }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  subscript (shapeID inID : UUID) -> (CanariShapeRoot <ShapeTypesDescription>)? {
+  subscript (shapeID inID : UUID) -> (CanariShapeRoot <SHAPE_TYPES_DESCRIPTION>)? {
     get {
-      self.mShapeArray.first { $0.mDecoration.id == inID }
+      self.mShapeArray.first { $0.id == inID }
     }
     set {
-      if let v = newValue, let idx = self.mShapeArray.firstIndex (where: { $0.mDecoration.id == inID } ) {
+      if let v = newValue, let idx = self.mShapeArray.firstIndex (where: { $0.id == inID } ) {
         self.mShapeArray [idx] = v
       }
     }
@@ -60,7 +60,7 @@ public struct ShapeArrayManager <ShapeTypesDescription : DocumentShapesDescripti
   //MARK: Mutating functions
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func append (_ inNewObject : CanariShapeRoot <ShapeTypesDescription>) {
+  mutating func append (_ inNewObject : CanariShapeRoot <SHAPE_TYPES_DESCRIPTION>) {
     self.mShapeArray.append (inNewObject)
   }
 
@@ -79,15 +79,15 @@ public struct ShapeArrayManager <ShapeTypesDescription : DocumentShapesDescripti
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   mutating func remove (id inID : UUID) {
-    if let idx = self.mShapeArray.firstIndex (where: { $0.mDecoration.id == inID } ) {
+    if let idx = self.mShapeArray.firstIndex (where: { $0.id == inID } ) {
       self.mShapeArray.remove (at: idx)
     }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func replaceShape (withID inID : UUID, by inArray : [CanariShapeRoot <ShapeTypesDescription>]) {
-    var idx = self.mShapeArray.firstIndex { $0.mDecoration.id == inID }!
+  mutating func replaceShape (withID inID : UUID, by inArray : [CanariShapeRoot <SHAPE_TYPES_DESCRIPTION>]) {
+    var idx = self.mShapeArray.firstIndex { $0.id == inID }!
     self.mShapeArray.remove (at: idx)
     for widget in inArray {
       self.mShapeArray.insert (widget, at: idx)

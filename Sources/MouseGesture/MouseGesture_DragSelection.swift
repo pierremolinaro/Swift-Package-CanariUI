@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-struct MouseGesture_DragSelection <ShapeTypesDescription : DocumentShapesDescriptionProtocol> : MouseGestureProtocol {
+struct MouseGesture_DragSelection <SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> : MouseGestureProtocol {
 
   let alignedCurrentPoint : CanariPoint
 
@@ -15,8 +15,8 @@ struct MouseGesture_DragSelection <ShapeTypesDescription : DocumentShapesDescrip
   func onMouseDragged (geometry inGeometry : MouseGestureGeometryContext,
                        beginOrContinueUndoGrouping inBeginOrContinueUndoGrouping : () -> Void,
                        userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                       shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <ShapeTypesDescription>,
-                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<ShapeTypesDescription>)?) {
+                       shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <SHAPE_TYPES_DESCRIPTION>,
+                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<SHAPE_TYPES_DESCRIPTION>)?) {
     let translation = inShapesManagerInterface.validatedGlobalTranslation (
       proposedValue: inGeometry.alignedUserCurrentLocation - self.alignedCurrentPoint,
       canvasSize: inGeometry.canvasSize
@@ -24,7 +24,7 @@ struct MouseGesture_DragSelection <ShapeTypesDescription : DocumentShapesDescrip
     if translation != .zero {
       inBeginOrContinueUndoGrouping ()
       for i in 0 ..< inShapesManagerInterface.shapeCount {
-        if inShapesManagerInterface.selection.contains (inShapesManagerInterface [shapeIndex: i].mDecoration.id) {
+        if inShapesManagerInterface.selection.contains (inShapesManagerInterface [shapeIndex: i].id) {
           inShapesManagerInterface [shapeIndex: i].mOrigin.mPoint += translation
         }
       }
@@ -38,7 +38,7 @@ struct MouseGesture_DragSelection <ShapeTypesDescription : DocumentShapesDescrip
 
   func onMouseUp (removeUndoGrouping inRemoveUndoGrouping : () -> Void,
                   userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                  shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <ShapeTypesDescription>) {
+                  shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <SHAPE_TYPES_DESCRIPTION>) {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -6,31 +6,29 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public protocol CanariShapeDecorationProtocol <ShapeTypesDescription> : Identifiable, Sendable, Codable {
+public protocol CanariShapeDecorationProtocol <SHAPE_TYPES_DESCRIPTION> : Sendable, Codable {
 
-  associatedtype ShapeTypesDescription : DocumentShapesDescriptionProtocol
+  associatedtype SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  var id : UUID { get }
 
   var localOutlinePath : CanariPath { get }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func duplicated () -> (any CanariShapeDecorationProtocol <ShapeTypesDescription>)?
+  func duplicated () -> (any CanariShapeDecorationProtocol <SHAPE_TYPES_DESCRIPTION>)?
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var shapeKnobs : [ShapeKnob <ShapeTypesDescription>] { get }
+  var shapeKnobs : [ShapeKnob <SHAPE_TYPES_DESCRIPTION>] { get }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func contextualMenu (_ inExecutor : ContextualMenuExecutor <ShapeTypesDescription>) -> any View
+  func contextualMenu (_ inExecutor : ContextualMenuExecutor <SHAPE_TYPES_DESCRIPTION>) -> any View
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func isEqual (to inOther : any CanariShapeDecorationProtocol <ShapeTypesDescription>) -> Bool
+  func isEqual (to inOther : any CanariShapeDecorationProtocol <SHAPE_TYPES_DESCRIPTION>) -> Bool
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -58,7 +56,7 @@ public protocol CanariShapeDecorationProtocol <ShapeTypesDescription> : Identifi
 
   @MainActor static var inspectorTitle : String { get }
 
-  @MainActor static func inspectorView (proxy inProxy : CanariInspectorProxy <ShapeTypesDescription>) -> any View
+  @MainActor static func inspectorView (proxy inProxy : CanariInspectorProxy <SHAPE_TYPES_DESCRIPTION>) -> any View
 
  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

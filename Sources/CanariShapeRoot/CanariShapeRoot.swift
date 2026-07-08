@@ -6,7 +6,9 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public nonisolated struct CanariShapeRoot <ShapeTypesDescription : DocumentShapesDescriptionProtocol> : Sendable {
+public nonisolated struct CanariShapeRoot <SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> : Sendable, Identifiable {
+
+  public let id : UUID
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -18,7 +20,7 @@ public nonisolated struct CanariShapeRoot <ShapeTypesDescription : DocumentShape
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var mDecoration : any CanariShapeDecorationProtocol <ShapeTypesDescription> {
+  public var mDecoration : any CanariShapeDecorationProtocol <SHAPE_TYPES_DESCRIPTION> {
     didSet {
       self.mOrigin.setLocalOutline (self.mDecoration.localOutlinePath)
     }
@@ -27,7 +29,8 @@ public nonisolated struct CanariShapeRoot <ShapeTypesDescription : DocumentShape
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (_ inOrientedOrigin : CanariScaledOrientedOrigin,
-               _ inDecoration : any CanariShapeDecorationProtocol <ShapeTypesDescription>) {
+               _ inDecoration : any CanariShapeDecorationProtocol <SHAPE_TYPES_DESCRIPTION>) {
+    self.id = UUID ()
     self.mOrigin = inOrientedOrigin
     self.mDecoration = inDecoration
     self.mOrigin.setLocalOutline (self.mDecoration.localOutlinePath)
@@ -37,7 +40,7 @@ public nonisolated struct CanariShapeRoot <ShapeTypesDescription : DocumentShape
   //MARK: Knobs
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var knobs : [ShapeKnob <ShapeTypesDescription>] {
+  var knobs : [ShapeKnob <SHAPE_TYPES_DESCRIPTION>] {
     var result = self.mDecoration.shapeKnobs
     result.append (ShapeKnob (dragAction: Self.dragCenterKnob))
     return result
@@ -45,7 +48,7 @@ public nonisolated struct CanariShapeRoot <ShapeTypesDescription : DocumentShape
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private static func dragCenterKnob (_ ioShape : inout CanariShapeRoot <ShapeTypesDescription>,
+  private static func dragCenterKnob (_ ioShape : inout CanariShapeRoot <SHAPE_TYPES_DESCRIPTION>,
                                       _ inLocalTranslation : CanariPoint,
                                       _ inInitialOptionKeyOn : Bool) {
     ioShape.mOrigin.addLocalTranslation (inLocalTranslation)
