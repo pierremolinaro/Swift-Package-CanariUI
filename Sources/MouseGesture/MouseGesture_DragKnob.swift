@@ -29,11 +29,9 @@ struct MouseGesture_DragKnob <ANCHOR : CanariShapeAnchorProtocol,
           proposedValue: translation,
           canvasSize: inGeometry.canvasSize
         )
-//   §§     let localTranslation = CanariAffinity (scale: 1.0 / shape.mAnchor.mScale)
-//          .rotating (-shape.mAnchor.mAngle)
-//          .transforming (validatedGlobalTranslation)
-//        self.dragKnobAction (&shape, localTranslation, self.optionKeyInitiallyOn)
-//        inShapesManagerInterface [shapeID: self.shapeID] = shape
+        let localTranslation = shape.mAnchor.globalTranslationToLocalTranslation (validatedGlobalTranslation)
+        self.dragKnobAction (&shape, localTranslation, self.optionKeyInitiallyOn)
+        inShapesManagerInterface [shapeID: self.shapeID] = shape
       }
       outOptionalNextState = MouseGesture_DragKnob (
         alignedCurrentPoint: inGeometry.alignedUserCurrentLocation,

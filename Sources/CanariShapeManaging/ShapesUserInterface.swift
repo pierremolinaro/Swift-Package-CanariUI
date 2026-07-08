@@ -870,7 +870,8 @@ import Combine
       Text ("Empty Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
     }else{
       VStack (spacing: 1) {
-        InspectorOfCanariScaledOrientedAnchor (shapesUserInterface: self)
+        AnyView (ANCHOR.anchorInspector (shapesUserInterface: self))
+//        InspectorOfCanariScaledOrientedAnchor (shapesUserInterface: self)
         if let type = self.commonTypeForSelection () {
           Text (type.inspectorTitle).bold ()
           ScrollView (.vertical) {

@@ -14,9 +14,11 @@ public protocol CanariShapeAnchorProtocol : Sendable, Codable, Equatable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @MainActor static func inspector <ANCHOR : CanariShapeAnchorProtocol, SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> (shapesUserInterface inShapesUserInterface : ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>) -> any View
+  @MainActor static func anchorInspector <ANCHOR : CanariShapeAnchorProtocol, SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> (shapesUserInterface inShapesUserInterface : ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>) -> any View
 
   func withLocalBoundingRect (action inAction : (CanariRect) -> Void)
+
+  func globalTranslationToLocalTranslation (_ inGlobalTranslation : CanariPoint) -> CanariPoint
 
   static func == (_ inLeft  : Self, _ inRight : Self) -> Bool
 

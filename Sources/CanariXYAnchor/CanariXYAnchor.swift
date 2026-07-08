@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariScaledOrientedAnchor : Sendable, CanariShapeAnchorProtocol {
+public struct CanariXYAnchor : Sendable, CanariShapeAnchorProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -368,7 +368,7 @@ public struct CanariScaledOrientedAnchor : Sendable, CanariShapeAnchorProtocol {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   @MainActor public static func anchorInspector <ANCHOR : CanariShapeAnchorProtocol, SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> (shapesUserInterface inShapesUserInterface : ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>) -> any View {
-    return InspectorOfCanariScaledOrientedAnchor (shapesUserInterface: inShapesUserInterface)
+    return InspectorOfCanariXYAnchor (shapesUserInterface: inShapesUserInterface)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

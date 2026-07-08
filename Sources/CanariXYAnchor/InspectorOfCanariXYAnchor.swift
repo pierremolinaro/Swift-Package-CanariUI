@@ -6,8 +6,8 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-struct InspectorOfCanariScaledOrientedAnchor <ANCHOR : CanariShapeAnchorProtocol,
-                                              SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> : View {
+struct InspectorOfCanariXYAnchor <ANCHOR : CanariShapeAnchorProtocol,
+                                  SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
