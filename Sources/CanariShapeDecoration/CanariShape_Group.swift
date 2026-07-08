@@ -13,7 +13,7 @@ public struct CanariShape_Group <SHAPE_TYPES_DESCRIPTION : DocumentShapesDescrip
   public var localOutlinePath : CanariPath {
     var result = CanariPath ()
     for shape in self.mArray {
-      shape.mOrigin.withGlobalOutline { result.unionInPlaceUsingNonZeroRule ($0) }
+      shape.mAnchor.withGlobalOutline { result.unionInPlaceUsingNonZeroRule ($0) }
     }
     return result
   }
@@ -29,18 +29,9 @@ public struct CanariShape_Group <SHAPE_TYPES_DESCRIPTION : DocumentShapesDescrip
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  init (grouping inShapeArray : [CanariShapeRoot <SHAPE_TYPES_DESCRIPTION>]) {
+  init (zeroCenteredShapeArray inShapeArray : [CanariShapeRoot <SHAPE_TYPES_DESCRIPTION>]) {
     self.mUnGroupIsEnabled = true
-    var vertices = [CanariPoint] ()
-    for shape in inShapeArray {
-      vertices += shape.mOrigin.globalBoundingRect.vertices
-    }
-    let r = CanariRect (vertices)
-    self.mArray = inShapeArray.map {
-      var origin = $0.mOrigin
-      origin.mPoint -= r.center
-      return CanariShapeRoot (origin, $0.mDecoration)
-    }
+    self.mArray = inShapeArray
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -111,32 +102,54 @@ public struct CanariShape_Group <SHAPE_TYPES_DESCRIPTION : DocumentShapesDescrip
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func drawShape (context ioContext : inout GraphicsContext,
-                          canvasScale inCanvasScale : Double,
-                          hovered inHovered : Bool,
-                          selected inSelected : Bool,
-                          groupLevel inGroupLevel : UInt) {
+                         anchor inAnchor : CanariScaledOrientedAnchor,
+                         drawingScale inDrawingScale : Double,
+                         hovered inHovered : Bool,
+                         selected inSelected : Bool,
+                         groupLevel inGroupLevel : UInt) {
     for shape in self.mArray {
-      ioContext.translate (by: shape.mOrigin.mPoint)
-      ioContext.rotate (by: shape.mOrigin.mAngle)
-      ioContext.scale (by: shape.mOrigin.mScale, horizontalFlip: shape.mOrigin.mHorizontalFlip)
-      shape.mDecoration.drawShape (
+      shape.mAnchor.withLocalCoordinates (
         context: &ioContext,
-        canvasScale: inCanvasScale * shape.mOrigin.mScale,
-        hovered: inHovered,
-        selected: inSelected,
-        groupLevel: inGroupLevel
-      )
-      ioContext.scale (by: 1.0 / shape.mOrigin.mScale, horizontalFlip: shape.mOrigin.mHorizontalFlip)
-      ioContext.rotate (by: -shape.mOrigin.mAngle)
-      ioContext.translate (by: -shape.mOrigin.mPoint)
+        drawingScale: inDrawingScale
+      ) { context, decorationDrawingScale in
+        shape.mDecoration.drawShape (
+          context: &context,
+          anchor: shape.mAnchor,
+          drawingScale: decorationDrawingScale,
+          hovered: inHovered,
+          selected: inSelected,
+          groupLevel: inGroupLevel
+        )
+      }
+//      shape.mAnchor.drawShapeInLocalCoordinates (
+//        &ioContext,
+//        shape.mDecoration,
+//        drawingScale: inDrawingScale,
+//        hovered: inHovered,
+//        selected: inSelected,
+//        groupLevel: inGroupLevel
+//      )
+//      ioContext.translate (by: shape.mAnchor.mPoint)
+//      ioContext.rotate (by: shape.mAnchor.mAngle)
+//      ioContext.scale (by: shape.mAnchor.mScale, horizontalFlip: shape.mAnchor.mHorizontalFlip)
+//      shape.mDecoration.drawShape (
+//        context: &ioContext,
+//        canvasScale: inCanvasScale * shape.mAnchor.mScale,
+//        hovered: inHovered,
+//        selected: inSelected,
+//        groupLevel: inGroupLevel
+//      )
+//      ioContext.scale (by: 1.0 / shape.mAnchor.mScale, horizontalFlip: shape.mAnchor.mHorizontalFlip)
+//      ioContext.rotate (by: -shape.mAnchor.mAngle)
+//      ioContext.translate (by: -shape.mAnchor.mPoint)
     }
     if inSelected || inHovered, inGroupLevel == 0 {
-//  §    self.mOrigin.withLocalBoundingRect {
-//        ioContext.stroke (
-//          CanariPath (rect: $0),
-//          with: .color (.black), lineWidth: .px (0.5) / inScale
-//        )
-//      }
+      inAnchor.withLocalBoundingRect {
+        ioContext.stroke (
+          CanariPath (rect: $0),
+          with: .color (.black), lineWidth: .px (0.5) / inDrawingScale
+        )
+      }
     }
   }
 
@@ -156,9 +169,9 @@ public struct CanariShape_Group <SHAPE_TYPES_DESCRIPTION : DocumentShapesDescrip
   //MARK: ungrouped array
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func ungroupedArray (_ inGroupOrigin : CanariScaledOrientedOrigin) -> [CanariShapeRoot <SHAPE_TYPES_DESCRIPTION>] {
+  func ungroupedArray (_ inGroupOrigin : CanariScaledOrientedAnchor) -> [CanariShapeRoot <SHAPE_TYPES_DESCRIPTION>] {
     return self.mArray.map {
-      var origin = $0.mOrigin
+      var origin = $0.mAnchor
       origin.transformToGlobal (inGroupOrigin)
       return CanariShapeRoot (origin, $0.mDecoration)
     }

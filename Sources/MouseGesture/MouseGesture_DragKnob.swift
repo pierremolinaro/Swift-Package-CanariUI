@@ -28,8 +28,8 @@ struct MouseGesture_DragKnob <SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptio
           proposedValue: translation,
           canvasSize: inGeometry.canvasSize
         )
-        let localTranslation = CanariAffinity (scale: 1.0 / shape.mOrigin.mScale)
-          .rotating (-shape.mOrigin.mAngle)
+        let localTranslation = CanariAffinity (scale: 1.0 / shape.mAnchor.mScale)
+          .rotating (-shape.mAnchor.mAngle)
           .transforming (validatedGlobalTranslation)
         self.dragKnobAction (&shape, localTranslation, self.optionKeyInitiallyOn)
         inShapesManagerInterface [shapeID: self.shapeID] = shape

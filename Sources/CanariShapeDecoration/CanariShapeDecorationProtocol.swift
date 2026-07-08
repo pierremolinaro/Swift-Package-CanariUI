@@ -39,7 +39,8 @@ public protocol CanariShapeDecorationProtocol <SHAPE_TYPES_DESCRIPTION> : Sendab
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func drawShape (context ioContext : inout GraphicsContext,
-                  canvasScale inCanvasScale : Double,
+                  anchor inAnchor : CanariScaledOrientedAnchor,
+                  drawingScale inDrawingScale : Double,
                   hovered inHovered : Bool,
                   selected inSelected : Bool,
                   groupLevel inGroupLevel : UInt)

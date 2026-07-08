@@ -89,8 +89,8 @@ public struct ShapeArrayManager <SHAPE_TYPES_DESCRIPTION : DocumentShapesDescrip
   mutating func replaceShape (withID inID : UUID, by inArray : [CanariShapeRoot <SHAPE_TYPES_DESCRIPTION>]) {
     var idx = self.mShapeArray.firstIndex { $0.id == inID }!
     self.mShapeArray.remove (at: idx)
-    for widget in inArray {
-      self.mShapeArray.insert (widget, at: idx)
+    for shape in inArray {
+      self.mShapeArray.insert (shape, at: idx)
       idx += 1
     }
   }

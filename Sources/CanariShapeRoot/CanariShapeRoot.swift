@@ -8,13 +8,13 @@ import SwiftUI
 
 public nonisolated struct CanariShapeRoot <SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> : Sendable, Identifiable {
 
-  public let id : UUID
+  public let id = UUID () // Identifiable
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var mOrigin : CanariScaledOrientedOrigin {
+  public var mAnchor : CanariScaledOrientedAnchor {
     didSet {
-      self.mOrigin.setLocalOutline (self.mDecoration.localOutlinePath)
+      self.mAnchor.setLocalOutline (self.mDecoration.localOutlinePath)
     }
   }
 
@@ -22,18 +22,17 @@ public nonisolated struct CanariShapeRoot <SHAPE_TYPES_DESCRIPTION : DocumentSha
 
   public var mDecoration : any CanariShapeDecorationProtocol <SHAPE_TYPES_DESCRIPTION> {
     didSet {
-      self.mOrigin.setLocalOutline (self.mDecoration.localOutlinePath)
+      self.mAnchor.setLocalOutline (self.mDecoration.localOutlinePath)
     }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (_ inOrientedOrigin : CanariScaledOrientedOrigin,
+  public init (_ inAnchor : CanariScaledOrientedAnchor,
                _ inDecoration : any CanariShapeDecorationProtocol <SHAPE_TYPES_DESCRIPTION>) {
-    self.id = UUID ()
-    self.mOrigin = inOrientedOrigin
+    self.mAnchor = inAnchor
     self.mDecoration = inDecoration
-    self.mOrigin.setLocalOutline (self.mDecoration.localOutlinePath)
+    self.mAnchor.setLocalOutline (self.mDecoration.localOutlinePath)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -51,7 +50,7 @@ public nonisolated struct CanariShapeRoot <SHAPE_TYPES_DESCRIPTION : DocumentSha
   private static func dragCenterKnob (_ ioShape : inout CanariShapeRoot <SHAPE_TYPES_DESCRIPTION>,
                                       _ inLocalTranslation : CanariPoint,
                                       _ inInitialOptionKeyOn : Bool) {
-    ioShape.mOrigin.addLocalTranslation (inLocalTranslation)
+    ioShape.mAnchor.addLocalTranslation (inLocalTranslation)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

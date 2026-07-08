@@ -44,7 +44,7 @@ public final class CanariInspectorProxy <SHAPE_TYPES_DESCRIPTION : DocumentShape
             if let shape = self.mShapesUserInterface [shapeID: id],
                     var v = shape.mDecoration as? T {
               v [keyPath: inKeyPath] = property
-              self.mShapesUserInterface [shapeID: id] = CanariShapeRoot (shape.mOrigin, v)
+              self.mShapesUserInterface [shapeID: id] = CanariShapeRoot (shape.mAnchor, v)
             }
           }
         }
@@ -97,7 +97,7 @@ public final class CanariInspectorProxy <SHAPE_TYPES_DESCRIPTION : DocumentShape
     for id in self.mShapesUserInterface.selection {
       if let shape = self.mShapesUserInterface [shapeID: id], var v = shape.mDecoration as? T {
         v [keyPath: inKeyPath] = inValue
-        self.mShapesUserInterface [shapeID: id] = CanariShapeRoot (shape.mOrigin, v)
+        self.mShapesUserInterface [shapeID: id] = CanariShapeRoot (shape.mAnchor, v)
       }
     }
   }
@@ -114,7 +114,7 @@ public final class CanariInspectorProxy <SHAPE_TYPES_DESCRIPTION : DocumentShape
     for id in self.mShapesUserInterface.selection {
       if let shape = self.mShapesUserInterface [shapeID: id], var s = shape.mDecoration as? T {
         inAction (&s)
-        self.mShapesUserInterface [shapeID: id] = CanariShapeRoot (shape.mOrigin, s)
+        self.mShapesUserInterface [shapeID: id] = CanariShapeRoot (shape.mAnchor, s)
       }
     }
   }

@@ -370,7 +370,11 @@ public struct CanvasManagerView <SHAPE_TYPES_DESCRIPTION : DocumentShapesDescrip
         self.mDrawBackGround (&context)
         context.scaleBy (x: 1.0 / self.mCanvasScale, y: 1.0 / self.mCanvasScale)
       //--- Shapes
-        self.mShapesUserInterface.draw (context: &context, hoverUserLocationPoint: self.mUnalignedHoverUserLocation, scale: self.mCanvasScale)
+        self.mShapesUserInterface.draw (
+          context: &context,
+          hoverUserLocationPoint: self.mUnalignedHoverUserLocation,
+          canvasScale: self.mCanvasScale
+        )
       //--- Overlay
         context.scaleBy (x: self.mCanvasScale, y: self.mCanvasScale)
         self.mDrawOverlay (&context)

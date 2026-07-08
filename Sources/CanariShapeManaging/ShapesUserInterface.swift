@@ -166,68 +166,100 @@ import Combine
 
   public func draw (context ioContext : inout GraphicsContext,
                     hoverUserLocationPoint inHoverUserLocationPoint : CanariPoint?,
-                    scale inScale : Double) {
+                    canvasScale inCanvasScale : Double) {
     enterTracing ("shapes.user.interface.draw") ; defer { exitTracing ("shapes.user.interface.draw") }
-    ioContext.scale (by: inScale)
+    ioContext.scale (by: inCanvasScale)
   //--- Draw shapes
     for shape in self.shapeArray {
-      ioContext.translate (by: shape.mOrigin.mPoint)
-      ioContext.rotate (by: shape.mOrigin.mAngle)
-      ioContext.scale (by: shape.mOrigin.mScale, horizontalFlip: shape.mOrigin.mHorizontalFlip)
-      let scale = inScale * shape.mOrigin.mScale
       let hovered = shape.id == self.mHoveredObject
       let selected = self.mSelection.contains (shape.id)
-      shape.mOrigin.withLocalOutline {
-        self.drawShapesBackground (
-          context: &ioContext,
-          scale: scale,
-          hovered: hovered,
-          selected : selected,
-          localOutline: $0
-        )
-      }
-      shape.mDecoration.drawShape (
+      shape.mAnchor.withLocalCoordinates (
         context: &ioContext,
-        canvasScale: scale,
-        hovered: hovered,
-        selected: selected,
-        groupLevel: 0
-      )
-      shape.mOrigin.withLocalOutline {
-        self.drawShapesForeground (
-          context: &ioContext,
-          scale: scale,
+        drawingScale: inCanvasScale
+      ) { context, decorationDrawingScale in
+        shape.mAnchor.withLocalOutline {
+          self.drawShapesBackground (
+            context: &context,
+            drawingScale: decorationDrawingScale,
+            hovered: hovered,
+            selected : selected,
+            localOutline: $0
+          )
+        }
+        shape.mDecoration.drawShape (
+          context: &context,
+          anchor: shape.mAnchor,
+          drawingScale: decorationDrawingScale,
           hovered: hovered,
-          selected : selected,
-          localOutline: $0
+          selected: selected,
+          groupLevel: 0
         )
+        shape.mAnchor.withLocalOutline {
+          self.drawShapesForeground (
+            context: &context,
+            drawingScale: decorationDrawingScale,
+            hovered: hovered,
+            selected : selected,
+            localOutline: $0
+          )
+        }
       }
-      ioContext.scale (by: 1.0 / shape.mOrigin.mScale, horizontalFlip: shape.mOrigin.mHorizontalFlip)
-      ioContext.rotate (by: -shape.mOrigin.mAngle)
-      ioContext.translate (by: -shape.mOrigin.mPoint)
+//      ioContext.translate (by: shape.mAnchor.mPoint)
+//      ioContext.rotate (by: shape.mAnchor.mAngle)
+//      ioContext.scale (by: shape.mAnchor.mScale, horizontalFlip: shape.mAnchor.mHorizontalFlip)
+//      let scale = inCanvasScale * shape.mAnchor.mScale
+//      shape.mAnchor.withLocalOutline {
+//        self.drawShapesBackground (
+//          context: &ioContext,
+//          drawingScale: scale,
+//          hovered: hovered,
+//          selected : selected,
+//          localOutline: $0
+//        )
+//      }
+//      shape.mDecoration.drawShape (
+//        context: &ioContext,
+//        anchor: shape.mAnchor,
+//        drawingScale: scale,
+//        hovered: hovered,
+//        selected: selected,
+//        groupLevel: 0
+//      )
+//      shape.mAnchor.withLocalOutline {
+//        self.drawShapesForeground (
+//          context: &ioContext,
+//          drawingScale: scale,
+//          hovered: hovered,
+//          selected : selected,
+//          localOutline: $0
+//        )
+//      }
+//      ioContext.scale (by: 1.0 / shape.mAnchor.mScale, horizontalFlip: shape.mAnchor.mHorizontalFlip)
+//      ioContext.rotate (by: -shape.mAnchor.mAngle)
+//      ioContext.translate (by: -shape.mAnchor.mPoint)
     }
   //--- Get alignment points
     var selectedObjetsAlignmentPoints = Set <CanariPoint> ()
     for shape in self.shapeArray {
       if self.mSelection.contains (shape.id) {
-        selectedObjetsAlignmentPoints.formUnion (shape.mOrigin.localToGlobal (shape.mDecoration.localAlignmentGuidePoints))
+        selectedObjetsAlignmentPoints.formUnion (shape.mAnchor.localToGlobal (shape.mDecoration.localAlignmentGuidePoints))
       }
     }
   //--- Draw alignment guides
     for p in selectedObjetsAlignmentPoints {
       for shape in self.shapeArray {
         if !self.mSelection.contains (shape.id) {
-          for q in shape.mOrigin.localToGlobal (shape.mDecoration.localAlignmentGuidePoints) {
+          for q in shape.mAnchor.localToGlobal (shape.mDecoration.localAlignmentGuidePoints) {
             if p.x == q.x, p.y != q.y { // Vertical guide
               var path = CanariPath ()
               path.addMove (to: p)
               path.addLine (to: q)
-              ioContext.stroke (path, with: .color (.orange), lineWidth: .px (1) / inScale)
+              ioContext.stroke (path, with: .color (.orange), lineWidth: .px (1) / inCanvasScale)
             }else if p.y == q.y, p.x != q.x { // Horizontal guide
               var path = CanariPath ()
               path.addMove (to: p)
               path.addLine (to: q)
-              ioContext.stroke (path, with: .color (.orange), lineWidth: .px (1) / inScale)
+              ioContext.stroke (path, with: .color (.orange), lineWidth: .px (1) / inCanvasScale)
             }
           }
         }
@@ -236,33 +268,50 @@ import Combine
   //--- Draw knobs
     for shape in self.shapeArray {
       if self.mSelection.contains (shape.id), !shape.knobs.isEmpty {
-        ioContext.translate (by: shape.mOrigin.mPoint)
-        ioContext.rotate (by: shape.mOrigin.mAngle)
-        ioContext.scale (by: shape.mOrigin.mScale)
-        for knob in shape.knobs {
-          let inside : Bool
-          if let p = inHoverUserLocationPoint {
-            inside = knob.contains (
-              localPoint: shape.mOrigin.globalToLocal (p),
-              scale: inScale
-            )
-          }else{
-            inside = false
+        shape.mAnchor.withLocalCoordinates (
+          context: &ioContext,
+          drawingScale: inCanvasScale
+        ) { context, decorationDrawingScale in
+          for knob in shape.knobs {
+            let inside : Bool
+            if let p = inHoverUserLocationPoint {
+              inside = knob.contains (
+                localPoint: shape.mAnchor.globalToLocal (p),
+                scale: inCanvasScale
+              )
+            }else{
+              inside = false
+            }
+            knob.drawKnob (context: &context, inside: inside, scale: decorationDrawingScale)
           }
-          knob.drawKnob (context: &ioContext, inside: inside, scale: inScale * shape.mOrigin.mScale)
         }
-        ioContext.scale (by: 1.0 / shape.mOrigin.mScale)
-        ioContext.rotate (by: -shape.mOrigin.mAngle)
-        ioContext.translate (by: -shape.mOrigin.mPoint)
+//        ioContext.translate (by: shape.mAnchor.mPoint)
+//        ioContext.rotate (by: shape.mAnchor.mAngle)
+//        ioContext.scale (by: shape.mAnchor.mScale)
+//        for knob in shape.knobs {
+//          let inside : Bool
+//          if let p = inHoverUserLocationPoint {
+//            inside = knob.contains (
+//              localPoint: shape.mAnchor.globalToLocal (p),
+//              scale: inCanvasScale
+//            )
+//          }else{
+//            inside = false
+//          }
+//          knob.drawKnob (context: &ioContext, inside: inside, scale: inCanvasScale * shape.mAnchor.mScale)
+//        }
+//        ioContext.scale (by: 1.0 / shape.mAnchor.mScale)
+//        ioContext.rotate (by: -shape.mAnchor.mAngle)
+//        ioContext.translate (by: -shape.mAnchor.mPoint)
       }
     }
-    ioContext.scale (by: 1.0 / inScale)
+    ioContext.scale (by: 1.0 / inCanvasScale)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   open func drawShapesBackground (context ioContext : inout GraphicsContext,
-                                  scale inScale : Double,
+                                  drawingScale inDrawingScale : Double,
                                   hovered inHovered : Bool,
                                   selected inSelected : Bool,
                                   localOutline inLocalOutline : CanariPath) {
@@ -271,7 +320,7 @@ import Combine
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   open func drawShapesForeground (context ioContext : inout GraphicsContext,
-                                  scale inScale : Double,
+                                  drawingScale inDrawingScale : Double,
                                   hovered inHovered : Bool,
                                   selected inSelected : Bool,
                                   localOutline inLocalOutline : CanariPath) {
@@ -284,7 +333,7 @@ import Combine
   public func hoverTracking (at inPoint : CanariPoint) {
     enterTracing ("shapes.user.interface.hover.tracking") ; defer { exitTracing ("shapes.user.interface.hover.tracking") }
     for shape in self.shapeArray.reversed () {
-      if shape.mOrigin.localOutline (containsLocalPointForMouseGesture: shape.mOrigin.globalToLocal (inPoint)) {
+      if shape.mAnchor.localOutline (containsLocalPointForMouseGesture: shape.mAnchor.globalToLocal (inPoint)) {
         self.mHoveredObject = shape.id
         return
       }
@@ -337,7 +386,7 @@ import Combine
     for shape in self.shapeArray.reversed () {
       if self.mSelection.contains (shape.id) {
         for knob in shape.knobs {
-          if knob.contains (localPoint: shape.mOrigin.globalToLocal (inGeometry.unalignedUserStartLocation), scale: inGeometry.scale) {
+          if knob.contains (localPoint: shape.mAnchor.globalToLocal (inGeometry.unalignedUserStartLocation), scale: inGeometry.scale) {
             return MouseGesture_DragKnob <SHAPE_TYPES_DESCRIPTION> (
               alignedCurrentPoint: inGeometry.alignedUserStartLocation,
               optionKeyInitiallyOn: true,
@@ -349,29 +398,29 @@ import Combine
       }
     }
 
-    var widgetUnderMouseID : UUID? = nil
+    var shapeUnderMouseID : UUID? = nil
     for shape in self.shapeArray.reversed () {
-      if shape.mOrigin.localOutline (containsLocalPointForMouseGesture: shape.mOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
-        widgetUnderMouseID = shape.id
+      if shape.mAnchor.localOutline (containsLocalPointForMouseGesture: shape.mAnchor.globalToLocal (inGeometry.unalignedUserStartLocation)) {
+        shapeUnderMouseID = shape.id
         break
       }
     }
-    if let widgetID = widgetUnderMouseID {
-      if self.mSelection.contains (widgetID) { // option-click on a selected shape
+    if let shapeID = shapeUnderMouseID {
+      if self.mSelection.contains (shapeID) { // option-click on a selected shape
         let selectedArray = self.selectedShapeArray ()
         self.mSelection.removeAll ()
         for shape in selectedArray {
           if let newDecoration = shape.mDecoration.duplicated () {
-            let newShape = CanariShapeRoot (shape.mOrigin, newDecoration)
+            let newShape = CanariShapeRoot (shape.mAnchor, newDecoration)
             self.mShapeArrayManager.append (newShape)
             self.mSelection.insert (newShape.id)
           }
         }
         return MouseGesture_DragSelection <SHAPE_TYPES_DESCRIPTION> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
       }else{ // option-click on a non-selected shape
-        if let shape = self.mShapeArrayManager [shapeID: widgetID],
+        if let shape = self.mShapeArrayManager [shapeID: shapeID],
               let newDecoration = shape.mDecoration.duplicated () {
-          let newShape = CanariShapeRoot (shape.mOrigin, newDecoration)
+          let newShape = CanariShapeRoot (shape.mAnchor, newDecoration)
           self.mShapeArrayManager.append (newShape)
           self.mSelection = [newShape.id]
           return MouseGesture_DragSelection <SHAPE_TYPES_DESCRIPTION> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
@@ -409,18 +458,18 @@ import Combine
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private func mouseDown_shiftKey (geometry inGeometry : MouseGestureGeometryContext) -> any MouseGestureProtocol <SHAPE_TYPES_DESCRIPTION> {
-    var widgetUnderMouseID : UUID? = nil
+    var shapeUnderMouseID : UUID? = nil
     for shape in self.shapeArray.reversed () {
-      if shape.mOrigin.localOutline (containsLocalPointForMouseGesture:shape.mOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
-        widgetUnderMouseID = shape.id
+      if shape.mAnchor.localOutline (containsLocalPointForMouseGesture:shape.mAnchor.globalToLocal (inGeometry.unalignedUserStartLocation)) {
+        shapeUnderMouseID = shape.id
         break
       }
     }
-    if let id = widgetUnderMouseID {
-      if self.mSelection.contains (id) {
-        self.mSelection.remove (id)
+    if let shapeID = shapeUnderMouseID {
+      if self.mSelection.contains (shapeID) {
+        self.mSelection.remove (shapeID)
       }else{
-        self.mSelection.insert (id)
+        self.mSelection.insert (shapeID)
       }
       return MouseGesture_Inactive <SHAPE_TYPES_DESCRIPTION> ()
     }else{
@@ -435,7 +484,7 @@ import Combine
     for shape in self.shapeArray.reversed () {
       if self.mSelection.contains (shape.id) {
         for knob in shape.knobs {
-          if knob.contains (localPoint: shape.mOrigin.globalToLocal (inGeometry.unalignedUserStartLocation), scale: inGeometry.scale) {
+          if knob.contains (localPoint: shape.mAnchor.globalToLocal (inGeometry.unalignedUserStartLocation), scale: inGeometry.scale) {
             return MouseGesture_DragKnob <SHAPE_TYPES_DESCRIPTION> (
               alignedCurrentPoint: inGeometry.alignedUserStartLocation,
               optionKeyInitiallyOn: false,
@@ -448,14 +497,14 @@ import Combine
     }
   //--- Mouse down in a selected object ?
     for shape in self.shapeArray.reversed () {
-      if self.mSelection.contains (shape.id), shape.mOrigin.localOutline (containsLocalPointForMouseGesture:shape.mOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)) {
+      if self.mSelection.contains (shape.id), shape.mAnchor.localOutline (containsLocalPointForMouseGesture:shape.mAnchor.globalToLocal (inGeometry.unalignedUserStartLocation)) {
         return MouseGesture_DragSelection <SHAPE_TYPES_DESCRIPTION> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
       }
     }
   //--- Mouse down in a non selected object ?
     for shape in self.shapeArray.reversed () {
-      let localPoint = shape.mOrigin.globalToLocal (inGeometry.unalignedUserStartLocation)
-      if shape.mOrigin.localOutline (containsLocalPointForMouseGesture: localPoint) {
+      let localPoint = shape.mAnchor.globalToLocal (inGeometry.unalignedUserStartLocation)
+      if shape.mAnchor.localOutline (containsLocalPointForMouseGesture: localPoint) {
         self.mSelection = [shape.id]
         return MouseGesture_DragSelection <SHAPE_TYPES_DESCRIPTION> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
       }
@@ -473,7 +522,7 @@ import Combine
       let shape = self.mShapeArrayManager [shapeIndex: idx]
       if self.mSelection.contains (shape.id) {
         for knob in shape.knobs {
-          if knob.contains (localPoint: shape.mOrigin.globalToLocal (inUnalignedPoint), scale: inScale) {
+          if knob.contains (localPoint: shape.mAnchor.globalToLocal (inUnalignedPoint), scale: inScale) {
             if let menu = knob.menu {
               return menu (ContextualMenuExecutor (self, idx))
             }else{
@@ -486,7 +535,7 @@ import Combine
   //--- CMD + Mouse down in a selected object ?
     for idx in (0 ..< self.mShapeArrayManager.count).reversed () {
       let shape = self.mShapeArrayManager [shapeIndex: idx]
-      if self.mSelection.contains (shape.id), shape.mOrigin.localOutline (containsLocalPointForMouseGesture: shape.mOrigin.globalToLocal (inUnalignedPoint)) {
+      if self.mSelection.contains (shape.id), shape.mAnchor.localOutline (containsLocalPointForMouseGesture: shape.mAnchor.globalToLocal (inUnalignedPoint)) {
         return shape.mDecoration.contextualMenu (ContextualMenuExecutor (self, idx))
       }
     }
@@ -589,7 +638,7 @@ import Combine
         var idx = 0
         while idx < self.shapeCount {
           if self.selection.contains (self [shapeIndex: idx].id) {
-            self [shapeIndex: idx].mOrigin.mPoint += translation
+            self [shapeIndex: idx].mAnchor.mPoint += translation
           }
           idx += 1
         }
@@ -608,7 +657,7 @@ import Combine
         var idx = 0
         while idx < self.shapeCount {
           if self.selection.contains (self [shapeIndex: idx].id) {
-            self [shapeIndex: idx].mOrigin.mPoint += translation
+            self [shapeIndex: idx].mAnchor.mPoint += translation
           }
           idx += 1
         }
@@ -627,7 +676,7 @@ import Combine
         var idx = 0
         while idx < self.shapeCount {
           if self.selection.contains (self [shapeIndex: idx].id) {
-            self [shapeIndex: idx].mOrigin.mPoint += translation
+            self [shapeIndex: idx].mAnchor.mPoint += translation
           }
           idx += 1
         }
@@ -646,7 +695,7 @@ import Combine
         var idx = 0
         while idx < self.shapeCount {
           if self.selection.contains (self [shapeIndex: idx].id) {
-            self [shapeIndex: idx].mOrigin.mPoint += translation
+            self [shapeIndex: idx].mAnchor.mPoint += translation
           }
           idx += 1
         }
@@ -760,11 +809,23 @@ import Combine
 
   public override func performGroup () {
     let selectedShapes = self.selectedShapeArray ()
-    let shapeGroup = CanariShape_Group <SHAPE_TYPES_DESCRIPTION> (grouping: selectedShapes)
+  //--- Compute group anchor
+    var vertices = [CanariPoint] ()
+    for shape in selectedShapes {
+      vertices += shape.mAnchor.globalBoundingRect.vertices
+    }
+    let r = CanariRect (vertices)
+    let centeredShapes = selectedShapes.map {
+      var anchor = $0.mAnchor
+      anchor.mPoint -= r.center
+      return CanariShapeRoot (anchor, $0.mDecoration)
+    }
+  //---
+    let shapeGroup = CanariShape_Group <SHAPE_TYPES_DESCRIPTION> (zeroCenteredShapeArray: centeredShapes)
     for shape in selectedShapes {
       self.mShapeArrayManager.remove (id: shape.id)
     }
-    let newShape = CanariShapeRoot (CanariScaledOrientedOrigin (), shapeGroup)
+    let newShape = CanariShapeRoot (CanariScaledOrientedAnchor (origin: r.center), shapeGroup)
     self.mShapeArrayManager.append (newShape)
     self.mSelection = [newShape.id]
   }
@@ -789,7 +850,7 @@ import Combine
       if self.mSelection.contains (shape.id),
           let group = shape.mDecoration as? CanariShape_Group <SHAPE_TYPES_DESCRIPTION>,
           group.mUnGroupIsEnabled {
-        let array = group.ungroupedArray (shape.mOrigin)
+        let array = group.ungroupedArray (shape.mAnchor)
         self.mShapeArrayManager.replaceShape (withID: shape.id, by: array)
         self.mSelection.remove (shape.id)
         for p in array {
@@ -808,7 +869,7 @@ import Combine
       Text ("Empty Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
     }else{
       VStack (spacing: 1) {
-        InspectorOfCanariScaledOrientedOrigin (shapesUserInterface: self)
+        InspectorOfCanariScaledOrientedAnchor (shapesUserInterface: self)
         if let type = self.commonTypeForSelection () {
           Text (type.inspectorTitle).bold ()
           ScrollView (.vertical) {

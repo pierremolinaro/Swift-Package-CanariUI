@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariScaledOrientedOrigin : Equatable, Sendable {
+public struct CanariScaledOrientedAnchor : Equatable, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -36,7 +36,8 @@ public struct CanariScaledOrientedOrigin : Equatable, Sendable {
     didSet {
       if self.mScale != oldValue {
         self.computeAffinities ()
-        self.mOriginCenteredGlobalOutlineAndBoundingRect = self.mOriginCenteredGlobalOutlineAndBoundingRect.scaled (by: self.mScale / oldValue)
+        let r = self.mOriginCenteredGlobalOutlineAndBoundingRect.scaled (by: self.mScale / oldValue)
+        self.mOriginCenteredGlobalOutlineAndBoundingRect = r
       }
     }
   }
@@ -218,7 +219,7 @@ public struct CanariScaledOrientedOrigin : Equatable, Sendable {
   //MARK: transformToGlobal
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public mutating func transformToGlobal (_ inGlobalOrientedOrigin : borrowing CanariScaledOrientedOrigin) {
+  public mutating func transformToGlobal (_ inGlobalOrientedOrigin : borrowing CanariScaledOrientedAnchor) {
     self.mPoint = inGlobalOrientedOrigin.localToGlobal (self.mPoint)
     self.mAngle += inGlobalOrientedOrigin.mAngle
     self.mScale *= inGlobalOrientedOrigin.mScale
@@ -317,6 +318,54 @@ public struct CanariScaledOrientedOrigin : Equatable, Sendable {
       .scaling (self.mScale)
     let globalTranslation = inLocalTranslation.transformed(by: affinity)
     self.mPoint += globalTranslation
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func drawShapeInLocalCoordinates <SHAPE_TYPES_DESCRIPTION>
+            (_ ioContext: inout GraphicsContext,
+             _ inShapeDecoration : any CanariShapeDecorationProtocol <SHAPE_TYPES_DESCRIPTION>,
+             drawingScale inDrawingScale : Double,
+             hovered inHovered : Bool,
+             selected inSelected : Bool,
+             groupLevel inGroupLevel : UInt) {
+    ioContext.translate (by: self.mPoint)
+    ioContext.rotate (by: self.mAngle)
+    ioContext.scale (by: self.mScale, horizontalFlip: self.mHorizontalFlip)
+    inShapeDecoration.drawShape (
+      context: &ioContext,
+      anchor: self,
+      drawingScale: inDrawingScale * self.mScale,
+      hovered: inHovered,
+      selected: inSelected,
+      groupLevel: inGroupLevel
+    )
+    ioContext.scale (by: 1.0 / self.mScale, horizontalFlip: self.mHorizontalFlip)
+    ioContext.rotate (by: -self.mAngle)
+    ioContext.translate (by: -self.mPoint)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func withLocalCoordinates (context ioContext: inout GraphicsContext,
+                                    drawingScale inDrawingScale : Double,
+                                    action inAction : (inout GraphicsContext, Double) -> Void) {
+    ioContext.translate (by: self.mPoint)
+    ioContext.rotate (by: self.mAngle)
+    ioContext.scale (by: self.mScale, horizontalFlip: self.mHorizontalFlip)
+    let drawingScale = inDrawingScale * self.mScale
+    inAction (&ioContext, drawingScale)
+//    inShapeDecoration.drawShape (
+//      context: &ioContext,
+//      anchor: self,
+//      drawingScale: inDrawingScale * self.mScale,
+//      hovered: inHovered,
+//      selected: inSelected,
+//      groupLevel: inGroupLevel
+//    )
+    ioContext.scale (by: 1.0 / self.mScale, horizontalFlip: self.mHorizontalFlip)
+    ioContext.rotate (by: -self.mAngle)
+    ioContext.translate (by: -self.mPoint)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
