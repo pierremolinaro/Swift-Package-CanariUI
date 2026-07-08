@@ -6,11 +6,13 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-struct InspectorOfCanariScaledOrientedAnchor <SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> : View {
+struct InspectorOfCanariScaledOrientedAnchor <ANCHOR : CanariShapeAnchorProtocol,
+                                              SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> : View {
 
+// CanariScaledOrientedAnchor
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @State private var mShapesUserInterface : ShapesUserInterface <SHAPE_TYPES_DESCRIPTION>
+  @State private var mShapesUserInterface : ShapesUserInterface <CanariScaledOrientedAnchor, SHAPE_TYPES_DESCRIPTION>
   @AppStorage("angle.inspector.expanded") private var mAngleInspectorIsExpanded = true
   @AppStorage("scale.inspector.expanded") private var mScaleInspectorIsExpanded = true
   @AppStorage("bounding.rect.inspector.expanded") private var mBoundingRectInspectorIsExpanded = true
@@ -18,13 +20,13 @@ struct InspectorOfCanariScaledOrientedAnchor <SHAPE_TYPES_DESCRIPTION : Document
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  init (shapesUserInterface inShapesUserInterface : ShapesUserInterface <SHAPE_TYPES_DESCRIPTION>) {
-    self.mShapesUserInterface = inShapesUserInterface
+  public init (shapesUserInterface inShapesUserInterface : ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>) {
+    self.mShapesUserInterface = inShapesUserInterface as! ShapesUserInterface <CanariScaledOrientedAnchor, SHAPE_TYPES_DESCRIPTION>
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @ViewBuilder var body : some View {
+  @ViewBuilder public var body : some View {
     ExpandableInspectorOfCanariPointSet (
       title : "Center",
       pointSet: Set (self.mShapesUserInterface.selectedShapeArray ().map { $0.mAnchor.mPoint }),

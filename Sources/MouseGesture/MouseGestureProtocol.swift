@@ -6,10 +6,11 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-protocol MouseGestureProtocol <SHAPE_TYPES_DESCRIPTION> {
+protocol MouseGestureProtocol <ANCHOR, SHAPE_TYPES_DESCRIPTION> {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  associatedtype ANCHOR : CanariShapeAnchorProtocol
   associatedtype SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -17,14 +18,14 @@ protocol MouseGestureProtocol <SHAPE_TYPES_DESCRIPTION> {
   func onMouseDragged (geometry inGeometry : MouseGestureGeometryContext,
                        beginOrContinueUndoGrouping inBeginOrContinueUndoGrouping : () -> Void,
                        userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                       shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <SHAPE_TYPES_DESCRIPTION>,
-                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<SHAPE_TYPES_DESCRIPTION>)?)
+                       shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>,
+                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<ANCHOR, SHAPE_TYPES_DESCRIPTION>)?)
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func onMouseUp (removeUndoGrouping inRemoveUndoGrouping : () -> Void,
                   userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                  shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <SHAPE_TYPES_DESCRIPTION>)
+                  shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>)
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

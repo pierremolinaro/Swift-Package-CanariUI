@@ -6,20 +6,21 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-struct MouseGesture_DragKnob <SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> : MouseGestureProtocol {
+struct MouseGesture_DragKnob <ANCHOR : CanariShapeAnchorProtocol,
+                              SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> : MouseGestureProtocol {
 
   let alignedCurrentPoint : CanariPoint
   let optionKeyInitiallyOn : Bool
   let shapeID : UUID
-  let dragKnobAction : (inout CanariShapeRoot <SHAPE_TYPES_DESCRIPTION>, CanariPoint, Bool) -> Void
+  let dragKnobAction : (inout CanariShapeRoot <ANCHOR, SHAPE_TYPES_DESCRIPTION>, CanariPoint, Bool) -> Void
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func onMouseDragged (geometry inGeometry : MouseGestureGeometryContext,
                        beginOrContinueUndoGrouping inBeginOrContinueUndoGrouping : () -> Void,
                        userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                       shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <SHAPE_TYPES_DESCRIPTION>,
-                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<SHAPE_TYPES_DESCRIPTION>)?) {
+                       shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>,
+                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<ANCHOR, SHAPE_TYPES_DESCRIPTION>)?) {
     let translation = inGeometry.alignedUserCurrentLocation - self.alignedCurrentPoint
     if translation != .zero {
       inBeginOrContinueUndoGrouping ()
@@ -28,11 +29,11 @@ struct MouseGesture_DragKnob <SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptio
           proposedValue: translation,
           canvasSize: inGeometry.canvasSize
         )
-        let localTranslation = CanariAffinity (scale: 1.0 / shape.mAnchor.mScale)
-          .rotating (-shape.mAnchor.mAngle)
-          .transforming (validatedGlobalTranslation)
-        self.dragKnobAction (&shape, localTranslation, self.optionKeyInitiallyOn)
-        inShapesManagerInterface [shapeID: self.shapeID] = shape
+//   §§     let localTranslation = CanariAffinity (scale: 1.0 / shape.mAnchor.mScale)
+//          .rotating (-shape.mAnchor.mAngle)
+//          .transforming (validatedGlobalTranslation)
+//        self.dragKnobAction (&shape, localTranslation, self.optionKeyInitiallyOn)
+//        inShapesManagerInterface [shapeID: self.shapeID] = shape
       }
       outOptionalNextState = MouseGesture_DragKnob (
         alignedCurrentPoint: inGeometry.alignedUserCurrentLocation,
@@ -47,7 +48,7 @@ struct MouseGesture_DragKnob <SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptio
 
   func onMouseUp (removeUndoGrouping inRemoveUndoGrouping : () -> Void,
                   userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                  shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <SHAPE_TYPES_DESCRIPTION>) {
+                  shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>) {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

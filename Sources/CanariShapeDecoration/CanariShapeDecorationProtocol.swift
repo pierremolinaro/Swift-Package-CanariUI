@@ -6,9 +6,22 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public protocol CanariShapeDecorationProtocol <SHAPE_TYPES_DESCRIPTION> : Sendable, Codable {
+public protocol CanariShapeDecorationProtocol <ANCHOR, SHAPE_TYPES_DESCRIPTION> : Sendable, Codable {
 
+  associatedtype ANCHOR : CanariShapeAnchorProtocol
   associatedtype SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Draw
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  func drawShape (context ioContext : inout GraphicsContext,
+                  //anchor inAnchor : any CanariShapeDecorationProtocol<ANCHOR, SHAPE_TYPES_DESCRIPTION>,
+                  anchor inAnchor : ANCHOR,
+                  drawingScale inDrawingScale : Double,
+                  hovered inHovered : Bool,
+                  selected inSelected : Bool,
+                  groupLevel inGroupLevel : UInt)
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -16,34 +29,23 @@ public protocol CanariShapeDecorationProtocol <SHAPE_TYPES_DESCRIPTION> : Sendab
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func duplicated () -> (any CanariShapeDecorationProtocol <SHAPE_TYPES_DESCRIPTION>)?
+  func duplicated () -> (any CanariShapeDecorationProtocol <ANCHOR, SHAPE_TYPES_DESCRIPTION>)?
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var shapeKnobs : [ShapeKnob <SHAPE_TYPES_DESCRIPTION>] { get }
+  var shapeKnobs : [ShapeKnob <ANCHOR, SHAPE_TYPES_DESCRIPTION>] { get }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func contextualMenu (_ inExecutor : ContextualMenuExecutor <SHAPE_TYPES_DESCRIPTION>) -> any View
+  func contextualMenu (_ inExecutor : ContextualMenuExecutor <ANCHOR, SHAPE_TYPES_DESCRIPTION>) -> any View
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func isEqual (to inOther : any CanariShapeDecorationProtocol <SHAPE_TYPES_DESCRIPTION>) -> Bool
+  func isEqual (to inOther : any CanariShapeDecorationProtocol <ANCHOR, SHAPE_TYPES_DESCRIPTION>) -> Bool
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   var isGraphicallyEmpty : Bool { get }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: Draw
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  func drawShape (context ioContext : inout GraphicsContext,
-                  anchor inAnchor : CanariScaledOrientedAnchor,
-                  drawingScale inDrawingScale : Double,
-                  hovered inHovered : Bool,
-                  selected inSelected : Bool,
-                  groupLevel inGroupLevel : UInt)
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: AlignmentGuidePoints
@@ -57,7 +59,7 @@ public protocol CanariShapeDecorationProtocol <SHAPE_TYPES_DESCRIPTION> : Sendab
 
   @MainActor static var inspectorTitle : String { get }
 
-  @MainActor static func inspectorView (proxy inProxy : CanariInspectorProxy <SHAPE_TYPES_DESCRIPTION>) -> any View
+  @MainActor static func inspectorView (proxy inProxy : CanariInspectorProxy <ANCHOR, SHAPE_TYPES_DESCRIPTION>) -> any View
 
  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

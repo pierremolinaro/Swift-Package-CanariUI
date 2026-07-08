@@ -6,7 +6,8 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-struct MouseGesture_SelectionRectangle <SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> : MouseGestureProtocol {
+struct MouseGesture_SelectionRectangle <ANCHOR : CanariShapeAnchorProtocol,
+                                        SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> : MouseGestureProtocol {
 
   let startSelectionSet : Set <UUID>
 
@@ -15,8 +16,8 @@ struct MouseGesture_SelectionRectangle <SHAPE_TYPES_DESCRIPTION : DocumentShapes
   func onMouseDragged (geometry inGeometry : MouseGestureGeometryContext,
                        beginOrContinueUndoGrouping inBeginOrContinueUndoGrouping : () -> Void,
                        userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                       shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <SHAPE_TYPES_DESCRIPTION>,
-                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol <SHAPE_TYPES_DESCRIPTION>)?) {
+                       shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>,
+                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol <ANCHOR, SHAPE_TYPES_DESCRIPTION>)?) {
   //--- Update selection rectangle
     let selectionRectangle = CanariRect ([inGeometry.unalignedUserStartLocation, inGeometry.unalignedUserCurrentLocation])
     ioUserSelectionRectangle = selectionRectangle
@@ -43,7 +44,7 @@ struct MouseGesture_SelectionRectangle <SHAPE_TYPES_DESCRIPTION : DocumentShapes
 
   func onMouseUp (removeUndoGrouping inRemoveUndoGrouping : () -> Void,
                   userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                  shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <SHAPE_TYPES_DESCRIPTION>) {
+                  shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>) {
     ioUserSelectionRectangle = nil
   }
 

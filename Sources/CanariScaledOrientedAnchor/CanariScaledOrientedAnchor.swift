@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariScaledOrientedAnchor : Equatable, Sendable {
+public struct CanariScaledOrientedAnchor : Sendable, CanariShapeAnchorProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -73,6 +73,12 @@ public struct CanariScaledOrientedAnchor : Equatable, Sendable {
     self.mOriginCenteredLocalBoundingRect = CanariRect ()
     self.mOriginCenteredGlobalOutlineAndBoundingRect = CanariPathWithBoundingRect ()
     self.computeAffinities ()
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public init (origin inOrigin : CanariPoint) {
+    self.init (origin: inOrigin, angle: .zero, scale: 1.0, hFlip: false)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -219,11 +225,11 @@ public struct CanariScaledOrientedAnchor : Equatable, Sendable {
   //MARK: transformToGlobal
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public mutating func transformToGlobal (_ inGlobalOrientedOrigin : borrowing CanariScaledOrientedAnchor) {
-    self.mPoint = inGlobalOrientedOrigin.localToGlobal (self.mPoint)
-    self.mAngle += inGlobalOrientedOrigin.mAngle
-    self.mScale *= inGlobalOrientedOrigin.mScale
-    self.mHorizontalFlip = self.mHorizontalFlip != inGlobalOrientedOrigin.mHorizontalFlip
+  public mutating func transformToGlobal (_ inGlobalAnchor : Self) {
+    self.mPoint = inGlobalAnchor.localToGlobal (self.mPoint)
+    self.mAngle += inGlobalAnchor.mAngle
+    self.mScale *= inGlobalAnchor.mScale
+    self.mHorizontalFlip = self.mHorizontalFlip != inGlobalAnchor.mHorizontalFlip
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -309,10 +315,10 @@ public struct CanariScaledOrientedAnchor : Equatable, Sendable {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //MARK: Add location translation
+  //MARK: Add translation
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func addLocalTranslation (_ inLocalTranslation: CanariPoint) {
+  public mutating func addLocalTranslation (_ inLocalTranslation : CanariPoint) {
     let affinity = CanariAffinity ()
       .rotating (self.mAngle)
       .scaling (self.mScale)
@@ -322,28 +328,34 @@ public struct CanariScaledOrientedAnchor : Equatable, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func drawShapeInLocalCoordinates <SHAPE_TYPES_DESCRIPTION>
-            (_ ioContext: inout GraphicsContext,
-             _ inShapeDecoration : any CanariShapeDecorationProtocol <SHAPE_TYPES_DESCRIPTION>,
-             drawingScale inDrawingScale : Double,
-             hovered inHovered : Bool,
-             selected inSelected : Bool,
-             groupLevel inGroupLevel : UInt) {
-    ioContext.translate (by: self.mPoint)
-    ioContext.rotate (by: self.mAngle)
-    ioContext.scale (by: self.mScale, horizontalFlip: self.mHorizontalFlip)
-    inShapeDecoration.drawShape (
-      context: &ioContext,
-      anchor: self,
-      drawingScale: inDrawingScale * self.mScale,
-      hovered: inHovered,
-      selected: inSelected,
-      groupLevel: inGroupLevel
-    )
-    ioContext.scale (by: 1.0 / self.mScale, horizontalFlip: self.mHorizontalFlip)
-    ioContext.rotate (by: -self.mAngle)
-    ioContext.translate (by: -self.mPoint)
+  public mutating func addGlobalTranslation (_ inGlobalTranslation : CanariPoint) {
+    self.mPoint += inGlobalTranslation
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+//  public func drawShapeInLocalCoordinates <ANCHOR, SHAPE_TYPES_DESCRIPTION>
+//            (_ ioContext: inout GraphicsContext,
+//             _ inShapeDecoration : any CanariShapeDecorationProtocol <ANCHOR, SHAPE_TYPES_DESCRIPTION>,
+//             drawingScale inDrawingScale : Double,
+//             hovered inHovered : Bool,
+//             selected inSelected : Bool,
+//             groupLevel inGroupLevel : UInt) {
+//    ioContext.translate (by: self.mPoint)
+//    ioContext.rotate (by: self.mAngle)
+//    ioContext.scale (by: self.mScale, horizontalFlip: self.mHorizontalFlip)
+//    inShapeDecoration.drawShape (
+//      context: &ioContext,
+//      anchor: self,
+//      drawingScale: inDrawingScale * self.mScale,
+//      hovered: inHovered,
+//      selected: inSelected,
+//      groupLevel: inGroupLevel
+//    )
+//    ioContext.scale (by: 1.0 / self.mScale, horizontalFlip: self.mHorizontalFlip)
+//    ioContext.rotate (by: -self.mAngle)
+//    ioContext.translate (by: -self.mPoint)
+//  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -366,6 +378,21 @@ public struct CanariScaledOrientedAnchor : Equatable, Sendable {
     ioContext.scale (by: 1.0 / self.mScale, horizontalFlip: self.mHorizontalFlip)
     ioContext.rotate (by: -self.mAngle)
     ioContext.translate (by: -self.mPoint)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public static func == (_ inLeft  : Self, _ inRight : Self) -> Bool {
+       (inLeft.mPoint  == inRight.mPoint)
+    && (inLeft.mAngle == inRight.mAngle)
+    && (inLeft.mScale == inRight.mScale)
+    && (inLeft.mHorizontalFlip == inRight.mHorizontalFlip)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  @MainActor public static func inspector <ANCHOR : CanariShapeAnchorProtocol, SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> (shapesUserInterface inShapesUserInterface : ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>) -> any View {
+    return InspectorOfCanariScaledOrientedAnchor (shapesUserInterface: inShapesUserInterface)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
