@@ -367,7 +367,7 @@ public struct CanariScaledOrientedAnchor : Sendable, CanariShapeAnchorProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @MainActor public static func anchorInspector <ANCHOR : CanariShapeAnchorProtocol, SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> (shapesUserInterface inShapesUserInterface : ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>) -> any View {
+  @MainActor public static func anchorInspector <SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> (shapesUserInterface inShapesUserInterface : ShapesUserInterface <Self, SHAPE_TYPES_DESCRIPTION>) -> any View {
     return InspectorOfCanariScaledOrientedAnchor (shapesUserInterface: inShapesUserInterface)
   }
 

@@ -14,17 +14,11 @@ extension CanariXYAnchor : Codable {
     let container = try inDecoder.singleValueContainer ()
     let string = try container.decode (String.self)
     let components = string.split (separator: " ")
-    if components.count == 5,
+    if components.count >= 2,
        let x = Int (components [0]),
-       let y = Int (components [1]),
-       let angle = Int (components [2]),
-       let scale = Double (components [3]),
-       let hFlip = Int (components [4]) {
+       let y = Int (components [1]) {
       self.init (
         origin: CanariPoint (x: .cu (x), y: .cu (y)),
-        angle: CanariAngle (Double (angle) / 1000.0, in: .degrees),
-        scale: scale,
-        hFlip: hFlip != 0
       )
     }else {
       throw DecodingError.dataCorruptedError (in: container, debugDescription: "Invalid oriented origin string")
@@ -35,8 +29,7 @@ extension CanariXYAnchor : Codable {
 
   public func encode (to inEncoder : any Encoder) throws { // Encodable
     var container = inEncoder.singleValueContainer ()
-    let angle = Int ((self.mAngle.degrees * 1000.0).rounded ())
-    try container.encode ("\(self.mPoint.x.cuValue) \(self.mPoint.y.cuValue) \(angle) \(self.mScale) \(self.mHorizontalFlip ? 1 : 0)")
+    try container.encode ("\(self.mPoint.x.cuValue) \(self.mPoint.y.cuValue)")
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

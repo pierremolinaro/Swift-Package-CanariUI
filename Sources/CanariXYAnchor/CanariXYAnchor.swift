@@ -20,65 +20,24 @@ public struct CanariXYAnchor : Sendable, CanariShapeAnchorProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var mAngle : CanariAngle {
-    didSet {
-      if self.mAngle != oldValue {
-        self.computeAffinities ()
-        let x = self.mOriginCenteredGlobalOutlineAndBoundingRect.rotated (by: self.mAngle - oldValue)
-        self.mOriginCenteredGlobalOutlineAndBoundingRect = x
-      }
-    }
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  var mScale : Double {
-    didSet {
-      if self.mScale != oldValue {
-        self.computeAffinities ()
-        let r = self.mOriginCenteredGlobalOutlineAndBoundingRect.scaled (by: self.mScale / oldValue)
-        self.mOriginCenteredGlobalOutlineAndBoundingRect = r
-      }
-    }
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  var mHorizontalFlip : Bool {
-    didSet {
-      if self.mHorizontalFlip != oldValue {
-        self.computeAffinities ()
-        self.computeOriginCenteredGlobalOutlineAndBoundingRect ()
-      }
-    }
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
   private var mOriginCenteredLocalOutline : CanariPath
   private var mOriginCenteredLocalBoundingRect : CanariRect
   private var mOriginCenteredGlobalOutlineAndBoundingRect : CanariPathWithBoundingRect
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (origin inOrigin : CanariPoint = .zero,
-               angle inAngle : CanariAngle = .zero,
-               scale inScale : Double = 1.0,
-               hFlip inHorizontalFlip : Bool = false) {
-    self.mPoint = inOrigin
-    self.mAngle = inAngle
-    self.mScale = inScale
-    self.mHorizontalFlip = inHorizontalFlip
-    self.mOriginCenteredLocalOutline = CanariPath ()
-    self.mOriginCenteredLocalBoundingRect = CanariRect ()
-    self.mOriginCenteredGlobalOutlineAndBoundingRect = CanariPathWithBoundingRect ()
-    self.computeAffinities ()
+  public init () {
+    self.init (origin: .zero)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (origin inOrigin : CanariPoint) {
-    self.init (origin: inOrigin, angle: .zero, scale: 1.0, hFlip: false)
+    self.mPoint = inOrigin
+    self.mOriginCenteredLocalOutline = CanariPath ()
+    self.mOriginCenteredLocalBoundingRect = CanariRect ()
+    self.mOriginCenteredGlobalOutlineAndBoundingRect = CanariPathWithBoundingRect ()
+    self.computeAffinities ()
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -92,10 +51,9 @@ public struct CanariXYAnchor : Sendable, CanariShapeAnchorProtocol {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private mutating func computeOriginCenteredGlobalOutlineAndBoundingRect () {
-    let affinity = CanariAffinity (rotation: self.mAngle)
-          .scaling (self.mScale, horizontalFlip: self.mHorizontalFlip)
-    let path = self.mOriginCenteredLocalOutline.transformed (using: affinity)
-    self.mOriginCenteredGlobalOutlineAndBoundingRect = CanariPathWithBoundingRect (path: path)
+//    let affinity = CanariAffinity (rotation: self.mAngle)
+//    let path = self.mOriginCenteredLocalOutline.transformed (using: affinity)
+    self.mOriginCenteredGlobalOutlineAndBoundingRect = CanariPathWithBoundingRect (path: self.mOriginCenteredLocalOutline)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -122,7 +80,6 @@ public struct CanariXYAnchor : Sendable, CanariShapeAnchorProtocol {
     let stroked = originCenteredLocalOutline.stroked (with: .px (1.0))
     originCenteredLocalOutline.unionInPlaceUsingNonZeroRule (stroked)
     return originCenteredLocalOutline.containsUsingNonZeroRule (inLocalPoint)
- //   return self.mOriginCenteredLocalOutline.contains (inLocalPoint)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -136,10 +93,8 @@ public struct CanariXYAnchor : Sendable, CanariShapeAnchorProtocol {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func withGlobalOutlineInLocalCoordinates (action inAction : (CanariPath) -> Void) {
-    let af = CanariAffinity ()
-      .scaling (1.0 / self.mScale, horizontalFlip: self.mHorizontalFlip)
-      .rotating (-self.mAngle)
-    inAction (self.mOriginCenteredGlobalOutlineAndBoundingRect.path.transformed (using: af))
+//    let af = CanariAffinity ().rotating (-self.mAngle)
+    inAction (self.mOriginCenteredGlobalOutlineAndBoundingRect.path) // .transformed (using: af))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -151,13 +106,6 @@ public struct CanariXYAnchor : Sendable, CanariShapeAnchorProtocol {
     let stroked = originCenteredGlobalOutline.stroked (with: .px (1.0))
     originCenteredGlobalOutline.unionInPlaceUsingNonZeroRule (stroked)
     return originCenteredGlobalOutline.intersectsUsingNonZeroRule (globalRect)
-//    if self.mOriginCenteredGlobalOutlineAndBoundingRect.boundingRect.isEmpty {
-//      return self.mOriginCenteredGlobalOutlineAndBoundingRect.path.intersectsLines (of: globalRect)
-//    }else{
-//      return self.mOriginCenteredGlobalOutlineAndBoundingRect.boundingRect.intersects (globalRect)
-//              &&
-//             self.mOriginCenteredGlobalOutlineAndBoundingRect.path.intersects (globalRect)
-//    }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -177,10 +125,9 @@ public struct CanariXYAnchor : Sendable, CanariShapeAnchorProtocol {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func withGlobalBoundingRectInLocalCoordinates (action inAction : (CanariPath) -> Void) {
-    let af = CanariAffinity ()
-      .scaling (1.0 / self.mScale, horizontalFlip: self.mHorizontalFlip)
-      .rotating (-self.mAngle)
-    inAction (CanariPath (rect: self.mOriginCenteredGlobalOutlineAndBoundingRect.boundingRect).transformed (using: af))
+//    let af = CanariAffinity ()
+//      .rotating (-self.mAngle)
+    inAction (CanariPath (rect: self.mOriginCenteredGlobalOutlineAndBoundingRect.boundingRect)) // .transformed (using: af))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -227,9 +174,6 @@ public struct CanariXYAnchor : Sendable, CanariShapeAnchorProtocol {
 
   public mutating func transformToGlobal (_ inGlobalAnchor : Self) {
     self.mPoint = inGlobalAnchor.localToGlobal (self.mPoint)
-    self.mAngle += inGlobalAnchor.mAngle
-    self.mScale *= inGlobalAnchor.mScale
-    self.mHorizontalFlip = self.mHorizontalFlip != inGlobalAnchor.mHorizontalFlip
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -237,9 +181,6 @@ public struct CanariXYAnchor : Sendable, CanariShapeAnchorProtocol {
   public func transforming (toGlobal inGlobalOrientedOrigin : Self) -> Self {
     var result = self
     result.mPoint = inGlobalOrientedOrigin.localToGlobal (self.mPoint)
-    result.mAngle += inGlobalOrientedOrigin.mAngle
-    result.mScale *= inGlobalOrientedOrigin.mScale
-    result.mHorizontalFlip = result.mHorizontalFlip != inGlobalOrientedOrigin.mHorizontalFlip
     return result
   }
 
@@ -255,11 +196,7 @@ public struct CanariXYAnchor : Sendable, CanariShapeAnchorProtocol {
   private mutating func computeAffinities () {
     self.mLocalToGlobalAffinity = CanariAffinity ()
       .translating (self.mPoint)
-      .rotating (self.mAngle)
-      .scaling (self.mScale, horizontalFlip: self.mHorizontalFlip)
     self.mGlobalToLocalAffinity = CanariAffinity ()
-      .scaling (1.0 / self.mScale, horizontalFlip: self.mHorizontalFlip)
-      .rotating (-self.mAngle)
       .translating (-self.mPoint)
   }
 
@@ -305,10 +242,9 @@ public struct CanariXYAnchor : Sendable, CanariShapeAnchorProtocol {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func globalTranslationToLocalTranslation (_ inGlobalTranslation : CanariPoint) -> CanariPoint {
-     let localTranslation = CanariAffinity (scale: 1.0 / self.mScale)
-          .rotating (-self.mAngle)
-          .transforming (inGlobalTranslation)
-    return localTranslation
+//     let localTranslation = CanariAffinity ()
+//          .transforming (inGlobalTranslation)
+    return inGlobalTranslation
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -328,11 +264,10 @@ public struct CanariXYAnchor : Sendable, CanariShapeAnchorProtocol {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public mutating func addLocalTranslation (_ inLocalTranslation : CanariPoint) {
-    let affinity = CanariAffinity ()
-      .rotating (self.mAngle)
-      .scaling (self.mScale)
-    let globalTranslation = inLocalTranslation.transformed(by: affinity)
-    self.mPoint += globalTranslation
+//    let affinity = CanariAffinity ()
+//      .rotating (self.mAngle)
+//    let globalTranslation = inLocalTranslation.transformed(by: affinity)
+    self.mPoint += inLocalTranslation
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -347,12 +282,8 @@ public struct CanariXYAnchor : Sendable, CanariShapeAnchorProtocol {
                                     drawingScale inDrawingScale : Double,
                                     action inAction : (inout GraphicsContext, Double) -> Void) {
     ioContext.translate (by: self.mPoint)
-    ioContext.rotate (by: self.mAngle)
-    ioContext.scale (by: self.mScale, horizontalFlip: self.mHorizontalFlip)
-    let drawingScale = inDrawingScale * self.mScale
+    let drawingScale = inDrawingScale
     inAction (&ioContext, drawingScale)
-    ioContext.scale (by: 1.0 / self.mScale, horizontalFlip: self.mHorizontalFlip)
-    ioContext.rotate (by: -self.mAngle)
     ioContext.translate (by: -self.mPoint)
   }
 
@@ -360,14 +291,11 @@ public struct CanariXYAnchor : Sendable, CanariShapeAnchorProtocol {
 
   public static func == (_ inLeft  : Self, _ inRight : Self) -> Bool {
        (inLeft.mPoint  == inRight.mPoint)
-    && (inLeft.mAngle == inRight.mAngle)
-    && (inLeft.mScale == inRight.mScale)
-    && (inLeft.mHorizontalFlip == inRight.mHorizontalFlip)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @MainActor public static func anchorInspector <ANCHOR : CanariShapeAnchorProtocol, SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> (shapesUserInterface inShapesUserInterface : ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>) -> any View {
+  @MainActor public static func anchorInspector <SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> (shapesUserInterface inShapesUserInterface : ShapesUserInterface <Self, SHAPE_TYPES_DESCRIPTION>) -> any View {
     return InspectorOfCanariXYAnchor (shapesUserInterface: inShapesUserInterface)
   }
 

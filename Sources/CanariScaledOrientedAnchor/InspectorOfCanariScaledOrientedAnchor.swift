@@ -6,12 +6,13 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-struct InspectorOfCanariScaledOrientedAnchor <ANCHOR : CanariShapeAnchorProtocol,
-                                              SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> : View {
+struct InspectorOfCanariScaledOrientedAnchor <SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> : View {
+
+  typealias ANCHOR = CanariScaledOrientedAnchor
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @State private var mShapesUserInterface : ShapesUserInterface <CanariScaledOrientedAnchor, SHAPE_TYPES_DESCRIPTION>
+  @State private var mShapesUserInterface : ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>
   @AppStorage("angle.inspector.expanded") private var mAngleInspectorIsExpanded = true
   @AppStorage("scale.inspector.expanded") private var mScaleInspectorIsExpanded = true
   @AppStorage("bounding.rect.inspector.expanded") private var mBoundingRectInspectorIsExpanded = true
@@ -20,7 +21,7 @@ struct InspectorOfCanariScaledOrientedAnchor <ANCHOR : CanariShapeAnchorProtocol
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (shapesUserInterface inShapesUserInterface : ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>) {
-    self.mShapesUserInterface = inShapesUserInterface as! ShapesUserInterface <CanariScaledOrientedAnchor, SHAPE_TYPES_DESCRIPTION>
+    self.mShapesUserInterface = inShapesUserInterface
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
