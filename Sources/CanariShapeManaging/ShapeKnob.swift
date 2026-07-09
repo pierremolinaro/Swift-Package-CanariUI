@@ -46,10 +46,11 @@ public struct ShapeKnob <ANCHOR : CanariShapeAnchorProtocol,
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func contains (localPoint inLocalPoint : CanariPoint, scale inScale : Double) -> Bool {
+  public func contains (localPoint inLocalPoint : CanariPoint,
+                        drawingScale inDrawingScale : Double) -> Bool {
     let r = CanariRect (
       center: self.localCenter,
-      size: CanariSize (width: .px (10.0) / inScale, height: .px (10.0) / inScale)
+      size: CanariSize (width: .px (10.0) / inDrawingScale, height: .px (10.0) / inDrawingScale)
     )
     return r.contains (inLocalPoint)
   }
@@ -59,7 +60,10 @@ public struct ShapeKnob <ANCHOR : CanariShapeAnchorProtocol,
   func drawKnob (context ioContext : inout GraphicsContext,
                  inside inInside : Bool,
                  scale inScale : Double) {
-    let r = CanariRect (center: self.localCenter, size: CanariSize (width: .px (10) / inScale, height: .px (10) / inScale))
+    let r = CanariRect (
+      center: self.localCenter,
+      size: CanariSize (width: .px (10) / inScale, height: .px (10) / inScale)
+    )
     let path : CanariPath
     switch self.shape {
     case .rect:
@@ -67,8 +71,15 @@ public struct ShapeKnob <ANCHOR : CanariShapeAnchorProtocol,
     case .circle:
       path = CanariPath (ellipse: r)
     }
-    ioContext.fill (path, with: .color (inInside ? .gray : .white))
-    ioContext.stroke (path, with: .color (.gray), lineWidth: .px (1) / inScale)
+    ioContext.fill (
+      path,
+      with: .color (inInside ? .gray : .white)
+    )
+    ioContext.stroke (
+      path,
+      with: .color (inInside ? .black : .gray),
+      lineWidth: .px (1) / inScale
+    )
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -8,6 +8,8 @@ import SwiftUI
 
 public protocol CanariShapeDecorationProtocol <ANCHOR, SHAPE_TYPES_DESCRIPTION> : Sendable, Codable {
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   associatedtype ANCHOR : CanariShapeAnchorProtocol
   associatedtype SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol
 
@@ -16,7 +18,6 @@ public protocol CanariShapeDecorationProtocol <ANCHOR, SHAPE_TYPES_DESCRIPTION> 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func drawShape (context ioContext : inout GraphicsContext,
-                  //anchor inAnchor : any CanariShapeDecorationProtocol<ANCHOR, SHAPE_TYPES_DESCRIPTION>,
                   anchor inAnchor : ANCHOR,
                   drawingScale inDrawingScale : Double,
                   hovered inHovered : Bool,

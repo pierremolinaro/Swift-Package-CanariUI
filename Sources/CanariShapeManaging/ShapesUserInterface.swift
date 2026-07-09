@@ -278,7 +278,7 @@ import Combine
             if let p = inHoverUserLocationPoint {
               inside = knob.contains (
                 localPoint: shape.mAnchor.globalToLocal (p),
-                scale: inCanvasScale
+                drawingScale: inCanvasScale
               )
             }else{
               inside = false
@@ -286,24 +286,6 @@ import Combine
             knob.drawKnob (context: &context, inside: inside, scale: decorationDrawingScale)
           }
         }
-//        ioContext.translate (by: shape.mAnchor.mPoint)
-//        ioContext.rotate (by: shape.mAnchor.mAngle)
-//        ioContext.scale (by: shape.mAnchor.mScale)
-//        for knob in shape.knobs {
-//          let inside : Bool
-//          if let p = inHoverUserLocationPoint {
-//            inside = knob.contains (
-//              localPoint: shape.mAnchor.globalToLocal (p),
-//              scale: inCanvasScale
-//            )
-//          }else{
-//            inside = false
-//          }
-//          knob.drawKnob (context: &ioContext, inside: inside, scale: inCanvasScale * shape.mAnchor.mScale)
-//        }
-//        ioContext.scale (by: 1.0 / shape.mAnchor.mScale)
-//        ioContext.rotate (by: -shape.mAnchor.mAngle)
-//        ioContext.translate (by: -shape.mAnchor.mPoint)
       }
     }
     ioContext.scale (by: 1.0 / inCanvasScale)
@@ -387,7 +369,7 @@ import Combine
     for shape in self.shapeArray.reversed () {
       if self.mSelection.contains (shape.id) {
         for knob in shape.knobs {
-          if knob.contains (localPoint: shape.mAnchor.globalToLocal (inGeometry.unalignedUserStartLocation), scale: inGeometry.scale) {
+          if knob.contains (localPoint: shape.mAnchor.globalToLocal (inGeometry.unalignedUserStartLocation), drawingScale: inGeometry.scale) {
             return MouseGesture_DragKnob <ANCHOR, SHAPE_TYPES_DESCRIPTION> (
               alignedCurrentPoint: inGeometry.alignedUserStartLocation,
               optionKeyInitiallyOn: true,
@@ -485,7 +467,7 @@ import Combine
     for shape in self.shapeArray.reversed () {
       if self.mSelection.contains (shape.id) {
         for knob in shape.knobs {
-          if knob.contains (localPoint: shape.mAnchor.globalToLocal (inGeometry.unalignedUserStartLocation), scale: inGeometry.scale) {
+          if knob.contains (localPoint: shape.mAnchor.globalToLocal (inGeometry.unalignedUserStartLocation), drawingScale: inGeometry.scale) {
             return MouseGesture_DragKnob <ANCHOR, SHAPE_TYPES_DESCRIPTION> (
               alignedCurrentPoint: inGeometry.alignedUserStartLocation,
               optionKeyInitiallyOn: false,
@@ -523,7 +505,7 @@ import Combine
       let shape = self.mShapeArrayManager [shapeIndex: idx]
       if self.mSelection.contains (shape.id) {
         for knob in shape.knobs {
-          if knob.contains (localPoint: shape.mAnchor.globalToLocal (inUnalignedPoint), scale: inScale) {
+          if knob.contains (localPoint: shape.mAnchor.globalToLocal (inUnalignedPoint), drawingScale: inScale) {
             if let menu = knob.menu {
               return menu (ContextualMenuExecutor (self, idx))
             }else{
