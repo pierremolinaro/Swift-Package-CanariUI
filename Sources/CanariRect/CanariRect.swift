@@ -119,6 +119,12 @@ public struct CanariRect : Hashable, Sendable {
   
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public var diagonal : CanariLength {
+    CanariPoint (x: self.width, y: self.height).distance (to: .zero)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 }
 
 //--------------------------------------------------------------------------------------------------
