@@ -53,22 +53,6 @@ public struct EditorOfCanariAngleSet : View {
         }
       }
       Text ("°")
-//      Stepper {
-//        EmptyView ()
-//      } onIncrement: {
-//        self.mSetter (CanariAngle (self.mDoubleValue!, in: .degrees) + .degrees (10))
-//      } onDecrement: {
-//        self.mSetter (CanariAngle (self.mDoubleValue!, in: .degrees) - .degrees (10))
-//      }.help ("10°").hiddenWhen (self.mDoubleValue == nil).controlSize (.small)
-//      .overlay {
-//        if self.mAngleArray.count > 1 {
-//          Menu ("") {
-//            ForEach (self.mAngleArray, id: \.self) { angle in
-//              Button (angle.string (in: .degrees, fractionDigits: 3)) { self.mSetter (angle) }
-//            }
-//          }.buttonStyle (.borderless)
-//        }
-//      }
       Stepper {
         EmptyView ()
       } onIncrement: {
