@@ -105,23 +105,23 @@ public struct CanariPoint : Hashable, CustomStringConvertible, Sendable, Equatab
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func distance (to inPoint : CanariPoint) -> CanariLength {
-    let dx = (self.x - inPoint.x).cuValue
-    let dy = (self.y - inPoint.y).cuValue
+    let dx = self.x.cuValue - inPoint.x.cuValue
+    let dy = self.y.cuValue - inPoint.y.cuValue
     return .cu (sqrt (Double (dx * dx + dy * dy)))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func squareOfCuDistance (to inPoint : CanariPoint) -> UInt {
-    let dx = (self.x - inPoint.x).cuValue
-    let dy = (self.y - inPoint.y).cuValue
+    let dx = self.x.cuValue - inPoint.x.cuValue
+    let dy = self.y.cuValue - inPoint.y.cuValue
     return UInt (dx * dx + dy * dy)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var pxValue : NSPoint {
-    return NSPoint (x: self.x.pxValue, y: self.y.pxValue)
+  public var pxValue : CGPoint {
+    return CGPoint (x: self.x.pxValue, y: self.y.pxValue)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -154,8 +154,8 @@ public struct CanariPoint : Hashable, CustomStringConvertible, Sendable, Equatab
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func angle (to inPoint : CanariPoint) -> CanariAngle {
-    let dyMM = (inPoint.y - self.y).mmValue
-    let dxMM = (inPoint.x - self.x).mmValue
+    let dyMM = Double (inPoint.y.cuValue - self.y.cuValue)
+    let dxMM = Double (inPoint.x.cuValue - self.x.cuValue)
     return .radians (Darwin.atan2 (dyMM, dxMM))
   }
 
