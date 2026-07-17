@@ -2,6 +2,7 @@
 //  Created by Pierre Molinaro on 21/02/2026.
 //--------------------------------------------------------------------------------------------------
 
+//@preconcurrency import SwiftUI
 import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
@@ -11,6 +12,7 @@ public struct CanariPath : Equatable, Sendable {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   internal var mPath : Path
+//  internal var mCGPath : CGMutablePath = .init ()
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

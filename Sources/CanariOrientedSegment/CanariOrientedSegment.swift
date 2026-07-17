@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariSegment : Equatable, CustomStringConvertible {
+public struct CanariOrientedSegment : Equatable, CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -74,7 +74,7 @@ public struct CanariSegment : Equatable, CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func hasSameDirection (as inOther : CanariSegment) -> Bool {
+  public func hasSameDirection (as inOther : CanariOrientedSegment) -> Bool {
     let xAB = (self.end.x - self.start.x).cuValue
     let yAB = (self.end.y - self.start.y).cuValue
     let xCD = (inOther.end.x - inOther.start.x).cuValue
@@ -93,9 +93,9 @@ public struct CanariSegment : Equatable, CustomStringConvertible {
 //  public enum IntersectionResult : Equatable {
 //    case disjoint // No intersection
 //    case identical
-//    case singlePoint (CanariSegment, CanariSegment, CanariSegment, CanariSegment)
-//    case splitAB (CanariSegment, CanariSegment)
-//    case splitCD (CanariSegment, CanariSegment)
+//    case singlePoint (CanariOrientedSegment, CanariOrientedSegment, CanariOrientedSegment, CanariOrientedSegment)
+//    case splitAB (CanariOrientedSegment, CanariOrientedSegment)
+//    case splitCD (CanariOrientedSegment, CanariOrientedSegment)
 //    case identicalAC // A == C, intersection only at this common point
 //    case identicalAD // A == D, intersection only at this common point
 //    case identicalBC // B == C, intersection only at this common point
@@ -106,7 +106,7 @@ public struct CanariSegment : Equatable, CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-//  public func intersection (with inOther : CanariSegment) -> IntersectionResult {
+//  public func intersection (with inOther : CanariOrientedSegment) -> IntersectionResult {
 //    guard self != inOther else { return .identical }
 //    let xAB = (self.end.x - self.start.x).cuValue
 //    let yAB = (self.end.y - self.start.y).cuValue
@@ -122,10 +122,10 @@ public struct CanariSegment : Equatable, CustomStringConvertible {
 //      let u = Double (xAC * yAB - yAC * xAB) / Double (denominator)
 //      if 0.0 <= u, u <= 1.0, 0.0 <= h, h <= 1.0 {
 //        let p = CanariPoint (x: self.start.x + h * .cu (xAB), y: self.start.y + h * .cu (yAB))
-//        let s0 = CanariSegment (start: self.start, end: p)
-//        let s1 = CanariSegment (start: p, end: self.end)
-//        let s2 = CanariSegment (start: inOther.start, end: p)
-//        let s3 = CanariSegment (start: p, end: inOther.end)
+//        let s0 = CanariOrientedSegment (start: self.start, end: p)
+//        let s1 = CanariOrientedSegment (start: p, end: self.end)
+//        let s2 = CanariOrientedSegment (start: inOther.start, end: p)
+//        let s3 = CanariOrientedSegment (start: p, end: inOther.end)
 //        if s0 == nil {
 //          if s2 == nil {
 //            return .identicalAC
@@ -157,7 +157,7 @@ public struct CanariSegment : Equatable, CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-//  private func intersection (withParallel inOther : CanariSegment) -> IntersectionResult {
+//  private func intersection (withParallel inOther : CanariOrientedSegment) -> IntersectionResult {
 //    let orientationABC = self.orientation (of: inOther.start)
 //    if orientationABC != 0 {
 //      return .disjoint
@@ -173,13 +173,13 @@ public struct CanariSegment : Equatable, CustomStringConvertible {
 //        let intersectionLeft = CanariPoint (x: intersectionLeftX, y: self.start.y)
 //        let intersectionRight = CanariPoint (x: intersectionRightX, y: self.start.y)
 //        let pRight = CanariPoint (x: max (self.end.x, inOther.end.x), y: self.start.y)
-////        if let s = CanariSegment (start: pLeft, end: intersectionLeft) {
+////        if let s = CanariOrientedSegment (start: pLeft, end: intersectionLeft) {
 ////          result.append (s)
 ////        }
-////        if let s = CanariSegment (start: intersectionLeft, end: intersectionRight) {
+////        if let s = CanariOrientedSegment (start: intersectionLeft, end: intersectionRight) {
 ////          result.append (s)
 ////        }
-////        if let s = CanariSegment (start: intersectionRight, end: pRight) {
+////        if let s = CanariOrientedSegment (start: intersectionRight, end: pRight) {
 ////          result.append (s)
 ////        }
 //        return .other
@@ -190,18 +190,18 @@ public struct CanariSegment : Equatable, CustomStringConvertible {
 //      if intersectionTopY < intersectionBottomY {
 //        return .disjoint
 //      }else{
-//        var result = [CanariSegment] ()
+//        var result = [CanariOrientedSegment] ()
 ////          let pBottom = CanariPoint (x: min (self.start.x, inOther.start.x), y: min (self.start.y, inOther.start.y))
 ////          let intersectionBottom = CanariPoint (x: intersectionBottomY, y: self.start.y)
 ////          let intersectionRight = CanariPoint (x: intersectionTopY, y: self.start.y)
 ////          let pTop = CanariPoint (x: max (self.end.x, inOther.end.x), y: max (self.end.y, inOther.end.y))
-////          if let s = CanariSegment (start: pLeft, end: intersectionLeft) {
+////          if let s = CanariOrientedSegment (start: pLeft, end: intersectionLeft) {
 ////            result.append (s)
 ////          }
-////          if let s = CanariSegment (start: intersectionLeft, end: intersectionRight) {
+////          if let s = CanariOrientedSegment (start: intersectionLeft, end: intersectionRight) {
 ////            result.append (s)
 ////          }
-////          if let s = CanariSegment (start: intersectionRight, end: pRight) {
+////          if let s = CanariOrientedSegment (start: intersectionRight, end: pRight) {
 ////            result.append (s)
 ////          }
 //        return .other
@@ -242,19 +242,19 @@ public struct CanariSegment : Equatable, CustomStringConvertible {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public struct OverlappingResult {
-    public let intersection : CanariSegment?
-    public let remaining0 : CanariSegment?
-    public let remaining1 : CanariSegment?
+    public let intersection : CanariOrientedSegment?
+    public let remaining0 : CanariOrientedSegment?
+    public let remaining1 : CanariOrientedSegment?
 
-    init (_ inIntersection : CanariSegment?,
-          _ inRemaining0 : CanariSegment?,
-          _ inRemaining1 : CanariSegment?) {
+    init (_ inIntersection : CanariOrientedSegment?,
+          _ inRemaining0 : CanariOrientedSegment?,
+          _ inRemaining1 : CanariOrientedSegment?) {
       self.intersection = inIntersection
       self.remaining0 = inRemaining0
       self.remaining1 = inRemaining1
     }
 
-//    init (_ inIntersection : CanariSegment?, _ inRemaining : CanariSegment) {
+//    init (_ inIntersection : CanariOrientedSegment?, _ inRemaining : CanariOrientedSegment) {
 //      self.intersection = inIntersection
 //      self.remaining = [inRemaining]
 //    }
@@ -262,7 +262,7 @@ public struct CanariSegment : Equatable, CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func test (_ inSegmentCD : CanariSegment,
+  public func test (_ inSegmentCD : CanariOrientedSegment,
                     forOverlapping inDistance : CanariLength) -> OverlappingResult {
     let segmentAB = self
   //--- Solve trivial cases
@@ -294,8 +294,8 @@ public struct CanariSegment : Equatable, CustomStringConvertible {
       }
       if inSegmentCD.contains (point: segmentAB.end, distance: inDistance) {
       //--- B is between C and D --> intersection is BC, remaining BD
-        let optSegmentBC = CanariSegment (start: segmentAB.end, end: inSegmentCD.start)
-        let optSegmentBD = CanariSegment (start: segmentAB.end, end: inSegmentCD.end)
+        let optSegmentBC = CanariOrientedSegment (start: segmentAB.end, end: inSegmentCD.start)
+        let optSegmentBD = CanariOrientedSegment (start: segmentAB.end, end: inSegmentCD.end)
         return OverlappingResult (optSegmentBC, optSegmentBD, nil)
       }else{
         return OverlappingResult (nil, inSegmentCD, nil)
@@ -309,8 +309,8 @@ public struct CanariSegment : Equatable, CustomStringConvertible {
       }
       if inSegmentCD.contains (point: segmentAB.end, distance: inDistance) {
       //--- B is between C and D --> intersection is BC, remaining BD
-        let optSegmentBC = CanariSegment (start: segmentAB.end, end: inSegmentCD.start)
-        let optSegmentBD = CanariSegment (start: segmentAB.end, end: inSegmentCD.end)
+        let optSegmentBC = CanariOrientedSegment (start: segmentAB.end, end: inSegmentCD.start)
+        let optSegmentBD = CanariOrientedSegment (start: segmentAB.end, end: inSegmentCD.end)
         return OverlappingResult (optSegmentBC, optSegmentBD, nil)
       }else{
         return OverlappingResult (nil, inSegmentCD, nil)
@@ -321,14 +321,14 @@ public struct CanariSegment : Equatable, CustomStringConvertible {
     //--- C between A and B
       if segmentAB.contains (point: inSegmentCD.end, distance: inDistance) {
       //--- D between A and B : intersection is AD, remaining is AC
-        let optSegmentAD = CanariSegment (start: segmentAB.start, end: inSegmentCD.end)
-        let optSegmentAC = CanariSegment (start: segmentAB.start, end: inSegmentCD.start)
+        let optSegmentAD = CanariOrientedSegment (start: segmentAB.start, end: inSegmentCD.end)
+        let optSegmentAC = CanariOrientedSegment (start: segmentAB.start, end: inSegmentCD.start)
        return OverlappingResult (optSegmentAD, optSegmentAC, nil)
       }
       if inSegmentCD.contains (point: segmentAB.end, distance: inDistance) {
       //--- B between C and D : intersection is AB, remaining AC and BD
-        let optSegmentAC = CanariSegment (start: segmentAB.start, end: inSegmentCD.start)
-        let optSegmentBD = CanariSegment (start: segmentAB.end, end: inSegmentCD.end)
+        let optSegmentAC = CanariOrientedSegment (start: segmentAB.start, end: inSegmentCD.start)
+        let optSegmentBD = CanariOrientedSegment (start: segmentAB.end, end: inSegmentCD.end)
         return OverlappingResult (segmentAB, optSegmentAC, optSegmentBD)
       }
     }

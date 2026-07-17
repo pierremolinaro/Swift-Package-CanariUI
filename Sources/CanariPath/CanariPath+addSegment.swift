@@ -10,7 +10,7 @@ public extension CanariPath {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func addSegment (_ inSegment : CanariSegment) {
+  mutating func addSegment (_ inSegment : CanariOrientedSegment) {
     self.addMove (to: inSegment.start)
     self.addLine (to: inSegment.end)
   }
