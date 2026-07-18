@@ -1,18 +1,23 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 02/06/2026.
+//  Created by Pierre Molinaro on 18/07/2026.
 //--------------------------------------------------------------------------------------------------
 
-import AppKit
-
-//--------------------------------------------------------------------------------------------------
-
-public extension CanariPath {
+public struct CanariPolygon {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func addSegment (_ inSegment : CanariOrientedSegment) {
-    self.addMove (to: inSegment.source)
-    self.addLine (to: inSegment.target)
+  private let vertices : [CanariPoint]
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public init (vertices inPoints : [CanariPoint]) {
+    self.vertices = inPoints
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public var path : CanariPath {
+    CanariPath (points: self.vertices, isClosed: true)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
