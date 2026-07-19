@@ -6,35 +6,40 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public final class Node <INFO> {
-  let id = UUID ()
-  let info : INFO
-
-  fileprivate init (_ info: INFO) {
-    self.info = info
-  }
-}
-
-//--------------------------------------------------------------------------------------------------
-
-public struct DirectedGraph <INFO> {
+public struct CanariDirectedGraph <INFO> {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private var mNodeDictionary = [UUID : Node <INFO>] ()
+  public final class Node {
+    let id = UUID ()
+    public let info : INFO
+
+    fileprivate init (_ info: INFO) {
+      self.info = info
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  private var mNodeDictionary = [UUID : Self.Node] ()
   private var mArrows = [UUID : [UUID]] ()
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public mutating func addNode (_ inInfo : INFO) -> Node <INFO> {
-    let node = Node (inInfo)
+  public init () {
+  }
+  
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public mutating func addNode (_ inInfo : INFO) -> Self.Node {
+    let node = Self.Node (inInfo)
     self.mNodeDictionary [node.id] = node
     return node
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public mutating func addEdge (from inStartNode : Node <INFO>, to inTargetNode : Node <INFO>) {
+  public mutating func addEdge (from inStartNode : Self.Node, to inTargetNode : Self.Node) {
     self.mArrows [inStartNode.id, default: []].append (inTargetNode.id)
   }
 
