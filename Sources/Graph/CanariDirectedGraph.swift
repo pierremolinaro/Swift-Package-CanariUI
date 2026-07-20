@@ -78,6 +78,37 @@ public struct CanariDirectedGraph <INFO> {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // algorithme de Arthur B. Kahn
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func topologicalSort (_ inCallBack : ([INFO]) -> Int) {
+    var inputDegreeDictionary = [UUID : UInt] ()
+  //--- Initialisation
+    for nodeID in self.mNodeDictionary.keys {
+      inputDegreeDictionary [nodeID] = 0
+    }
+  //--- Calcul des degrés entrants
+    for (_, neighbors) in self.mArrows {
+      for n in neighbors {
+        inputDegreeDictionary [n, default: 0] += 1
+      }
+    }
+  //--- Sommets sans prédécesseur
+    var queue = Array (inputDegreeDictionary.filter { $0.value == 0 }.keys)
+  //---
+    while !queue.isEmpty {
+      let removedIndex = inCallBack (queue.map { self.mNodeDictionary [$0]!.info } )
+      let removedNodeID = queue.remove (at: removedIndex)
+      for targetNodeID in self.mArrows [removedNodeID] ?? [] {
+        inputDegreeDictionary [targetNodeID]! -= 1
+        if inputDegreeDictionary [targetNodeID] == 0 {
+          queue.append (targetNodeID)
+        }
+      }
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 }
 

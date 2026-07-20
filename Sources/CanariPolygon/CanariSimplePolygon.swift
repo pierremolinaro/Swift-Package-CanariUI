@@ -63,6 +63,21 @@ public struct CanariSimplePolygon {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public func nearestVertex (to inPoint : CanariPoint) -> (CanariLength, Int) {
+    var length : CanariLength = .max
+    var index : Int = 0
+    for (i, p) in self.vertices.enumerated() {
+      let d = inPoint.distance (to: p)
+      if d < length {
+        length = d
+        index = i
+      }
+    }
+    return (length, index)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 }
 
 //--------------------------------------------------------------------------------------------------
