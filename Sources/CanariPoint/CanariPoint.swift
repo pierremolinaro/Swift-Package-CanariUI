@@ -64,25 +64,31 @@ public struct CanariPoint : Hashable, CustomStringConvertible, Sendable, Equatab
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func scaled (byX inScaleX : Double, byY inScaleY : Double) -> CanariPoint {
-    return CanariPoint (x: self.x * inScaleX, y: self.y * inScaleY)
+    CanariPoint (x: self.x * inScaleX, y: self.y * inScaleY)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func scaled (by inScale : Double) -> CanariPoint {
-    return CanariPoint (x: self.x * inScale, y: self.y * inScale)
+    CanariPoint (x: self.x * inScale, y: self.y * inScale)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public var µmAligned : CanariPoint {
+    CanariPoint (x: self.x.µmAligned, y: self.y.µmAligned)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func aligning (to inUnit : CanariLength?) -> CanariPoint {
-    return CanariPoint (x: self.x.aligning (to: inUnit), y: self.y.aligning (to: inUnit))
+    CanariPoint (x: self.x.aligning (to: inUnit), y: self.y.aligning (to: inUnit))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func isAligned (_ inUnit : CanariLength) -> Bool {
-    return self.x.isAligned (inUnit) && self.y.isAligned (inUnit)
+    self.x.isAligned (inUnit) && self.y.isAligned (inUnit)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

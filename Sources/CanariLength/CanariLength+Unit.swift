@@ -13,6 +13,8 @@ import AppKit
 // 1 mil = 0,001 pouce = 2 286 cu
 // Le pixel Cocoa est 1/72 pouce
 // 1 px = 1/72 pouce = 31 750 cu
+// Dans certains logiciels, le pixel est le 1/96 pouce
+// 1/96 pouce = 23 812.5 cu
 //--------------------------------------------------------------------------------------------------
 
 private let CANARI_UNITS_PER_µM    = 90
@@ -22,6 +24,7 @@ private let CANARI_UNITS_PER_MM    = CANARI_UNITS_PER_µM * 1000
 private let CANARI_UNITS_PER_CM    = CANARI_UNITS_PER_MM * 10
 private let CANARI_UNITS_PER_INCH  = CANARI_UNITS_PER_MIL * 1000
 
+//--------------------------------------------------------------------------------------------------
 
 public extension CanariLength {
 
@@ -41,7 +44,7 @@ public extension CanariLength {
 
     // -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
-    public func toCanariUnits () -> Int {
+    public var cuValue : Int {
       switch self {
         case .mm   : return CANARI_UNITS_PER_MM
         case .cm   : return CANARI_UNITS_PER_CM
@@ -69,7 +72,7 @@ public extension CanariLength {
 
     // -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
-    public var length : CanariLength { .cu (self.toCanariUnits ()) }
+    public var length : CanariLength { .cu (self.cuValue) }
 
     // -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 
