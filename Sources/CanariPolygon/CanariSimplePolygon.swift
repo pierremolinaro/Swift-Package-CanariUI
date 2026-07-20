@@ -20,7 +20,16 @@ public struct CanariSimplePolygon {
     CanariPath (points: self.vertices, isClosed: true)
   }
 
- // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func isVertex (point inP : CanariPoint) -> Bool {
+    for p in self.vertices where p == inP {
+      return true
+    }
+    return false
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // Algorithme de Dan Sunday, ATTENTION : résultat imprévisible si le point testé est sur le contour
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
