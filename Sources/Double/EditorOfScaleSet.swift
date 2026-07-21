@@ -60,7 +60,8 @@ public struct EditorOfScaleSet : View {
         self.mSetter (self.mDoubleValue! * self.mFactor.value)
       } onDecrement: {
         self.mSetter (self.mDoubleValue! / self.mFactor.value)
-      }.help (self.mFactor.value.str3f).hiddenWhen (self.mDoubleValue == nil).controlSize (.small)
+      }
+      .help (self.mFactor.value.str3f).hiddenWhen (self.mDoubleValue == nil).controlSize (.small)
       .overlay {
         if self.mValueArray.count > 1 {
           Menu ("") {
@@ -89,14 +90,14 @@ public struct EditorOfScaleSet : View {
 
 fileprivate enum Factor : Int, CaseIterable, CustomStringConvertible {
 
-  case sqr2 = 2
-  case sqr3 = 3
-  case sqr4 = 4
-  case sqr5 = 5
-  case sqr6 = 6
-  case sqr7 = 7
-  case sqr8 = 8
-  case sqr9 = 9
+  case sqr2  = 2
+  case sqr3  = 3
+  case sqr4  = 4
+  case sqr5  = 5
+  case sqr6  = 6
+  case sqr7  = 7
+  case sqr8  = 8
+  case sqr9  = 9
   case sqr10 = 10
 
   var value : Double { pow (2.0, 1.0 / Double (self.rawValue)) }

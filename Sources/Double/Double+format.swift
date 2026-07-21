@@ -38,23 +38,19 @@ public extension Double {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func strf (_ inCount : Int) -> String {
-    self.formatted (.number.precision (.fractionLength (inCount)))
+    let formatter = FloatingPointFormatStyle <Double> (locale: Locale (identifier: "en_US_POSIX"))
+      .grouping (.never)
+      .precision (.fractionLength (inCount))
+    return self.formatted (formatter)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func strg (_ inCount : Int) -> String {
-    var s = self.formatted (.number.precision (.fractionLength (inCount)))
-    while s.last == "0" {
-      s.removeLast ()
-    }
-    if s.last == "." {
-      s.removeLast ()
-    }
-    if s.isEmpty {
-      s = "0"
-    }
-    return s
+    let formatter = FloatingPointFormatStyle <Double> (locale: Locale (identifier: "en_US_POSIX"))
+      .grouping (.never)
+      .precision (.fractionLength (0 ... inCount))
+    return self.formatted (formatter)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
