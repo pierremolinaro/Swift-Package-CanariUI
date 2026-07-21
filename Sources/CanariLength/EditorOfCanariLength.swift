@@ -20,7 +20,7 @@ struct EditorOfCanariLength : View {
 
   init (value inCanariValue : Binding <CanariLength>,
         unit inUnit : CanariLength.Unit = .cm,
-        fractionDigits inFractionDigits : Int = 2,
+        fractionDigits inFractionDigits : Int,
         width inWidth : CGFloat? = nil) {
     self._mCanariLength = inCanariValue
     self.mDoubleValue = inCanariValue.wrappedValue.value (in: inUnit)

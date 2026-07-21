@@ -80,6 +80,12 @@ public func / (_ inLeft : CanariLength, _ inRight : Double) -> CanariLength {
 
 //--------------------------------------------------------------------------------------------------
 
+public func / (_ inLeft : CanariLength, _ inRight : Int) -> CanariLength {
+  return .cu (inLeft.cuValue / inRight)
+}
+
+//--------------------------------------------------------------------------------------------------
+
 public func == (_ inLeft : CanariLength, _ inRight : CanariLength) -> Bool {
   return inLeft.cuValue == inRight.cuValue
 }

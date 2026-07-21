@@ -29,10 +29,12 @@ struct InspectorOfCanariScaledOrientedAnchor <SHAPE_TYPES_DESCRIPTION : Document
   @ViewBuilder public var body : some View {
     ExpandableInspectorOfCanariPointSet (
       title : "Center",
+      isExpanded: self.$mCenterInspectorIsExpanded,
+      displayUnit: .cm,
+      fractionDigits: 3,
       pointSet: Set (self.mShapesUserInterface.selectedShapeArray ().map { $0.mAnchor.mPoint }),
       setterX: { for id in self.mShapesUserInterface.selection { self.mShapesUserInterface [shapeID: id]?.mAnchor.mPoint.x = $0 } },
-      setterY: { for id in self.mShapesUserInterface.selection { self.mShapesUserInterface [shapeID: id]?.mAnchor.mPoint.y = $0 } },
-      isExpanded: self.$mCenterInspectorIsExpanded
+      setterY: { for id in self.mShapesUserInterface.selection { self.mShapesUserInterface [shapeID: id]?.mAnchor.mPoint.y = $0 } }
     )
     CanariExpandableInspectorView (title: "Angle", isExpanded: self.$mAngleInspectorIsExpanded) {
       EditorOfCanariAngleSet (
@@ -54,8 +56,8 @@ struct InspectorOfCanariScaledOrientedAnchor <SHAPE_TYPES_DESCRIPTION : Document
     CanariExpandableInspectorView (title: "Enclosing Rectangle", isExpanded: self.$mBoundingRectInspectorIsExpanded) {
       ViewerOfCanariRectSet (
         rectSet: Set (self.mShapesUserInterface.selectedShapeArray ().map { $0.mAnchor.globalBoundingRect }),
-        unit: .mm,
-        fractionDigits: 2
+        displayUnit: .cm,
+        fractionDigits: 3
       )
     }
   }

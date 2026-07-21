@@ -113,9 +113,10 @@ public final class CanariInspectorProxy <ANCHOR : CanariShapeAnchorProtocol,
 
   public func performAction <T : CanariShapeDecorationProtocol <ANCHOR, SHAPE_TYPES_DESCRIPTION> > (_ inAction : (inout T) -> Void) {
     for id in self.mShapesUserInterface.selection {
-      if let shape = self.mShapesUserInterface [shapeID: id], var s = shape.mDecoration as? T {
-        inAction (&s)
-        self.mShapesUserInterface [shapeID: id] = CanariShapeRoot <ANCHOR, SHAPE_TYPES_DESCRIPTION> (shape.mAnchor, s)
+      if let shape = self.mShapesUserInterface [shapeID: id], var decoration = shape.mDecoration as? T {
+        inAction (&decoration)
+ //       self.mShapesUserInterface [shapeID: id] = CanariShapeRoot <ANCHOR, SHAPE_TYPES_DESCRIPTION> (shape.mAnchor, s)
+        self.mShapesUserInterface [shapeID: id]!.mDecoration = decoration
       }
     }
   }

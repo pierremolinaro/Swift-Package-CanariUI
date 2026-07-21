@@ -12,7 +12,7 @@ public struct InspectorOfCanariPointSet : View {
 
   private let mTitle : String
   private let mPointSet : Set <CanariPoint>
-  private let mUnit : CanariLength.Unit
+  private let mUnit : EditorOfCanariLengthSet.DisplayUnit
   private let mFractionDigits : Int
   private let mFieldWidth = 48.0
   private let mSetterX : (CanariLength) -> Void
@@ -24,8 +24,8 @@ public struct InspectorOfCanariPointSet : View {
                pointSet inCanariPointSet : Set <CanariPoint>,
                setterX: @escaping (CanariLength) -> Void,
                setterY: @escaping (CanariLength) -> Void,
-               unit inUnit : CanariLength.Unit = .cm,
-               fractionDigits inFractionDigits : Int = 2) {
+               displayUnit inUnit : EditorOfCanariLengthSet.DisplayUnit,
+               fractionDigits inFractionDigits : Int) {
     self.mTitle = inTitle
     self.mPointSet = inCanariPointSet
     self.mUnit = inUnit
@@ -45,9 +45,8 @@ public struct InspectorOfCanariPointSet : View {
             pointSet: self.mPointSet,
             setterX: { newX in self.mSetterX (newX) },
             setterY: { newY in self.mSetterY (newY) },
-            unit: self.mUnit,
-            fractionDigits: self.mFractionDigits,
-            displayUnit: false
+            displayUnit: self.mUnit,
+            fractionDigits: self.mFractionDigits
           )
         }
         Spacer ()

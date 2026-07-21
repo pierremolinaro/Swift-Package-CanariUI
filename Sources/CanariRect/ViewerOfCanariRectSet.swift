@@ -11,14 +11,14 @@ public struct ViewerOfCanariRectSet : View {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private let mRectSet : Set <CanariRect>
-  private let mUnit : CanariLength.Unit
+  private let mUnit : EditorOfCanariLengthSet.DisplayUnit
   private let mFractionDigits : Int
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (rectSet inCanariRectSet : Set <CanariRect>,
-               unit inUnit : CanariLength.Unit = .cm,
-               fractionDigits inFractionDigits : Int = 2) {
+               displayUnit inUnit : EditorOfCanariLengthSet.DisplayUnit,
+               fractionDigits inFractionDigits : Int) {
     self.mRectSet = inCanariRectSet
     self.mUnit = inUnit
     self.mFractionDigits = inFractionDigits
@@ -28,19 +28,19 @@ public struct ViewerOfCanariRectSet : View {
 
   public var body : some View {
     VStack {
-      ViewerOfOptionalString (self.maxY?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
+      ViewerOfOptionalString (self.maxY?.string (in: self.mUnit.unit, fractionDigits: self.mFractionDigits))
 //      .background (Rectangle ().fill (.quinary))
       .anchorPreference (key: RectanglePrefKey.self, value: .bounds) { ["bottom" : $0] }
       HStack {
-        ViewerOfOptionalString (self.minX?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
+        ViewerOfOptionalString (self.minX?.string (in: self.mUnit.unit, fractionDigits: self.mFractionDigits))
 //        .background (Rectangle ().fill (.quaternary))
         .anchorPreference (key: RectanglePrefKey.self, value: .bounds) { ["left" : $0] }
         Spacer ()
-        ViewerOfOptionalString (self.maxX?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
+        ViewerOfOptionalString (self.maxX?.string (in: self.mUnit.unit, fractionDigits: self.mFractionDigits))
  //       .background (Rectangle ().fill (.white))
         .anchorPreference (key: RectanglePrefKey.self, value: .bounds) { ["right" : $0] }
       }
-      ViewerOfOptionalString (self.minY?.string (in: self.mUnit, fractionDigits: self.mFractionDigits))
+      ViewerOfOptionalString (self.minY?.string (in: self.mUnit.unit, fractionDigits: self.mFractionDigits))
 //      .background (Rectangle ().fill (.white))
       .anchorPreference (key: RectanglePrefKey.self, value: .bounds) { ["top" : $0] }
     }

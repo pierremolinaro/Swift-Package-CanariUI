@@ -18,7 +18,7 @@ public struct CanariPointView : View {
 
   public init (point inCanariPoint : CanariPoint,
                unit inUnit : CanariLength.Unit = .cm,
-               fractionDigits inFractionDigits : Int = 2) {
+               fractionDigits inFractionDigits : Int) {
     self.mPoint = inCanariPoint
     self.mUnit = inUnit
     self.mFractionDigits = inFractionDigits

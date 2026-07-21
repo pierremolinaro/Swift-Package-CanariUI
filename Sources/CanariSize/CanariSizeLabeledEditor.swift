@@ -23,7 +23,7 @@ public struct CanariSizeLabeledEditor : View {
 
   public init (value inSizeBinding : Binding <CanariSize>,
                unit inUnit : CanariLength.Unit = .cm,
-               fractionDigits inFractionDigits : Int = 2,
+               fractionDigits inFractionDigits : Int,
                width inWidth : CGFloat? = nil) {
     self._mSizeBinding = inSizeBinding
     self.mUnit = inUnit

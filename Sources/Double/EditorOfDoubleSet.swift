@@ -20,7 +20,7 @@ public struct EditorOfDoubles : View {
 
   public init (valueSet inValueSet : Set <Double>,
                setter inSetter: @escaping (Double) -> Void,
-               fractionDigits inFractionDigits : Int = 3,
+               fractionDigits inFractionDigits : Int,
                width inWidth : CGFloat) {
     self.mValueArray = Array (inValueSet).sorted ()
     if inValueSet.count == 1, let v = inValueSet.first {
