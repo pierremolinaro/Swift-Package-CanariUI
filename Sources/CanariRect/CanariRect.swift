@@ -41,6 +41,18 @@ public struct CanariRect : Hashable, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public init (center inCenter : CanariPoint,
+               width inWidth : CanariLength,
+               height inHeight : CanariLength) {
+    self.origin = CanariPoint (
+      x: inCenter.x - inWidth / 2.0,
+      y: inCenter.y - inHeight / 2.0
+    )
+    self.size = CanariSize (width: inWidth, height: inHeight)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public init (left inLeft : CanariLength,
                bottom inBottom : CanariLength,
                width inWidth : CanariLength,

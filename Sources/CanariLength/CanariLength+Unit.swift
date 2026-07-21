@@ -18,11 +18,11 @@ import AppKit
 //--------------------------------------------------------------------------------------------------
 
 private let CANARI_UNITS_PER_µM    = 90
-private let CANARI_UNITS_PER_MIL   = 2_286
-private let CANARI_UNITS_PER_PIXEL = 31_750
 private let CANARI_UNITS_PER_MM    = CANARI_UNITS_PER_µM * 1000
 private let CANARI_UNITS_PER_CM    = CANARI_UNITS_PER_MM * 10
-private let CANARI_UNITS_PER_INCH  = CANARI_UNITS_PER_MIL * 1000
+private let CANARI_UNITS_PER_INCH  = CANARI_UNITS_PER_µM * 25_400 // CANARI_UNITS_PER_MIL * 1000
+private let CANARI_UNITS_PER_MIL   = CANARI_UNITS_PER_INCH / 1_000 // 2_286
+private let CANARI_UNITS_PER_PIXEL = CANARI_UNITS_PER_INCH / 72 // 31_750
 
 //--------------------------------------------------------------------------------------------------
 
