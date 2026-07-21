@@ -851,20 +851,19 @@ import Combine
     if self.mSelection.isEmpty {
       Text ("Empty Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
     }else{
-      VStack (spacing: 1) {
-        AnyView (ANCHOR.anchorInspector (shapesUserInterface: self))
-//        InspectorOfCanariScaledOrientedAnchor (shapesUserInterface: self)
-        if let type = self.commonTypeForSelection () {
+      if let type = self.commonTypeForSelection () {
+        VStack (spacing: 1) {
           Text (type.inspectorTitle).bold ()
           ScrollView (.vertical) {
+            AnyView (ANCHOR.anchorInspector (shapesUserInterface: self))
             AnyView (type.inspectorView (proxy: CanariInspectorProxy (self)).id (self.mSelection))
           }
-        }else if self.mSelection.count > 1 {
-          Text ("Multiple Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
-        }else{
-          Text ("Single Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
-        }
-      }.padding ()
+        }.padding (.leading, 8)
+      }else if self.mSelection.count > 1 {
+        Text ("Multiple Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
+      }else{
+        Text ("Single Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
+      }
     }
   }
 

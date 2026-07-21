@@ -11,13 +11,13 @@ public struct ViewerOfCanariRectSet : View {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private let mRectSet : Set <CanariRect>
-  private let mUnit : EditorOfCanariLengthSet.DisplayUnit
+  private let mUnit : CanariLength.DisplayUnit
   private let mFractionDigits : Int
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (rectSet inCanariRectSet : Set <CanariRect>,
-               displayUnit inUnit : EditorOfCanariLengthSet.DisplayUnit,
+               displayUnit inUnit : CanariLength.DisplayUnit,
                fractionDigits inFractionDigits : Int) {
     self.mRectSet = inCanariRectSet
     self.mUnit = inUnit

@@ -6,27 +6,30 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct InspectorOfCanariSizeSet : View {
+public struct ExpandableInspectorOfCanariSizeSet : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private let mTitle : String
   private let mSizeSet : Set <CanariSize>
-  private let mUnit : EditorOfCanariLengthSet.DisplayUnit
+  private let mUnit : CanariLength.DisplayUnit
   private let mFractionDigits : Int
   private let mFieldWidth = 48.0
   private let mWidthSetter : (CanariLength) -> Void
   private let mHeightSetter : (CanariLength) -> Void
+  @Binding private var mIsExpanded : Bool
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (title inTitle : String,
-               displayUnit inUnit : EditorOfCanariLengthSet.DisplayUnit,
+               isExpanded inIsExpanded : Binding <Bool>,
+               displayUnit inUnit : CanariLength.DisplayUnit,
                fractionDigits inFractionDigits : Int,
                sizeSet inCanariSizeSet : Set <CanariSize>,
                widthSetter: @escaping (CanariLength) -> Void,
                heightSetter: @escaping (CanariLength) -> Void) {
     self.mTitle = inTitle
+    self._mIsExpanded = inIsExpanded
     self.mSizeSet = inCanariSizeSet
     self.mUnit = inUnit
     self.mFractionDigits = inFractionDigits
@@ -37,7 +40,11 @@ public struct InspectorOfCanariSizeSet : View {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var body : some View {
-    CanariElementInspector (title: self.mTitle, expandedSubtitle: "cm") {
+    CanariExpandableInspectorView (
+      title: self.mTitle,
+      collapsedSubtitle: self.collapsedTitle,
+      isExpanded: self.$mIsExpanded
+    ) {
       HStack {
         Spacer ()
         Form {
@@ -51,6 +58,16 @@ public struct InspectorOfCanariSizeSet : View {
         }
         Spacer ()
       }
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  var collapsedTitle : String {
+    if let s = self.mSizeSet.first, self.mSizeSet.count == 1 {
+      return s.string (in: self.mUnit.unit, fractionDigits: self.mFractionDigits)
+    }else{
+      return MULTIPLE_VALUES_MARK
     }
   }
 

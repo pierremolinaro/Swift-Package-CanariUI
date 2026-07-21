@@ -135,7 +135,7 @@ public struct CanariLength : Hashable, Comparable, Sendable {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func string (in inUnit : CanariLength.Unit, fractionDigits inCount : Int) -> String {
-    unsafe "\(String (format: "%.*f", inCount, self.value (in: inUnit))) \(inUnit.unitString)"
+    self.value (in: inUnit).strf (inCount) + " " + inUnit.unitString
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

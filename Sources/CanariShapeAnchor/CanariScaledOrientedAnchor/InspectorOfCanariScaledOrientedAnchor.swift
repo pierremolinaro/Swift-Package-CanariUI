@@ -36,13 +36,18 @@ struct InspectorOfCanariScaledOrientedAnchor <SHAPE_TYPES_DESCRIPTION : Document
       setterX: { for id in self.mShapesUserInterface.selection { self.mShapesUserInterface [shapeID: id]?.mAnchor.mPoint.x = $0 } },
       setterY: { for id in self.mShapesUserInterface.selection { self.mShapesUserInterface [shapeID: id]?.mAnchor.mPoint.y = $0 } }
     )
-    CanariExpandableInspectorView (title: "Angle", isExpanded: self.$mAngleInspectorIsExpanded) {
-      EditorOfCanariAngleSet (
-        angleSet: Set (self.mShapesUserInterface.selectedShapeArray ().map { $0.mAnchor.mAngle }),
-        setter: { for id in self.mShapesUserInterface.selection { self.mShapesUserInterface [shapeID: id]?.mAnchor.mAngle = $0 } }
-      )
-    }
-    CanariExpandableInspectorView (title: "Scale, Flip", isExpanded: self.$mScaleInspectorIsExpanded) {
+    ExpandableInspectorOfCanariAngleSet (
+      title: "Angle",
+      isExpanded: self.$mAngleInspectorIsExpanded,
+      fractionDigits: 3,
+      angleSet: Set (self.mShapesUserInterface.selectedShapeArray ().map { $0.mAnchor.mAngle }),
+      setter: { for id in self.mShapesUserInterface.selection { self.mShapesUserInterface [shapeID: id]?.mAnchor.mAngle = $0 } }
+    )
+    CanariExpandableInspectorView (
+      title: "Scale, Flip",
+      collapsedSubtitle: self.scaleAndFlipCollapsedSubtitle,
+      isExpanded: self.$mScaleInspectorIsExpanded
+    ) {
       EditorOfScaleSet (
         valueSet: Set (self.mShapesUserInterface.selectedShapeArray ().map { $0.mAnchor.mScale }),
         setter: { for id in self.mShapesUserInterface.selection { self.mShapesUserInterface [shapeID: id]?.mAnchor.mScale = $0 } }
@@ -60,6 +65,26 @@ struct InspectorOfCanariScaledOrientedAnchor <SHAPE_TYPES_DESCRIPTION : Document
         fractionDigits: 3
       )
     }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  var scaleAndFlipCollapsedSubtitle : String {
+    var str = ""
+    let scaleSet = self.mShapesUserInterface.selectedShapeArray ().map { $0.mAnchor.mScale }
+    if let s = scaleSet.first, scaleSet.count == 1 {
+      str = "\(s)"
+    }else{
+      str = MULTIPLE_VALUES_MARK
+    }
+    str += ", flip: "
+    let flipSet = self.mShapesUserInterface.selectedShapeArray ().map { $0.mAnchor.mHorizontalFlip }
+    if let s = flipSet.first, flipSet.count == 1 {
+      str += s ? "yes" : "no"
+    }else{
+      str += MULTIPLE_VALUES_MARK
+    }
+    return str
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

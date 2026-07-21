@@ -133,19 +133,25 @@ public struct CanariPoint : Hashable, CustomStringConvertible, Sendable, Equatab
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var cmString : String {
-    unsafe String (format: "%.3f", self.x.cmValue) + " cm, " + String (format: "%.3f", self.y.cmValue) + " cm"
+    self.x.cmValue.str3f + " cm, " + self.y.cmValue.str3f + " cm"
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var mmString : String {
-    unsafe String (format: "%.3f", self.x.mmValue) + " mm, " + String (format: "%.3f", self.y.mmValue) + " mm"
+    self.x.mmValue.str3f + " mm, " + self.y.mmValue.str3f + " mm"
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func string (in inUnit : CanariLength.Unit, fractionDigits inCount : Int) -> String {
+    "\(self.x.string (in: inUnit, fractionDigits: inCount)) x \(self.y.string (in: inUnit, fractionDigits: inCount))"
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var burningKitCode : String {
-    unsafe "Point (x: .mm (" + String (format: "%.3f", self.x.mmValue) + "), y : .mm (" + String (format: "%.3f", self.y.mmValue) + "))"
+    "Point (x: .mm (" + self.x.mmValue.str3f + "), y : .mm (" + self.y.mmValue.str3f + "))"
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

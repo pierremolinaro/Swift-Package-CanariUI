@@ -11,7 +11,7 @@ public struct EditorOfCanariPointSet : View {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private let mPointSet : Set <CanariPoint>
-  private let mUnit : EditorOfCanariLengthSet.DisplayUnit
+  private let mUnit : CanariLength.DisplayUnit
   private let mFractionDigits : Int
   private let mFieldWidth = 48.0
   private let mSetterX : (CanariLength) -> Void
@@ -22,7 +22,7 @@ public struct EditorOfCanariPointSet : View {
   public init (pointSet inCanariPointSet : Set <CanariPoint>,
                setterX: @escaping (CanariLength) -> Void,
                setterY: @escaping (CanariLength) -> Void,
-               displayUnit inUnit : EditorOfCanariLengthSet.DisplayUnit,
+               displayUnit inUnit : CanariLength.DisplayUnit,
                fractionDigits inFractionDigits : Int) {
     self.mPointSet = inCanariPointSet
     self.mUnit = inUnit
@@ -39,7 +39,7 @@ public struct EditorOfCanariPointSet : View {
         EditorOfCanariLengthSet (
           lengthSet: Set (Array (self.mPointSet).map (\.x)),
           setter: { self.mSetterX ($0) },
-          unit: self.mUnit,
+          displayUnit: self.mUnit,
           fractionDigits: self.mFractionDigits,
           width: self.mFieldWidth
         )
@@ -51,7 +51,7 @@ public struct EditorOfCanariPointSet : View {
         EditorOfCanariLengthSet (
           lengthSet: Set (Array (self.mPointSet).map (\.y)),
           setter: { self.mSetterY ($0) },
-          unit: self.mUnit,
+          displayUnit: self.mUnit,
           fractionDigits: self.mFractionDigits,
           width: self.mFieldWidth
         )

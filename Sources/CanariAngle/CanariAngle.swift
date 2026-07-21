@@ -100,7 +100,7 @@ public struct CanariAngle : Hashable, Comparable, Sendable {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func string (in inUnit : CanariAngle.Unit, fractionDigits inCount : Int) -> String {
-    return unsafe "\(String (format: "%.*f", inCount, self.value (in: inUnit)))\(inUnit.unitString)"
+    return self.value (in: inUnit).strf (inCount) + inUnit.unitString
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

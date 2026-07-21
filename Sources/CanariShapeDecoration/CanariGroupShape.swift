@@ -202,6 +202,7 @@ fileprivate struct GroupShapeInspectorView <ANCHOR : CanariShapeAnchorProtocol,
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   @State private var mProxy : CanariInspectorProxy <ANCHOR, SHAPE_TYPES_DESCRIPTION>
+  @AppStorage("group.ungrouping.inspector.is.expanded") private var mUngroupInspectorIsExpanded = false
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -212,7 +213,10 @@ fileprivate struct GroupShapeInspectorView <ANCHOR : CanariShapeAnchorProtocol,
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   var body : some View {
-    CanariElementInspector (title: "Ungrouping") {
+    CanariExpandableInspectorView (
+      title: "Ungrouping",
+      isExpanded: self.$mUngroupInspectorIsExpanded
+    ) {
       HStack {
         Text ("Group count")
         ViewerOfStringSet (Set (self.mProxy.arrayOf (\T.count).map { "\($0)" }) )
@@ -237,4 +241,3 @@ fileprivate struct GroupShapeInspectorView <ANCHOR : CanariShapeAnchorProtocol,
 }
 
 //--------------------------------------------------------------------------------------------------
-

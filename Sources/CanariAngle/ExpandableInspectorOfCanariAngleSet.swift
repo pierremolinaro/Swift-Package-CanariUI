@@ -1,69 +1,54 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 18/06/2026.
+//  Created by Pierre Molinaro on 21/07/2026.
 //--------------------------------------------------------------------------------------------------
 
 import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct ExpandableInspectorOfCanariPointSet : View {
+public struct ExpandableInspectorOfCanariAngleSet : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private let mTitle : String
-  private let mPointSet : Set <CanariPoint>
-  private let mUnit : CanariLength.DisplayUnit
+  private let mAngleSet : Set <CanariAngle>
   private let mFractionDigits : Int
   private let mFieldWidth = 48.0
-  private let mSetterX : (CanariLength) -> Void
-  private let mSetterY : (CanariLength) -> Void
+  private let mSetter : (CanariAngle) -> Void
   @Binding private var mIsExpanded : Bool
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (title inTitle : String,
                isExpanded inIsExpanded : Binding <Bool>,
-               displayUnit inUnit : CanariLength.DisplayUnit,
                fractionDigits inFractionDigits : Int,
-               pointSet inCanariPointSet : Set <CanariPoint>,
-               setterX: @escaping (CanariLength) -> Void,
-               setterY: @escaping (CanariLength) -> Void) {
+               angleSet inAngleSet : Set <CanariAngle>,
+               setter: @escaping (CanariAngle) -> Void) {
     self.mTitle = inTitle
-    self.mPointSet = inCanariPointSet
-    self.mUnit = inUnit
+    self.mAngleSet = inAngleSet
     self.mFractionDigits = inFractionDigits
-    self.mSetterX = setterX
-    self.mSetterY = setterY
+    self.mSetter = setter
     self._mIsExpanded = inIsExpanded
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var body : some View {
-    CanariExpandableInspectorView (title: "Center",
+    CanariExpandableInspectorView (title: self.mTitle,
                                    collapsedSubtitle: self.collapsedTitle,
                                    isExpanded: self.$mIsExpanded) {
-      HStack {
-        Spacer ()
-        Form {
-          EditorOfCanariPointSet (
-            pointSet: self.mPointSet,
-            setterX: { newX in self.mSetterX (newX) },
-            setterY: { newY in self.mSetterY (newY) },
-            displayUnit: self.mUnit,
-            fractionDigits: self.mFractionDigits
-          )
-        }
-        Spacer ()
-      }
+      EditorOfCanariAngleSet (
+        angleSet: mAngleSet,
+        setter: { self.mSetter ($0) }
+      )
     }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   var collapsedTitle : String {
-    if let p = self.mPointSet.first, self.mPointSet.count == 1 {
-      return p.string (in: self.mUnit.unit, fractionDigits: self.mFractionDigits)
+    if let p = self.mAngleSet.first, self.mAngleSet.count == 1 {
+      return p.string (in: .degrees, fractionDigits: self.mFractionDigits)
     }else{
       return MULTIPLE_VALUES_MARK
     }
@@ -74,3 +59,4 @@ public struct ExpandableInspectorOfCanariPointSet : View {
 }
 
 //--------------------------------------------------------------------------------------------------
+

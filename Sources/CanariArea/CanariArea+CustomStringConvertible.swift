@@ -6,12 +6,12 @@ import AppKit
 
 //--------------------------------------------------------------------------------------------------
 
-extension CanariLength : CustomStringConvertible {
+extension CanariArea : CustomStringConvertible {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var description : String { // CustomStringConvertible protocol
-    self.value (in: .mm).strf (3) + " " + Unit.mm.unitString
+    self.value (in: .mm2).strf (3) + " " + Unit.mm2.unitString
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
