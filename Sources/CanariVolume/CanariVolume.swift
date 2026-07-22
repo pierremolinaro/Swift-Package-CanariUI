@@ -12,7 +12,7 @@ public struct CanariVolume : Hashable, Comparable, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public let cu3Value : Int128
+  internal let cu3Value : Int128
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

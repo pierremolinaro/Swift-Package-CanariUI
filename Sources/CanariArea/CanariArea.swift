@@ -12,7 +12,7 @@ public struct CanariArea : Hashable, Comparable, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public let cu2Value : Int
+  internal let cu2Value : Int
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

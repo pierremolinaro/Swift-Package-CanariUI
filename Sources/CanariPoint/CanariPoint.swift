@@ -118,10 +118,10 @@ public struct CanariPoint : Hashable, CustomStringConvertible, Sendable, Equatab
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func squareOfCuDistance (to inPoint : CanariPoint) -> UInt {
-    let dx = self.x.cuValue - inPoint.x.cuValue
-    let dy = self.y.cuValue - inPoint.y.cuValue
-    return UInt (dx * dx + dy * dy)
+  public func squareOfDistance (to inPoint : CanariPoint) -> CanariArea {
+    let dx = self.x - inPoint.x
+    let dy = self.y - inPoint.y
+    return dx * dx + dy * dy
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -12,7 +12,7 @@ public struct CanariLength : Hashable, Comparable, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public let cuValue : Int
+  internal let cuValue : Int
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
