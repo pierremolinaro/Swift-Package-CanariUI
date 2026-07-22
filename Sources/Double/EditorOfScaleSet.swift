@@ -90,6 +90,8 @@ public struct EditorOfScaleSet : View {
 
 fileprivate enum Factor : Int, CaseIterable, CustomStringConvertible {
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   case sqr2  = 2
   case sqr3  = 3
   case sqr4  = 4
@@ -100,9 +102,15 @@ fileprivate enum Factor : Int, CaseIterable, CustomStringConvertible {
   case sqr9  = 9
   case sqr10 = 10
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   var value : Double { pow (2.0, 1.0 / Double (self.rawValue)) }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   var description : String { self.value.str3f + " (\(self.rawValue))" }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 }
 

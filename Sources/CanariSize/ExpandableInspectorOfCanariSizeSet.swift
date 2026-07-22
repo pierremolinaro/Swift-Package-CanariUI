@@ -42,8 +42,8 @@ public struct ExpandableInspectorOfCanariSizeSet : View {
   public var body : some View {
     CanariExpandableInspectorView (
       title: self.mTitle,
-      collapsedSubtitle: self.collapsedTitle,
-      isExpanded: self.$mIsExpanded
+      isExpanded: self.$mIsExpanded,
+      collapsedSubtitle: { Text (self.collapsedTitle) }
     ) {
       HStack {
         Spacer ()

@@ -34,9 +34,11 @@ public struct ExpandableInspectorOfCanariAngleSet : View {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var body : some View {
-    CanariExpandableInspectorView (title: self.mTitle,
-                                   collapsedSubtitle: self.collapsedTitle,
-                                   isExpanded: self.$mIsExpanded) {
+    CanariExpandableInspectorView (
+      title: self.mTitle,
+      isExpanded: self.$mIsExpanded,
+      collapsedSubtitle: { Text (self.collapsedTitle) }
+    ) {
       EditorOfCanariAngleSet (
         angleSet: mAngleSet,
         setter: { self.mSetter ($0) }

@@ -11,17 +11,17 @@ public struct CanariExpandableInspectorView <Content : View> : View { // where C
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private let mTitle : String
-  private let mExpandedSubTitle : String
-  private let mCollapsedSubTitle : String
+  private let mExpandedSubTitle : (() -> any View)?
+  private let mCollapsedSubTitle : (() -> any View)?
   private let mContent : () -> Content
   @Binding private var mIsExpanded : Bool
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (title inTitle : String,
-               expandedSubtitle inExpandedSubTitle : String = "",
-               collapsedSubtitle inCollapsedSubTitle : String = "",
                isExpanded inIsExpanded : Binding <Bool>,
+               expandedSubtitle inExpandedSubTitle : (() -> any View)? = nil,
+               collapsedSubtitle inCollapsedSubTitle : (() -> any View)? = nil,
                @ViewBuilder content : @escaping () -> Content) {
     self.mTitle = inTitle
     self.mExpandedSubTitle = inExpandedSubTitle
@@ -39,10 +39,10 @@ public struct CanariExpandableInspectorView <Content : View> : View { // where C
       HStack {
         Text (self.mTitle).bold ()
         Spacer ()
-        if self.mIsExpanded {
-          Text (self.mExpandedSubTitle)
-        }else{
-          Text (self.mCollapsedSubTitle)
+        if self.mIsExpanded, let v = self.mExpandedSubTitle {
+          AnyView (v ())
+        }else if !self.mIsExpanded, let v = self.mCollapsedSubTitle {
+          AnyView (v ())
         }
       }
     }

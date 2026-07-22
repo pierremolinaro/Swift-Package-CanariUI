@@ -113,7 +113,13 @@ public struct CanariLength : Hashable, Comparable, Sendable {
 
   public func aligning (to inUnit : CanariLength?) -> CanariLength {
     if let unit = inUnit, !unit.isZero {
-      return .cu ((self.cuValue + unit.cuValue / 2) / unit.cuValue) * unit.cuValue
+      if self.cuValue > 0 {
+        return .cu (((self.cuValue + unit.cuValue / 2) / unit.cuValue) * unit.cuValue)
+      }else if self.cuValue < 0 {
+        return -.cu (((-self.cuValue + unit.cuValue / 2) / unit.cuValue) * unit.cuValue)
+      }else{
+        return .zero
+      }
     }else{
       return self
     }
@@ -123,7 +129,13 @@ public struct CanariLength : Hashable, Comparable, Sendable {
 
   public var µmAligned : CanariLength {
     let µm = CanariLength.Unit.µm.cuValue
-    return .cu ((self.cuValue + µm / 2) / µm) * µm
+    if self.cuValue > 0 {
+      return .cu (((self.cuValue + µm / 2) / µm) * µm)
+    }else if self.cuValue < 0 {
+      return -.cu (((-self.cuValue + µm / 2) / µm) * µm)
+    }else{
+      return .zero
+    }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

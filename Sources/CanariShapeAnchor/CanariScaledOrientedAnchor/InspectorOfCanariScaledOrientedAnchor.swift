@@ -45,8 +45,8 @@ struct InspectorOfCanariScaledOrientedAnchor <SHAPE_TYPES_DESCRIPTION : Document
     )
     CanariExpandableInspectorView (
       title: "Scale, Flip",
-      collapsedSubtitle: self.scaleAndFlipCollapsedSubtitle,
-      isExpanded: self.$mScaleInspectorIsExpanded
+      isExpanded: self.$mScaleInspectorIsExpanded,
+      collapsedSubtitle: { Text (self.scaleAndFlipCollapsedSubtitle) }
     ) {
       EditorOfScaleSet (
         valueSet: Set (self.mShapesUserInterface.selectedShapeArray ().map { $0.mAnchor.mScale }),
