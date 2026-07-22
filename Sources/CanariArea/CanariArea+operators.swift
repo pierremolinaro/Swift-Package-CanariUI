@@ -62,6 +62,18 @@ public func * (_ inLeft : CanariArea, _ inRight : Double) -> CanariArea {
 
 //--------------------------------------------------------------------------------------------------
 
+public func * (_ inLeft : CanariArea, _ inRight : CanariLength) -> CanariVolume {
+  return .cu3 (int: Int128 (inLeft.cu2Value) * Int128 (inRight.cuValue))
+}
+
+//--------------------------------------------------------------------------------------------------
+
+public func * (_ inLeft : CanariLength, _ inRight : CanariArea) -> CanariVolume {
+  return .cu3 (int: Int128 (inLeft.cuValue) * Int128 (inRight.cu2Value))
+}
+
+//--------------------------------------------------------------------------------------------------
+
 public func * (_ inLeft : CanariArea, _ inRight : Int) -> CanariArea {
   return CanariArea (inLeft, multipliedByInt: inRight)
 }

@@ -95,6 +95,13 @@ public struct CanariPath : Equatable, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public init (segment inSegment : CanariOrientedSegment) {
+    self.init ()
+    self.addSegment (inSegment)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public func rotated (by inAngle : CanariAngle) -> CanariPath {
     let af = CGAffineTransform (rotationAngle: inAngle.radians)
     var result = CanariPath ()
