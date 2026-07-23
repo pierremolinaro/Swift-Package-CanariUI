@@ -16,16 +16,16 @@ public struct CanariOrientedSegment : Equatable, Hashable, CustomStringConvertib
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (_ inA : CanariPoint, _ inB : CanariPoint) {
-    if inA.x < inB.x {
-      self.src = inA
-      self.tgt = inB
-    }else if inA.x > inB.x {
-      self.src = inB
-      self.tgt = inA
-    }else if inA.y < inB.y {
+    if inA.y < inB.y {
       self.src = inA
       self.tgt = inB
     }else if inA.y > inB.y {
+      self.src = inB
+      self.tgt = inA
+    }else if inA.x < inB.x {
+      self.src = inA
+      self.tgt = inB
+    }else if inA.x > inB.x {
       self.src = inB
       self.tgt = inA
     }else{
@@ -38,15 +38,8 @@ public struct CanariOrientedSegment : Equatable, Hashable, CustomStringConvertib
   public init? (opt inA : CanariPoint, _ inB : CanariPoint) {
     if inA == inB {
       return nil
-    }else if inA.x < inB.x {
-      self.src = inA
-      self.tgt = inB
-    }else if inA.x == inB.x, inA.y < inB.y {
-      self.src = inA
-      self.tgt = inB
     }else{
-      self.src = inB
-      self.tgt = inA
+      self.init (inA, inB)
     }
   }
 
@@ -54,8 +47,8 @@ public struct CanariOrientedSegment : Equatable, Hashable, CustomStringConvertib
 
   public init? (x inStartX : CanariLength,
                 y inStartY : CanariLength,
-                dx inDX : CanariLength = .zero,
-                dy inDY : CanariLength = .zero) {
+                dx inDX : CanariLength,
+                dy inDY : CanariLength) {
     let p1 = CanariPoint (x: inStartX, y: inStartY)
     let p2 = CanariPoint (x: inStartX + inDX, y: inStartY + inDY)
     self.init (opt: p1, p2)
@@ -81,8 +74,7 @@ public struct CanariOrientedSegment : Equatable, Hashable, CustomStringConvertib
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func angle_0_2π () -> Double {
-    let angle = self.src.angle (to: self.tgt)
-    var angle_rd = angle.radians
+    var angle_rd = self.src.angle (to: self.tgt).radians
     while angle_rd < 0.0 {
       angle_rd += 2.0 * .pi
     }
@@ -92,11 +84,11 @@ public struct CanariOrientedSegment : Equatable, Hashable, CustomStringConvertib
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func orientation (of inPoint : CanariPoint) -> Int {
-    let d = (self.tgt.x.cuValue - self.src.x.cuValue) * (inPoint.y.cuValue - self.src.y.cuValue)
-          - (self.tgt.y.cuValue - self.src.y.cuValue) * (inPoint.x.cuValue - self.src.x.cuValue)
-    if d > 0 {
+    let d = (self.tgt.x - self.src.x) * (inPoint.y - self.src.y)
+          - (self.tgt.y - self.src.y) * (inPoint.x - self.src.x)
+    if d > .zero {
       return 1 // On Right
-    }else if d < 0 {
+    }else if d < .zero {
       return -1 // On Left
     }else{
       return 0 // Aligned
@@ -106,12 +98,12 @@ public struct CanariOrientedSegment : Equatable, Hashable, CustomStringConvertib
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func hasSameDirection (as inOther : CanariOrientedSegment) -> Bool {
-    let xAB = self.tgt.x.cuValue - self.src.x.cuValue
-    let yAB = self.tgt.y.cuValue - self.src.y.cuValue
-    let xCD = inOther.tgt.x.cuValue - inOther.src.x.cuValue
-    let yCD = inOther.tgt.y.cuValue - inOther.src.y.cuValue
+    let xAB = self.tgt.x - self.src.x
+    let yAB = self.tgt.y - self.src.y
+    let xCD = inOther.tgt.x - inOther.src.x
+    let yCD = inOther.tgt.y - inOther.src.y
     let p = xAB * yCD - yAB * xCD
-    return p == 0
+    return p == .zero
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -125,12 +117,12 @@ public struct CanariOrientedSegment : Equatable, Hashable, CustomStringConvertib
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func status (of inPoint : CanariPoint) -> PointStatus {
-    let xAP = (inPoint.x - self.src.x).cuValue
-    let yAP = (inPoint.y - self.src.y).cuValue
-    let xAB = (self.tgt.x - self.src.x).cuValue
-    let yAB = (self.tgt.y - self.src.y).cuValue
-    let h = Double (xAP * xAB + yAP * yAB) / Double (xAB * xAB + yAB * yAB)
-    let H = self.src + h * CanariPoint (x: .cu (xAB), y: .cu (yAB))
+    let xAP = inPoint.x - self.src.x
+    let yAP = inPoint.y - self.src.y
+    let xAB = self.tgt.x - self.src.x
+    let yAB = self.tgt.y - self.src.y
+    let h : Double =  (xAP * xAB + yAP * yAB) / (xAB * xAB + yAB * yAB)
+    let H = self.src + h * CanariPoint (x: xAB, y: yAB)
     let distance = inPoint.distance (to: H)
     return PointStatus (point: H, distance: distance, h: h)
   }
@@ -260,19 +252,23 @@ public struct CanariOrientedSegment : Equatable, Hashable, CustomStringConvertib
     let B = inAB.tgt
     let C = inCD.src
     let D = inCD.tgt
-    if A.x > D.x {
-      return .disjointOrConsecutive
-    }else if B.x < C.x {
-      return .disjointOrConsecutive
-    }else if A.y > D.y {
+//    if min (A.y, B.y) > max (C.y, D.y) {
+//      return .disjointOrConsecutive
+//    }else if max (A.y, B.y) < min (C.y, D.y) {
+//      return .disjointOrConsecutive
+    if A.y > D.y {
       return .disjointOrConsecutive
     }else if B.y < C.y {
+      return .disjointOrConsecutive
+    }else if min (A.x, B.x) > max (C.x, D.x) {
+      return .disjointOrConsecutive
+    }else if max (A.x, B.x) < min (C.x, D.x) {
       return .disjointOrConsecutive
     }else{
     //--- Segments are parallel ?
       let ABx = A.x - B.x
       let ABy = A.y - B.y
-      let d = ABx * (C.y - D.y) - ABy * (C.x - D.x)
+      let d : CanariArea = ABx * (C.y - D.y) - ABy * (C.x - D.x)
       if d == .zero { // Yes, parallel
       //--- Détecter si ils sont alignés
         let C_on_AB = ABx * (C.y - A.y) == ABy * (C.x - A.x) // true if C is on AB line

@@ -60,13 +60,11 @@ public struct CanariSimplePolygon {
       let v0 = self.vertices [i]
       let v1 = self.vertices [(i + 1) % self.vertices.count]
       if v0.y <= inP.y { // Traversée vers le haut
-        if (v1.y > inP.y) && (isLeft (v0, v1, inP) > 0) {
+        if v1.y > inP.y, isLeft (v0, v1, inP) > .zero {
           wn += 1
         }
-      }else{ // Traversée vers le bas
-        if (v1.y <= inP.y) && (isLeft(v0, v1, inP) < 0) {
-          wn -= 1
-        }
+      }else if v1.y <= inP.y, isLeft (v0, v1, inP) < .zero { // Traversée vers le bas
+        wn -= 1
       }
     }
     return wn
@@ -108,9 +106,8 @@ public struct CanariSimplePolygon {
 // Produit vectoriel (P0->P1) x (P0->P2)
 nonisolated private func isLeft (_ inP0 : CanariPoint,
                                  _ inP1 : CanariPoint,
-                                 _ inP2 : CanariPoint) -> Int {
-  return (inP1.x.cuValue - inP0.x.cuValue) * (inP2.y.cuValue - inP0.y.cuValue)
-       - (inP2.x.cuValue - inP0.x.cuValue) * (inP1.y.cuValue - inP0.y.cuValue)
+                                 _ inP2 : CanariPoint) -> CanariArea {
+  return (inP1.x - inP0.x) * (inP2.y - inP0.y) - (inP2.x - inP0.x) * (inP1.y - inP0.y)
 }
 
 //--------------------------------------------------------------------------------------------------

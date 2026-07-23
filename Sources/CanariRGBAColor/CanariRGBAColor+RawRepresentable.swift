@@ -20,7 +20,7 @@ extension CanariRGBAColor : RawRepresentable {
        let red = UInt8 (components[0]),
        let green = UInt8 (components[1]),
        let blue = UInt8 (components[2]),
-       let alpha = UInt8 (components[4]) {
+       let alpha = UInt8 (components[3]) {
       self.init (red: red, green: green, blue: blue, alpha: alpha)
     }else{
       return nil
