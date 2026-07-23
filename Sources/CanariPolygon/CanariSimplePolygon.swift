@@ -22,6 +22,17 @@ public struct CanariSimplePolygon {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public var segments : [CanariOrientedSegment] {
+    var result = [CanariOrientedSegment] ()
+    for i in 0 ..< self.vertices.count {
+      let s = CanariOrientedSegment(self.vertices [i], self.vertices [(i+1) % self.vertices.count])
+      result.append (s)
+    }
+    return result
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public func isVertex (point inP : CanariPoint) -> Bool {
     for p in self.vertices where p == inP {
       return true
