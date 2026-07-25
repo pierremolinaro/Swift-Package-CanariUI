@@ -22,18 +22,7 @@ public extension Double {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var str3fz : String {
-    var s = self.strf (3)
-    if s.contains (".") {
-      while s.last == "0" {
-        s.removeLast ()
-      }
-      if s.last == "." {
-        s.removeLast ()
-      }
-    }
-    return s
-  }
+  var str3g : String { self.strg (3) }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

@@ -73,13 +73,13 @@ public struct CanariOrientedSegment : Equatable, Hashable, CustomStringConvertib
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func angle_0_2π () -> Double {
-    var angle_rd = self.src.angle (to: self.tgt).radians
-    while angle_rd < 0.0 {
-      angle_rd += 2.0 * .pi
-    }
-    return angle_rd
-  }
+//  public func angle_0_2π () -> Double {
+//    var angle_rd = self.src.angle (to: self.tgt).radians
+//    while angle_rd < 0.0 {
+//      angle_rd += 2.0 * .pi
+//    }
+//    return angle_rd
+//  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
