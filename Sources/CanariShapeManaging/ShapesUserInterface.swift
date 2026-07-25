@@ -165,9 +165,9 @@ import Combine
   //MARK: Draw
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func draw (context ioContext : inout GraphicsContext,
-                    hoverUserLocationPoint inHoverUserLocationPoint : CanariPoint?,
-                    canvasScale inCanvasScale : Double) {
+  public func drawShapes (context ioContext : inout GraphicsContext,
+                          hoverUserLocationPoint inHoverUserLocationPoint : CanariPoint?,
+                          canvasScale inCanvasScale : Double) {
     enterTracing ("shapes.user.interface.draw") ; defer { exitTracing ("shapes.user.interface.draw") }
     ioContext.scale (by: inCanvasScale)
   //--- Draw shapes

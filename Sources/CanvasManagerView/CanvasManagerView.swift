@@ -371,7 +371,7 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
         self.mDrawBackGround (&context)
         context.scaleBy (x: 1.0 / self.mCanvasScale, y: 1.0 / self.mCanvasScale)
       //--- Shapes
-        self.mShapesUserInterface.draw (
+        self.mShapesUserInterface.drawShapes (
           context: &context,
           hoverUserLocationPoint: self.mUnalignedHoverUserLocation,
           canvasScale: self.mCanvasScale
