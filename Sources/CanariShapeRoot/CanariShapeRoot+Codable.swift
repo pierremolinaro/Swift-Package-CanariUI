@@ -26,7 +26,7 @@ extension CanariShapeRoot : Codable {
     let typeName = try container.decode (String.self, forKey: .type)
     if let type = dictionary [typeName] {
       let shape : any CanariShapeDecorationProtocol = try container.decode (type, forKey: .value)
-      self.mDecoration = shape as! any CanariShapeDecorationProtocol <ANCHOR, SHAPE_TYPES_DESCRIPTION>
+      self.mDecoration = shape as! any CanariShapeDecorationProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>
       let localOutlinePath = self.mDecoration.localOutlinePath
       self.mAnchor.setLocalOutline (localOutlinePath)
     }else{

@@ -7,21 +7,22 @@ import SwiftUI
 //--------------------------------------------------------------------------------------------------
 
 public final class CanariInspectorProxy <ANCHOR : CanariShapeAnchorProtocol,
+                                         DOCUMENT_SHAPES_DISPLAY_SETTINGS,
                                          SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private let mShapesUserInterface : ShapesUserInterface <ANCHOR,  SHAPE_TYPES_DESCRIPTION>
+  private let mShapesUserInterface : ShapesUserInterface <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  init (_ inShapesUserInterface : ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>) {
+  init (_ inShapesUserInterface : ShapesUserInterface <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>) {
     self.mShapesUserInterface = inShapesUserInterface
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @MainActor public subscript <T : CanariShapeDecorationProtocol <ANCHOR, SHAPE_TYPES_DESCRIPTION>, Value : Equatable> (bindingFor inKeyPath : WritableKeyPath <T, Value>) -> Binding <Value?> {
+  @MainActor public subscript <T : CanariShapeDecorationProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>, Value : Equatable> (bindingFor inKeyPath : WritableKeyPath <T, Value>) -> Binding <Value?> {
     let binding = Binding <Value?> (
       get: {
         var result : Value? = nil
@@ -56,7 +57,7 @@ public final class CanariInspectorProxy <ANCHOR : CanariShapeAnchorProtocol,
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func optValueOf <T : CanariShapeDecorationProtocol <ANCHOR, SHAPE_TYPES_DESCRIPTION>, Value : Equatable> (_ inKeyPath : KeyPath <T, Value>) -> Value? {
+  public func optValueOf <T : CanariShapeDecorationProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>, Value : Equatable> (_ inKeyPath : KeyPath <T, Value>) -> Value? {
     var result : Value? = nil
     for id in self.mShapesUserInterface.selection {
       if let v = self.mShapesUserInterface [shapeID: id]?.mDecoration as? T {
@@ -75,7 +76,7 @@ public final class CanariInspectorProxy <ANCHOR : CanariShapeAnchorProtocol,
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func setOf <T : CanariShapeDecorationProtocol <ANCHOR, SHAPE_TYPES_DESCRIPTION>, Value : Hashable> (_ inKeyPath : KeyPath <T, Value>) -> Set <Value> {
+  public func setOf <T : CanariShapeDecorationProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>, Value : Hashable> (_ inKeyPath : KeyPath <T, Value>) -> Set <Value> {
     var result = Set <Value> ()
     for id in self.mShapesUserInterface.selection {
       if let v = self.mShapesUserInterface [shapeID: id]?.mDecoration as? T {
@@ -88,34 +89,34 @@ public final class CanariInspectorProxy <ANCHOR : CanariShapeAnchorProtocol,
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func arrayOf <T : CanariShapeDecorationProtocol <ANCHOR, SHAPE_TYPES_DESCRIPTION>, Value : Hashable> (_ inKeyPath : KeyPath <T, Value>) -> [Value] {
+  public func arrayOf <T : CanariShapeDecorationProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>, Value : Hashable> (_ inKeyPath : KeyPath <T, Value>) -> [Value] {
     return Array (self.setOf (inKeyPath))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func setProperty <T : CanariShapeDecorationProtocol <ANCHOR, SHAPE_TYPES_DESCRIPTION>, Value> (_ inKeyPath : WritableKeyPath <T, Value>, _ inValue : Value) {
+  public func setProperty <T : CanariShapeDecorationProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>, Value> (_ inKeyPath : WritableKeyPath <T, Value>, _ inValue : Value) {
     for id in self.mShapesUserInterface.selection {
       if let shape = self.mShapesUserInterface [shapeID: id], var v = shape.mDecoration as? T {
         v [keyPath: inKeyPath] = inValue
-        self.mShapesUserInterface [shapeID: id] = CanariShapeRoot <ANCHOR, SHAPE_TYPES_DESCRIPTION> (shape.mAnchor, v)
+        self.mShapesUserInterface [shapeID: id] = CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> (shape.mAnchor, v)
       }
     }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func performUserInterfaceAction (_ inAction : (ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>) -> Void) {
+  public func performUserInterfaceAction (_ inAction : (ShapesUserInterface <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>) -> Void) {
     inAction (self.mShapesUserInterface)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func performAction <T : CanariShapeDecorationProtocol <ANCHOR, SHAPE_TYPES_DESCRIPTION> > (_ inAction : (inout T) -> Void) {
+  public func performAction <T : CanariShapeDecorationProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> > (_ inAction : (inout T) -> Void) {
     for id in self.mShapesUserInterface.selection {
       if let shape = self.mShapesUserInterface [shapeID: id], var decoration = shape.mDecoration as? T {
         inAction (&decoration)
- //       self.mShapesUserInterface [shapeID: id] = CanariShapeRoot <ANCHOR, SHAPE_TYPES_DESCRIPTION> (shape.mAnchor, s)
+ //       self.mShapesUserInterface [shapeID: id] = CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> (shape.mAnchor, s)
         self.mShapesUserInterface [shapeID: id]!.mDecoration = decoration
       }
     }

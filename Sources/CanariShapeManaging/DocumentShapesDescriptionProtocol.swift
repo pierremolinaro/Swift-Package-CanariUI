@@ -9,12 +9,12 @@ import SwiftUI
 public protocol DocumentShapesDescriptionProtocol {
 
   associatedtype ANCHOR : CanariShapeAnchorProtocol
-//  associatedtype DOCUMENT_SHAPES_DISPLAY_SETTINGS : CanariShapeDisplayProtocol
+  associatedtype DOCUMENT_SHAPES_DISPLAY_SETTINGS
   associatedtype SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  nonisolated static var shapeTypeArray : [(any CanariShapeDecorationProtocol <ANCHOR, SHAPE_TYPES_DESCRIPTION>.Type, String)] { get }
+  nonisolated static var shapeTypeArray : [(any CanariShapeDecorationProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>.Type, String)] { get }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

@@ -7,7 +7,7 @@ import SwiftUI
 //--------------------------------------------------------------------------------------------------
 
 public struct ShapeKnob <ANCHOR : CanariShapeAnchorProtocol,
-//                         DOCUMENT_SHAPES_DISPLAY_SETTINGS : CanariShapeDisplayProtocol,
+                         DOCUMENT_SHAPES_DISPLAY_SETTINGS,
                          SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -21,14 +21,14 @@ public struct ShapeKnob <ANCHOR : CanariShapeAnchorProtocol,
 
   private let localCenter : CanariPoint
   private let shape : Shape
-  let dragKnobAction : (inout CanariShapeRoot <ANCHOR, SHAPE_TYPES_DESCRIPTION>, CanariPoint, Bool) -> Void
-  let menu : ((ContextualMenuExecutor <ANCHOR, SHAPE_TYPES_DESCRIPTION>) -> any View)?
+  let dragKnobAction : (inout CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>, CanariPoint, Bool) -> Void
+  let menu : ((ContextualMenuExecutor <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>) -> any View)?
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (localCenter inCenter : CanariPoint,
-               dragAction inKnobDragAction : @escaping (inout CanariShapeRoot <ANCHOR, SHAPE_TYPES_DESCRIPTION>, CanariPoint, Bool) -> Void,
-               menu inMenu : ((ContextualMenuExecutor <ANCHOR, SHAPE_TYPES_DESCRIPTION>) -> any View)? = nil) {
+               dragAction inKnobDragAction : @escaping (inout CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>, CanariPoint, Bool) -> Void,
+               menu inMenu : ((ContextualMenuExecutor <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>) -> any View)? = nil) {
     self.localCenter = inCenter
     self.shape = .circle
     self.dragKnobAction = inKnobDragAction
@@ -37,8 +37,8 @@ public struct ShapeKnob <ANCHOR : CanariShapeAnchorProtocol,
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (dragAction inKnobDragAction : @escaping (inout CanariShapeRoot <ANCHOR, SHAPE_TYPES_DESCRIPTION>, CanariPoint, Bool) -> Void,
-               menu inMenu : ((ContextualMenuExecutor <ANCHOR, SHAPE_TYPES_DESCRIPTION>) -> any View)? = nil) {
+  public init (dragAction inKnobDragAction : @escaping (inout CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>, CanariPoint, Bool) -> Void,
+               menu inMenu : ((ContextualMenuExecutor <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>) -> any View)? = nil) {
     self.localCenter = .zero
     self.shape = .rect
     self.dragKnobAction = inKnobDragAction

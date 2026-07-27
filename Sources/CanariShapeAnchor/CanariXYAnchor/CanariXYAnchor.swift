@@ -295,7 +295,7 @@ public struct CanariXYAnchor : Sendable, CanariShapeAnchorProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @MainActor public static func anchorInspector <SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> (shapesUserInterface inShapesUserInterface : ShapesUserInterface <Self, SHAPE_TYPES_DESCRIPTION>) -> any View {
+  @MainActor public static func anchorInspector <DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> (shapesUserInterface inShapesUserInterface : ShapesUserInterface <Self, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>) -> any View {
     return InspectorOfCanariXYAnchor (shapesUserInterface: inShapesUserInterface)
   }
 

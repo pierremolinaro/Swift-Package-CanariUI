@@ -7,6 +7,7 @@ import SwiftUI
 //--------------------------------------------------------------------------------------------------
 
 struct MouseGesture_SelectionRectangle <ANCHOR : CanariShapeAnchorProtocol,
+                                        DOCUMENT_SHAPES_DISPLAY_SETTINGS,
                                         SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> : MouseGestureProtocol {
 
   let startSelectionSet : Set <UUID>
@@ -16,8 +17,8 @@ struct MouseGesture_SelectionRectangle <ANCHOR : CanariShapeAnchorProtocol,
   func onMouseDragged (geometry inGeometry : MouseGestureGeometryContext,
                        beginOrContinueUndoGrouping inBeginOrContinueUndoGrouping : () -> Void,
                        userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                       shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>,
-                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol <ANCHOR, SHAPE_TYPES_DESCRIPTION>)?) {
+                       shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>,
+                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>)?) {
   //--- Update selection rectangle
     let selectionRectangle = CanariRect ([inGeometry.unalignedUserStartLocation, inGeometry.unalignedUserCurrentLocation])
     ioUserSelectionRectangle = selectionRectangle
@@ -44,7 +45,7 @@ struct MouseGesture_SelectionRectangle <ANCHOR : CanariShapeAnchorProtocol,
 
   func onMouseUp (removeUndoGrouping inRemoveUndoGrouping : () -> Void,
                   userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                  shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>) {
+                  shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>) {
     ioUserSelectionRectangle = nil
   }
 

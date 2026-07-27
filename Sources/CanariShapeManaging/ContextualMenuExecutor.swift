@@ -7,16 +7,17 @@ import Foundation
 //--------------------------------------------------------------------------------------------------
 
 public final class ContextualMenuExecutor <ANCHOR : CanariShapeAnchorProtocol,
+                                           DOCUMENT_SHAPES_DISPLAY_SETTINGS,
                                            SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private let mShapesUserInterface : ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>
+  private let mShapesUserInterface : ShapesUserInterface <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>
   private let mShapeIndex : Int
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  init (_ inShapesUserInterface : ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>,
+  init (_ inShapesUserInterface : ShapesUserInterface <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>,
         _ inIndex : Int) {
     self.mShapesUserInterface = inShapesUserInterface
     self.mShapeIndex = inIndex
@@ -24,7 +25,7 @@ public final class ContextualMenuExecutor <ANCHOR : CanariShapeAnchorProtocol,
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func execute <T : CanariShapeDecorationProtocol <ANCHOR, SHAPE_TYPES_DESCRIPTION>> (_ inAction : (inout T) -> Void) {
+  public func execute <T : CanariShapeDecorationProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>> (_ inAction : (inout T) -> Void) {
     var shape = self.mShapesUserInterface [shapeIndex: self.mShapeIndex]
     if var decoration = shape.mDecoration as? T {
       inAction (&decoration)

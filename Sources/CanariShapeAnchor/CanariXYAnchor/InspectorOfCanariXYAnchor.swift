@@ -6,13 +6,13 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-struct InspectorOfCanariXYAnchor <SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> : View {
+struct InspectorOfCanariXYAnchor <DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> : View {
 
   typealias ANCHOR = CanariXYAnchor
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @State private var mShapesUserInterface : ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>
+  @State private var mShapesUserInterface : ShapesUserInterface <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>
   @AppStorage("angle.inspector.expanded") private var mAngleInspectorIsExpanded = true
   @AppStorage("scale.inspector.expanded") private var mScaleInspectorIsExpanded = true
   @AppStorage("bounding.rect.inspector.expanded") private var mBoundingRectInspectorIsExpanded = true
@@ -20,7 +20,7 @@ struct InspectorOfCanariXYAnchor <SHAPE_TYPES_DESCRIPTION : DocumentShapesDescri
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (shapesUserInterface inShapesUserInterface : ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>) {
+  public init (shapesUserInterface inShapesUserInterface : ShapesUserInterface <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>) {
     self.mShapesUserInterface = inShapesUserInterface
   }
 

@@ -7,7 +7,7 @@ import SwiftUI
 //--------------------------------------------------------------------------------------------------
 
 public struct CanariGroupShape <ANCHOR : CanariShapeAnchorProtocol,
-//                                DOCUMENT_SHAPES_DISPLAY_SETTINGS : CanariShapeDisplayProtocol,
+                                DOCUMENT_SHAPES_DISPLAY_SETTINGS,
                                 SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> : CanariShapeDecorationProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -23,7 +23,7 @@ public struct CanariGroupShape <ANCHOR : CanariShapeAnchorProtocol,
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   var mUnGroupIsEnabled : Bool
-  public let mArray : [CanariShapeRoot <ANCHOR, SHAPE_TYPES_DESCRIPTION>] // at 0: back, at count - 1: front
+  public let mArray : [CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>] // at 0: back, at count - 1: front
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -31,7 +31,7 @@ public struct CanariGroupShape <ANCHOR : CanariShapeAnchorProtocol,
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  init (zeroCenteredShapeArray inShapeArray : [CanariShapeRoot <ANCHOR, SHAPE_TYPES_DESCRIPTION>]) {
+  init (zeroCenteredShapeArray inShapeArray : [CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>]) {
     self.mUnGroupIsEnabled = true
     self.mArray = inShapeArray
   }
@@ -46,7 +46,7 @@ public struct CanariGroupShape <ANCHOR : CanariShapeAnchorProtocol,
 
   public init (from inDecoder : Decoder) throws {
     let container = try inDecoder.container (keyedBy: CodingKeys.self)
-    self.mArray = try container.decode ([CanariShapeRoot <ANCHOR, SHAPE_TYPES_DESCRIPTION>].self, forKey: .array)
+    self.mArray = try container.decode ([CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>].self, forKey: .array)
     self.mUnGroupIsEnabled = try container.decode (Bool.self, forKey: .unGroupIsEnabled)
   }
 
@@ -60,16 +60,16 @@ public struct CanariGroupShape <ANCHOR : CanariShapeAnchorProtocol,
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var shapeKnobs : [ShapeKnob <ANCHOR, SHAPE_TYPES_DESCRIPTION>] { [] }
+  public var shapeKnobs : [ShapeKnob <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>] { [] }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func contextualMenu (_ inExecutor : ContextualMenuExecutor <ANCHOR, SHAPE_TYPES_DESCRIPTION>) -> any View { EmptyView () }
+  public func contextualMenu (_ inExecutor : ContextualMenuExecutor <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>) -> any View { EmptyView () }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func isEqual (to inOther : any CanariShapeDecorationProtocol <ANCHOR, SHAPE_TYPES_DESCRIPTION>) -> Bool {
-    if let other = inOther as? CanariGroupShape <ANCHOR, SHAPE_TYPES_DESCRIPTION> {
+  public func isEqual (to inOther : any CanariShapeDecorationProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>) -> Bool {
+    if let other = inOther as? CanariGroupShape <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> {
       return (self.mUnGroupIsEnabled == other.mUnGroupIsEnabled)
           && (self.mArray == other.mArray)
     }else{
@@ -81,14 +81,14 @@ public struct CanariGroupShape <ANCHOR : CanariShapeAnchorProtocol,
   //MARK: duplicated
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func duplicated () -> (any CanariShapeDecorationProtocol <ANCHOR, SHAPE_TYPES_DESCRIPTION>)? {
+  public func duplicated () -> (any CanariShapeDecorationProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>)? {
     CanariGroupShape (self.mUnGroupIsEnabled, self.mArray)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private init (_ inUnGroupIsEnabled : Bool,
-                _ inArray : [CanariShapeRoot <ANCHOR, SHAPE_TYPES_DESCRIPTION>]) {
+                _ inArray : [CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>]) {
     self.mUnGroupIsEnabled = inUnGroupIsEnabled
     self.mArray = inArray
   }
@@ -105,7 +105,7 @@ public struct CanariGroupShape <ANCHOR : CanariShapeAnchorProtocol,
 
   public func drawShape (context ioContext : inout GraphicsContext,
                          anchor inAnchor : ANCHOR,
-//                         documentShapeDisplaySettings inDisplaySettings : DOCUMENT_SHAPES_DISPLAY_SETTINGS,
+                         documentShapeDisplaySettings inDisplaySettings : DOCUMENT_SHAPES_DISPLAY_SETTINGS,
                          drawingScale inDrawingScale : Double,
                          hovered inHovered : Bool,
                          selected inSelected : Bool,
@@ -118,7 +118,7 @@ public struct CanariGroupShape <ANCHOR : CanariShapeAnchorProtocol,
         shape.mDecoration.drawShape (
           context: &context,
           anchor: shape.mAnchor,
-//          documentShapeDisplaySettings: inDisplaySettings,
+          documentShapeDisplaySettings: inDisplaySettings,
           drawingScale: decorationDrawingScale,
           hovered: inHovered,
           selected: inSelected,
@@ -152,7 +152,7 @@ public struct CanariGroupShape <ANCHOR : CanariShapeAnchorProtocol,
   //MARK: ungrouped array
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func ungroupedArray (_ inGroupAnchor : ANCHOR) -> [CanariShapeRoot <ANCHOR, SHAPE_TYPES_DESCRIPTION>] {
+  func ungroupedArray (_ inGroupAnchor : ANCHOR) -> [CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>] {
     return self.mArray.map {
       var anchor = $0.mAnchor
       anchor.transformToGlobal (inGroupAnchor)
@@ -166,8 +166,8 @@ public struct CanariGroupShape <ANCHOR : CanariShapeAnchorProtocol,
 
   public static var inspectorTitle : String { "Group" }
 
-  public static func inspectorView (proxy inProxy : CanariInspectorProxy <ANCHOR, SHAPE_TYPES_DESCRIPTION>) -> any View {
-    GroupShapeInspectorView <ANCHOR, SHAPE_TYPES_DESCRIPTION> (proxy: inProxy)
+  public static func inspectorView (proxy inProxy : CanariInspectorProxy <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>) -> any View {
+    GroupShapeInspectorView <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> (proxy: inProxy)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -177,19 +177,19 @@ public struct CanariGroupShape <ANCHOR : CanariShapeAnchorProtocol,
 //--------------------------------------------------------------------------------------------------
 
 fileprivate struct GroupShapeInspectorView <ANCHOR : CanariShapeAnchorProtocol,
-//                                            DOCUMENT_SHAPES_DISPLAY_SETTINGS : CanariShapeDisplayProtocol,
+                                            DOCUMENT_SHAPES_DISPLAY_SETTINGS,
                                             SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> : View {
 
-  typealias T = CanariGroupShape <ANCHOR, SHAPE_TYPES_DESCRIPTION>
+  typealias T = CanariGroupShape <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @State private var mProxy : CanariInspectorProxy <ANCHOR, SHAPE_TYPES_DESCRIPTION>
+  @State private var mProxy : CanariInspectorProxy <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>
   @AppStorage("group.ungrouping.inspector.is.expanded") private var mUngroupInspectorIsExpanded = false
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  init (proxy inProxy : CanariInspectorProxy <ANCHOR, SHAPE_TYPES_DESCRIPTION>) {
+  init (proxy inProxy : CanariInspectorProxy <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>) {
     self.mProxy = inProxy
   }
 

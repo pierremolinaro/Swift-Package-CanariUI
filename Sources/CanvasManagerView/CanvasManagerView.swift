@@ -14,7 +14,7 @@ fileprivate let ANCHOR_FOR_INITIAL_SCROLL = "bottom.left.for.initial.scroll"
 //--------------------------------------------------------------------------------------------------
 
 public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
-//                                 DOCUMENT_SHAPES_DISPLAY_SETTINGS,
+                                 DOCUMENT_SHAPES_DISPLAY_SETTINGS,
                                  SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -29,7 +29,7 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
   private let mContext : CanvasManagerViewContext
   private let mContentSizeWithMargins : CanariSize
   private let mDroppedFilesHandler : (([Data], CanariPoint) -> Void)?
-//  private let mDocumentShapesDisplaySettings : DOCUMENT_SHAPES_DISPLAY_SETTINGS
+  private let mDocumentShapesDisplaySettings : DOCUMENT_SHAPES_DISPLAY_SETTINGS
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -45,7 +45,7 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @State private var mShapesUserInterface : ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>
+  @State private var mShapesUserInterface : ShapesUserInterface <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>
   @Environment(\.undoManager) private var undoManager
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -53,7 +53,7 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
   public init (context inContext : CanvasManagerViewContext,
         canvasScale inScale : Binding <Double>,
         alignedHoverUserLocation inAlignedHoverUserLocation : Binding <CanariPoint?>,
-        shapesUserInterface inShapesUserInterface : ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>,
+        shapesUserInterface inShapesUserInterface : ShapesUserInterface <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>,
         drawBackGround inDrawBackGround : @escaping (_ ioContext : inout GraphicsContext) -> Void,
         drawOverlay inDrawOverlay : @escaping (_ ioContext : inout GraphicsContext) -> Void,
         backgroundViewBuilder inBackgroundViewBuilder : @escaping (BackgroundViewContext) -> any View,
@@ -62,7 +62,7 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
         rightVerticalRulerViewBuilder inRightVerticalRulerViewBuilder : @escaping (VerticalRulerViewContext) -> any View,
         bottomHorizontalRulerViewBuilder inBottomHorizontalRulerViewBuilder : @escaping (HorizontalRulerViewContext) -> any View,
         droppedFilesHandler inDroppedFilesHandler : (([Data], CanariPoint) -> Void)?,
-//        documentShapesDisplaySettings inDocumentShapesDisplaySettings : DOCUMENT_SHAPES_DISPLAY_SETTINGS,
+        documentShapesDisplaySettings inDocumentShapesDisplaySettings : DOCUMENT_SHAPES_DISPLAY_SETTINGS,
         centerOfVisibleRectUserLocation inCenterOfVisibleRectUserLocation : Binding <CanariPoint>) {
     self._mCanvasScale = inScale
     self._mAlignedHoverUserLocation = inAlignedHoverUserLocation
@@ -81,7 +81,7 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
     self.mBottomHorizontalRulerViewBuilder = inBottomHorizontalRulerViewBuilder
     self.mTopHorizontalRulerViewBuilder = inTopHorizontalRulerViewBuilder
     self._mCenterOfVisibleRectUserLocation = inCenterOfVisibleRectUserLocation
-//    self.mDocumentShapesDisplaySettings = inDocumentShapesDisplaySettings
+    self.mDocumentShapesDisplaySettings = inDocumentShapesDisplaySettings
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -377,7 +377,7 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
       //--- Shapes
         self.mShapesUserInterface.drawShapes (
           context: &context,
-//          documentShapeDisplaySettings: self.mDocumentShapesDisplaySettings,
+          documentShapeDisplaySettings: self.mDocumentShapesDisplaySettings,
           hoverUserLocationPoint: self.mUnalignedHoverUserLocation,
           canvasScale: self.mCanvasScale
         )

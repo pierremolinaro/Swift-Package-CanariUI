@@ -7,20 +7,21 @@ import SwiftUI
 //--------------------------------------------------------------------------------------------------
 
 struct MouseGesture_DragKnob <ANCHOR : CanariShapeAnchorProtocol,
+                              DOCUMENT_SHAPES_DISPLAY_SETTINGS,
                               SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> : MouseGestureProtocol {
 
   let alignedCurrentPoint : CanariPoint
   let optionKeyInitiallyOn : Bool
   let shapeID : UUID
-  let dragKnobAction : (inout CanariShapeRoot <ANCHOR, SHAPE_TYPES_DESCRIPTION>, CanariPoint, Bool) -> Void
+  let dragKnobAction : (inout CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>, CanariPoint, Bool) -> Void
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func onMouseDragged (geometry inGeometry : MouseGestureGeometryContext,
                        beginOrContinueUndoGrouping inBeginOrContinueUndoGrouping : () -> Void,
                        userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                       shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>,
-                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<ANCHOR, SHAPE_TYPES_DESCRIPTION>)?) {
+                       shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>,
+                       optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>)?) {
     let translation = inGeometry.alignedUserCurrentLocation - self.alignedCurrentPoint
     if translation != .zero {
       inBeginOrContinueUndoGrouping ()
@@ -46,7 +47,7 @@ struct MouseGesture_DragKnob <ANCHOR : CanariShapeAnchorProtocol,
 
   func onMouseUp (removeUndoGrouping inRemoveUndoGrouping : () -> Void,
                   userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
-                  shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>) {
+                  shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>) {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
