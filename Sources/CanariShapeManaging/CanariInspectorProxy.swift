@@ -11,7 +11,7 @@ public final class CanariInspectorProxy <ANCHOR : CanariShapeAnchorProtocol,
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private let mShapesUserInterface : ShapesUserInterface <ANCHOR, SHAPE_TYPES_DESCRIPTION>
+  private let mShapesUserInterface : ShapesUserInterface <ANCHOR,  SHAPE_TYPES_DESCRIPTION>
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

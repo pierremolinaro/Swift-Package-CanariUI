@@ -7,6 +7,7 @@ import SwiftUI
 //--------------------------------------------------------------------------------------------------
 
 public struct CanariGroupShape <ANCHOR : CanariShapeAnchorProtocol,
+//                                DOCUMENT_SHAPES_DISPLAY_SETTINGS : CanariShapeDisplayProtocol,
                                 SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> : CanariShapeDecorationProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -104,6 +105,7 @@ public struct CanariGroupShape <ANCHOR : CanariShapeAnchorProtocol,
 
   public func drawShape (context ioContext : inout GraphicsContext,
                          anchor inAnchor : ANCHOR,
+//                         documentShapeDisplaySettings inDisplaySettings : DOCUMENT_SHAPES_DISPLAY_SETTINGS,
                          drawingScale inDrawingScale : Double,
                          hovered inHovered : Bool,
                          selected inSelected : Bool,
@@ -116,33 +118,13 @@ public struct CanariGroupShape <ANCHOR : CanariShapeAnchorProtocol,
         shape.mDecoration.drawShape (
           context: &context,
           anchor: shape.mAnchor,
+//          documentShapeDisplaySettings: inDisplaySettings,
           drawingScale: decorationDrawingScale,
           hovered: inHovered,
           selected: inSelected,
           groupLevel: inGroupLevel
         )
       }
-//      shape.mAnchor.drawShapeInLocalCoordinates (
-//        &ioContext,
-//        shape.mDecoration,
-//        drawingScale: inDrawingScale,
-//        hovered: inHovered,
-//        selected: inSelected,
-//        groupLevel: inGroupLevel
-//      )
-//      ioContext.translate (by: shape.mAnchor.mPoint)
-//      ioContext.rotate (by: shape.mAnchor.mAngle)
-//      ioContext.scale (by: shape.mAnchor.mScale, horizontalFlip: shape.mAnchor.mHorizontalFlip)
-//      shape.mDecoration.drawShape (
-//        context: &ioContext,
-//        canvasScale: inCanvasScale * shape.mAnchor.mScale,
-//        hovered: inHovered,
-//        selected: inSelected,
-//        groupLevel: inGroupLevel
-//      )
-//      ioContext.scale (by: 1.0 / shape.mAnchor.mScale, horizontalFlip: shape.mAnchor.mHorizontalFlip)
-//      ioContext.rotate (by: -shape.mAnchor.mAngle)
-//      ioContext.translate (by: -shape.mAnchor.mPoint)
     }
     if inSelected || inHovered, inGroupLevel == 0 {
       inAnchor.withLocalBoundingRect {
@@ -195,6 +177,7 @@ public struct CanariGroupShape <ANCHOR : CanariShapeAnchorProtocol,
 //--------------------------------------------------------------------------------------------------
 
 fileprivate struct GroupShapeInspectorView <ANCHOR : CanariShapeAnchorProtocol,
+//                                            DOCUMENT_SHAPES_DISPLAY_SETTINGS : CanariShapeDisplayProtocol,
                                             SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> : View {
 
   typealias T = CanariGroupShape <ANCHOR, SHAPE_TYPES_DESCRIPTION>

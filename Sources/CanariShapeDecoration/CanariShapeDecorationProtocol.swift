@@ -19,6 +19,7 @@ public protocol CanariShapeDecorationProtocol <ANCHOR, SHAPE_TYPES_DESCRIPTION> 
 
   func drawShape (context ioContext : inout GraphicsContext,
                   anchor inAnchor : ANCHOR,
+//                  documentShapeDisplaySettings inDisplaySettings : DOCUMENT_SHAPES_DISPLAY_SETTINGS,
                   drawingScale inDrawingScale : Double,
                   hovered inHovered : Bool,
                   selected inSelected : Bool,

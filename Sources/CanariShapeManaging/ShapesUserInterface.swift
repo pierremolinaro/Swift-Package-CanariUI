@@ -8,6 +8,7 @@ import Combine
 //--------------------------------------------------------------------------------------------------
 
 @Observable open class ShapesUserInterface <ANCHOR : CanariShapeAnchorProtocol,
+//                                            DOCUMENT_SHAPES_DISPLAY_SETTINGS : CanariShapeDisplayProtocol,
                                             SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> : MenuCommands {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -166,6 +167,7 @@ import Combine
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func drawShapes (context ioContext : inout GraphicsContext,
+//                          documentShapeDisplaySettings inDisplaySettings : DOCUMENT_SHAPES_DISPLAY_SETTINGS,
                           hoverUserLocationPoint inHoverUserLocationPoint : CanariPoint?,
                           canvasScale inCanvasScale : Double) {
     enterTracing ("shapes.user.interface.draw") ; defer { exitTracing ("shapes.user.interface.draw") }
@@ -190,6 +192,7 @@ import Combine
         shape.mDecoration.drawShape (
           context: &context,
           anchor: shape.mAnchor,
+//          documentShapeDisplaySettings: inDisplaySettings,
           drawingScale: decorationDrawingScale,
           hovered: hovered,
           selected: selected,
@@ -205,39 +208,6 @@ import Combine
           )
         }
       }
-//      ioContext.translate (by: shape.mAnchor.mPoint)
-//      ioContext.rotate (by: shape.mAnchor.mAngle)
-//      ioContext.scale (by: shape.mAnchor.mScale, horizontalFlip: shape.mAnchor.mHorizontalFlip)
-//      let scale = inCanvasScale * shape.mAnchor.mScale
-//      shape.mAnchor.withLocalOutline {
-//        self.drawShapesBackground (
-//          context: &ioContext,
-//          drawingScale: scale,
-//          hovered: hovered,
-//          selected : selected,
-//          localOutline: $0
-//        )
-//      }
-//      shape.mDecoration.drawShape (
-//        context: &ioContext,
-//        anchor: shape.mAnchor,
-//        drawingScale: scale,
-//        hovered: hovered,
-//        selected: selected,
-//        groupLevel: 0
-//      )
-//      shape.mAnchor.withLocalOutline {
-//        self.drawShapesForeground (
-//          context: &ioContext,
-//          drawingScale: scale,
-//          hovered: hovered,
-//          selected : selected,
-//          localOutline: $0
-//        )
-//      }
-//      ioContext.scale (by: 1.0 / shape.mAnchor.mScale, horizontalFlip: shape.mAnchor.mHorizontalFlip)
-//      ioContext.rotate (by: -shape.mAnchor.mAngle)
-//      ioContext.translate (by: -shape.mAnchor.mPoint)
     }
   //--- Get alignment points
     var selectedObjetsAlignmentPoints = Set <CanariPoint> ()

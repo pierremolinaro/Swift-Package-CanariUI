@@ -7,6 +7,7 @@ import SwiftUI
 //--------------------------------------------------------------------------------------------------
 
 public nonisolated struct CanariShapeRoot <ANCHOR : CanariShapeAnchorProtocol,
+//                                           DOCUMENT_SHAPES_DISPLAY_SETTINGS : CanariShapeDisplayProtocol,
                                            SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> : Sendable, Identifiable {
 
   public let id = UUID () // Identifiable
