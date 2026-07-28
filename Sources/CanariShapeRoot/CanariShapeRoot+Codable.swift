@@ -18,8 +18,8 @@ extension CanariShapeRoot : Codable {
 
   nonisolated public init (from inDecoder : Decoder) throws {
     var dictionary : [String : any CanariShapeDecorationProtocol.Type] = [:]
-    for (type, name) : (any CanariShapeDecorationProtocol.Type, String) in SHAPE_TYPES_DESCRIPTION.shapeTypeArray {
-      dictionary [name] = type
+    for (shapeType, typeNameInDocument, _) in SHAPE_TYPES_DESCRIPTION.shapeTypeArray {
+      dictionary [typeNameInDocument] = shapeType
     }
     let container = try inDecoder.container (keyedBy: CodingKeys.self)
     self.mAnchor = try container.decode (ANCHOR.self, forKey: .oo)

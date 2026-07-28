@@ -286,7 +286,7 @@ import Combine
   public func hoverTracking (at inPoint : CanariPoint) {
     enterTracing ("shapes.user.interface.hover.tracking") ; defer { exitTracing ("shapes.user.interface.hover.tracking") }
     for shape in self.shapeArray.reversed () {
-      if shape.mAnchor.localOutline (containsLocalPointForMouseGesture: shape.mAnchor.globalToLocal (inPoint)) {
+      if shape.mAnchor.outlineContainsGlobalPointForMouseGesture (inPoint) {
         self.mHoveredObject = shape.id
         return
       }
@@ -353,7 +353,7 @@ import Combine
 
     var shapeUnderMouseID : UUID? = nil
     for shape in self.shapeArray.reversed () {
-      if shape.mAnchor.localOutline (containsLocalPointForMouseGesture: shape.mAnchor.globalToLocal (inGeometry.unalignedUserStartLocation)) {
+      if shape.mAnchor.outlineContainsGlobalPointForMouseGesture (inGeometry.unalignedUserStartLocation) {
         shapeUnderMouseID = shape.id
         break
       }
@@ -413,7 +413,7 @@ import Combine
   private func mouseDown_shiftKey (geometry inGeometry : MouseGestureGeometryContext) -> any MouseGestureProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> {
     var shapeUnderMouseID : UUID? = nil
     for shape in self.shapeArray.reversed () {
-      if shape.mAnchor.localOutline (containsLocalPointForMouseGesture:shape.mAnchor.globalToLocal (inGeometry.unalignedUserStartLocation)) {
+      if shape.mAnchor.outlineContainsGlobalPointForMouseGesture (inGeometry.unalignedUserStartLocation) {
         shapeUnderMouseID = shape.id
         break
       }
@@ -450,14 +450,14 @@ import Combine
     }
   //--- Mouse down in a selected object ?
     for shape in self.shapeArray.reversed () {
-      if self.mSelection.contains (shape.id), shape.mAnchor.localOutline (containsLocalPointForMouseGesture:shape.mAnchor.globalToLocal (inGeometry.unalignedUserStartLocation)) {
+      if self.mSelection.contains (shape.id), shape.mAnchor.outlineContainsGlobalPointForMouseGesture (inGeometry.unalignedUserStartLocation) {
         return MouseGesture_DragSelection <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
       }
     }
   //--- Mouse down in a non selected object ?
     for shape in self.shapeArray.reversed () {
-      let localPoint = shape.mAnchor.globalToLocal (inGeometry.unalignedUserStartLocation)
-      if shape.mAnchor.localOutline (containsLocalPointForMouseGesture: localPoint) {
+//      let localPoint = shape.mAnchor.globalToLocal (inGeometry.unalignedUserStartLocation)
+      if shape.mAnchor.outlineContainsGlobalPointForMouseGesture (inGeometry.unalignedUserStartLocation) {
         self.mSelection = [shape.id]
         return MouseGesture_DragSelection <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
       }
@@ -488,7 +488,7 @@ import Combine
   //--- CMD + Mouse down in a selected object ?
     for idx in (0 ..< self.mShapeArrayManager.count).reversed () {
       let shape = self.mShapeArrayManager [shapeIndex: idx]
-      if self.mSelection.contains (shape.id), shape.mAnchor.localOutline (containsLocalPointForMouseGesture: shape.mAnchor.globalToLocal (inUnalignedPoint)) {
+      if self.mSelection.contains (shape.id), shape.mAnchor.outlineContainsGlobalPointForMouseGesture (inUnalignedPoint) {
         return shape.mDecoration.contextualMenu (ContextualMenuExecutor (self, idx))
       }
     }
@@ -825,7 +825,9 @@ import Combine
         VStack (spacing: 1) {
           Text (type.inspectorTitle).bold ()
           ScrollView (.vertical) {
-            AnyView (ANCHOR.anchorInspector (shapesUserInterface: self))
+            if SHAPE_TYPES_DESCRIPTION.anchorInspectorIsDisplayed (type) {
+              AnyView (ANCHOR.anchorInspector (shapesUserInterface: self))
+            }
             AnyView (type.inspectorView (proxy: CanariInspectorProxy (self)).id (self.mSelection))
           }
         }.padding (.leading, 8)
@@ -854,6 +856,24 @@ import Combine
     }
     return result
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// § private func anchorIsDisplayed () -> (any CanariShapeDecorationProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>.Type)? {
+//    var result : (any CanariShapeDecorationProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>.Type)? = nil
+//    for id in self.mSelection {
+//      if let shape = self.mShapeArrayManager [shapeID: id] {
+//        if let r = result {
+//          if r != type (of: shape.mDecoration) {
+//            return nil
+//          }
+//        }else{
+//          result = type (of: shape.mDecoration)
+//        }
+//      }
+//    }
+//    return result
+//  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

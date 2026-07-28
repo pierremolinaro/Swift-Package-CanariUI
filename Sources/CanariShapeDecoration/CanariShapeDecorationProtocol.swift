@@ -62,6 +62,8 @@ public protocol CanariShapeDecorationProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_S
 
   @MainActor static var inspectorTitle : String { get }
 
+// § @MainActor static var anchorIsDisplayed : String { get }
+
   @MainActor static func inspectorView (proxy inProxy : CanariInspectorProxy <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>) -> any View
 
  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

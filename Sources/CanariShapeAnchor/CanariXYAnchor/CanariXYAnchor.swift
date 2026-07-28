@@ -74,12 +74,17 @@ public struct CanariXYAnchor : Sendable, CanariShapeAnchorProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func localOutline (containsLocalPointForMouseGesture inLocalPoint : CanariPoint) -> Bool {
-  //--- § À optimiser
-    var originCenteredLocalOutline = self.mOriginCenteredLocalOutline
-    let stroked = originCenteredLocalOutline.stroked (with: .px (1.0))
-    originCenteredLocalOutline.unionInPlaceUsingNonZeroRule (stroked)
-    return originCenteredLocalOutline.containsUsingNonZeroRule (inLocalPoint)
+//  public func localOutline (containsLocalPointForMouseGesture inLocalPoint : CanariPoint) -> Bool {
+//  //--- § À optimiser
+//    var originCenteredLocalOutline = self.mOriginCenteredLocalOutline
+//    let stroked = originCenteredLocalOutline.stroked (with: .px (1.0))
+//    originCenteredLocalOutline.unionInPlaceUsingNonZeroRule (stroked)
+//    return originCenteredLocalOutline.containsUsingNonZeroRule (inLocalPoint)
+//  }
+
+  public func outlineContainsGlobalPointForMouseGesture (_ inGlobalPoint : CanariPoint) -> Bool {
+    let localPoint = self.globalToLocal (inGlobalPoint)
+    return self.mOriginCenteredLocalOutline.containsUsingNonZeroRule (localPoint)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -482,10 +482,17 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
   //MARK: Mouse Down
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private func mouseDownOrMouseDragged (_ inGeometry : GeometryProxy, _ inDragGestureValue : DragGesture.Value) {
-    let unalignedStart = self.unalignedUserPoint (inGeometry, fromLocationInContentView: inDragGestureValue.startLocation)
+  private func mouseDownOrMouseDragged (_ inGeometry : GeometryProxy,
+                                        _ inDragGestureValue : DragGesture.Value) {
+    let unalignedStart = self.unalignedUserPoint (
+      inGeometry,
+      fromLocationInContentView: inDragGestureValue.startLocation
+    )
     let alignedStart = unalignedStart.aligning (to: self.mContext.magneticGrid)
-    let unalignedCurrent = self.unalignedUserPoint (inGeometry, fromLocationInContentView: inDragGestureValue.location)
+    let unalignedCurrent = self.unalignedUserPoint (
+      inGeometry,
+      fromLocationInContentView: inDragGestureValue.location
+    )
     let alignedCurrent = unalignedCurrent.aligning (to: self.mContext.magneticGrid)
     self.mAlignedHoverUserLocation = alignedCurrent
     self.mUnalignedHoverUserLocation = unalignedCurrent

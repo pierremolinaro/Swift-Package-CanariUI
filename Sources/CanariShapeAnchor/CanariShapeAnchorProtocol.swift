@@ -46,7 +46,7 @@ public protocol CanariShapeAnchorProtocol : Sendable, Codable, Equatable {
 
   func withLocalOutline (action inAction : (CanariPath) -> Void)
 
-  func localOutline (containsLocalPointForMouseGesture inLocalPoint : CanariPoint) -> Bool
+  func outlineContainsGlobalPointForMouseGesture (_ inGlobalPoint : CanariPoint) -> Bool
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Translation

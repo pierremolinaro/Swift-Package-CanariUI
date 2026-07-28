@@ -56,6 +56,7 @@ public struct CanariScaledOrientedAnchor : Sendable, CanariShapeAnchorProtocol {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private var mOriginCenteredLocalOutline : CanariPath
+  private var mOriginCenteredLocalExtendedOutline : CanariPath // For mouse gesture
   private var mOriginCenteredLocalBoundingRect : CanariRect
   private var mOriginCenteredGlobalOutlineAndBoundingRect : CanariPathWithBoundingRect
 
@@ -70,6 +71,7 @@ public struct CanariScaledOrientedAnchor : Sendable, CanariShapeAnchorProtocol {
     self.mScale = inScale
     self.mHorizontalFlip = inHorizontalFlip
     self.mOriginCenteredLocalOutline = CanariPath ()
+    self.mOriginCenteredLocalExtendedOutline = CanariPath ()
     self.mOriginCenteredLocalBoundingRect = CanariRect ()
     self.mOriginCenteredGlobalOutlineAndBoundingRect = CanariPathWithBoundingRect ()
     self.computeAffinities ()
@@ -85,6 +87,9 @@ public struct CanariScaledOrientedAnchor : Sendable, CanariShapeAnchorProtocol {
 
   public mutating func setLocalOutline (_ inLocalOutLine : CanariPath) {
     self.mOriginCenteredLocalOutline = inLocalOutLine
+    self.mOriginCenteredLocalExtendedOutline = inLocalOutLine
+    let stroked = inLocalOutLine.stroked (with: .px (4.0))
+    self.mOriginCenteredLocalExtendedOutline.unionInPlaceUsingNonZeroRule (stroked)
     self.mOriginCenteredLocalBoundingRect = inLocalOutLine.boundingRect
     self.computeOriginCenteredGlobalOutlineAndBoundingRect ()
   }
@@ -116,12 +121,13 @@ public struct CanariScaledOrientedAnchor : Sendable, CanariShapeAnchorProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func localOutline (containsLocalPointForMouseGesture inLocalPoint : CanariPoint) -> Bool {
-    return self.mOriginCenteredLocalOutline.containsUsingNonZeroRule (inLocalPoint)
+  public func outlineContainsGlobalPointForMouseGesture (_ inGlobalPoint : CanariPoint) -> Bool {
+    let localPoint = self.globalToLocal (inGlobalPoint)
 //    var originCenteredLocalOutline = self.mOriginCenteredLocalOutline
 //    let stroked = originCenteredLocalOutline.stroked (with: .px (1.0))
 //    originCenteredLocalOutline.unionInPlaceUsingNonZeroRule (stroked)
-//    return originCenteredLocalOutline.containsUsingNonZeroRule (inLocalPoint)
+//    return originCenteredLocalOutline.containsUsingNonZeroRule (localPoint)
+    return self.mOriginCenteredLocalExtendedOutline.containsUsingNonZeroRule (localPoint)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
