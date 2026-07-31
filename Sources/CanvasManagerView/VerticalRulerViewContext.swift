@@ -11,6 +11,8 @@ public struct VerticalRulerViewContext {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public let contentHeight : CanariLength
+  public let visibleYmin : CanariLength
+  public let visibleYmax : CanariLength
   public let rulerSize : CanariSize
   public let scale : Double
   public let hoverLocationY : CanariLength?
@@ -21,6 +23,8 @@ public struct VerticalRulerViewContext {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (contentHeight: CanariLength,
+               visibleYmin : CanariLength,
+               visibleYmax : CanariLength,
                rulerSize: CanariSize,
                scale: Double,
                hoverLocationY: CanariLength?,
@@ -28,6 +32,8 @@ public struct VerticalRulerViewContext {
                originOffsetY: CanariLength,
                bottomMargin: CanariLength) {
     self.contentHeight = contentHeight
+    self.visibleYmin = visibleYmin
+    self.visibleYmax = visibleYmax
     self.rulerSize = rulerSize
     self.scale = scale
     self.hoverLocationY = hoverLocationY

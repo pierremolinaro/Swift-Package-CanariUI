@@ -26,14 +26,11 @@ public struct LeftVerticalRulerView_cm : View {
     var xMMArray = [CanariLength] ()
     var x5MMArray = [CanariLength] ()
     if self.mContext.rulerSize.width > .zero {
-  //    print ("\(inContentHeight), \(inRulerSize.height), \(inScrollY)")
       let startY_mm = Int ((inContext.contentHeight - inContext.bottomMargin - inContext.scrollY - (inContext.rulerSize.height + inContext.originOffsetY) / inContext.scale).mmValue)
       var y = (inContext.contentHeight - inContext.bottomMargin - CanariLength.mm (startY_mm) - inContext.scrollY) * inContext.scale + inContext.originOffsetY
       var idx = startY_mm
-//      var s = "\(startY_mm) mm :"
       while y >= .zero {
         if (idx % 10) == 0 {
-//          s += " \(idx / 10)"
           cmArray.append (IndexAndY (idx: idx / 10, y: y))
         }else if (idx % 5) == 0 {
           x5MMArray.append (y)
@@ -43,7 +40,6 @@ public struct LeftVerticalRulerView_cm : View {
         y -= .mm (1) * inContext.scale
         idx += 1
       }
-//      print (s)
     }
     self.array_cm = cmArray
     self.array_5mm = x5MMArray
@@ -100,8 +96,16 @@ public struct LeftVerticalRulerView_cm : View {
         }
       }
       .overlay {
-        ForEach (self.array_cm.dropLast ().dropFirst (), id: \.self) { indexAndY in
-          if (self.mContext.scale > 0.5) || (indexAndY.idx % 2 == 0) {
+        ForEach (self.array_cm, id: \.self) { indexAndY in
+          if self.mContext.scale > 0.5 {
+            Text ("\(indexAndY.idx)").font (.system (size: self.mContext.rulerSize.width.pxValue * 0.4))
+            .frame (maxWidth: .infinity, alignment: .trailing)
+            .position (x: .px (-1), y: indexAndY.y)
+          }else if self.mContext.scale > 0.25, indexAndY.idx % 2 == 0 {
+            Text ("\(indexAndY.idx)").font (.system (size: self.mContext.rulerSize.width.pxValue * 0.4))
+            .frame (maxWidth: .infinity, alignment: .trailing)
+            .position (x: .px (-1), y: indexAndY.y)
+          }else if indexAndY.idx % 4 == 0 {
             Text ("\(indexAndY.idx)").font (.system (size: self.mContext.rulerSize.width.pxValue * 0.4))
             .frame (maxWidth: .infinity, alignment: .trailing)
             .position (x: .px (-1), y: indexAndY.y)

@@ -10,8 +10,8 @@ public extension ScrollView {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @ViewBuilder func onScrollPositionChange (_ inScrollPositionBinding : Binding <CanariPoint>,
-                                            _ inContentZoom : Double) -> some View {
+  @ViewBuilder func onScrollCanariPositionChange (_ inScrollPositionBinding : Binding <CanariPoint>,
+                                                  _ inContentZoom : Double) -> some View {
     self.onScrollGeometryChange (
       for: CGPoint.self,
       of: { (value : ScrollGeometry) in

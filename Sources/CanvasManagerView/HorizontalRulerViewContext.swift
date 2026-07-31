@@ -11,6 +11,8 @@ public struct HorizontalRulerViewContext {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public let contentWidth : CanariLength
+  public let visibleXmin : CanariLength
+  public let visibleXmax : CanariLength
   public let rulerSize : CanariSize
   public let scale : Double
   public let hoverLocationX : CanariLength?
@@ -21,6 +23,8 @@ public struct HorizontalRulerViewContext {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (contentWidth: CanariLength,
+               visibleXmin : CanariLength,
+               visibleXmax : CanariLength,
                rulerSize: CanariSize,
                scale: Double,
                hoverLocationX: CanariLength?,
@@ -28,6 +32,8 @@ public struct HorizontalRulerViewContext {
                originOffsetX: CanariLength,
                leftMargin: CanariLength) {
     self.contentWidth = contentWidth
+    self.visibleXmax = visibleXmax
+    self.visibleXmin = visibleXmin
     self.rulerSize = rulerSize
     self.scale = scale
     self.hoverLocationX = hoverLocationX

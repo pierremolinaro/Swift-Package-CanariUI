@@ -27,13 +27,13 @@ public struct TopHorizontalRulerView_cm : View {
     var xMMArray = [CanariLength] ()
   //--- Compute arraies
     if self.mContext.rulerSize.height > .zero {
-      let startX_mm = Int ((inContext.scrollX - inContext.leftMargin - inContext.originOffsetX / inContext.scale).mmValue)
-      var x : CanariLength = (CanariLength.mm (startX_mm) + inContext.leftMargin - inContext.scrollX) * inContext.scale + inContext.originOffsetX
+      let startX_mm = Int (inContext.visibleXmin.mmValue)
+      let endX_mm   = Int ((inContext.visibleXmax - inContext.leftMargin / inContext.scale).mmValue)
+      var x = (CanariLength.mm (startX_mm) + inContext.leftMargin - inContext.scrollX) * inContext.scale + inContext.originOffsetX
       var idx = startX_mm
-  //    var s = "\(startX_mm) mm :"
-      while x <= inContext.rulerSize.width {
+      let xMax = (CanariLength.mm (endX_mm) + inContext.leftMargin - inContext.scrollX) * inContext.scale + inContext.originOffsetX
+      while x <= xMax {
         if (idx % 10) == 0 {
-  //        s += " \(idx / 10)"
           cmArray.append (IndexAndX (idx: idx / 10, x: x))
         }else if (idx % 5) == 0 {
           x5MMArray.append (x)
@@ -47,7 +47,6 @@ public struct TopHorizontalRulerView_cm : View {
     self.mArray_cm = cmArray
     self.mArray_5mm = x5MMArray
     self.mArray_mm = xMMArray
-//    print (s)
   }
   
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -102,7 +101,13 @@ public struct TopHorizontalRulerView_cm : View {
       }
       .overlay {
         ForEach (self.mArray_cm.dropLast ().dropFirst (), id: \.self) { indexAndX in
-          if (self.mContext.scale > 0.5) || (indexAndX.idx % 2 == 0) {
+          if self.mContext.scale > 0.5 {
+            Text ("\(indexAndX.idx)").font (.system (size: self.mContext.rulerSize.height.pxValue * 0.4))
+            .position (x: indexAndX.x, y: self.mContext.rulerSize.height / 4.0)
+          }else if self.mContext.scale > 0.25, indexAndX.idx % 2 == 0 {
+            Text ("\(indexAndX.idx)").font (.system (size: self.mContext.rulerSize.height.pxValue * 0.4))
+            .position (x: indexAndX.x, y: self.mContext.rulerSize.height / 4.0)
+          }else if indexAndX.idx % 4 == 0 {
             Text ("\(indexAndX.idx)").font (.system (size: self.mContext.rulerSize.height.pxValue * 0.4))
             .position (x: indexAndX.x, y: self.mContext.rulerSize.height / 4.0)
           }

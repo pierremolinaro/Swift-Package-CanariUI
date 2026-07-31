@@ -33,6 +33,7 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  @State private var mVisibleUserRectangle = CanariRect ()
   @Binding private var mCenterOfVisibleRectUserLocation : CanariPoint
   @State private var mScrollPosition = CanariPoint.zero
   @Binding private var mAlignedHoverUserLocation : CanariPoint?
@@ -88,8 +89,8 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
 
   @ViewBuilder public var body : some View {
     HStack (spacing: 0) {
-      ScrollViewReader { readerProxy in
-        GeometryReader { geometry in
+      ScrollViewReader { (readerProxy : ScrollViewProxy) in
+        GeometryReader { (geometry : GeometryProxy) in
           ScrollView ([.horizontal, .vertical]) {
             VStack (spacing: 0.0) {
               self.topSpacer ()
@@ -116,12 +117,13 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
              self.bottomSpacer ()
             }
           }
-          .onScrollPositionChange (self.$mScrollPosition, self.mCanvasScale)
-          .onScrollGeometryChange (for: CGRect.self, of: \.visibleRect) { _, newRect in
-            self.mCenterOfVisibleRectUserLocation = self.alignedUserPoint (
-              geometry,
-              fromLocationInContentView: CGPoint (x: newRect.midX, y: newRect.midY)
-            )
+          .onScrollCanariPositionChange (self.$mScrollPosition, self.mCanvasScale)
+          .onScrollGeometryChange (for: CGRect.self, of: \.visibleRect) { _, newVisibleRect in
+            self.mVisibleUserRectangle = self.unalignedUserRectangle (geometry, newVisibleRect)
+            self.mCenterOfVisibleRectUserLocation = self.mVisibleUserRectangle.center
+          }
+          .onChange (of: self.mCanvasScale) {
+
           }
           .overlay {
             self.rightVerticalRulerView (geometry)
@@ -257,6 +259,8 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
     )
    let context = HorizontalRulerViewContext (
       contentWidth: self.mContentSizeWithMargins.width,
+      visibleXmin: self.mVisibleUserRectangle.minX,
+      visibleXmax: self.mVisibleUserRectangle.maxX,
       rulerSize: rulerSize,
       scale: self.mCanvasScale,
       hoverLocationX: self.mAlignedHoverUserLocation?.x,
@@ -282,6 +286,8 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
     )
    let context = HorizontalRulerViewContext (
       contentWidth: self.mContentSizeWithMargins.width,
+      visibleXmin: self.mVisibleUserRectangle.minX,
+      visibleXmax: self.mVisibleUserRectangle.maxX,
       rulerSize: rulerSize,
       scale: self.mCanvasScale,
       hoverLocationX: self.mAlignedHoverUserLocation?.x,
@@ -307,6 +313,8 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
     )
    let context = VerticalRulerViewContext (
       contentHeight: self.mContentSizeWithMargins.height,
+      visibleYmin: self.mVisibleUserRectangle.minY,
+      visibleYmax: self.mVisibleUserRectangle.maxY,
       rulerSize: rulerSize,
       scale: self.mCanvasScale,
       hoverLocationY: self.mAlignedHoverUserLocation?.y,
@@ -332,6 +340,8 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
     )
    let context = VerticalRulerViewContext (
       contentHeight: self.mContentSizeWithMargins.height,
+      visibleYmin: self.mVisibleUserRectangle.minY,
+      visibleYmax: self.mVisibleUserRectangle.maxY,
       rulerSize: rulerSize,
       scale: self.mCanvasScale,
       hoverLocationY: self.mAlignedHoverUserLocation?.y,
@@ -646,6 +656,17 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
       y: self.mContentSizeWithMargins.height - self.mContext.margins.bottom + (self.contentOverHeight (inGeometry) / 2.0 - .px (inLocation.y)) / self.mCanvasScale
     )
     return point
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  private func unalignedUserRectangle (_ inGeometry : GeometryProxy,
+                                       _ inRect : NSRect) -> CanariRect {
+    let left = (.px (inRect.minX) - self.contentOverWidth (inGeometry) / 2.0) / self.mCanvasScale - self.mContext.margins.left
+    let bottom = self.mContentSizeWithMargins.height - self.mContext.margins.bottom + (self.contentOverHeight (inGeometry) / 2.0 - .px (inRect.minY)) / self.mCanvasScale
+    let width  = CanariLength.px (inRect.width) / self.mCanvasScale
+    let height = CanariLength.px (inRect.height) / self.mCanvasScale
+    return CanariRect (left: left, bottom: bottom, width: width, height: height)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
