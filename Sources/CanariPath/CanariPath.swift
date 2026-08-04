@@ -112,7 +112,7 @@ public struct CanariPath : Equatable, Sendable {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var xMirrored : Self {
-    self.transformed (using: CanariAffinity (scale: 1.0, horizontalFlip: true))
+    self.transformed (using: CanariAffinity.scaling (1.0, horizontalFlip: true))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -409,7 +409,7 @@ public struct CanariPath : Equatable, Sendable {
     }
   // Perform a vertical symetry (SVG y goes from top to bottom)
     let midY = self.boundingRect.midY
-    let af = CanariAffinity (translationByX: .zero, byY: midY)
+    let af = CanariAffinity.translating (x: .zero, y: midY)
       .scaling (x: 1.0, y: -1.0)
       .translating (x: .zero, y: -midY)
     self.transformInPlace (using: af)

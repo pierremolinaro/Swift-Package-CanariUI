@@ -13,6 +13,8 @@ public nonisolated struct CanariAffinity : Equatable, Sendable {
   internal var mAffineTransform : AffineTransform
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Identity
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   /**
    Creates an affine transformation matrix with identity values.
    - see also: identity
@@ -24,6 +26,18 @@ public nonisolated struct CanariAffinity : Equatable, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   /**
+   An identity affine transformation matrix
+
+       [ 1  0  0 ]
+       [ 0  1  0 ]
+       [ 0  0  1 ]
+  */
+  @MainActor public static let identity = CanariAffinity ()
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Translation
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  /**
    Creates an affine transformation matrix from translation values.
    The matrix takes the following form:
 
@@ -32,22 +46,55 @@ public nonisolated struct CanariAffinity : Equatable, Sendable {
        [ x  y  1 ]
    */
 
-  public init (translationByX inX : CanariLength, byY inY : CanariLength) {
-    self.mAffineTransform = AffineTransform (
-      translationByX: inX.pxValue,
-      byY: inY.pxValue
-    )
+  public static func translating (_ inPoint : CanariPoint) -> CanariAffinity {
+    var af = CanariAffinity ()
+    af.translate (inPoint)
+    return af
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (translation inPoint : CanariPoint) {
-    self.mAffineTransform = AffineTransform (
-      translationByX: inPoint.x.pxValue,
-      byY: inPoint.y.pxValue
-    )
+  public static func translating (x inDx : CanariLength = .zero,
+                                  y inDy : CanariLength = .zero) -> CanariAffinity {
+    var af = CanariAffinity ()
+    af.translate (x: inDx, y: inDy)
+    return af
   }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func translating (x inDx : CanariLength = .zero,
+                           y inDy : CanariLength = .zero) -> CanariAffinity {
+    var af = self
+    af.translate (x: inDx, y: inDy)
+    return af
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func translating (_ inPoint : CanariPoint) -> CanariAffinity {
+    var af = self
+    af.translate (x: inPoint.x, y: inPoint.y)
+    return af
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  /**
+   Mutates an affine transformation matrix from x and y translation values.
+  */
+
+  public mutating func translate (x inDx : CanariLength, y inDy : CanariLength) {
+    self.mAffineTransform.translate (x: inDx.pxValue, y: inDy.pxValue)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public mutating func translate (_ inPoint : CanariPoint) {
+    self.translate (x: inPoint.x, y: inPoint.y)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Scaling
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   /**
  Creates an affine transformation matrix from scaling values.
@@ -58,11 +105,10 @@ public nonisolated struct CanariAffinity : Equatable, Sendable {
      [ 0  0  1 ]
  */
 
-  public init (scaleByX inFactorX : CGFloat, byY inFactorY : CGFloat) {
-    self.mAffineTransform = AffineTransform (
-      scaleByX: inFactorX,
-      byY: inFactorY
-    )
+  public static func scaling (x inFactorX : CGFloat, y inFactorY : CGFloat) -> CanariAffinity {
+    var af = CanariAffinity ()
+    af.scale (x: inFactorX, y: inFactorY)
+    return af
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -75,13 +121,64 @@ public nonisolated struct CanariAffinity : Equatable, Sendable {
        [ 0  0  1 ]
   */
 
-  public init (scale inFactor : CGFloat, horizontalFlip inHorizontalFlip : Bool = false) {
-    self.mAffineTransform = AffineTransform (
+  public static func scaling (_ inFactor : CGFloat,
+                              horizontalFlip inHorizontalFlip : Bool = false) -> CanariAffinity {
+    var af = CanariAffinity ()
+    af.mAffineTransform = AffineTransform (
       scaleByX: inHorizontalFlip ? -inFactor : inFactor,
       byY: inFactor
     )
+    return af
   }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func scaling (_ inFactor : Double) -> CanariAffinity {
+    var af = self
+    af.scale (inFactor)
+    return af
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func scaling (_ inFactor : Double, horizontalFlip inHorizontalFlip : Bool) -> CanariAffinity {
+    var af = self
+    if inHorizontalFlip {
+      af.scale (x: -inFactor, y: inFactor)
+    }else{
+      af.scale (inFactor)
+    }
+    return af
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func scaling (x inX : Double, y inY : Double) -> CanariAffinity {
+    var af = self
+    af.scale (x: inX, y: inY)
+    return af
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  /**
+   Mutates an affine transformation matrix from a scale value.
+  */
+
+  public mutating func scale (_ inFactor : CGFloat) {
+    self.mAffineTransform .scale (inFactor)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  /**
+   Mutates an affine transformation matrix from a x-scale and y-scale values.
+  */
+
+  public mutating func scale (x inFactorX : CGFloat, y inFactorY : CGFloat) {
+    self.mAffineTransform.scale (x: inFactorX, y: inFactorY)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Rotation
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   /**
    Creates an affine transformation matrix from rotation value.
@@ -92,8 +189,27 @@ public nonisolated struct CanariAffinity : Equatable, Sendable {
        [    0       0    1 ]
    */
 
-  public init (rotation inAngle : CanariAngle) {
-    self.mAffineTransform = AffineTransform (rotationByRadians: inAngle.radians)
+  public static func rotating (_ inAngle : CanariAngle) -> CanariAffinity {
+    var af = CanariAffinity ()
+    af.rotate (inAngle)
+    return af
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func rotating (_ inAngle : CanariAngle) -> CanariAffinity {
+    var af = self
+    af.rotate (inAngle)
+    return af
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  /**
+   Mutates an affine transformation matrix from a rotation value.
+  */
+
+  public mutating func rotate (_ inAngle : CanariAngle) {
+    self.mAffineTransform.rotate (byRadians: inAngle.radians)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -146,52 +262,6 @@ public nonisolated struct CanariAffinity : Equatable, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   /**
-   An identity affine transformation matrix
-
-       [ 1  0  0 ]
-       [ 0  1  0 ]
-       [ 0  0  1 ]
-  */
-  @MainActor public static let identity = CanariAffinity ()
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  /**
-   Mutates an affine transformation matrix from x and y translation values.
-  */
-
-  public mutating func translate (x inDx : CanariLength, y inDy : CanariLength) {
-    self.mAffineTransform.translate (x: inDx.pxValue, y: inDy.pxValue)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  /**
-   Mutates an affine transformation matrix from a rotation value.
-  */
-
-  public mutating func rotate (_ inAngle : CanariAngle) {
-    self.mAffineTransform.rotate (byRadians: inAngle.radians)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  /**
-   Mutates an affine transformation matrix from a scale value.
-  */
-
-  public mutating func scale (_ inFactor : CGFloat) {
-    self.mAffineTransform .scale (inFactor)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  /**
-   Mutates an affine transformation matrix from a x-scale and y-scale values.
-  */
-
-  public mutating func scale (x inFactorX : CGFloat, y inFactorY : CGFloat) {
-    self.mAffineTransform.scale (x: inFactorX, y: inFactorY)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  /**
    Inverts the transformation matrix if possible. Matrices with a determinant that is less than
    the smallest valid representation of a double value greater than zero are considered to be
    invalid for representing as an inverse. If the input AffineTransform can potentially fall into
@@ -240,31 +310,6 @@ public nonisolated struct CanariAffinity : Equatable, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func translating (x inDx : CanariLength = .zero,
-                           y inDy : CanariLength = .zero) -> CanariAffinity {
-    var af = self
-    af.translate (x: inDx, y: inDy)
-    return af
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public func translating (_ inPoint : CanariPoint) -> CanariAffinity {
-    var af = self
-    af.translate (x: inPoint.x, y: inPoint.y)
-    return af
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public func rotating (_ inAngle : CanariAngle) -> CanariAffinity {
-    var af = self
-    af.rotate (inAngle)
-    return af
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
   public func transforming (_ inPoint : CanariPoint) -> CanariPoint {
     let nsPoint = self.affineTransform.transform (inPoint.pxValue)
     return CanariPoint (px: nsPoint)
@@ -274,34 +319,6 @@ public nonisolated struct CanariAffinity : Equatable, Sendable {
 
   public func transforming (_ inPath : CanariPath) -> CanariPath {
     return inPath.transformed (using: self)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public func scaling (_ inFactor : Double) -> CanariAffinity {
-    var af = self
-    af.scale (inFactor)
-    return af
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public func scaling (_ inFactor : Double, horizontalFlip inHorizontalFlip : Bool) -> CanariAffinity {
-    var af = self
-    if inHorizontalFlip {
-      af.scale (x: -inFactor, y: inFactor)
-    }else{
-      af.scale (inFactor)
-    }
-    return af
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public func scaling (x inX : Double, y inY : Double) -> CanariAffinity {
-    var af = self
-    af.scale (x: inX, y: inY)
-    return af
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

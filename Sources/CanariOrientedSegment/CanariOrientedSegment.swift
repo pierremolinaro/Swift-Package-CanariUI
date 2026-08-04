@@ -234,7 +234,7 @@ public struct CanariOrientedSegment : Equatable, Hashable, CustomStringConvertib
 
   public enum IntersectionResult {
     case disjointOrConsecutive
-    case identical
+ //   case identical
     case pointAinCD
     case pointBinCD
     case pointCinAB
