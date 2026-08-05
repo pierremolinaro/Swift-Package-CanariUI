@@ -139,15 +139,3 @@ public func > (_ inLeft : CanariArea, _ inRight : CanariArea) -> Bool {
 }
 
 //--------------------------------------------------------------------------------------------------
-
-public func abs (_ inValue : CanariArea) -> CanariArea {
-  return .cu2 (abs (inValue.cu2Value))
-}
-
-//--------------------------------------------------------------------------------------------------
-
-public func sqrt (_ inValue : CanariArea) -> CanariLength {
-  return .cu (Int (sqrt (Double (inValue.cu2Value))))
-}
-
-//--------------------------------------------------------------------------------------------------

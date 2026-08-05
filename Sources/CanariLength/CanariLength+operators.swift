@@ -127,9 +127,3 @@ public func > (_ inLeft : CanariLength, _ inRight : CanariLength) -> Bool {
 }
 
 //--------------------------------------------------------------------------------------------------
-
-public func abs (_ inValue : CanariLength) -> CanariLength {
-  return .cu (abs (inValue.cuValue))
-}
-
-//--------------------------------------------------------------------------------------------------
