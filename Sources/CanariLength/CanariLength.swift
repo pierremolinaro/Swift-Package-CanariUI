@@ -99,6 +99,12 @@ public struct CanariLength : Hashable, Comparable, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public var inchValue : Double {
+    return Double (self.cuValue) / Double (Unit.inch.cuValue)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public var pxValue : CGFloat {
     return Double (self.cuValue) / Double (Unit.px.cuValue)
   }
