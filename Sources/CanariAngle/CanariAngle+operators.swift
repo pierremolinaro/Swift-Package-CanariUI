@@ -55,41 +55,4 @@ public func / (_ inLeft : CanariAngle, _ inRight : Double) -> CanariAngle {
 }
 
 //--------------------------------------------------------------------------------------------------
-//   Functions
-//--------------------------------------------------------------------------------------------------
 
-public func sin (_ inAngle : CanariAngle) -> Double {
-  return sin (inAngle.value (in: .radians))
-}
-
-//--------------------------------------------------------------------------------------------------
-
-public func sin (degrees inAngle : Double) -> Double {
-  return sin (inAngle * .pi / 180.0)
-}
-
-//--------------------------------------------------------------------------------------------------
-
-public func cos (_ inAngle : CanariAngle) -> Double {
-  return cos (inAngle.value (in: .radians))
-}
-
-//--------------------------------------------------------------------------------------------------
-
-public func cos (degrees inAngle : Double) -> Double {
-  return cos (inAngle * .pi / 180.0)
-}
-
-//--------------------------------------------------------------------------------------------------
-
-public func tan (_ inAngle : CanariAngle) -> Double {
-  return sin (inAngle) / cos (inAngle)
-}
-
-//--------------------------------------------------------------------------------------------------
-
-public func tan (degrees inAngle : Double) -> Double {
-  return sin (degrees: inAngle) / cos (degrees: inAngle)
-}
-
-//--------------------------------------------------------------------------------------------------
