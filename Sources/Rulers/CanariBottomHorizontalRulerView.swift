@@ -107,10 +107,10 @@ public struct CanariBottomHorizontalRulerView : View {
           if self.mContext.scale > 0.5 {
             Text ("\(indexAndX.idx)").font (.system (size: self.mContext.rulerSize.height.pxValue * 0.4))
             .position (x: indexAndX.x, y: 3.0 * self.mContext.rulerSize.height / 4.0)
-          }else if self.mContext.scale > 0.25, indexAndX.idx % 2 == 0 {
+          }else if self.mContext.scale > 0.25, (indexAndX.idx % 2) == 0 {
             Text ("\(indexAndX.idx)").font (.system (size: self.mContext.rulerSize.height.pxValue * 0.4))
             .position (x: indexAndX.x, y: 3.0 * self.mContext.rulerSize.height / 4.0)
-          }else if indexAndX.idx % 4 == 0 {
+          }else if (indexAndX.idx % 4) == 0 {
             Text ("\(indexAndX.idx)").font (.system (size: self.mContext.rulerSize.height.pxValue * 0.4))
             .position (x: indexAndX.x, y: 3.0 * self.mContext.rulerSize.height / 4.0)
           }
