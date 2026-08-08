@@ -97,7 +97,31 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
               HStack (spacing: 0.0) {
                 self.leftSpacer ()
                 self.contentView (geometry).id (ANCHOR_FOR_INITIAL_SCROLL)
-  //              .dropDestination (for: String.self, isEnabled: true) { items, dropSession in
+                .cuttable (for: CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>.self) {
+                  let selection = self.mShapesUserInterface.selectedShapeArray ()
+                  for shape in selection {
+                    self.mShapesUserInterface.removeShape (id: shape.id)
+                  }
+                  return selection
+                }
+                .onDeleteCommand {
+                  let selection = self.mShapesUserInterface.selectedShapeArray ()
+                  for shape in selection {
+                    self.mShapesUserInterface.removeShape (id: shape.id)
+                  }
+                }
+                .deleteDisabled (self.mShapesUserInterface.selection.isEmpty)
+                .copyable (self.mShapesUserInterface.selectedShapeArray())
+                .pasteDestination (for: CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>.self) {
+                  for var object in $0 {
+                    object.mAnchor.addGlobalTranslation (CanariPoint (x: .cm (1), y: .cm (1)))
+                    self.mShapesUserInterface.append (object)
+                  }
+                }
+                .onCommand (#selector(NSResponder.selectAll(_:))) {
+                  self.mShapesUserInterface.selectAll ()
+                }
+ //              .dropDestination (for: String.self, isEnabled: true) { items, dropSession in
   //                let p = self.unalignedUserPoint (geometry, fromLocationInContentView: dropSession.location)
   //                self.mDroppedStringsHandler? (items, p)
   //              }

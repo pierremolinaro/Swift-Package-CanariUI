@@ -12,22 +12,6 @@ import Combine
                                             SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> : MenuCommands {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  private let mPasteboardType : NSPasteboard.PasteboardType
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public init (withPasteboardType inPasteboardType : NSPasteboard.PasteboardType) {
-    self.mPasteboardType = inPasteboardType
-    super.init ()
-    self.mCancellableTimerForUpdateInternalPasteState = Timer.publish (every: 0.5, on: .main, in: .common)
-    .autoconnect ()
-    .sink { _ in
-      self.mInternalPasteIsEnabled = NSPasteboard.general.string (forType: self.mPasteboardType) != nil
-    }
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: CanariShapeRoot array
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -52,6 +36,13 @@ import Combine
 
   func removeLast () {
     self.mShapeArrayManager.removeLast ()
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  func removeShape (id inID : UUID) {
+    self.mShapeArrayManager.remove (id: inID)
+    self.mSelection.remove (inID)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -97,6 +88,15 @@ import Combine
   func clearSelection () {
     if !self.mSelection.isEmpty {
       self.mSelection.removeAll ()
+    }
+  }
+
+ // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  func selectAll () {
+    self.mSelection.removeAll ()
+    for shape in self.shapeArray {
+      self.mSelection.insert (shape.id)
     }
   }
 
@@ -669,85 +669,85 @@ import Combine
   //MARK: pasteboard
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public override var copyIsEnabled : Bool { !self.mSelection.isEmpty }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public override func performCopy () {
-    let selectedProxies = self.selectedShapeArray ()
-    let encoder = JSONEncoder ()
-    if let data = try? encoder.encode (selectedProxies), let str = String (data: data, encoding: .utf8) {
-    //--- Pasteboard
-      let pb = NSPasteboard.general
-      pb.declareTypes ([self.mPasteboardType], owner: self)
-      pb.setString (str, forType: self.mPasteboardType)
-    }
-  }
+//  public override var copyIsEnabled : Bool { !self.mSelection.isEmpty }
+//
+//  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//
+//  public override func performCopy () {
+//    let selectedProxies = self.selectedShapeArray ()
+//    let encoder = JSONEncoder ()
+//    if let data = try? encoder.encode (selectedProxies), let str = String (data: data, encoding: .utf8) {
+//    //--- Pasteboard
+//      let pb = NSPasteboard.general
+//      pb.declareTypes ([self.mPasteboardType], owner: self)
+//      pb.setString (str, forType: self.mPasteboardType)
+//    }
+//  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // Actuellement, il n'y a en SwiftUI aucun moyen d'observer si le contenu du pasteboard a changé.
   // Une solution, faute de mieux : utiliser un timer, démarré dans init
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private var mCancellableTimerForUpdateInternalPasteState : AnyCancellable? = nil
-  private var mInternalPasteIsEnabled = false
-
-  public override var pasteIsEnabled : Bool { self.mInternalPasteIsEnabled }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public override func performPaste () {
-    let pb = NSPasteboard.general
-    if let string = pb.string (forType: self.mPasteboardType) {
-      let decoder = JSONDecoder ()
-      if let decodedShapes = try? decoder.decode ([CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>].self, from: string.data (using: .utf8)!) {
-        self.mSelection.removeAll ()
-        for shape in decodedShapes {
-          self.mShapeArrayManager.append (shape)
-          self.mSelection.insert (shape.id)
-        }
-      }
-    }
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public override var selectAllIsEnabled : Bool { !self.shapeArray.isEmpty }
+//  private var mCancellableTimerForUpdateInternalPasteState : AnyCancellable? = nil
+//  private var mInternalPasteIsEnabled = false
+//
+//  public override var pasteIsEnabled : Bool { self.mInternalPasteIsEnabled }
+//
+//  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//
+//  public override func performPaste () {
+//    let pb = NSPasteboard.general
+//    if let string = pb.string (forType: self.mPasteboardType) {
+//      let decoder = JSONDecoder ()
+//      if let decodedShapes = try? decoder.decode ([CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>].self, from: string.data (using: .utf8)!) {
+//        self.mSelection.removeAll ()
+//        for shape in decodedShapes {
+//          self.mShapeArrayManager.append (shape)
+//          self.mSelection.insert (shape.id)
+//        }
+//      }
+//    }
+//  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public override func performSelectAll () {
-    for shape in self.shapeArray {
-      self.mSelection.insert (shape.id)
-    }
-  }
+//  public override var selectAllIsEnabled : Bool { !self.shapeArray.isEmpty }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
- public  override var deleteIsEnabled : Bool { !self.shapeArray.isEmpty }
+//  public override func performSelectAll () {
+//    for shape in self.shapeArray {
+//      self.mSelection.insert (shape.id)
+//    }
+//  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public override func performDelete () {
-    let selection = self.mSelection
-    self.mSelection.removeAll ()
-    for shape in self.shapeArray {
-      if selection.contains (shape.id) {
-        self.mShapeArrayManager.remove (id: shape.id)
-      }
-    }
-  }
+// public  override var deleteIsEnabled : Bool { !self.shapeArray.isEmpty }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public override var cutIsEnabled : Bool { !self.mSelection.isEmpty }
+//  public override func performDelete () {
+//    let selection = self.mSelection
+//    self.mSelection.removeAll ()
+//    for shape in self.shapeArray {
+//      if selection.contains (shape.id) {
+//        self.mShapeArrayManager.remove (id: shape.id)
+//      }
+//    }
+//  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public override func performCut () {
-    self.performCopy ()
-    self.performDelete ()
-  }
+//  public override var cutIsEnabled : Bool { !self.mSelection.isEmpty }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+//  public override func performCut () {
+//    self.performCopy ()
+//    self.performDelete ()
+//  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Grouping
