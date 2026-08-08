@@ -6,10 +6,11 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct RightVerticalRulerView_cm : View {
+public struct CanariRightVerticalRulerView : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  private let mUnit : CanariRulerUnit
   private let mContext : VerticalRulerViewContext
   private let mBackColor : Color
   private let mArray_cm : [IndexAndY]
@@ -19,14 +20,18 @@ public struct RightVerticalRulerView_cm : View {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (context inContext : VerticalRulerViewContext,
+               unit inUnit : CanariRulerUnit,
                backColor inBackColor : Color) {
+    self.mUnit = inUnit
     self.mContext = inContext
     self.mBackColor = inBackColor
     var cmArray = [IndexAndY] ()
     var xMMArray = [CanariLength] ()
     var x5MMArray = [CanariLength] ()
     if self.mContext.rulerSize.width > .zero {
-      let startY_mm = Int ((inContext.contentHeight - inContext.bottomMargin - inContext.scrollY - (inContext.rulerSize.height + inContext.originOffsetY) / inContext.scale).mmValue)
+      let startY = inContext.contentHeight - inContext.bottomMargin - inContext.scrollY - (inContext.rulerSize.height + inContext.originOffsetY) / inContext.scale
+      let startY_mm = Int (inUnit.doubleValue (for: startY) * 10.0)
+//      let startY_mm = Int ((inContext.contentHeight - inContext.bottomMargin - inContext.scrollY - (inContext.rulerSize.height + inContext.originOffsetY) / inContext.scale).mmValue)
       var y = (inContext.contentHeight - inContext.bottomMargin - CanariLength.mm (startY_mm) - inContext.scrollY) * inContext.scale + inContext.originOffsetY
       var idy = startY_mm
       while y >= .zero {
@@ -37,7 +42,7 @@ public struct RightVerticalRulerView_cm : View {
         }else if self.mContext.scale > 0.5 {
           xMMArray.append (y)
         }
-        y -= .mm (1) * inContext.scale
+        y -= self.mUnit.length * inContext.scale / 10.0
         idy += 1
       }
     }
@@ -111,12 +116,18 @@ public struct RightVerticalRulerView_cm : View {
             .position (x: self.mContext.rulerSize.width - .px (1), y: indexAndY.y)
           }
         }
-        AnchoredPosition (x: self.mContext.rulerSize.width / 2.0, y: .zero, anchor: .top) {
-          Text ("cm")
+        CanariAnchoredLayout (x: self.mContext.rulerSize.width / 2.0,
+                              y: .zero,
+                              anchor: .top) {
+          Text (self.mUnit.string)
+          .background (self.mBackColor)
           .font (.system (size: self.mContext.rulerSize.width.pxValue * 0.4))
         }
-        AnchoredPosition (x: self.mContext.rulerSize.width / 2.0, y: self.mContext.rulerSize.height, anchor: .bottom) {
-          Text ("cm")
+        CanariAnchoredLayout (x: self.mContext.rulerSize.width / 2.0,
+                              y: self.mContext.rulerSize.height,
+                              anchor: .bottom) {
+          Text (self.mUnit.string)
+          .background (self.mBackColor)
           .font (.system (size: self.mContext.rulerSize.width.pxValue * 0.4))
         }
       }

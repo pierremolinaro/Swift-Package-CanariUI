@@ -11,14 +11,14 @@ public struct CanvasManagerViewContext {
   public let canvasSize : CanariSize
   public let contentSizeWithMargins : CanariSize
   public let margins : CanvasMargins
-  public let rulerDescriptor : RulerDisplayDescriptor
+  public let rulerDescriptor : CanariRulerDisplayDescriptor
   public let magneticGrid : CanariLength?
   public let rulerBackColor : Color
 
   public init (zoomValues: [UInt16],
                canvasSize: CanariSize,
                margins: CanvasMargins,
-               rulerDescriptor: RulerDisplayDescriptor,
+               rulerDescriptor: CanariRulerDisplayDescriptor,
                magneticGrid: CanariLength?,
                rulerBackColor: Color) {
     self.zoomValues = zoomValues

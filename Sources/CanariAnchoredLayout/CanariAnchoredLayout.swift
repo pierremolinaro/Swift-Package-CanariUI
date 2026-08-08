@@ -6,7 +6,7 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-struct AnchoredPosition : Layout {
+public struct CanariAnchoredLayout : Layout {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -16,7 +16,8 @@ struct AnchoredPosition : Layout {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  init (location inLocation : CanariPoint, anchor inAnchor : UnitPoint) {
+  public init (location inLocation : CanariPoint,
+               anchor inAnchor : UnitPoint) {
     self.mLocationX = inLocation.x.pxValue
     self.mLocationY = inLocation.y.pxValue
     self.mAnchor = inAnchor
@@ -24,7 +25,9 @@ struct AnchoredPosition : Layout {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  init (x inX : CanariLength, y inY : CanariLength, anchor inAnchor : UnitPoint) {
+  public init (x inX : CanariLength,
+               y inY : CanariLength,
+               anchor inAnchor : UnitPoint) {
     self.mLocationX = inX.pxValue
     self.mLocationY = inY.pxValue
     self.mAnchor = inAnchor
@@ -32,27 +35,27 @@ struct AnchoredPosition : Layout {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func sizeThatFits (proposal: ProposedViewSize,
-                     subviews: Subviews,
-                     cache: inout ()) -> CGSize {
-    return proposal.replacingUnspecifiedDimensions ()
+  public func sizeThatFits (proposal inProposal : ProposedViewSize,
+                            subviews: Subviews,
+                            cache: inout ()) -> CGSize {
+    return inProposal.replacingUnspecifiedDimensions ()
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func placeSubviews (in bounds: CGRect,
-                      proposal: ProposedViewSize,
-                      subviews: Subviews,
-                      cache: inout ()) {
-    let locationInBounds = CGPoint(
-      x: self.mLocationX + bounds.origin.x,
-      y: self.mLocationY + bounds.origin.y
+  public func placeSubviews (in inBounds : CGRect,
+                             proposal inProposal : ProposedViewSize,
+                             subviews inSubviews : Subviews,
+                             cache: inout ()) {
+    let locationInBounds = CGPoint (
+      x: self.mLocationX + inBounds.origin.x,
+      y: self.mLocationY + inBounds.origin.y
     )
-    for view in subviews {
+    for view in inSubviews {
       view.place (
         at: locationInBounds,
         anchor: self.mAnchor,
-        proposal: proposal
+        proposal: inProposal
       )
     }
   }
