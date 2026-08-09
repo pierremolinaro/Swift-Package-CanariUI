@@ -16,7 +16,7 @@ extension CanariLength : Codable {
     if let v = Int (string) {
       self.cuValue = v
     }else {
-      throw DecodingError.dataCorruptedError (in: container, debugDescription: "Invalid rectangle string")
+      throw DecodingError.dataCorruptedError (in: container, debugDescription: "Invalid Canari Length")
     }
   }
 
