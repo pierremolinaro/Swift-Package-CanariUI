@@ -154,7 +154,7 @@ public struct CanariGroupShape <ANCHOR : CanariShapeAnchorProtocol,
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func ungroupedArray (_ inGroupAnchor : ANCHOR) -> [CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>] {
-    return self.mArray.map {
+    self.mArray.map {
       var anchor = $0.mAnchor
       anchor.transformToGlobal (inGroupAnchor)
       return CanariShapeRoot (anchor, $0.mDecoration)
