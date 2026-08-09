@@ -14,6 +14,15 @@ public nonisolated struct CanariShapeRoot <ANCHOR : CanariShapeAnchorProtocol,
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public init (_ inAnchor : ANCHOR,
+               _ inDecoration : any CanariShapeDecorationProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>) {
+    self.mAnchor = inAnchor
+    self.mDecoration = inDecoration
+    self.mAnchor.setLocalOutline (self.mDecoration.localOutlinePath)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public var mAnchor : ANCHOR {
     didSet {
       self.mAnchor.setLocalOutline (self.mDecoration.localOutlinePath)
@@ -26,15 +35,6 @@ public nonisolated struct CanariShapeRoot <ANCHOR : CanariShapeAnchorProtocol,
     didSet {
       self.mAnchor.setLocalOutline (self.mDecoration.localOutlinePath)
     }
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public init (_ inAnchor : ANCHOR,
-               _ inDecoration : any CanariShapeDecorationProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>) {
-    self.mAnchor = inAnchor
-    self.mDecoration = inDecoration
-    self.mAnchor.setLocalOutline (self.mDecoration.localOutlinePath)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -88,7 +88,8 @@ public struct ShapeArrayManager <ANCHOR : CanariShapeAnchorProtocol,
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func replaceShape (withID inID : UUID, by inArray : [CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>]) {
+  mutating func replaceShape (withID inID : UUID,
+                              by inArray : [CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>]) {
     var idx = self.mShapeArray.firstIndex { $0.id == inID }!
     self.mShapeArray.remove (at: idx)
     for shape in inArray {

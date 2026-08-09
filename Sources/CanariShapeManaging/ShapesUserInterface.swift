@@ -47,6 +47,19 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public func replaceShape (withID inID : UUID,
+                     by inArray : [CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>],
+                     selectAddedShapes inSelectAddedShapes : Bool) {
+    self.mShapeArrayManager.replaceShape (withID: inID, by: inArray)
+    if inSelectAddedShapes {
+      for shape in inArray {
+        self.mSelection.insert (shape.id)
+      }
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public var shapeArray : [CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>] { self.mShapeArrayManager.shapeArray }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

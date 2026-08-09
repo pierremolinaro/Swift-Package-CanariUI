@@ -10,7 +10,7 @@ extension CanariPath {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func separatedComponentsUsingNonZero () -> [CanariPath] {
+  public func separatedComponentsUsingNonZeroRule () -> [CanariPath] {
     let components = self.mPath.cgPath.componentsSeparated (using: .winding)
     var result = [CanariPath] ()
     for p in components {
@@ -21,7 +21,7 @@ extension CanariPath {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func separatedComponentsUsingEvenOdd () -> [CanariPath] {
+  public func separatedComponentsUsingEvenOddRule () -> [CanariPath] {
     let components = self.mPath.cgPath.componentsSeparated (using: .evenOdd)
     var result = [CanariPath] ()
     for p in components {
