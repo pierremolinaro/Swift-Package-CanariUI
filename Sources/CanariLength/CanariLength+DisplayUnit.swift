@@ -30,7 +30,7 @@ extension CanariLength {
 
     func length (_ inDivisor: Divisor) -> CanariLength {
       switch self {
-      case .cm : return .cm (1) / inDivisor.rawValue
+      case .cm   : return .cm (1) / inDivisor.rawValue
       case .inch : return .inch (1) / inDivisor.rawValue
       }
     }

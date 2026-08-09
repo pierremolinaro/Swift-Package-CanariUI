@@ -16,7 +16,8 @@ public extension CanariPath {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func translated (xBy inX : CanariLength, yBy inY : CanariLength) -> CanariPath {
+  func translated (xBy inX : CanariLength = .zero,
+                   yBy inY : CanariLength = .zero) -> CanariPath {
     let dx = inX.pxValue
     let dy = inY.pxValue
     var path = CanariPath ()

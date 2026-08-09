@@ -217,12 +217,17 @@ public struct CanariScaledOrientedAnchor : Sendable, CanariShapeAnchorProtocol {
                                    relativeTo inUnselectedShapeOutlines : [CanariPath]) {
     var idx = 0
     while !ioTranslation.isZero, idx < inUnselectedShapeOutlines.count {
-      let intersects = inUnselectedShapeOutlines [idx].intersectsUsingNonZeroRule (self.globalOutline.translated (by: ioTranslation))
-      if intersects {
-        ioTranslation *= 0.5
-      }else{
-        idx += 1
+      var hIntersects = inUnselectedShapeOutlines [idx].intersectsUsingNonZeroRule (self.globalOutline.translated (xBy: ioTranslation.x))
+      while hIntersects, !ioTranslation.x.isZero {
+        ioTranslation.x *= 0.5
+        hIntersects = inUnselectedShapeOutlines [idx].intersectsUsingNonZeroRule (self.globalOutline.translated (xBy: ioTranslation.x))
       }
+      var vIntersects = inUnselectedShapeOutlines [idx].intersectsUsingNonZeroRule (self.globalOutline.translated (yBy: ioTranslation.y))
+      while vIntersects, !ioTranslation.y.isZero {
+        ioTranslation.y *= 0.5
+        vIntersects = inUnselectedShapeOutlines [idx].intersectsUsingNonZeroRule (self.globalOutline.translated (yBy: ioTranslation.y))
+      }
+      idx += 1
     }
   }
 

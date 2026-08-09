@@ -62,6 +62,12 @@ public func * (_ inLeft : CanariLength, _ inRight : Double) -> CanariLength {
 
 //--------------------------------------------------------------------------------------------------
 
+public func *= (_ ioLeft : inout CanariLength, _ inRight : Double) {
+  ioLeft = ioLeft * inRight
+}
+
+//--------------------------------------------------------------------------------------------------
+
 public func * (_ inLeft : CanariLength, _ inRight : Int) -> CanariLength {
   return CanariLength (inLeft, multipliedByInt: inRight)
 }
