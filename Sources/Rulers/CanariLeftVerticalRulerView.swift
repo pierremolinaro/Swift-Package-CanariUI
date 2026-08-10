@@ -75,15 +75,15 @@ public struct CanariLeftVerticalRulerView : View {
         enterTracing ("left.vertical.ruler.view.body") ; defer { exitTracing ("left.vertical.ruler.view.body") }
         var path = CanariPath ()
         for indexAndY in self.array_cm {
-           path.addMove (toX: self.mContext.rulerSize.width / 2.0, toY: indexAndY.y)
+           path.addMove (toX: 7.0 * self.mContext.rulerSize.width / 12.0, toY: indexAndY.y)
            path.addLine (toX: self.mContext.rulerSize.width, toY: indexAndY.y)
         }
-        for y in self.array_mm {
-           path.addMove (toX: 5.0 * self.mContext.rulerSize.width / 6.0, toY: y)
+        for y in self.array_5mm {
+           path.addMove (toX: 9.0 * self.mContext.rulerSize.width / 12.0, toY: y)
            path.addLine (toX: self.mContext.rulerSize.width, toY: y)
         }
-        for y in self.array_5mm {
-           path.addMove (toX: 2.0 * self.mContext.rulerSize.width / 3.0, toY: y)
+        for y in self.array_mm {
+           path.addMove (toX: 10.0 * self.mContext.rulerSize.width / 12.0, toY: y)
            path.addLine (toX: self.mContext.rulerSize.width, toY: y)
         }
         context.stroke (path, with: .color (.gray), lineWidth: .px (1))
@@ -99,20 +99,20 @@ public struct CanariLeftVerticalRulerView : View {
           context.stroke (path, with: .color (.black), lineWidth: .px (1))
         }
       }
-      .overlay {
+      .overlay { // X par rapprt au centre
         ForEach (self.array_cm, id: \.self) { indexAndY in
           if self.mContext.scale > 0.5 {
             Text ("\(indexAndY.idx)").font (.system (size: self.mContext.rulerSize.width.pxValue * 0.4))
             .frame (maxWidth: .infinity, alignment: .trailing)
-            .position (x: .px (-1), y: indexAndY.y)
+            .position (x: self.mContext.rulerSize.width / 12.0 - .px (1), y: indexAndY.y)
           }else if self.mContext.scale > 0.25, indexAndY.idx % 2 == 0 {
             Text ("\(indexAndY.idx)").font (.system (size: self.mContext.rulerSize.width.pxValue * 0.4))
             .frame (maxWidth: .infinity, alignment: .trailing)
-            .position (x: .px (-1), y: indexAndY.y)
+            .position (x: self.mContext.rulerSize.width / 12.0 - .px (1), y: indexAndY.y)
           }else if indexAndY.idx % 4 == 0 {
             Text ("\(indexAndY.idx)").font (.system (size: self.mContext.rulerSize.width.pxValue * 0.4))
             .frame (maxWidth: .infinity, alignment: .trailing)
-            .position (x: .px (-1), y: indexAndY.y)
+            .position (x: self.mContext.rulerSize.width / 12.0 - .px (1), y: indexAndY.y)
           }
         }
         CanariAnchoredLayout (x: self.mContext.rulerSize.width / 2.0,

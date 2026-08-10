@@ -11,8 +11,10 @@ extension CanariPoint : CanariCodableByString {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (scanner inScanner : Scanner, _ ioOk : inout Bool) {
-    if ioOk, let x = inScanner.scanInt (), let y = inScanner.scanInt () {
-      self = CanariPoint (x: .cu (x), y: .cu (y))
+    if ioOk,
+         let x = inScanner.scanCanariLengthEncodedWithUnit (),
+         let y = inScanner.scanCanariLengthEncodedWithUnit () {
+      self = CanariPoint (x: x, y: y)
     }else{
       ioOk = false
       self = .zero
@@ -22,7 +24,7 @@ extension CanariPoint : CanariCodableByString {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func canariCodableEncodedString () -> String {
-    return "\(self.x.cuValue) \(self.y.cuValue)"
+    return "\(self.x.valueEncodedWithUnit) \(self.y.valueEncodedWithUnit)"
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

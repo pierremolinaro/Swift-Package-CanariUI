@@ -46,8 +46,18 @@ public struct CanariStrokeStyle : Equatable, Sendable, CanariCodableByString {
     }else{
       self.lineJoinStyle = .round
     }
-    self.lineWidth = CanariLength (scanner: inScanner, &ioOk)
-    self.miterLimit = CanariLength (scanner: inScanner, &ioOk)
+    if let v = inScanner.scanCanariLengthEncodedWithUnit () {
+      self.lineWidth = v
+    }else{
+      self.lineWidth = .px (1)
+      ioOk = false
+    }
+    if let v = inScanner.scanCanariLengthEncodedWithUnit () {
+      self.miterLimit = v
+    }else{
+      self.miterLimit = .px (1)
+      ioOk = false
+    }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -77,9 +87,9 @@ public struct CanariStrokeStyle : Equatable, Sendable, CanariCodableByString {
 
   public func canariCodableEncodedString () -> String {
     var str = "\(self.lineCapStyle.rawValue) \(self.lineJoinStyle.rawValue) "
-    str += self.lineWidth.canariCodableEncodedString ()
+    str += self.lineWidth.valueEncodedWithUnit
     str += " "
-    str += self.miterLimit.canariCodableEncodedString ()
+    str += self.miterLimit.valueEncodedWithUnit
     return str
   }
 

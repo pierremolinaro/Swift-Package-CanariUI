@@ -47,14 +47,14 @@ public struct CanvasMargins : Codable, CustomStringConvertible, Equatable, Senda
     let string = try container.decode (String.self)
     let components = string.split (separator: " ")
     if components.count == 4,
-       let left = Int (components [0]),
-       let bottom = Int (components [1]),
-       let right = Int (components [2]),
-       let top = Int (components [3]) {
-      self.bottom = .cu (bottom)
-      self.left = .cu (left)
-      self.right = .cu (right)
-      self.top = .cu (top)
+       let left = String (components [0]).decodedCanariLengthWithUnit (),
+       let bottom = String (components [1]).decodedCanariLengthWithUnit (),
+       let right = String (components [2]).decodedCanariLengthWithUnit (),
+       let top = String (components [3]).decodedCanariLengthWithUnit () {
+      self.bottom = bottom
+      self.left = left
+      self.right = right
+      self.top = top
     }else {
       throw DecodingError.dataCorruptedError (in: container, debugDescription: "Invalid rectangle string")
     }
@@ -64,7 +64,7 @@ public struct CanvasMargins : Codable, CustomStringConvertible, Equatable, Senda
 
   public func encode (to inEncoder : any Encoder) throws { // Encodable
     var container = inEncoder.singleValueContainer ()
-    try container.encode ("\(self.left.cuValue) \(self.bottom.cuValue) \(self.right.cuValue) \(self.top.cuValue)")
+    try container.encode ("\(self.left.valueEncodedWithUnit) \(self.bottom.valueEncodedWithUnit) \(self.right.valueEncodedWithUnit) \(self.top.valueEncodedWithUnit)")
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

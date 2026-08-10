@@ -63,7 +63,7 @@ public struct ExpandableInspectorOfCanariPointSet : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var collapsedTitle : String {
+  private var collapsedTitle : String {
     if let p = self.mPointSet.first, self.mPointSet.count == 1 {
       return p.string (in: self.mUnit.unit, fractionDigits: self.mFractionDigits)
     }else{

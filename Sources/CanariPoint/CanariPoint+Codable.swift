@@ -15,11 +15,11 @@ extension CanariPoint : Codable {
     let string = try container.decode (String.self)
     let components = string.split (separator: " ")
     if components.count == 2,
-       let x = Int (components [0]),
-       let y = Int (components [1]) {
-      self = CanariPoint (x: .cu (x), y: .cu (y))
+       let x = String (components [0]).decodedCanariLengthWithUnit (),
+       let y = String (components [1]).decodedCanariLengthWithUnit () {
+      self = CanariPoint (x: x, y: y)
     }else {
-      throw DecodingError.dataCorruptedError (in: container, debugDescription: "Invalid rectangle string")
+      throw DecodingError.dataCorruptedError (in: container, debugDescription: "Invalid CanariPoint string")
     }
   }
 
@@ -27,7 +27,7 @@ extension CanariPoint : Codable {
 
   public func encode (to inEncoder : any Encoder) throws { // Encodable
     var container = inEncoder.singleValueContainer ()
-    try container.encode ("\(self.x.cuValue) \(self.y.cuValue)")
+    try container.encode ("\(self.x.valueEncodedWithUnit) \(self.y.valueEncodedWithUnit)")
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
