@@ -19,12 +19,6 @@ public struct CanariSize : Hashable, CustomStringConvertible, RawRepresentable, 
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-//  public init () {
-//    self.init (width: .zero, height: .zero)
-//  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
   public init (px inSize : NSSize) {
     self.init (width: .px (inSize.width), height: .px (inSize.height))
   }

@@ -30,6 +30,8 @@ public protocol CanariShapeAnchorProtocol : Sendable, Codable, Equatable {
   //MARK: Global Outline
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  var globalOutline : CanariPath { get }
+
   func withGlobalOutline (action inAction : (CanariPath) -> Void)
 
   func globalOutlineIntersects (mouseGestureGlobalRect inGlobalRect : CanariRect) -> Bool
@@ -47,6 +49,14 @@ public protocol CanariShapeAnchorProtocol : Sendable, Codable, Equatable {
   func withLocalOutline (action inAction : (CanariPath) -> Void)
 
   func outlineContainsGlobalPointForMouseGesture (_ inGlobalPoint : CanariPoint) -> Bool
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Global origin
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  var globalOrigin : CanariPoint { get }
+
+  mutating func alignGlobalOrigin (on inUnit : CanariLength)
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Translation

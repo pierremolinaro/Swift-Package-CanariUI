@@ -209,6 +209,16 @@ public struct CanariXYAnchor : Sendable, CanariShapeAnchorProtocol {
   //MARK: Local to global
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public var globalOrigin : CanariPoint { self.mPoint }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public mutating func alignGlobalOrigin (on inUnit : CanariLength) {
+    self.mPoint = self.mPoint.aligning (to: inUnit)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public func localToGlobal (x inX : CanariLength = .zero, y inY : CanariLength = .zero) -> CanariPoint {
     return CanariPoint (x: inX, y: inY).transformed (by: self.mLocalToGlobalAffinity)
   }

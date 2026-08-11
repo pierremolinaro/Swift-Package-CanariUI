@@ -8,8 +8,8 @@ public extension View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @ViewBuilder func isDefaultAction (_ inDefaultAction : Bool) -> some View {
-    if inDefaultAction {
+  @ViewBuilder func isDefaultAction (_ inIsDefaultAction : Bool) -> some View {
+    if inIsDefaultAction {
       self.keyboardShortcut (.defaultAction)
     }else{
       self
