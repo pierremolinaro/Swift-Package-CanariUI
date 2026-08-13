@@ -1,21 +1,21 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 20/02/2026.
+//  Created by Pierre Molinaro on 13/08/2026.
 //--------------------------------------------------------------------------------------------------
 
 import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct AppIconView : View {
+public struct AppIconTitleView <TitleView> : View where TitleView : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private let title : String
+  private let titleView : TitleView
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (title : String) {
-    self.title = title
+  public init (titleView : TitleView) {
+    self.titleView = titleView
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -26,7 +26,7 @@ public struct AppIconView : View {
       .resizable ()
       .frame (width: 64, height: 64)
       Spacer ()
-      Text (self.title).bold ().controlSize (.large)
+      self.titleView
       Spacer ()
     }
   }
