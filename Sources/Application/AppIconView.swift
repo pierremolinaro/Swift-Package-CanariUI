@@ -11,11 +11,13 @@ public struct AppIconView : View {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private let title : String
+  private let subtitle : any View?
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (title : String) {
+  public init (title : String, subtitle : any View? = nil) {
     self.title = title
+    self.subtitle = subtitle
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -26,7 +28,14 @@ public struct AppIconView : View {
       .resizable ()
       .frame (width: 64, height: 64)
       Spacer ()
-      Text (self.title).bold ().controlSize (.large)
+      if let view = self.subtitle {
+        VStack {
+          Text (self.title).bold ().controlSize (.large)
+          AnyView (view)
+        }
+      }else{
+        Text (self.title).bold ().controlSize (.large)
+      }
       Spacer ()
     }
   }

@@ -580,8 +580,8 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
   //MARK: Key actions
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private func escapeKeyAction () -> KeyPress.Result {
-    DispatchQueue.main.async {
+  nonisolated private func escapeKeyAction () -> KeyPress.Result {
+    Task { @MainActor in
       self.mShapesUserInterface.escapeKeyAction ()
     }
     return .handled
@@ -589,8 +589,8 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private func backDeleteKeyAction () -> KeyPress.Result {
-    DispatchQueue.main.async {
+  nonisolated private func backDeleteKeyAction () -> KeyPress.Result {
+    Task { @MainActor in
       self.mShapesUserInterface.backDeleteKeyAction ()
     }
     return .handled
@@ -598,8 +598,8 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private func rightArrowKeyAction () -> KeyPress.Result {
-    DispatchQueue.main.async {
+  nonisolated private func rightArrowKeyAction () -> KeyPress.Result {
+    Task { @MainActor in
       self.mShapesUserInterface.rightArrowKeyAction (magneticGrid: self.mContext.magneticGrid, self.mContext.canvasSize)
     }
     return .handled
@@ -607,8 +607,8 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private func leftArrowKeyAction () -> KeyPress.Result {
-    DispatchQueue.main.async {
+  nonisolated private func leftArrowKeyAction () -> KeyPress.Result {
+    Task { @MainActor in
       self.mShapesUserInterface.leftArrowKeyAction (magneticGrid: self.mContext.magneticGrid, self.mContext.canvasSize)
     }
     return .handled
@@ -616,8 +616,8 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private func upArrowKeyAction () -> KeyPress.Result {
-    DispatchQueue.main.async {
+  nonisolated private func upArrowKeyAction () -> KeyPress.Result {
+    Task { @MainActor in
       self.mShapesUserInterface.upArrowKeyAction (magneticGrid: self.mContext.magneticGrid, self.mContext.canvasSize)
     }
     return .handled
@@ -625,8 +625,8 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private func downArrowKeyAction () -> KeyPress.Result {
-    DispatchQueue.main.async {
+  nonisolated private func downArrowKeyAction () -> KeyPress.Result {
+    Task { @MainActor in
       self.mShapesUserInterface.downArrowKeyAction (magneticGrid: self.mContext.magneticGrid, self.mContext.canvasSize)
     }
     return .handled
