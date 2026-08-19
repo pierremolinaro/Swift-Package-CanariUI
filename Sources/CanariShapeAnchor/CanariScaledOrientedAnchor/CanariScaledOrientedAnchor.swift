@@ -364,6 +364,14 @@ public struct CanariScaledOrientedAnchor : Sendable, CanariShapeAnchorProtocol {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Rotation
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  mutating public func addRotation (_ inAngle : CanariAngle) {
+    self.mAngle += inAngle
+  }
+
+ // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func withLocalCoordinates (context ioContext: inout GraphicsContext,
                                     drawingScale inDrawingScale : Double,

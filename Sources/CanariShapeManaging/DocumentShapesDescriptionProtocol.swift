@@ -6,6 +6,30 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
+public nonisolated struct DocumentShapeFeatures : Sendable {
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public let typeNameInDocument : String
+  public let presentAnchorInspector : Bool
+  public let presentRotationKnob : Bool
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public init (typeNameInDocument: String,
+               presentAnchorInspector : Bool,
+               presentRotationKnob : Bool) {
+    self.typeNameInDocument = typeNameInDocument
+    self.presentAnchorInspector = presentAnchorInspector
+    self.presentRotationKnob = presentRotationKnob
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+}
+
+//--------------------------------------------------------------------------------------------------
+
 public protocol DocumentShapesDescriptionProtocol {
 
   associatedtype ANCHOR : CanariShapeAnchorProtocol
@@ -14,7 +38,7 @@ public protocol DocumentShapesDescriptionProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  nonisolated static var shapeTypeArray : [(any CanariShapeDecorationProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>.Type, String, Bool)] { get }
+  nonisolated static var shapeTypeArray : [(any CanariShapeDecorationProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>.Type, DocumentShapeFeatures)] { get }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -28,9 +52,9 @@ extension DocumentShapesDescriptionProtocol {
 
   static func documentEncodedTypeName (_ inShape : any CanariShapeDecorationProtocol) -> String {
     let type = type (of: inShape)
-    for (shapeType, typeName, _) in Self.shapeTypeArray {
+    for (shapeType, features) in Self.shapeTypeArray {
       if shapeType == type {
-        return typeName
+        return features.typeNameInDocument
       }
     }
     return "???"
@@ -39,9 +63,20 @@ extension DocumentShapesDescriptionProtocol {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   static func anchorInspectorIsDisplayed (_ inType : any CanariShapeDecorationProtocol.Type ) -> Bool {
-    for (shapeType, _, inspectorIsDisplayed) in Self.shapeTypeArray {
+    for (shapeType, features) in Self.shapeTypeArray {
       if shapeType == inType {
-        return inspectorIsDisplayed
+        return features.presentAnchorInspector
+      }
+    }
+    return true
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static func rotationKnobIsDisplayed (_ inType : any CanariShapeDecorationProtocol.Type ) -> Bool {
+    for (shapeType, features) in Self.shapeTypeArray {
+      if shapeType == inType {
+        return features.presentRotationKnob
       }
     }
     return true
