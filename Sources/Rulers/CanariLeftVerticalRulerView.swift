@@ -31,7 +31,7 @@ public struct CanariLeftVerticalRulerView : View {
     if self.mContext.rulerSize.width > .zero {
       let startY = inContext.contentHeight - inContext.bottomMargin - inContext.scrollY - (inContext.rulerSize.height + inContext.originOffsetY) / inContext.scale
       let startY_mm = Int (inUnit.doubleValue (for: startY) * 10.0)
-      var y = (inContext.contentHeight - inContext.bottomMargin - CanariLength.mm (startY_mm) - inContext.scrollY) * inContext.scale + inContext.originOffsetY
+      var y = (inContext.contentHeight - inContext.bottomMargin - Double (startY_mm) * inUnit.length / 10.0 - inContext.scrollY) * inContext.scale + inContext.originOffsetY
       var idx = startY_mm
       while y >= .zero {
         if (idx % 10) == 0 {
