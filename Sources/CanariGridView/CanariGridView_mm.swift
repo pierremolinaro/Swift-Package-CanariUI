@@ -3,11 +3,10 @@
 //--------------------------------------------------------------------------------------------------
 
 import SwiftUI
-import CanariUI
 
 //--------------------------------------------------------------------------------------------------
 
-struct CanariGridView_mm : View {
+public struct CanariGridView_mm : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -21,7 +20,7 @@ struct CanariGridView_mm : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  init (context inContext : BackgroundViewContext) {
+  public init (context inContext : BackgroundViewContext) {
     self.mContext = inContext
   //--- mm arraies
     var xArray_mm = [CanariLength] ()
@@ -130,7 +129,7 @@ struct CanariGridView_mm : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var body : some View {
+  public var body : some View {
     Canvas { context, size in
       enterTracing ("grid.view.canvas") ; defer { exitTracing ("grid.view.canvas") }
     //--- Appliquer une transformation manuelle

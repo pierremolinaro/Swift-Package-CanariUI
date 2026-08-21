@@ -3,11 +3,10 @@
 //--------------------------------------------------------------------------------------------------
 
 import SwiftUI
-import CanariUI
 
 //--------------------------------------------------------------------------------------------------
 
-struct CanariGridView_inch : View {
+public struct CanariGridView_inch : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -17,7 +16,7 @@ struct CanariGridView_inch : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  init (context inContext : BackgroundViewContext) {
+  public init (context inContext : BackgroundViewContext) {
     self.mContext = inContext
     let xStartIN = Int (self.mContext.margins.left.inchValue.rounded(.up))
     let yStartIN = Int (self.mContext.margins.bottom.inchValue.rounded(.up))
@@ -69,7 +68,7 @@ struct CanariGridView_inch : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var body : some View {
+  public var body : some View {
     Canvas { context, size in
       enterTracing ("grid.view.canvas") ; defer { exitTracing ("grid.view.canvas") }
     //--- Appliquer une transformation manuelle

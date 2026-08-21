@@ -3,11 +3,10 @@
 //--------------------------------------------------------------------------------------------------
 
 import SwiftUI
-import CanariUI
 
 //--------------------------------------------------------------------------------------------------
 
-struct CanariGridView_100mils : View {
+public struct CanariGridView_100mils : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -21,7 +20,7 @@ struct CanariGridView_100mils : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  init (context inContext : BackgroundViewContext) {
+  public init (context inContext : BackgroundViewContext) {
     self.mContext = inContext
   //--- 50 mils and 10 mils arraies
     var xArray_10mils = [CanariLength] ()
@@ -138,7 +137,7 @@ struct CanariGridView_100mils : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var body : some View {
+  public var body : some View {
     Canvas { context, size in
       enterTracing ("grid.view.canvas") ; defer { exitTracing ("grid.view.canvas") }
     //--- Appliquer une transformation manuelle
