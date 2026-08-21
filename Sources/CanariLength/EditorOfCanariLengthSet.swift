@@ -51,6 +51,11 @@ public struct EditorOfCanariLengthSet : View {
           self.mSetter (CanariLength (v, in: self.mUnit.unit))
         }
       }
+      .onDisappear { // Triggered AFTER the view disappears
+        if let v = self.mDoubleValue {
+          self.mSetter (CanariLength (v, in: self.mUnit.unit))
+        }
+      }
       .labelsHidden ()
       .frame (width: self.mWidth)
       .onChange (of: self.mLengthArray) {
