@@ -49,10 +49,10 @@ public nonisolated struct CanariShapeRoot <ANCHOR : CanariShapeAnchorProtocol,
     if SHAPE_TYPES_DESCRIPTION.rotationKnobIsDisplayed (type (of: self.mDecoration)) {
       let boundingRect = self.mDecoration.localOutlinePath.boundingRect
       if boundingRect.maxX >= boundingRect.maxY {
-        let localPosition = CanariPoint (x: self.mDecoration.localOutlinePath.boundingRect.maxX)
+        let localPosition = CanariPoint (x: self.mDecoration.localOutlinePath.boundingRect.maxX / 2.0)
         result.append (ShapeKnob (localCenter: localPosition, dragAction: Self.dragLeftRotationKnob))
       }else{
-        let localPosition = CanariPoint (y: self.mDecoration.localOutlinePath.boundingRect.maxY)
+        let localPosition = CanariPoint (y: self.mDecoration.localOutlinePath.boundingRect.maxY / 2.0)
         result.append (ShapeKnob (localCenter: localPosition, dragAction: Self.dragTopRotationKnob))
       }
     }
@@ -72,7 +72,7 @@ public nonisolated struct CanariShapeRoot <ANCHOR : CanariShapeAnchorProtocol,
   private static func dragLeftRotationKnob (_ ioShape : inout CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>,
                                             _ inLocalTranslation : CanariPoint,
                                             _ inInitialOptionKeyOn : Bool) {
-    let p = CanariPoint (x: ioShape.mDecoration.localOutlinePath.boundingRect.maxX) + inLocalTranslation
+    let p = CanariPoint (x: ioShape.mDecoration.localOutlinePath.boundingRect.maxX / 2.0) + inLocalTranslation
     let angle = p.angle ()
     ioShape.mAnchor.addRotation (angle)
   }
@@ -82,7 +82,7 @@ public nonisolated struct CanariShapeRoot <ANCHOR : CanariShapeAnchorProtocol,
   private static func dragTopRotationKnob (_ ioShape : inout CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>,
                                            _ inLocalTranslation : CanariPoint,
                                            _ inInitialOptionKeyOn : Bool) {
-    let p = CanariPoint (y: ioShape.mDecoration.localOutlinePath.boundingRect.maxY) + inLocalTranslation
+    let p = CanariPoint (y: ioShape.mDecoration.localOutlinePath.boundingRect.maxY / 2.0) + inLocalTranslation
     let angle = p.angle ()
     ioShape.mAnchor.addRotation (angle)
   }

@@ -8,7 +8,7 @@ import SwiftUI
 
 public struct CanariTopHorizontalRulerView : View {
 
- // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private let mUnit : CanariRulerUnit
   private let mContext : HorizontalRulerViewContext
@@ -25,16 +25,17 @@ public struct CanariTopHorizontalRulerView : View {
     self.mUnit = inUnit
     self.mContext = inContext
     self.mBackColor = inBackColor
+  //--- Compute arraies
     var cmArray = [IndexAndX] ()
     var x5MMArray = [CanariLength] ()
     var xMMArray = [CanariLength] ()
-  //--- Compute arraies
     if self.mContext.rulerSize.height > .zero {
       let startX_mm = Int (inUnit.doubleValue (for: inContext.visibleXmin) * 10.0)
-      let endX_mm   = Int ((inContext.visibleXmax - inContext.leftMargin / inContext.scale).mmValue)
-      var x = (CanariLength.mm (startX_mm) + inContext.leftMargin - inContext.scrollX) * inContext.scale + inContext.originOffsetX
+      let endX = inContext.visibleXmax - inContext.leftMargin / inContext.scale
+      let endX_mm = Int (inUnit.doubleValue (for: endX) * 10.0)
+      var x = (Double (startX_mm) * inUnit.length / 10.0 + inContext.leftMargin - inContext.scrollX) * inContext.scale + inContext.originOffsetX
       var idx = startX_mm
-      let xMax = (CanariLength.mm (endX_mm) + inContext.leftMargin - inContext.scrollX) * inContext.scale + inContext.originOffsetX
+      let xMax = (Double (endX_mm) * inUnit.length / 10.0 + inContext.leftMargin - inContext.scrollX) * inContext.scale + inContext.originOffsetX
       while x <= xMax {
         if (idx % 10) == 0 {
           cmArray.append (IndexAndX (idx: idx / 10, x: x))
@@ -44,7 +45,7 @@ public struct CanariTopHorizontalRulerView : View {
           xMMArray.append (x)
         }
         x += self.mUnit.length * inContext.scale / 10.0
-        idx += 1
+       idx += 1
       }
     }
     self.mArray_cm = cmArray
@@ -93,8 +94,7 @@ public struct CanariTopHorizontalRulerView : View {
         path.addMove (toX: .zero, toY: self.mContext.rulerSize.height)
         path.addLine (toX: self.mContext.contentWidth * self.mContext.scale, toY: self.mContext.rulerSize.height)
         context.stroke (path, with: .color (.black), lineWidth: .px (1))
-      //--- Hover location
-       if let hx = self.mContext.hoverLocationX {
+        if let hx = self.mContext.hoverLocationX {
           var path = CanariPath ()
           let x = (hx + self.mContext.leftMargin - self.mContext.scrollX) * self.mContext.scale + self.mContext.originOffsetX
           path.addMove (toX: x, toY: .zero)
