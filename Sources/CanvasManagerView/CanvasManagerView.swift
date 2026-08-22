@@ -19,7 +19,7 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private let mBackgroundViewBuilder : (BackgroundViewContext) -> any View
+  private let mBackgroundView : ((BackgroundViewContext) -> any View)?
   private let mDrawBackGround : (_ ioContext : inout GraphicsContext) -> Void
   private let mDrawOverlay : (_ ioContext : inout GraphicsContext) -> Void
   private let mTopHorizontalRulerViewBuilder : (HorizontalRulerViewContext) -> any View
@@ -57,7 +57,7 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
         shapesUserInterface inShapesUserInterface : ShapesUserInterface <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>,
         drawBackGround inDrawBackGround : @escaping (_ ioContext : inout GraphicsContext) -> Void,
         drawOverlay inDrawOverlay : @escaping (_ ioContext : inout GraphicsContext) -> Void,
-        backgroundViewBuilder inBackgroundViewBuilder : @escaping (BackgroundViewContext) -> any View,
+        backgroundView inBackgroundView : ((BackgroundViewContext) -> any View)?,
         leftVerticalRulerViewBuilder inLeftVerticalRulerViewBuilder : @escaping (VerticalRulerViewContext) -> any View,
         topHorizontalRulerViewBuilder inTopHorizontalRulerViewBuilder : @escaping (HorizontalRulerViewContext) -> any View,
         rightVerticalRulerViewBuilder inRightVerticalRulerViewBuilder : @escaping (VerticalRulerViewContext) -> any View,
@@ -74,7 +74,7 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
       width: inContext.canvasSize.width + inContext.margins.left + inContext.margins.right,
       height: inContext.canvasSize.height + inContext.margins.top + inContext.margins.bottom
     )
-    self.mBackgroundViewBuilder = inBackgroundViewBuilder
+    self.mBackgroundView = inBackgroundView
     self.mDrawBackGround = inDrawBackGround
     self.mDrawOverlay = inDrawOverlay
     self.mLeftVerticalRulerViewBuilder = inLeftVerticalRulerViewBuilder
@@ -395,7 +395,9 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
         overHeight: self.contentOverHeight (inGeometry),
         margins: actualMargins (inGeometry)
       )
-      AnyView (self.mBackgroundViewBuilder (backgroundViewContext))
+      if let backgroundView = self.mBackgroundView {
+        AnyView (backgroundView (backgroundViewContext))
+      }
       Canvas { (context, size) in
     //--- ATTENTION ! Il y a un bug dans SwiftUI, on ne peut pas appliquer un y négatif à scaleEffect,
     //    il en suit un comportement imprévisible dans un Canvas. Il faut faire la symétrie en y ici.
