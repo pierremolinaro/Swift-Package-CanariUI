@@ -6,11 +6,15 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-public struct CanariRightVerticalRulerView : View {
+private let MAIN_UNIT = CanariLength.cm (1)
+private let MAIN_UNIT_STRING = "cm"
+
+//--------------------------------------------------------------------------------------------------
+
+public struct CanariRightVerticalRulerView_cm : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private let mUnit : CanariRulerUnit
   private let mContext : VerticalRulerViewContext
   private let mBackColor : Color
   private let mArray_cm : [IndexAndY]
@@ -20,9 +24,7 @@ public struct CanariRightVerticalRulerView : View {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (context inContext : VerticalRulerViewContext,
-               unit inUnit : CanariRulerUnit,
                backColor inBackColor : Color) {
-    self.mUnit = inUnit
     self.mContext = inContext
     self.mBackColor = inBackColor
     var cmArray = [IndexAndY] ()
@@ -30,8 +32,8 @@ public struct CanariRightVerticalRulerView : View {
     var x5MMArray = [CanariLength] ()
     if self.mContext.rulerSize.width > .zero {
       let startY = inContext.contentHeight - inContext.bottomMargin - inContext.scrollY - (inContext.rulerSize.height + inContext.originOffsetY) / inContext.scale
-      let startY_mm = Int (inUnit.doubleValue (for: startY) * 10.0)
-      var y = (inContext.contentHeight - inContext.bottomMargin - Double (startY_mm) * inUnit.length / 10.0 - inContext.scrollY) * inContext.scale + inContext.originOffsetY
+      let startY_mm = Int (startY / MAIN_UNIT * 10.0)
+      var y = (inContext.contentHeight - inContext.bottomMargin - Double (startY_mm) * MAIN_UNIT / 10.0 - inContext.scrollY) * inContext.scale + inContext.originOffsetY
       var idy = startY_mm
       while y >= .zero {
         if (idy % 10) == 0 {
@@ -41,7 +43,7 @@ public struct CanariRightVerticalRulerView : View {
         }else if self.mContext.scale > 0.5 {
           xMMArray.append (y)
         }
-        y -= self.mUnit.length * inContext.scale / 10.0
+        y -= MAIN_UNIT * inContext.scale / 10.0
         idy += 1
       }
     }
@@ -102,15 +104,15 @@ public struct CanariRightVerticalRulerView : View {
       .overlay {
         ForEach (self.mArray_cm, id: \.self) { indexAndY in
           if self.mContext.scale > 0.5 {
-            Text ("\(indexAndY.index)").font (.system (size: self.mContext.rulerSize.width.pxValue * 0.4))
+            Text ("\(indexAndY.index)").font (.system (size: 9.0))
             .frame (maxWidth: .infinity, alignment: .trailing)
             .position (x: self.mContext.rulerSize.width / 2.0, y: indexAndY.y)
           }else if self.mContext.scale > 0.25, (indexAndY.index % 2) == 0 {
-            Text ("\(indexAndY.index)").font (.system (size: self.mContext.rulerSize.width.pxValue * 0.4))
+            Text ("\(indexAndY.index)").font (.system (size: 9.0))
             .frame (maxWidth: .infinity, alignment: .trailing)
             .position (x: self.mContext.rulerSize.width / 2.0, y: indexAndY.y)
           }else if (indexAndY.index % 4) == 0 {
-            Text ("\(indexAndY.index)").font (.system (size: self.mContext.rulerSize.width.pxValue * 0.4))
+            Text ("\(indexAndY.index)").font (.system (size: 9.0))
             .frame (maxWidth: .infinity, alignment: .trailing)
             .position (x: self.mContext.rulerSize.width / 2.0, y: indexAndY.y)
           }
@@ -118,16 +120,16 @@ public struct CanariRightVerticalRulerView : View {
         CanariAnchoredLayout (x: self.mContext.rulerSize.width / 2.0,
                               y: .zero,
                               anchor: .top) {
-          Text (self.mUnit.string)
+          Text (MAIN_UNIT_STRING)
           .background (self.mBackColor)
-          .font (.system (size: self.mContext.rulerSize.width.pxValue * 0.4))
+          .font (.system (size: 9.0))
         }
         CanariAnchoredLayout (x: self.mContext.rulerSize.width / 2.0,
                               y: self.mContext.rulerSize.height,
                               anchor: .bottom) {
-          Text (self.mUnit.string)
+          Text (MAIN_UNIT_STRING)
           .background (self.mBackColor)
-          .font (.system (size: self.mContext.rulerSize.width.pxValue * 0.4))
+          .font (.system (size: 9.0))
         }
       }
       .background (self.mBackColor)
