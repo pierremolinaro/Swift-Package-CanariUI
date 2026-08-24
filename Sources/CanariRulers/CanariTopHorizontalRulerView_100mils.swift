@@ -34,7 +34,7 @@ public struct CanariTopHorizontalRulerView_100mils : View {
     var xMMArray = [CanariLength] ()
     if self.mContext.rulerSize.height > .zero {
       let startX_mm = Int (inContext.visibleXmin * 10.0 / MAIN_UNIT)
-      let endX   = inContext.visibleXmax - inContext.leftMargin / inContext.scale
+      let endX = inContext.visibleXmax - inContext.leftMargin / inContext.scale
       let endX_mm = Int (endX * 10.0 / MAIN_UNIT)
       var x = (Double (startX_mm) * MAIN_UNIT / 10.0 + inContext.leftMargin - inContext.scrollX) * inContext.scale + inContext.originOffsetX
       var idx = startX_mm
@@ -106,7 +106,7 @@ public struct CanariTopHorizontalRulerView_100mils : View {
         }
       }
       .overlay {
-        ForEach (self.mArray_cm, id: \.self) { indexAndX in
+        ForEach (self.mArray_cm.dropLast(), id: \.self) { indexAndX in
           if self.mContext.scale > 0.5 {
             Text ("\(indexAndX.idx * DISPLAY_FACTOR)").font (.system (size: 9.0))
             .position (x: indexAndX.x, y: self.mContext.rulerSize.height / 4.0)

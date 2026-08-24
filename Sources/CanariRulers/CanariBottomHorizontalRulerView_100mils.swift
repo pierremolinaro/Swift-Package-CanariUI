@@ -106,7 +106,7 @@ public struct CanariBottomHorizontalRulerView_100mils : View {
         }
       }
       .overlay {
-        ForEach (self.mArray_cm, id: \.self) { indexAndX in
+        ForEach (self.mArray_cm.dropLast(), id: \.self) { indexAndX in
           if self.mContext.scale > 0.5 {
             Text ("\(indexAndX.idx * DISPLAY_FACTOR)").font (.system (size: 9.0))
             .position (x: indexAndX.x, y: 3.0 * self.mContext.rulerSize.height / 4.0)
