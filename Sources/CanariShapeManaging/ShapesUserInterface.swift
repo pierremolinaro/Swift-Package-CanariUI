@@ -269,6 +269,9 @@ import Combine
           drawingScale: inCanvasScale
         ) { context, decorationDrawingScale in
           for knob in shape.knobs {
+            knob.drawKnobBackground (context: &context, scale: decorationDrawingScale)
+          }
+          for knob in shape.knobs {
             let inside : Bool
             if let p = inHoverUserLocationPoint {
               inside = knob.contains (

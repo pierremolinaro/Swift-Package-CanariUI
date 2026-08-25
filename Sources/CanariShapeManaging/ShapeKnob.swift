@@ -12,35 +12,24 @@ public struct ShapeKnob <ANCHOR : CanariShapeAnchorProtocol,
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  fileprivate enum Shape {
-    case rect
-    case circle
+  public enum Role {
+    case translate
+    case extendShrink (localCenter : CanariPoint)
+    case rotate (localPosition : CanariPoint)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private let localCenter : CanariPoint
-  private let shape : Shape
+  private let mRole : Role
   let dragKnobAction : (inout CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>, CanariPoint, Bool) -> Void
   let menu : ((ContextualMenuExecutor <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>) -> any View)?
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (localCenter inCenter : CanariPoint,
+  public init (role inRole : Self.Role,
                dragAction inKnobDragAction : @escaping (inout CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>, CanariPoint, Bool) -> Void,
                menu inMenu : ((ContextualMenuExecutor <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>) -> any View)? = nil) {
-    self.localCenter = inCenter
-    self.shape = .circle
-    self.dragKnobAction = inKnobDragAction
-    self.menu = inMenu
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  public init (dragAction inKnobDragAction : @escaping (inout CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>, CanariPoint, Bool) -> Void,
-               menu inMenu : ((ContextualMenuExecutor <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>) -> any View)? = nil) {
-    self.localCenter = .zero
-    self.shape = .rect
+    self.mRole = inRole
     self.dragKnobAction = inKnobDragAction
     self.menu = inMenu
   }
@@ -50,7 +39,7 @@ public struct ShapeKnob <ANCHOR : CanariShapeAnchorProtocol,
   public func contains (localPoint inLocalPoint : CanariPoint,
                         drawingScale inDrawingScale : Double) -> Bool {
     let r = CanariRect (
-      center: self.localCenter,
+      center: self.knobLocalCenter,
       size: CanariSize (width: .px (10.0) / inDrawingScale, height: .px (10.0) / inDrawingScale)
     )
     return r.contains (inLocalPoint)
@@ -58,18 +47,58 @@ public struct ShapeKnob <ANCHOR : CanariShapeAnchorProtocol,
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  private var knobLocalCenter : CanariPoint {
+    switch self.mRole {
+    case .translate :
+      return .zero
+    case .extendShrink (let localCenter) :
+      return localCenter
+    case .rotate (let localCenter) :
+      return localCenter
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  func drawKnobBackground (context ioContext : inout GraphicsContext,
+                           scale inScale : Double) {
+    switch self.mRole {
+    case .translate, .extendShrink :
+      ()
+    case .rotate (let localCenter) :
+      let line = CanariPath (points: [.zero, localCenter], isClosed: false)
+      ioContext.stroke (
+        line,
+        with: .color (.black),
+        lineWidth: .px (1) / inScale
+      )
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   func drawKnob (context ioContext : inout GraphicsContext,
                  inside inInside : Bool,
                  scale inScale : Double) {
-    let r = CanariRect (
-      center: self.localCenter,
-      size: CanariSize (width: .px (10) / inScale, height: .px (10) / inScale)
-    )
     let path : CanariPath
-    switch self.shape {
-    case .rect:
+    switch self.mRole {
+    case .translate :
+      let r = CanariRect (
+        center: .zero,
+        size: CanariSize (width: .px (10) / inScale, height: .px (10) / inScale)
+      )
       path = CanariPath (rect: r)
-    case .circle:
+    case .extendShrink (let localCenter) :
+      let r = CanariRect (
+        center: localCenter,
+        size: CanariSize (width: .px (10) / inScale, height: .px (10) / inScale)
+      )
+      path = CanariPath (ellipse: r)
+    case .rotate (let localCenter) :
+      let r = CanariRect (
+        center: localCenter,
+        size: CanariSize (width: .px (10) / inScale, height: .px (10) / inScale)
+      )
       path = CanariPath (ellipse: r)
     }
     ioContext.fill (
