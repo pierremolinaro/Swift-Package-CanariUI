@@ -17,12 +17,25 @@ public struct CanariShapeIssue : Identifiable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public struct NamedAction {
+    public let name : String
+    public let action : () -> Void
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public enum Kind : Hashable {
+    case warning
+    case error
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public let id : Self.Identifier
-  public enum Kind : Hashable { case warning, error }
   public let title : String
   public let absoluteOutline : CanariPath
   public let kind : Kind
-  public let namedAction : (String, () -> Void)
+  public let namedAction : NamedAction
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

@@ -99,7 +99,7 @@ public nonisolated struct CanariShapeRoot <ANCHOR : CanariShapeAnchorProtocol,
         title: "Center is not µm aligned",
         absoluteOutline: self.mAnchor.globalOutline,
         kind: .warning,
-        namedAction: ("µmAlign", { inShapesUI [shapeID: self.id]?.mAnchor.alignGlobalOrigin (on: CanariLength.µm (1)) })
+        namedAction: .init (name: "µmAlign", action: { inShapesUI [shapeID: self.id]?.mAnchor.alignGlobalOrigin (on: CanariLength.µm (1)) })
       )
       ioArray.append (issue)
     }
