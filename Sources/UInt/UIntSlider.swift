@@ -33,7 +33,7 @@ public struct UIntSlider : View {
 
   @ViewBuilder public var body : some View {
     HStack {
-      Text("\(self.mValue)\(self.mSuffix)").frame (width: 32)
+      Text("\(self.mValue)\(self.mSuffix)").frame (width: 40)
       Stepper (
         value: self.$mValue,
         in: UInt (self.mMin) ... UInt (self.mMax),

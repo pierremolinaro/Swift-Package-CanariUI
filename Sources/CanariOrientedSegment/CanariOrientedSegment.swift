@@ -64,22 +64,16 @@ public struct CanariOrientedSegment : Equatable, Hashable, CustomStringConvertib
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  var angle : CanariAngle { self.src.angle (to: self.tgt) }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   var path : CanariPath {
     var result = CanariPath ()
     result.addMove (to: self.src)
     result.addLine (to: self.tgt)
     return result
   }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-//  public func angle_0_2π () -> Double {
-//    var angle_rd = self.src.angle (to: self.tgt).radians
-//    while angle_rd < 0.0 {
-//      angle_rd += 2.0 * .pi
-//    }
-//    return angle_rd
-//  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -234,7 +228,6 @@ public struct CanariOrientedSegment : Equatable, Hashable, CustomStringConvertib
 
   public enum IntersectionResult {
     case disjointOrConsecutive
- //   case identical
     case pointAinCD
     case pointBinCD
     case pointCinAB
@@ -252,10 +245,6 @@ public struct CanariOrientedSegment : Equatable, Hashable, CustomStringConvertib
     let B = inAB.tgt
     let C = inCD.src
     let D = inCD.tgt
-//    if min (A.y, B.y) > max (C.y, D.y) {
-//      return .disjointOrConsecutive
-//    }else if max (A.y, B.y) < min (C.y, D.y) {
-//      return .disjointOrConsecutive
     if A.y > D.y {
       return .disjointOrConsecutive
     }else if B.y < C.y {
@@ -357,6 +346,20 @@ public struct CanariOrientedSegment : Equatable, Hashable, CustomStringConvertib
         }
       }
     }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // Segment extension points
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func pointBefore (at inDistance : CanariLength) -> CanariPoint {
+    self.src - CanariPoint (length: inDistance, angle: self.angle)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func pointAfter (at inDistance : CanariLength) -> CanariPoint {
+    self.tgt + CanariPoint (length: inDistance, angle: self.angle)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
