@@ -138,15 +138,6 @@ public struct CanariGridView_mm : View {
     //--- Dessiner la grille
       self.display_mm_grid (&context)
       self.display_cm_grid (&context, .gray)
-    //--- Dessiner le rectangle
-      let r = CanariRect (
-        left: self.mContext.margins.left * self.mContext.canvasScale ,
-        bottom: self.mContext.margins.bottom * self.mContext.canvasScale,
-        width: (self.mContext.contentSizeWithMargins.width - self.mContext.margins.left - self.mContext.margins.right) * self.mContext.canvasScale,
-        height: (self.mContext.contentSizeWithMargins.height - self.mContext.margins.top - self.mContext.margins.bottom) * self.mContext.canvasScale
-      )
-      let path = CanariPath (rect: r)
-      context.stroke (path, with: .color (.black), lineWidth: .px (1))
     }
 //    .overlay { self.displayDimensions () }
   }

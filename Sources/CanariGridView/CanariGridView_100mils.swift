@@ -147,15 +147,6 @@ public struct CanariGridView_100mils : View {
       self.display_10mils_grid (&context, .gray.opacity (0.25))
       self.display_50mils_grid (&context, .gray.opacity (0.50))
       self.display_100mils_grid (&context, .gray)
-    //--- Dessiner le rectangle
-      let r = CanariRect (
-        left: self.mContext.margins.left * self.mContext.canvasScale ,
-        bottom: self.mContext.margins.bottom * self.mContext.canvasScale,
-        width: (self.mContext.contentSizeWithMargins.width - self.mContext.margins.left - self.mContext.margins.right) * self.mContext.canvasScale,
-        height: (self.mContext.contentSizeWithMargins.height - self.mContext.margins.top - self.mContext.margins.bottom) * self.mContext.canvasScale
-      )
-      let path = CanariPath (rect: r)
-      context.stroke (path, with: .color (.black), lineWidth: .px (1))
     }
 //    .overlay { self.displayDimensions () }
   }
