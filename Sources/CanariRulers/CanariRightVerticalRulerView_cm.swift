@@ -15,7 +15,7 @@ public struct CanariRightVerticalRulerView_cm : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private let mContext : VerticalRulerViewContext
+  private let mContext : CanariVerticalRulerViewContext
   private let mBackColor : Color
   private let mArray_cm : [IndexAndY]
   private let mArray_5mm : [CanariLength]
@@ -23,7 +23,7 @@ public struct CanariRightVerticalRulerView_cm : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (context inContext : VerticalRulerViewContext,
+  public init (context inContext : CanariVerticalRulerViewContext,
                backColor inBackColor : Color) {
     self.mContext = inContext
     self.mBackColor = inBackColor

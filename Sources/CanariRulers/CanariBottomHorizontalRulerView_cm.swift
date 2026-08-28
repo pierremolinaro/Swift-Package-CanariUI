@@ -15,7 +15,7 @@ public struct CanariBottomHorizontalRulerView_cm : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private let mContext : HorizontalRulerViewContext
+  private let mContext : CanariHorizontalRulerViewContext
   private let mBackColor : Color
   private let mArray_cm : [IndexAndX]
   private let mArray_5mm : [CanariLength]
@@ -23,7 +23,7 @@ public struct CanariBottomHorizontalRulerView_cm : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (context inContext : HorizontalRulerViewContext,
+  public init (context inContext : CanariHorizontalRulerViewContext,
                backColor inBackColor : Color) {
     self.mContext = inContext
     self.mBackColor = inBackColor

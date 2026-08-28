@@ -22,10 +22,10 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
   private let mBackgroundView : ((BackgroundViewContext) -> any View)?
   private let mDrawBackGround : (_ ioContext : inout GraphicsContext) -> Void
   private let mDrawOverlay : (_ ioContext : inout GraphicsContext) -> Void
-  private let mTopHorizontalRulerView : (HorizontalRulerViewContext) -> any View
-  private let mLeftVerticalRulerView : (VerticalRulerViewContext) -> any View
-  private let mBottomHorizontalRulerView : (HorizontalRulerViewContext) -> any View
-  private let mRightVerticalRulerView : (VerticalRulerViewContext) -> any View
+  private let mTopHorizontalRulerView : (CanariHorizontalRulerViewContext) -> any View
+  private let mLeftVerticalRulerView : (CanariVerticalRulerViewContext) -> any View
+  private let mBottomHorizontalRulerView : (CanariHorizontalRulerViewContext) -> any View
+  private let mRightVerticalRulerView : (CanariVerticalRulerViewContext) -> any View
   private let mContext : CanvasManagerViewContext
   private let mContentSizeWithMargins : CanariSize
   private let mDroppedFilesHandler : (([Data], CanariPoint) -> Void)?
@@ -58,10 +58,10 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
         drawBackGround inDrawBackGround : @escaping (_ ioContext : inout GraphicsContext) -> Void,
         drawOverlay inDrawOverlay : @escaping (_ ioContext : inout GraphicsContext) -> Void,
         backgroundView inBackgroundView : ((BackgroundViewContext) -> any View)?,
-        leftVerticalRulerView inLeftVerticalRulerView : @escaping (VerticalRulerViewContext) -> any View,
-        topHorizontalRulerView inTopHorizontalRulerView : @escaping (HorizontalRulerViewContext) -> any View,
-        rightVerticalRulerView inRightVerticalRulerView : @escaping (VerticalRulerViewContext) -> any View,
-        bottomHorizontalRulerView inBottomHorizontalRulerView : @escaping (HorizontalRulerViewContext) -> any View,
+        leftVerticalRulerView inLeftVerticalRulerView : @escaping (CanariVerticalRulerViewContext) -> any View,
+        topHorizontalRulerView inTopHorizontalRulerView : @escaping (CanariHorizontalRulerViewContext) -> any View,
+        rightVerticalRulerView inRightVerticalRulerView : @escaping (CanariVerticalRulerViewContext) -> any View,
+        bottomHorizontalRulerView inBottomHorizontalRulerView : @escaping (CanariHorizontalRulerViewContext) -> any View,
         droppedFilesHandler inDroppedFilesHandler : (([Data], CanariPoint) -> Void)?,
         documentShapesDisplaySettings inDocumentShapesDisplaySettings : DOCUMENT_SHAPES_DISPLAY_SETTINGS,
         centerOfVisibleRectUserLocation inCenterOfVisibleRectUserLocation : Binding <CanariPoint>) {
@@ -281,7 +281,7 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
       x: self.mContext.rulerDescriptor.leftVerticalRulerWidth + rulerSize.width / 2.0,
       y: self.mContext.rulerDescriptor.topHorizontalRulerHeight / 2.0
     )
-   let context = HorizontalRulerViewContext (
+   let context = CanariHorizontalRulerViewContext (
       contentWidth: self.mContentSizeWithMargins.width,
       visibleXmin: self.mVisibleUserRectangle.minX,
       visibleXmax: self.mVisibleUserRectangle.maxX,
@@ -308,7 +308,7 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
       x: self.mContext.rulerDescriptor.leftVerticalRulerWidth + rulerSize.width / 2.0,
       y: inGeometry.availableHeight - self.mContext.rulerDescriptor.bottomHorizontalRulerHeight / 2.0
     )
-   let context = HorizontalRulerViewContext (
+   let context = CanariHorizontalRulerViewContext (
       contentWidth: self.mContentSizeWithMargins.width,
       visibleXmin: self.mVisibleUserRectangle.minX,
       visibleXmax: self.mVisibleUserRectangle.maxX,
@@ -335,7 +335,7 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
       x: self.mContext.rulerDescriptor.leftVerticalRulerWidth / 2.0,
       y: self.mContext.rulerDescriptor.topHorizontalRulerHeight + rulerSize.height / 2.0
     )
-   let context = VerticalRulerViewContext (
+   let context = CanariVerticalRulerViewContext (
       contentHeight: self.mContentSizeWithMargins.height,
       visibleYmin: self.mVisibleUserRectangle.minY,
       visibleYmax: self.mVisibleUserRectangle.maxY,
@@ -347,8 +347,8 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
       bottomMargin: self.mContext.margins.bottom
     )
     return AnyView (self.mLeftVerticalRulerView (context))
-    .frame (size: rulerSize)
-    .position (p: rulerPosition)
+      .frame (size: rulerSize)
+      .position (p: rulerPosition)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -362,7 +362,7 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
       x: inGeometry.availableWidth - self.mContext.rulerDescriptor.rightVerticalRulerWidth / 2.0,
       y: self.mContext.rulerDescriptor.topHorizontalRulerHeight + rulerSize.height / 2.0
     )
-   let context = VerticalRulerViewContext (
+   let context = CanariVerticalRulerViewContext (
       contentHeight: self.mContentSizeWithMargins.height,
       visibleYmin: self.mVisibleUserRectangle.minY,
       visibleYmax: self.mVisibleUserRectangle.maxY,
