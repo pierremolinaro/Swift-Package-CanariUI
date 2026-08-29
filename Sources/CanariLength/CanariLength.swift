@@ -52,6 +52,7 @@ public struct CanariLength : Hashable, Comparable, Sendable {
 
   public static var zero : CanariLength { return .cu (0) }
   public static var max  : CanariLength { CanariLength (.max, in: .cu) }
+  public static var min  : CanariLength { CanariLength (.min, in: .cu) }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
