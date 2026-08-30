@@ -8,47 +8,47 @@ import SwiftUI
 
 public struct CanariRulerDisplayDescriptor {
   private let rulerSize : CanariSize
-  private let topHorizontalRuler : CanariTrit
-  private let bottomHorizontalRuler : CanariTrit
-  private let leftVerticalRuler : CanariTrit
-  private let rightVerticalRuler : CanariTrit
+  private let showTopHorizontalRuler : Bool
+  private let showBottomHorizontalRuler : Bool
+  private let showLeftVerticalRuler : Bool
+  private let showRightVerticalRuler : Bool
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (rulerSize inRulerSize : CanariSize,
-               topHorizontalRuler inTopHorizontalRuler : CanariTrit,
-               bottomHorizontalRuler inBottomHorizontalRuler : CanariTrit,
-               leftVerticalRuler inLeftVerticalRuler : CanariTrit,
-               rightVerticalRuler inRightVerticalRuler : CanariTrit) {
+               showTopHorizontalRuler inShowTopHorizontalRuler : Bool,
+               showBottomHorizontalRuler inShowBottomHorizontalRuler : Bool,
+               showLeftVerticalRuler inShowLeftVerticalRuler : Bool,
+               showRightVerticalRuler inShowRightVerticalRuler : Bool) {
     self.rulerSize = inRulerSize
-    self.topHorizontalRuler = inTopHorizontalRuler
-    self.leftVerticalRuler = inLeftVerticalRuler
-    self.bottomHorizontalRuler = inBottomHorizontalRuler
-    self.rightVerticalRuler = inRightVerticalRuler
+    self.showTopHorizontalRuler = inShowTopHorizontalRuler
+    self.showLeftVerticalRuler = inShowLeftVerticalRuler
+    self.showBottomHorizontalRuler = inShowBottomHorizontalRuler
+    self.showRightVerticalRuler = inShowRightVerticalRuler
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var topHorizontalRulerHeight : CanariLength {
-    (self.topHorizontalRuler == .zero) ? .zero : self.rulerSize.height
+    self.showTopHorizontalRuler ? self.rulerSize.height : .zero
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var bottomHorizontalRulerHeight : CanariLength {
-    (self.bottomHorizontalRuler == .zero) ? .zero : self.rulerSize.height
+    self.showBottomHorizontalRuler ? self.rulerSize.height : .zero
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var leftVerticalRulerWidth : CanariLength {
-    (self.leftVerticalRuler == .zero) ? .zero : self.rulerSize.width
+    self.showLeftVerticalRuler ? self.rulerSize.width : .zero
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var rightVerticalRulerWidth : CanariLength {
-    (self.rightVerticalRuler == .zero) ? .zero : self.rulerSize.width
+    self.showRightVerticalRuler ? self.rulerSize.width : .zero
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

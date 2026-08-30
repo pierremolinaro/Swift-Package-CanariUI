@@ -166,9 +166,9 @@ public struct CanariPoint : Hashable, CustomStringConvertible, Sendable, Equatab
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func angle (to inPoint : CanariPoint) -> CanariAngle {
-    let dyMM = Double (inPoint.y.cuValue - self.y.cuValue)
-    let dxMM = Double (inPoint.x.cuValue - self.x.cuValue)
-    return .radians (Darwin.atan2 (dyMM, dxMM))
+    let dy = Double (inPoint.y.cuValue - self.y.cuValue)
+    let dx = Double (inPoint.x.cuValue - self.x.cuValue)
+    return .radians (Darwin.atan2 (dy, dx))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

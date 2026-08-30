@@ -6,15 +6,11 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
-private let MAIN_UNIT = CanariLength.cm (1)
-private let MAIN_UNIT_STRING = "cm"
-
-//--------------------------------------------------------------------------------------------------
-
-public struct CanariBottomHorizontalRulerView_cm : View {
+public struct CanariTopHorizontalRulerView : View {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  private let mDescriptor : CanariRulerUnitDescriptor
   private let mContext : CanariHorizontalRulerViewContext
   private let mBackColor : Color
   private let mArray_cm : [IndexAndX]
@@ -24,20 +20,22 @@ public struct CanariBottomHorizontalRulerView_cm : View {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (context inContext : CanariHorizontalRulerViewContext,
-               backColor inBackColor : Color) {
+               backColor inBackColor : Color,
+               descriptor inDescriptor : CanariRulerUnitDescriptor) {
     self.mContext = inContext
     self.mBackColor = inBackColor
+    self.mDescriptor = inDescriptor
   //--- Compute arraies
     var cmArray = [IndexAndX] ()
     var x5MMArray = [CanariLength] ()
     var xMMArray = [CanariLength] ()
     if self.mContext.rulerSize.height > .zero {
-      let startX_mm = Int (inContext.visibleXmin * 10.0 / MAIN_UNIT)
-      let endX   = inContext.visibleXmax - inContext.leftMargin / inContext.scale
-      let endX_mm = Int (endX * 10.0 / MAIN_UNIT)
-      var x = (Double (startX_mm) * MAIN_UNIT / 10.0 + inContext.leftMargin - inContext.scrollX) * inContext.scale + inContext.originOffsetX
+      let startX_mm = Int (inContext.visibleXmin * 10.0 / self.mDescriptor.mainUnitLength)
+      let endX = inContext.visibleXmax - inContext.leftMargin / inContext.scale
+      let endX_mm = Int (endX * 10.0 / self.mDescriptor.mainUnitLength)
+      var x = (Double (startX_mm) * self.mDescriptor.mainUnitLength / 10.0 + inContext.leftMargin - inContext.scrollX) * inContext.scale + inContext.originOffsetX
       var idx = startX_mm
-      let xMax = (Double (endX_mm) * MAIN_UNIT / 10.0 + inContext.leftMargin - inContext.scrollX) * inContext.scale + inContext.originOffsetX
+      let xMax = (Double (endX_mm) * self.mDescriptor.mainUnitLength / 10.0 + inContext.leftMargin - inContext.scrollX) * inContext.scale + inContext.originOffsetX
       while x <= xMax {
         if (idx % 10) == 0 {
           cmArray.append (IndexAndX (idx: idx / 10, x: x))
@@ -46,7 +44,7 @@ public struct CanariBottomHorizontalRulerView_cm : View {
         }else if self.mContext.scale > 0.5 {
           xMMArray.append (x)
         }
-        x += MAIN_UNIT * inContext.scale / 10.0
+        x += self.mDescriptor.mainUnitLength * inContext.scale / 10.0
        idx += 1
       }
     }
@@ -77,24 +75,24 @@ public struct CanariBottomHorizontalRulerView_cm : View {
       Spacer ()
     }else{
       Canvas { context, size in
-        enterTracing ("bottom.horizontal.ruler.view.canvas") ; defer { exitTracing ("bottom.horizontal.ruler.view.canvas") }
+        enterTracing ("top.horizontal.ruler.view.canvas") ; defer { exitTracing ("top.horizontal.ruler.view.canvas") }
         var path = CanariPath ()
         for indexAndX in self.mArray_cm {
-           path.addMove (toX: indexAndX.x, toY: .zero)
-           path.addLine (toX: indexAndX.x, toY: self.mContext.rulerSize.height / 2.0)
+          path.addMove (toX: indexAndX.x, toY: self.mContext.rulerSize.height)
+          path.addLine (toX: indexAndX.x, toY: self.mContext.rulerSize.height / 2.0)
         }
         for x in self.mArray_mm {
-           path.addMove (toX: x, toY: .zero)
-           path.addLine (toX: x, toY: self.mContext.rulerSize.height / 6.0)
+          path.addMove (toX: x, toY: self.mContext.rulerSize.height)
+          path.addLine (toX: x, toY: self.mContext.rulerSize.height * 5.0 / 6.0)
         }
         for x in self.mArray_5mm {
-           path.addMove (toX: x, toY: .zero)
-           path.addLine (toX: x, toY: self.mContext.rulerSize.height / 3.0)
+          path.addMove (toX: x, toY: self.mContext.rulerSize.height)
+          path.addLine (toX: x, toY: self.mContext.rulerSize.height * 2.0 / 3.0)
         }
         context.stroke (path, with: .color (.gray), lineWidth: .px (1))
         path = CanariPath ()
-        path.addMove (toX: .zero, toY: .zero)
-        path.addLine (toX: self.mContext.contentWidth * self.mContext.scale, toY: .zero)
+        path.addMove (toX: .zero, toY: self.mContext.rulerSize.height)
+        path.addLine (toX: self.mContext.contentWidth * self.mContext.scale, toY: self.mContext.rulerSize.height)
         context.stroke (path, with: .color (.black), lineWidth: .px (1))
         if let hx = self.mContext.hoverLocationX {
           var path = CanariPath ()
@@ -107,27 +105,27 @@ public struct CanariBottomHorizontalRulerView_cm : View {
       .overlay {
         ForEach (self.mArray_cm.dropLast(), id: \.self) { indexAndX in
           if self.mContext.scale > 0.5 {
-            Text ("\(indexAndX.idx)").font (.system (size: 9.0))
-            .position (x: indexAndX.x, y: 3.0 * self.mContext.rulerSize.height / 4.0)
+            Text ("\(indexAndX.idx * self.mDescriptor.displayFactor)").font (.system (size: 9.0))
+            .position (x: indexAndX.x, y: self.mContext.rulerSize.height / 4.0)
           }else if self.mContext.scale > 0.25, (indexAndX.idx % 2) == 0 {
-            Text ("\(indexAndX.idx)").font (.system (size: 9.0))
-            .position (x: indexAndX.x, y: 3.0 * self.mContext.rulerSize.height / 4.0)
+            Text ("\(indexAndX.idx * self.mDescriptor.displayFactor)").font (.system (size: 9.0))
+            .position (x: indexAndX.x, y: self.mContext.rulerSize.height / 4.0)
           }else if (indexAndX.idx % 4) == 0 {
-            Text ("\(indexAndX.idx)").font (.system (size: 9.0))
-            .position (x: indexAndX.x, y: 3.0 * self.mContext.rulerSize.height / 4.0)
+            Text ("\(indexAndX.idx * self.mDescriptor.displayFactor)").font (.system (size: 9.0))
+            .position (x: indexAndX.x, y: self.mContext.rulerSize.height / 4.0)
           }
         }
         CanariAnchoredLayout (x: self.mContext.rulerSize.width,
-                              y: 3.0 * self.mContext.rulerSize.height / 4.0,
+                              y: self.mContext.rulerSize.height / 4.0,
                               anchor: .trailing) {
-          Text (MAIN_UNIT_STRING)
+          Text (self.mDescriptor.mainUnitString)
           .background (self.mBackColor)
           .font (.system (size: 9.0))
         }
         CanariAnchoredLayout (x: .zero,
-                              y: 3.0 * self.mContext.rulerSize.height / 4.0,
+                              y: self.mContext.rulerSize.height / 4.0,
                               anchor: .leading) {
-          Text (MAIN_UNIT_STRING)
+          Text (self.mDescriptor.mainUnitString)
           .background (self.mBackColor)
           .font (.system (size: 9.0))
         }
