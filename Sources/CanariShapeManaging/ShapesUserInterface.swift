@@ -694,6 +694,64 @@ import Combine
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Move selection
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  open func moveSelectionToBottom () {
+    var selectedShapeOutlines = CanariPath ()
+    var unselectedShapeOutlines = [CanariPath] ()
+    for i in 0 ..< self.shapeCount {
+      if self.selection.contains (self [shapeIndex: i].id) {
+        selectedShapeOutlines.addPath (self [shapeIndex: i].mAnchor.globalOutline)
+      }else{
+        unselectedShapeOutlines.append (self [shapeIndex: i].mAnchor.globalOutline)
+      }
+    }
+    let minY = selectedShapeOutlines.boundingRect.minY
+    if minY > .zero {
+      var translation = CanariPoint (y: -minY)
+      for i in 0 ..< self.shapeCount {
+        if self.selection.contains (self [shapeIndex: i].id) {
+          self [shapeIndex: i].mAnchor.validateTranslation (&translation, relativeTo: unselectedShapeOutlines)
+        }
+      }
+      for i in 0 ..< self.shapeCount {
+        if self.selection.contains (self [shapeIndex: i].id) {
+          self [shapeIndex: i].mAnchor.addGlobalTranslation (translation)
+        }
+      }
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  open func moveSelectionToLeft () {
+    var selectedShapeOutlines = CanariPath ()
+    var unselectedShapeOutlines = [CanariPath] ()
+    for i in 0 ..< self.shapeCount {
+      if self.selection.contains (self [shapeIndex: i].id) {
+        selectedShapeOutlines.addPath (self [shapeIndex: i].mAnchor.globalOutline)
+      }else{
+        unselectedShapeOutlines.append (self [shapeIndex: i].mAnchor.globalOutline)
+      }
+    }
+    let minX = selectedShapeOutlines.boundingRect.minX
+    if minX > .zero {
+      var translation = CanariPoint (x: -minX)
+      for i in 0 ..< self.shapeCount {
+        if self.selection.contains (self [shapeIndex: i].id) {
+          self [shapeIndex: i].mAnchor.validateTranslation (&translation, relativeTo: unselectedShapeOutlines)
+        }
+      }
+      for i in 0 ..< self.shapeCount {
+        if self.selection.contains (self [shapeIndex: i].id) {
+          self [shapeIndex: i].mAnchor.addGlobalTranslation (translation)
+        }
+      }
+    }
+ }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Grouping
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

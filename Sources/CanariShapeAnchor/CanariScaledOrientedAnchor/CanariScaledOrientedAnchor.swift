@@ -215,19 +215,20 @@ public struct CanariScaledOrientedAnchor : Sendable, CanariShapeAnchorProtocol {
 
   public func validateTranslation (_ ioTranslation : inout CanariPoint,
                                    relativeTo inUnselectedShapeOutlines : [CanariPath]) {
-    var idx = 0
-    while !ioTranslation.isZero, idx < inUnselectedShapeOutlines.count {
-      var hIntersects = inUnselectedShapeOutlines [idx].intersectsUsingNonZeroRule (self.globalOutline.translated (xBy: ioTranslation.x))
-      while hIntersects, !ioTranslation.x.isZero {
-        ioTranslation.x *= 0.5
-        hIntersects = inUnselectedShapeOutlines [idx].intersectsUsingNonZeroRule (self.globalOutline.translated (xBy: ioTranslation.x))
+    var lowBound = CanariPoint.zero
+    while lowBound.distance (to: ioTranslation) > .µm (1) {
+      let t = (lowBound + ioTranslation) / 2.0
+      var idx = 0
+      var intersects = false
+      while !intersects, idx < inUnselectedShapeOutlines.count {
+        intersects = inUnselectedShapeOutlines [idx].intersectsUsingNonZeroRule (self.globalOutline.translated (by: t))
+        idx += 1
       }
-      var vIntersects = inUnselectedShapeOutlines [idx].intersectsUsingNonZeroRule (self.globalOutline.translated (yBy: ioTranslation.y))
-      while vIntersects, !ioTranslation.y.isZero {
-        ioTranslation.y *= 0.5
-        vIntersects = inUnselectedShapeOutlines [idx].intersectsUsingNonZeroRule (self.globalOutline.translated (yBy: ioTranslation.y))
+      if intersects {
+        ioTranslation = t
+      }else{
+        lowBound = t
       }
-      idx += 1
     }
   }
 

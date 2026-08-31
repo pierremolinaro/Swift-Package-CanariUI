@@ -12,7 +12,6 @@ public struct CanariPath : Equatable, Sendable {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   internal var mPath : Path
-//  internal var mCGPath : CGMutablePath = .init ()
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -98,6 +97,16 @@ public struct CanariPath : Equatable, Sendable {
   public init (segment inSegment : CanariOrientedSegment) {
     self.init ()
     self.addSegment (inSegment)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public init (arrowFrom inStart : CanariPoint,
+               to inTarget : CanariPoint,
+               arrowhead inLength : CanariLength) {
+    self.init ()
+    self.addMove (to: inStart)
+    self.addArrow (to: inTarget, arrowhead: inLength)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

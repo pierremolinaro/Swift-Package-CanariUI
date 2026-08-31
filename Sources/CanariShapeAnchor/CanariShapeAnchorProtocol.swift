@@ -59,6 +59,13 @@ public protocol CanariShapeAnchorProtocol : Sendable, Codable, Equatable {
   mutating func alignGlobalOrigin (on inUnit : CanariLength)
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Validate translation
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  func validateTranslation (_ ioTranslation : inout CanariPoint,
+                            relativeTo inUnselectedShapeOutlines : [CanariPath])
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Translation
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
