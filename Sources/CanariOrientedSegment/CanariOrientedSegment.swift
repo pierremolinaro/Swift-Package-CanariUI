@@ -352,13 +352,13 @@ public struct CanariOrientedSegment : Equatable, Hashable, CustomStringConvertib
   // Segment extension points
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func pointBefore (at inDistance : CanariLength) -> CanariPoint {
+  public func pointBeforeSRC (at inDistance : CanariLength) -> CanariPoint {
     self.src - CanariPoint (length: inDistance, angle: self.angle)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func pointAfter (at inDistance : CanariLength) -> CanariPoint {
+  public func pointAfterTGT (at inDistance : CanariLength) -> CanariPoint {
     self.tgt + CanariPoint (length: inDistance, angle: self.angle)
   }
 
