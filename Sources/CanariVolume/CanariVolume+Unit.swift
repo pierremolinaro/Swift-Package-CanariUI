@@ -19,7 +19,7 @@ public extension CanariVolume {
     case inch3
     case mil3
     case µm3
-    case px3
+    case pt3
     case cu3
 
     // -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
@@ -32,7 +32,7 @@ public extension CanariVolume {
         case .mil3  : return Int128 (CanariArea.Unit.mil2.cu2Value) * Int128 (CanariLength.Unit.mil.cuValue)
         case .µm3   : return Int128 (CanariArea.Unit.µm2.cu2Value) * Int128 (CanariLength.Unit.µm.cuValue)
         case .cu3   : return 1
-        case .px3   : return Int128 (CanariArea.Unit.px2.cu2Value) * Int128 (CanariLength.Unit.px.cuValue)
+        case .pt3   : return Int128 (CanariArea.Unit.pt2.cu2Value) * Int128 (CanariLength.Unit.pt.cuValue)
       }
     }
 
@@ -46,7 +46,7 @@ public extension CanariVolume {
         case .mil3  : return "mil³"
         case .µm3   : return "µm³"
         case .cu3   : return "cu³"
-        case .px3   : return "px³"
+        case .pt3   : return "pt³"
       }
     }
 

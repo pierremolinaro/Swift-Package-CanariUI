@@ -86,17 +86,17 @@ public struct CanariRightVerticalRulerView : View {
            path.addMove (toX: .zero, toY: y)
            path.addLine (toX: 4.0 * self.mContext.rulerSize.width / 12.0, toY: y)
         }
-        context.stroke (path, with: .color (.gray), lineWidth: .px (1))
+        context.stroke (path, with: .color (.gray), lineWidth: .pt (1))
         path = CanariPath ()
         path.addMove (toX: .zero, toY: .zero)
         path.addLine (toX: .zero, toY: self.mContext.rulerSize.height)
-        context.stroke (path, with: .color (.black), lineWidth: .px (1))
+        context.stroke (path, with: .color (.black), lineWidth: .pt (1))
         if let hy = self.mContext.hoverLocationY {
           var path = CanariPath ()
           let y = (self.mContext.contentHeight - self.mContext.bottomMargin - hy - self.mContext.scrollY) * self.mContext.scale + self.mContext.originOffsetY
           path.addMove (toX: .zero, toY: y)
           path.addLine (toX: self.mContext.rulerSize.width, toY: y)
-          context.stroke (path, with: .color (.black), lineWidth: .px (1))
+          context.stroke (path, with: .color (.black), lineWidth: .pt (1))
         }
       }
       .overlay {

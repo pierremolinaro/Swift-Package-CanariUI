@@ -31,13 +31,13 @@ public struct CanariPoint : Hashable, CustomStringConvertible, Sendable, Equatab
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (px inPoint : NSPoint, aligned inUnit : CanariLength? = nil) {
+  public init (pt inPoint : NSPoint, aligned inUnit : CanariLength? = nil) {
     if let unit = inUnit {
-      self.x = .px (inPoint.x).aligning (to: unit)
-      self.y = .px (inPoint.y).aligning (to: unit)
+      self.x = .pt (inPoint.x).aligning (to: unit)
+      self.y = .pt (inPoint.y).aligning (to: unit)
     }else{
-      self.x = .px (inPoint.x)
-      self.y = .px (inPoint.y)
+      self.x = .pt (inPoint.x)
+      self.y = .pt (inPoint.y)
     }
   }
 
@@ -126,8 +126,8 @@ public struct CanariPoint : Hashable, CustomStringConvertible, Sendable, Equatab
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var pxValue : CGPoint {
-    return CGPoint (x: self.x.pxValue, y: self.y.pxValue)
+  public var ptValue : CGPoint {
+    return CGPoint (x: self.x.ptValue, y: self.y.ptValue)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

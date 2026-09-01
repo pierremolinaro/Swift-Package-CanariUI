@@ -18,8 +18,8 @@ public struct CanariAnchoredLayout : Layout {
 
   public init (location inLocation : CanariPoint,
                anchor inAnchor : UnitPoint) {
-    self.mLocationX = inLocation.x.pxValue
-    self.mLocationY = inLocation.y.pxValue
+    self.mLocationX = inLocation.x.ptValue
+    self.mLocationY = inLocation.y.ptValue
     self.mAnchor = inAnchor
   }
 
@@ -28,8 +28,8 @@ public struct CanariAnchoredLayout : Layout {
   public init (x inX : CanariLength,
                y inY : CanariLength,
                anchor inAnchor : UnitPoint) {
-    self.mLocationX = inX.pxValue
-    self.mLocationY = inY.pxValue
+    self.mLocationX = inX.ptValue
+    self.mLocationY = inY.ptValue
     self.mAnchor = inAnchor
   }
 

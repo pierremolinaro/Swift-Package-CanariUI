@@ -15,7 +15,7 @@ public extension CanariPath {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func flattened (threshold inThreshold : CanariLength) -> CanariPath {
-    CanariPath (cgPath: self.mPath.cgPath.flattened (threshold: inThreshold.pxValue))
+    CanariPath (cgPath: self.mPath.cgPath.flattened (threshold: inThreshold.ptValue))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

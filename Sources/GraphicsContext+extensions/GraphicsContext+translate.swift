@@ -11,7 +11,7 @@ public extension GraphicsContext {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   mutating func translateBy (x inX : CanariLength, y inY : CanariLength) {
-    self.translateBy (x: inX.pxValue, y: inY.pxValue)
+    self.translateBy (x: inX.ptValue, y: inY.ptValue)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

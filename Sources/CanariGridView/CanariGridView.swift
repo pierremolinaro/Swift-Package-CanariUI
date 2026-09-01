@@ -66,7 +66,7 @@ public struct CanariGridView : View {
       path.addMove (toX: x, toY: .zero)
       path.addLine (toX: x, toY: self.mContext.contentSizeWithMargins.height * self.mContext.canvasScale)
     }
-    ioContext.stroke (path, with: .color (inColor), lineWidth: .px (1))
+    ioContext.stroke (path, with: .color (inColor), lineWidth: .pt (1))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

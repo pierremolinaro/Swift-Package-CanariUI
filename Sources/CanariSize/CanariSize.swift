@@ -19,8 +19,8 @@ public struct CanariSize : Hashable, CustomStringConvertible, RawRepresentable, 
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (px inSize : NSSize) {
-    self.init (width: .px (inSize.width), height: .px (inSize.height))
+  public init (pt inSize : NSSize) {
+    self.init (width: .pt (inSize.width), height: .pt (inSize.height))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -42,7 +42,7 @@ public struct CanariSize : Hashable, CustomStringConvertible, RawRepresentable, 
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var pxValue : CGSize { CGSize (width: self.width.pxValue, height: self.height.pxValue) }
+  public var ptValue : CGSize { CGSize (width: self.width.ptValue, height: self.height.ptValue) }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

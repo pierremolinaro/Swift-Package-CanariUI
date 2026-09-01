@@ -57,12 +57,12 @@ public struct CanariPath : Equatable, Sendable {
     case .middleLeft: rotationCenter = inRect.middleLeft
     case .middleRight: rotationCenter = inRect.middleRight
     }
-    let x = rotationCenter.x.pxValue
-    let y = rotationCenter.y.pxValue
+    let x = rotationCenter.x.ptValue
+    let y = rotationCenter.y.ptValue
     let af = CGAffineTransform (translationX: x, y: y)
       .rotated (by: inAngle.radians)
       .translatedBy (x: -x, y: -y)
-    self.mPath = Path (inRect.pxValue).applying (af)
+    self.mPath = Path (inRect.ptValue).applying (af)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -89,7 +89,7 @@ public struct CanariPath : Equatable, Sendable {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (ellipse inRect : CanariRect) {
-    self.mPath = Path (ellipseIn: inRect.pxValue)
+    self.mPath = Path (ellipseIn: inRect.ptValue)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -192,7 +192,7 @@ public struct CanariPath : Equatable, Sendable {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var boundingRect : CanariRect {
-    return self.mPath.isEmpty ? CanariRect () : CanariRect (px: self.mPath.boundingRect)
+    return self.mPath.isEmpty ? CanariRect () : CanariRect (pt: self.mPath.boundingRect)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -203,7 +203,7 @@ public struct CanariPath : Equatable, Sendable {
 
   public var currentCanariPoint : CanariPoint? {
     if let p = self.mPath.currentPoint {
-      return CanariPoint (px: p)
+      return CanariPoint (pt: p)
     }else{
       return nil
     }

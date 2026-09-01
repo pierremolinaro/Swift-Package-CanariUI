@@ -17,8 +17,8 @@ public struct CanariAngle : Hashable, Comparable, Sendable {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (fromPoint inStartPoint : CanariPoint, toPoint inTargetPoint : CanariPoint) {
-    let dyMM = (inTargetPoint.y - inStartPoint.y).pxValue
-    let dxMM = (inTargetPoint.x - inStartPoint.x).pxValue
+    let dyMM = (inTargetPoint.y - inStartPoint.y).ptValue
+    let dxMM = (inTargetPoint.x - inStartPoint.x).ptValue
     self.radians = Darwin.atan2 (dyMM, dxMM)
   }
 

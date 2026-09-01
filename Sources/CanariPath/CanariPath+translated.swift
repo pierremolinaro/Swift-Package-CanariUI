@@ -18,8 +18,8 @@ public extension CanariPath {
 
   func translated (xBy inX : CanariLength = .zero,
                    yBy inY : CanariLength = .zero) -> CanariPath {
-    let dx = inX.pxValue
-    let dy = inY.pxValue
+    let dx = inX.ptValue
+    let dy = inY.ptValue
     var path = CanariPath ()
     self.mPath.forEach {
       switch $0 {

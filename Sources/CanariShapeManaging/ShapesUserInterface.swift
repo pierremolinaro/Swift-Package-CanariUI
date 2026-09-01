@@ -250,12 +250,12 @@ import Combine
               var path = CanariPath ()
               path.addMove (to: p)
               path.addLine (to: q)
-              ioContext.stroke (path, with: .color (.orange), lineWidth: .px (1) / inCanvasScale)
+              ioContext.stroke (path, with: .color (.orange), lineWidth: .pt (1) / inCanvasScale)
             }else if p.y == q.y, p.x != q.x { // Horizontal guide
               var path = CanariPath ()
               path.addMove (to: p)
               path.addLine (to: q)
-              ioContext.stroke (path, with: .color (.orange), lineWidth: .px (1) / inCanvasScale)
+              ioContext.stroke (path, with: .color (.orange), lineWidth: .pt (1) / inCanvasScale)
             }
           }
         }

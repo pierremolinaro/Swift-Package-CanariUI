@@ -84,7 +84,7 @@ public nonisolated struct CanariAffinity : Equatable, Sendable {
   */
 
   public mutating func translate (x inDx : CanariLength, y inDy : CanariLength) {
-    self.mAffineTransform.translate (x: inDx.pxValue, y: inDy.pxValue)
+    self.mAffineTransform.translate (x: inDx.ptValue, y: inDy.ptValue)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -311,8 +311,8 @@ public nonisolated struct CanariAffinity : Equatable, Sendable {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func transforming (_ inPoint : CanariPoint) -> CanariPoint {
-    let nsPoint = self.affineTransform.transform (inPoint.pxValue)
-    return CanariPoint (px: nsPoint)
+    let nsPoint = self.affineTransform.transform (inPoint.ptValue)
+    return CanariPoint (pt: nsPoint)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

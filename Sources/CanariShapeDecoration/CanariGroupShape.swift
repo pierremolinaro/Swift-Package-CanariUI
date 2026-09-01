@@ -131,7 +131,7 @@ public struct CanariGroupShape <ANCHOR : CanariShapeAnchorProtocol,
       inAnchor.withLocalBoundingRect {
         ioContext.stroke (
           CanariPath (rect: $0),
-          with: .color (.black), lineWidth: .px (0.5) / inDrawingScale
+          with: .color (.black), lineWidth: .pt (0.5) / inDrawingScale
         )
       }
     }

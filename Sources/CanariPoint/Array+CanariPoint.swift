@@ -10,10 +10,10 @@ extension Array where Element == CanariPoint {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var pxValues : [CGPoint] {
+  var ptValues : [CGPoint] {
     var result = [CGPoint] ()
     for p in self {
-      result.append (p.pxValue)
+      result.append (p.ptValue)
     }
     return result
   }

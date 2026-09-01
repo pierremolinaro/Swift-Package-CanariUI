@@ -23,8 +23,8 @@ extension CanariLength {
       return "\(self.cuValue / CanariLength.Unit.inch.length.cuValue)in"
     }else if self.isAligned (CanariLength.Unit.mil.length) {
       return "\(self.cuValue / CanariLength.Unit.mil.length.cuValue)mil"
-    }else if self.isAligned (CanariLength.Unit.px.length) {
-      return "\(self.cuValue / CanariLength.Unit.px.length.cuValue)px"
+    }else if self.isAligned (CanariLength.Unit.pt.length) {
+      return "\(self.cuValue / CanariLength.Unit.pt.length.cuValue)pt"
     }else{
       return "\(self.cuValue)"
     }
@@ -52,8 +52,8 @@ extension Scanner {
         return .inch (v)
       }else if self.scanString ("mil") != nil {
         return .mil (v)
-      }else if self.scanString ("px") != nil {
-        return .px (v)
+      }else if self.scanString ("pt") != nil {
+        return .pt (v)
       }else{
         return .cu (v)
       }

@@ -86,17 +86,17 @@ public struct CanariLeftVerticalRulerView : View {
            path.addMove (toX: 10.0 * self.mContext.rulerSize.width / 12.0, toY: y)
            path.addLine (toX: self.mContext.rulerSize.width, toY: y)
         }
-        context.stroke (path, with: .color (.gray), lineWidth: .px (1))
+        context.stroke (path, with: .color (.gray), lineWidth: .pt (1))
         path = CanariPath ()
         path.addMove (toX: self.mContext.rulerSize.width, toY: .zero)
         path.addLine (toX: self.mContext.rulerSize.width, toY: self.mContext.rulerSize.height)
-        context.stroke (path, with: .color (.black), lineWidth: .px (1))
+        context.stroke (path, with: .color (.black), lineWidth: .pt (1))
         if let hy = self.mContext.hoverLocationY {
           var path = CanariPath ()
           let y = (self.mContext.contentHeight - self.mContext.bottomMargin - hy - self.mContext.scrollY) * self.mContext.scale + self.mContext.originOffsetY
           path.addMove (toX: .zero, toY: y)
           path.addLine (toX: self.mContext.rulerSize.width, toY: y)
-          context.stroke (path, with: .color (.black), lineWidth: .px (1))
+          context.stroke (path, with: .color (.black), lineWidth: .pt (1))
         }
       }
       .overlay { // X par rapprt au centre
@@ -104,15 +104,15 @@ public struct CanariLeftVerticalRulerView : View {
           if self.mContext.scale > 0.5 {
             Text ("\(indexAndY.idx * self.mDescriptor.displayFactor)").font (.system (size: 9.0))
             .frame (maxWidth: .infinity, alignment: .trailing)
-            .position (x: self.mContext.rulerSize.width / 12.0 - .px (1), y: indexAndY.y)
+            .position (x: self.mContext.rulerSize.width / 12.0 - .pt (1), y: indexAndY.y)
           }else if self.mContext.scale > 0.25, indexAndY.idx % 2 == 0 {
             Text ("\(indexAndY.idx * self.mDescriptor.displayFactor)").font (.system (size: 9.0))
             .frame (maxWidth: .infinity, alignment: .trailing)
-            .position (x: self.mContext.rulerSize.width / 12.0 - .px (1), y: indexAndY.y)
+            .position (x: self.mContext.rulerSize.width / 12.0 - .pt (1), y: indexAndY.y)
           }else if indexAndY.idx % 4 == 0 {
             Text ("\(indexAndY.idx * self.mDescriptor.displayFactor)").font (.system (size: 9.0))
             .frame (maxWidth: .infinity, alignment: .trailing)
-            .position (x: self.mContext.rulerSize.width / 12.0 - .px (1), y: indexAndY.y)
+            .position (x: self.mContext.rulerSize.width / 12.0 - .pt (1), y: indexAndY.y)
           }
         }
         CanariAnchoredLayout (x: self.mContext.rulerSize.width / 2.0,

@@ -20,8 +20,8 @@ public struct CanariStrokeStyle : Equatable, Sendable, CanariCodableByString {
   public init () {
     self.lineCapStyle = .round
     self.lineJoinStyle = .round
-    self.lineWidth = CanariLength.px (1.0)
-    self.miterLimit = CanariLength.px (10.0)
+    self.lineWidth = CanariLength.pt (1.0)
+    self.miterLimit = CanariLength.pt (10.0)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -30,7 +30,7 @@ public struct CanariStrokeStyle : Equatable, Sendable, CanariCodableByString {
     self.lineCapStyle = .round
     self.lineJoinStyle = .round
     self.lineWidth = inLineWidth
-    self.miterLimit = CanariLength.px (10.0)
+    self.miterLimit = CanariLength.pt (10.0)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -49,13 +49,13 @@ public struct CanariStrokeStyle : Equatable, Sendable, CanariCodableByString {
     if let v = inScanner.scanCanariLengthEncodedWithUnit () {
       self.lineWidth = v
     }else{
-      self.lineWidth = .px (1)
+      self.lineWidth = .pt (1)
       ioOk = false
     }
     if let v = inScanner.scanCanariLengthEncodedWithUnit () {
       self.miterLimit = v
     }else{
-      self.miterLimit = .px (1)
+      self.miterLimit = .pt (1)
       ioOk = false
     }
   }
@@ -65,7 +65,7 @@ public struct CanariStrokeStyle : Equatable, Sendable, CanariCodableByString {
   public init? (widthString inWidthString : String,
                 linejoinString inLinejoinString: String,
                 lineCapString inLineCapString : String) {
-    if let lineWidth_px = Double (inWidthString) {
+    if let lineWidth_pt = Double (inWidthString) {
       if inLineCapString == "round" {
         self.lineCapStyle = .round
       }else{
@@ -76,8 +76,8 @@ public struct CanariStrokeStyle : Equatable, Sendable, CanariCodableByString {
       }else{
         fatalError ("inLinejoinString not handled yet")
       }
-      self.lineWidth = CanariLength.px (lineWidth_px)
-      self.miterLimit = CanariLength.px (10.0)
+      self.lineWidth = CanariLength.pt (lineWidth_pt)
+      self.miterLimit = CanariLength.pt (10.0)
     }else{
       return nil
     }
@@ -97,10 +97,10 @@ public struct CanariStrokeStyle : Equatable, Sendable, CanariCodableByString {
 
   public var swiftui : StrokeStyle {
     StrokeStyle (
-      lineWidth: self.lineWidth.pxValue,
+      lineWidth: self.lineWidth.ptValue,
       lineCap: self.lineCapStyle,
       lineJoin: self.lineJoinStyle,
-      miterLimit: self.miterLimit.pxValue
+      miterLimit: self.miterLimit.ptValue
     )
   }
 

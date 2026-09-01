@@ -19,7 +19,7 @@ public extension CanariArea {
     case inch2
     case mil2
     case µm2
-    case px2
+    case pt2
     case cu2
 
     // -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
@@ -32,7 +32,7 @@ public extension CanariArea {
         case .mil2  : return CanariLength.Unit.mil.cuValue * CanariLength.Unit.mil.cuValue
         case .µm2   : return CanariLength.Unit.µm.cuValue * CanariLength.Unit.µm.cuValue
         case .cu2   : return 1
-        case .px2   : return CanariLength.Unit.px.cuValue * CanariLength.Unit.px.cuValue
+        case .pt2   : return CanariLength.Unit.pt.cuValue * CanariLength.Unit.pt.cuValue
       }
     }
 
@@ -46,7 +46,7 @@ public extension CanariArea {
         case .mil2  : return "mil²"
         case .µm2   : return "µm²"
         case .cu2   : return "cu²"
-        case .px2   : return "px²"
+        case .pt2   : return "pt²"
       }
     }
 

@@ -31,7 +31,7 @@ public extension GraphicsContext {
                with inShading : GraphicsContext.Shading,
                lineWidth inLineWidth : CanariLength) {
     let path = CanariPath (rect: inRect)
-    self.stroke (path.mPath, with: inShading, lineWidth: inLineWidth.pxValue)
+    self.stroke (path.mPath, with: inShading, lineWidth: inLineWidth.ptValue)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

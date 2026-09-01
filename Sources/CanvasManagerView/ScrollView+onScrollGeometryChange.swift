@@ -22,7 +22,7 @@ public extension ScrollView {
       },
       action: { oldOffset, newOffset in
         if oldOffset != newOffset {
-          inScrollPositionBinding.wrappedValue = CanariPoint (px: newOffset) / inContentZoom
+          inScrollPositionBinding.wrappedValue = CanariPoint (pt: newOffset) / inContentZoom
         }
       }
     )

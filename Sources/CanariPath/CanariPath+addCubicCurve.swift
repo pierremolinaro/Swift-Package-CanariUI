@@ -13,7 +13,7 @@ public extension CanariPath {
   mutating func addCubicCurve (to inPoint : CanariPoint,
                                control1 inCtrl1 : CanariPoint,
                                control2 inCtrl2 : CanariPoint) {
-    self.mPath.addCurve (to: inPoint.pxValue, control1: inCtrl1.pxValue, control2: inCtrl2.pxValue)
+    self.mPath.addCurve (to: inPoint.ptValue, control1: inCtrl1.ptValue, control2: inCtrl2.ptValue)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

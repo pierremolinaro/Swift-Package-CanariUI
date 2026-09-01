@@ -40,7 +40,7 @@ public struct ShapeKnob <ANCHOR : CanariShapeAnchorProtocol,
                         drawingScale inDrawingScale : Double) -> Bool {
     let r = CanariRect (
       center: self.knobLocalCenter,
-      size: CanariSize (width: .px (10.0) / inDrawingScale, height: .px (10.0) / inDrawingScale)
+      size: CanariSize (width: .pt (10.0) / inDrawingScale, height: .pt (10.0) / inDrawingScale)
     )
     return r.contains (inLocalPoint)
   }
@@ -70,7 +70,7 @@ public struct ShapeKnob <ANCHOR : CanariShapeAnchorProtocol,
       ioContext.stroke (
         line,
         with: .color (.black),
-        lineWidth: .px (1) / inScale
+        lineWidth: .pt (1) / inScale
       )
     }
   }
@@ -85,19 +85,19 @@ public struct ShapeKnob <ANCHOR : CanariShapeAnchorProtocol,
     case .translate :
       let r = CanariRect (
         center: .zero,
-        size: CanariSize (width: .px (10) / inScale, height: .px (10) / inScale)
+        size: CanariSize (width: .pt (10) / inScale, height: .pt (10) / inScale)
       )
       path = CanariPath (rect: r)
     case .extendShrink (let localCenter) :
       let r = CanariRect (
         center: localCenter,
-        size: CanariSize (width: .px (10) / inScale, height: .px (10) / inScale)
+        size: CanariSize (width: .pt (10) / inScale, height: .pt (10) / inScale)
       )
       path = CanariPath (ellipse: r)
     case .rotate (let localCenter) :
       let r = CanariRect (
         center: localCenter,
-        size: CanariSize (width: .px (10) / inScale, height: .px (10) / inScale)
+        size: CanariSize (width: .pt (10) / inScale, height: .pt (10) / inScale)
       )
       path = CanariPath (ellipse: r)
     }
@@ -108,7 +108,7 @@ public struct ShapeKnob <ANCHOR : CanariShapeAnchorProtocol,
     ioContext.stroke (
       path,
       with: .color (inInside ? .black : .gray),
-      lineWidth: .px (1) / inScale
+      lineWidth: .pt (1) / inScale
     )
   }
 

@@ -61,7 +61,7 @@ public struct CanariLength : Hashable, Comparable, Sendable {
   public static func µm   (_ inValue : Int) -> CanariLength { CanariLength (inValue, in: .µm) }
   public static func inch (_ inValue : Int) -> CanariLength { CanariLength (inValue, in: .inch) }
   public static func mil  (_ inValue : Int) -> CanariLength { CanariLength (inValue, in: .mil) }
-  public static func px   (_ inValue : Int) -> CanariLength { CanariLength (inValue, in: .px) }
+  public static func pt   (_ inValue : Int) -> CanariLength { CanariLength (inValue, in: .pt) }
   public static func cu   (_ inValue : Int) -> CanariLength { CanariLength (inValue, in: .cu) }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -71,7 +71,7 @@ public struct CanariLength : Hashable, Comparable, Sendable {
   public static func µm   (_ inValue : Double) -> CanariLength { CanariLength (inValue, in: .µm) }
   public static func inch (_ inValue : Double) -> CanariLength { CanariLength (inValue, in: .inch) }
   public static func mil  (_ inValue : Double) -> CanariLength { CanariLength (inValue, in: .mil) }
-  public static func px   (_ inValue : Double) -> CanariLength { CanariLength (inValue, in: .px) }
+  public static func pt   (_ inValue : Double) -> CanariLength { CanariLength (inValue, in: .pt) }
   public static func cu   (_ inValue : Double) -> CanariLength { CanariLength (inValue, in: .cu) }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -106,8 +106,8 @@ public struct CanariLength : Hashable, Comparable, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var pxValue : CGFloat {
-    return Double (self.cuValue) / Double (Unit.px.cuValue)
+  public var ptValue : CGFloat {
+    return Double (self.cuValue) / Double (Unit.pt.cuValue)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -11,7 +11,7 @@ public extension CanariPath {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   mutating func addLine (to inPoint : CanariPoint) {
-    self.mPath.addLine (to: inPoint.pxValue)
+    self.mPath.addLine (to: inPoint.ptValue)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -23,7 +23,7 @@ public extension CanariPath {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   mutating func addLine (toX inX : CanariLength, toY inY : CanariLength) {
-    self.mPath.addLine (to: CanariPoint (x: inX, y: inY).pxValue)
+    self.mPath.addLine (to: CanariPoint (x: inX, y: inY).ptValue)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

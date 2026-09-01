@@ -374,7 +374,7 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
     //    il en suit un comportement imprévisible dans un Canvas. Il faut faire la symétrie en y ici.
         context.translateBy (
           x: self.mContext.margins.left * self.mCanvasScale + self.contentOverWidth (inGeometry) / 2.0,
-          y: .px (size.height) - self.mContext.margins.bottom * self.mCanvasScale - self.contentOverHeight (inGeometry) / 2.0
+          y: .pt (size.height) - self.mContext.margins.bottom * self.mCanvasScale - self.contentOverHeight (inGeometry) / 2.0
         )
         context.scaleBy (x: 1.0, y: -1.0)
       //--- BackGround
@@ -649,8 +649,8 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
   private func unalignedUserPoint (_ inGeometry : GeometryProxy,
                                    fromLocationInContentView inLocation : NSPoint) -> CanariPoint {
     let point = CanariPoint (
-      x: (.px (inLocation.x) - self.contentOverWidth (inGeometry) / 2.0) / self.mCanvasScale - self.mContext.margins.left,
-      y: self.mContext.contentSizeWithMargins.height - self.mContext.margins.bottom + (self.contentOverHeight (inGeometry) / 2.0 - .px (inLocation.y)) / self.mCanvasScale
+      x: (.pt (inLocation.x) - self.contentOverWidth (inGeometry) / 2.0) / self.mCanvasScale - self.mContext.margins.left,
+      y: self.mContext.contentSizeWithMargins.height - self.mContext.margins.bottom + (self.contentOverHeight (inGeometry) / 2.0 - .pt (inLocation.y)) / self.mCanvasScale
     )
     return point
   }
@@ -659,10 +659,10 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
 
   private func unalignedUserRectangle (_ inGeometry : GeometryProxy,
                                        _ inRect : NSRect) -> CanariRect {
-    let left = (.px (inRect.minX) - self.contentOverWidth (inGeometry) / 2.0) / self.mCanvasScale - self.mContext.margins.left
-    let bottom = self.mContext.contentSizeWithMargins.height - self.mContext.margins.bottom + (self.contentOverHeight (inGeometry) / 2.0 - .px (inRect.minY)) / self.mCanvasScale
-    let width  = CanariLength.px (inRect.width) / self.mCanvasScale
-    let height = CanariLength.px (inRect.height) / self.mCanvasScale
+    let left = (.pt (inRect.minX) - self.contentOverWidth (inGeometry) / 2.0) / self.mCanvasScale - self.mContext.margins.left
+    let bottom = self.mContext.contentSizeWithMargins.height - self.mContext.margins.bottom + (self.contentOverHeight (inGeometry) / 2.0 - .pt (inRect.minY)) / self.mCanvasScale
+    let width  = CanariLength.pt (inRect.width) / self.mCanvasScale
+    let height = CanariLength.pt (inRect.height) / self.mCanvasScale
     return CanariRect (left: left, bottom: bottom, width: width, height: height)
   }
 

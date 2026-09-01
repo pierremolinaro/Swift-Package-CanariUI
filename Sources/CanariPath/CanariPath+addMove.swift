@@ -17,13 +17,13 @@ public extension CanariPath {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   mutating func addMove (to inPoint : CanariPoint) {
-    self.mPath.move (to: inPoint.pxValue)
+    self.mPath.move (to: inPoint.ptValue)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   mutating func addMove (toX inX : CanariLength, toY inY : CanariLength) {
-    self.mPath.move (to: CGPoint (x: inX.pxValue, y: inY.pxValue))
+    self.mPath.move (to: CGPoint (x: inX.ptValue, y: inY.ptValue))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

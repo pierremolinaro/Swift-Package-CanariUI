@@ -83,7 +83,7 @@ public struct CanariSubdivisedGridView : View {
       path.addMove (toX: x * self.mContext.canvasScale, toY: .zero)
       path.addLine (toX: x * self.mContext.canvasScale, toY: self.mContext.contentSizeWithMargins.height * self.mContext.canvasScale)
     }
-    ioContext.stroke (path, with: .color (.gray), lineWidth: .px (1))
+    ioContext.stroke (path, with: .color (.gray), lineWidth: .pt (1))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -98,7 +98,7 @@ public struct CanariSubdivisedGridView : View {
       path.addMove (toX: x * self.mContext.canvasScale, toY: .zero)
       path.addLine (toX: x * self.mContext.canvasScale, toY: self.mContext.contentSizeWithMargins.height * self.mContext.canvasScale)
     }
-    ioContext.stroke (path, with: .color (.gray.opacity (0.25)), lineWidth: .px (1))
+    ioContext.stroke (path, with: .color (.gray.opacity (0.25)), lineWidth: .pt (1))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -113,7 +113,7 @@ public struct CanariSubdivisedGridView : View {
       path.addMove (toX: x * self.mContext.canvasScale, toY: .zero)
       path.addLine (toX: x * self.mContext.canvasScale, toY: self.mContext.contentSizeWithMargins.height * self.mContext.canvasScale)
     }
-    ioContext.stroke (path, with: .color (.gray.opacity (0.5)), lineWidth: .px (1))
+    ioContext.stroke (path, with: .color (.gray.opacity (0.5)), lineWidth: .pt (1))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

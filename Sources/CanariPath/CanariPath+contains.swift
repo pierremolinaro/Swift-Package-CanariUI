@@ -11,13 +11,13 @@ public extension CanariPath {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func containsUsingNonZeroRule (_ inP : CanariPoint) -> Bool {
-    return self.mPath.cgPath.contains (inP.pxValue, using: .winding)
+    return self.mPath.cgPath.contains (inP.ptValue, using: .winding)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func containsUsingEvenOddRule (_ inP : CanariPoint) -> Bool {
-    return self.mPath.cgPath.contains (inP.pxValue, using: .evenOdd)
+    return self.mPath.cgPath.contains (inP.ptValue, using: .evenOdd)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

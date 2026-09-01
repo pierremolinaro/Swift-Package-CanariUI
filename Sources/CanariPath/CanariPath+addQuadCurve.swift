@@ -12,7 +12,7 @@ public extension CanariPath {
 
   mutating func addQuadCurve (to inPoint : CanariPoint,
                               control inCtrl : CanariPoint) {
-    self.mPath.addQuadCurve (to: inPoint.pxValue, control: inCtrl.pxValue)
+    self.mPath.addQuadCurve (to: inPoint.ptValue, control: inCtrl.ptValue)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

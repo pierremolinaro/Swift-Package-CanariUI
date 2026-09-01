@@ -11,7 +11,7 @@ public extension CanariPath {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   mutating func addEllipse (_ inRect : CanariRect) {
-    self.mPath.addEllipse (in: inRect.pxValue)
+    self.mPath.addEllipse (in: inRect.ptValue)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

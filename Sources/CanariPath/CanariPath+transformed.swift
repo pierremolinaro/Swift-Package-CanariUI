@@ -37,7 +37,7 @@ public extension CanariPath {
   func transformed (byTranslating inTranslation : CanariPoint = .zero,
                     scaling inScale : Double = 1.0) -> CanariPath {
     let af = CGAffineTransform (scaleX: inScale, y: inScale)
-      .translatedBy (x: inTranslation.x.pxValue, y: inTranslation.y.pxValue)
+      .translatedBy (x: inTranslation.x.ptValue, y: inTranslation.y.ptValue)
     var result = CanariPath ()
     result.mPath = self.mPath.applying (af)
     return result

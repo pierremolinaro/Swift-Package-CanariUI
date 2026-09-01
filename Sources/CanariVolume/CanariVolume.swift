@@ -60,7 +60,7 @@ public struct CanariVolume : Hashable, Comparable, Sendable {
   public static func µm3   (_ inValue : Int128) -> CanariVolume { CanariVolume (inValue, in: .µm3) }
   public static func inch3 (_ inValue : Int128) -> CanariVolume { CanariVolume (inValue, in: .inch3) }
   public static func mil3  (_ inValue : Int128) -> CanariVolume { CanariVolume (inValue, in: .mil3) }
-  public static func px3   (_ inValue : Int128) -> CanariVolume { CanariVolume (inValue, in: .px3) }
+  public static func pt3   (_ inValue : Int128) -> CanariVolume { CanariVolume (inValue, in: .pt3) }
   public static func cu3   (int inValue : Int128) -> CanariVolume { CanariVolume (inValue, in: .cu3) }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -70,7 +70,7 @@ public struct CanariVolume : Hashable, Comparable, Sendable {
   public static func µm3   (_ inValue : Double) -> CanariVolume { CanariVolume (inValue, in: .µm3) }
   public static func inch3 (_ inValue : Double) -> CanariVolume { CanariVolume (inValue, in: .inch3) }
   public static func mil3  (_ inValue : Double) -> CanariVolume { CanariVolume (inValue, in: .mil3) }
-  public static func px3   (_ inValue : Double) -> CanariVolume { CanariVolume (inValue, in: .px3) }
+  public static func pt3   (_ inValue : Double) -> CanariVolume { CanariVolume (inValue, in: .pt3) }
   public static func cu3   (double inValue : Double) -> CanariVolume { CanariVolume (inValue, in: .cu3) }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -99,8 +99,8 @@ public struct CanariVolume : Hashable, Comparable, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var px3Value : CGFloat {
-    return Double (self.cu3Value) / Double (Unit.px3.cu3Value)
+  public var pt3Value : CGFloat {
+    return Double (self.cu3Value) / Double (Unit.pt3.cu3Value)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

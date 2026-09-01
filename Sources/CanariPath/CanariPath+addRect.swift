@@ -11,7 +11,7 @@ public extension CanariPath {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   mutating func addRect (_ inRect : CanariRect) {
-    self.mPath.addRect (inRect.pxValue)
+    self.mPath.addRect (inRect.ptValue)
   }
 
 

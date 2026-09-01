@@ -88,7 +88,7 @@ public struct CanariScaledOrientedAnchor : Sendable, CanariShapeAnchorProtocol {
   public mutating func setLocalOutline (_ inLocalOutLine : CanariPath) {
     self.mOriginCenteredLocalOutline = inLocalOutLine
     self.mOriginCenteredLocalExtendedOutline = inLocalOutLine
-    let stroked = inLocalOutLine.stroked (with: .px (4.0))
+    let stroked = inLocalOutLine.stroked (with: .pt (4.0))
     self.mOriginCenteredLocalExtendedOutline.unionInPlaceUsingNonZeroRule (stroked)
     self.mOriginCenteredLocalBoundingRect = inLocalOutLine.boundingRect
     self.computeOriginCenteredGlobalOutlineAndBoundingRect ()
@@ -124,7 +124,7 @@ public struct CanariScaledOrientedAnchor : Sendable, CanariShapeAnchorProtocol {
   public func outlineContainsGlobalPointForMouseGesture (_ inGlobalPoint : CanariPoint) -> Bool {
     let localPoint = self.globalToLocal (inGlobalPoint)
 //    var originCenteredLocalOutline = self.mOriginCenteredLocalOutline
-//    let stroked = originCenteredLocalOutline.stroked (with: .px (1.0))
+//    let stroked = originCenteredLocalOutline.stroked (with: .pt (1.0))
 //    originCenteredLocalOutline.unionInPlaceUsingNonZeroRule (stroked)
 //    return originCenteredLocalOutline.containsUsingNonZeroRule (localPoint)
     return self.mOriginCenteredLocalExtendedOutline.containsUsingNonZeroRule (localPoint)
@@ -153,7 +153,7 @@ public struct CanariScaledOrientedAnchor : Sendable, CanariShapeAnchorProtocol {
     let globalCenteredRect = inGlobalRect.moved (by: -self.mPoint)
   //--- § À optimiser
     var originCenteredGlobalOutline = self.mOriginCenteredGlobalOutlineAndBoundingRect.path
-    let stroked = originCenteredGlobalOutline.stroked (with: .px (1.0))
+    let stroked = originCenteredGlobalOutline.stroked (with: .pt (1.0))
     originCenteredGlobalOutline.unionInPlaceUsingNonZeroRule (stroked)
     return originCenteredGlobalOutline.intersectsUsingNonZeroRule (globalCenteredRect)
 //    if self.mOriginCenteredGlobalOutlineAndBoundingRect.boundingRect.isEmpty {

@@ -13,13 +13,13 @@ public extension View {
   @inlinable func position (x inX : CanariLength = .zero,
                             y inY : CanariLength = .zero,
                             scale inScale : Double = 1.0) -> some View {
-    self.position (x: inX.pxValue * inScale, y: inY.pxValue * inScale)
+    self.position (x: inX.ptValue * inScale, y: inY.ptValue * inScale)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   @inlinable func position (p inPoint : CanariPoint) -> some View {
-    self.position (x: inPoint.x.pxValue, y: inPoint.y.pxValue)
+    self.position (x: inPoint.x.ptValue, y: inPoint.y.ptValue)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -27,14 +27,14 @@ public extension View {
   @inlinable func frame (width inWidth : CanariLength,
                          height inHeight : CanariLength,
                          alignment: Alignment = .center) -> some View {
-    self.frame (width: inWidth.pxValue, height: inHeight.pxValue, alignment: alignment)
+    self.frame (width: inWidth.ptValue, height: inHeight.ptValue, alignment: alignment)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func frame (size inSize : CanariSize,
               alignment: Alignment = .center) -> some View {
-    self.frame (width: inSize.width.pxValue, height: inSize.height.pxValue, alignment: alignment)
+    self.frame (width: inSize.width.ptValue, height: inSize.height.ptValue, alignment: alignment)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
