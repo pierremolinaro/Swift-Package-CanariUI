@@ -62,26 +62,26 @@ public struct CanariStrokeStyle : Equatable, Sendable, CanariCodableByString {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init? (widthString inWidthString : String,
-                linejoinString inLinejoinString: String,
-                lineCapString inLineCapString : String) {
-    if let lineWidth_pt = Double (inWidthString) {
-      if inLineCapString == "round" {
-        self.lineCapStyle = .round
-      }else{
-        fatalError ("inLinejoinString not handled yet")
-      }
-      if inLinejoinString == "round" {
-        self.lineJoinStyle = .round
-      }else{
-        fatalError ("inLinejoinString not handled yet")
-      }
-      self.lineWidth = CanariLength.pt (lineWidth_pt)
-      self.miterLimit = CanariLength.pt (10.0)
-    }else{
-      return nil
-    }
-  }
+//  public init? (widthString inWidthString : String,
+//                linejoinString inLinejoinString: String,
+//                lineCapString inLineCapString : String) {
+//    if let lineWidth_pt = Double (inWidthString) {
+//      if inLineCapString == "round" {
+//        self.lineCapStyle = .round
+//      }else{
+//        fatalError ("inLinejoinString not handled yet")
+//      }
+//      if inLinejoinString == "round" {
+//        self.lineJoinStyle = .round
+//      }else{
+//        fatalError ("inLinejoinString not handled yet")
+//      }
+//      self.lineWidth = CanariLength.pt (lineWidth_pt)
+//      self.miterLimit = CanariLength.pt (10.0)
+//    }else{
+//      return nil
+//    }
+//  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -102,6 +102,17 @@ public struct CanariStrokeStyle : Equatable, Sendable, CanariCodableByString {
       lineJoin: self.lineJoinStyle,
       miterLimit: self.miterLimit.ptValue
     )
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func scaled (by inScale : Double) -> CanariStrokeStyle {
+    var r = CanariStrokeStyle ()
+    r.lineWidth = self.lineWidth * inScale
+    r.lineCapStyle = self.lineCapStyle
+    r.lineJoinStyle = self.lineJoinStyle
+    r.miterLimit = self.miterLimit * inScale
+    return r
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

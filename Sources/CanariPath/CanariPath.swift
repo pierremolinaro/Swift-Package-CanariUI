@@ -67,6 +67,18 @@ public struct CanariPath : Equatable, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public init (rect inRect : CGRect) {
+    self.mPath = Path (inRect)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public init (roundedRect inRect : CGRect, xRadius : CGFloat, yRadius : CGFloat) {
+    self.mPath = Path (roundedRect: inRect, cornerSize: CGSize (width: xRadius, height: yRadius))
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public init (lineFrom inStart : CanariPoint, to inTarget : CanariPoint) {
     self.init ()
     self.addMove (to: inStart)
@@ -90,6 +102,12 @@ public struct CanariPath : Equatable, Sendable {
 
   public init (ellipse inRect : CanariRect) {
     self.mPath = Path (ellipseIn: inRect.ptValue)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public init (ellipse inRect : CGRect) {
+    self.mPath = Path (ellipseIn: inRect)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -416,12 +434,6 @@ public struct CanariPath : Equatable, Sendable {
         fatalError ("index \(scanner.currentIndex)")
       }
     }
-  // Perform a vertical symetry (SVG y goes from top to bottom)
-    let midY = self.boundingRect.midY
-    let af = CanariAffinity.translating (x: .zero, y: midY)
-      .scaling (x: 1.0, y: -1.0)
-      .translating (x: .zero, y: -midY)
-    self.transformInPlace (using: af)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
