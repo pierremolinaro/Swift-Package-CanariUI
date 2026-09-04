@@ -13,9 +13,9 @@ public struct CanariTopHorizontalRulerView : View {
   private let mDescriptor : CanariRulerUnitDescriptor
   private let mContext : CanariHorizontalRulerViewContext
   private let mBackColor : Color
-  private let mArray_cm : [IndexAndX]
-  private let mArray_5mm : [CanariLength]
-  private let mArray_mm : [CanariLength]
+  private let mArray_unit : [IndexAndX]
+  private let mArray_halfUnit : [CanariLength]
+  private let mArray_tenthUnit : [CanariLength]
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -30,12 +30,12 @@ public struct CanariTopHorizontalRulerView : View {
     var x5MMArray = [CanariLength] ()
     var xMMArray = [CanariLength] ()
     if self.mContext.rulerSize.height > .zero {
-      let startX_mm = Int (inContext.visibleXmin * 10.0 / self.mDescriptor.mainUnitLength)
-      let endX = inContext.visibleXmax - inContext.leftMargin / inContext.scale
-      let endX_mm = Int (endX * 10.0 / self.mDescriptor.mainUnitLength)
-      var x = (Double (startX_mm) * self.mDescriptor.mainUnitLength / 10.0 + inContext.leftMargin - inContext.scrollX) * inContext.scale + inContext.originOffsetX
-      var idx = startX_mm
-      let xMax = (Double (endX_mm) * self.mDescriptor.mainUnitLength / 10.0 + inContext.leftMargin - inContext.scrollX) * inContext.scale + inContext.originOffsetX
+      let startX_tenthUnit = Int (inContext.visibleXmin * 10.0 / self.mDescriptor.mainUnitLength)
+      let endX = inContext.visibleXmax - inContext.leftMargin // / inContext.scale
+      let endX_tenthUnit = Int (endX * 10.0 / self.mDescriptor.mainUnitLength)
+      var x = (Double (startX_tenthUnit) * self.mDescriptor.mainUnitLength / 10.0 + inContext.leftMargin - inContext.scrollX) * inContext.scale + inContext.originOffsetX
+      var idx = startX_tenthUnit
+      let xMax = (Double (endX_tenthUnit) * self.mDescriptor.mainUnitLength / 10.0 + inContext.leftMargin - inContext.scrollX) * inContext.scale + inContext.originOffsetX
       while x <= xMax {
         if (idx % 10) == 0 {
           cmArray.append (IndexAndX (idx: idx / 10, x: x))
@@ -45,12 +45,12 @@ public struct CanariTopHorizontalRulerView : View {
           xMMArray.append (x)
         }
         x += self.mDescriptor.mainUnitLength * inContext.scale / 10.0
-       idx += 1
+        idx += 1
       }
     }
-    self.mArray_cm = cmArray
-    self.mArray_5mm = x5MMArray
-    self.mArray_mm = xMMArray
+    self.mArray_unit = cmArray
+    self.mArray_halfUnit = x5MMArray
+    self.mArray_tenthUnit = xMMArray
   }
   
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -77,15 +77,15 @@ public struct CanariTopHorizontalRulerView : View {
       Canvas { context, size in
         enterTracing ("top.horizontal.ruler.view.canvas") ; defer { exitTracing ("top.horizontal.ruler.view.canvas") }
         var path = CanariPath ()
-        for indexAndX in self.mArray_cm {
+        for indexAndX in self.mArray_unit {
           path.addMove (toX: indexAndX.x, toY: self.mContext.rulerSize.height)
           path.addLine (toX: indexAndX.x, toY: self.mContext.rulerSize.height / 2.0)
         }
-        for x in self.mArray_mm {
+        for x in self.mArray_tenthUnit {
           path.addMove (toX: x, toY: self.mContext.rulerSize.height)
           path.addLine (toX: x, toY: self.mContext.rulerSize.height * 5.0 / 6.0)
         }
-        for x in self.mArray_5mm {
+        for x in self.mArray_halfUnit {
           path.addMove (toX: x, toY: self.mContext.rulerSize.height)
           path.addLine (toX: x, toY: self.mContext.rulerSize.height * 2.0 / 3.0)
         }
@@ -103,7 +103,7 @@ public struct CanariTopHorizontalRulerView : View {
         }
       }
       .overlay {
-        ForEach (self.mArray_cm.dropLast(), id: \.self) { indexAndX in
+        ForEach (self.mArray_unit, id: \.self) { indexAndX in
           if self.mContext.scale > 0.5 {
             Text ("\(indexAndX.idx * self.mDescriptor.displayFactor)").font (.system (size: 9.0))
             .position (x: indexAndX.x, y: self.mContext.rulerSize.height / 4.0)

@@ -97,9 +97,10 @@ public final class CanariInspectorProxy <ANCHOR : CanariShapeAnchorProtocol,
 
   public func setProperty <T : CanariShapeDecorationProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>, Value> (_ inKeyPath : WritableKeyPath <T, Value>, _ inValue : Value) {
     for id in self.mShapesUserInterface.selection {
-      if let shape = self.mShapesUserInterface [shapeID: id], var v = shape.mDecoration as? T {
+      if var shape = self.mShapesUserInterface [shapeID: id], var v = shape.mDecoration as? T {
         v [keyPath: inKeyPath] = inValue
-        self.mShapesUserInterface [shapeID: id] = CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> (shape.mAnchor, v)
+        shape.mDecoration = v
+        self.mShapesUserInterface [shapeID: id] = shape
       }
     }
   }

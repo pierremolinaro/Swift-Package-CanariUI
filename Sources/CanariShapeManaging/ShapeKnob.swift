@@ -103,7 +103,8 @@ public struct ShapeKnob <ANCHOR : CanariShapeAnchorProtocol,
     }
     ioContext.fill (
       path,
-      with: .color (inInside ? .gray : .white)
+      with: .color (inInside ? .gray : .white),
+      style: .nonZero
     )
     ioContext.stroke (
       path,

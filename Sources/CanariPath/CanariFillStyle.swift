@@ -14,7 +14,7 @@ public struct CanariFillStyle : Equatable, Sendable, CanariCodableByString {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public init (eoFill : Bool = false) {
+  private init (eoFill : Bool = false) {
     self.eoFill = eoFill
   }
 

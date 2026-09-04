@@ -38,7 +38,7 @@ public extension GraphicsContext {
 
   func fill (_ inPath : CanariPath,
              with inShading : GraphicsContext.Shading,
-             style inStyle : CanariFillStyle = CanariFillStyle()) {
+             style inStyle : CanariFillStyle) {
     self.fill (inPath.mPath, with: inShading, style: inStyle.fillStyle)
   }
 

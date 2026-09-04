@@ -80,12 +80,12 @@ public struct EditorOfCanariAngleSet : View {
         ControlGroup ("") {
           Button ("0°", systemImage: "arrow.right") { self.mSetter (.zero) }.labelsHidden().help ("0°")
           Button ("90°", systemImage: "arrow.up") { self.mSetter (.degrees90) }.labelsHidden().help ("90°")
-          Button ("180°", systemImage: "arrow.left") { self.mSetter (.degrees180) }.labelsHidden().help ("180°")
-          Button ("-90°", systemImage: "arrow.down") { self.mSetter (.degrees270) }.labelsHidden().help ("270°")
-        }.controlGroupStyle (.automatic)
-        ControlGroup ("") {
           Button ("45°", systemImage: "arrow.up.right") { self.mSetter (.degrees45) }.labelsHidden().help ("45°")
           Button ("135°", systemImage: "arrow.up.left") { self.mSetter (.degrees135) }.labelsHidden().help ("135°")
+        }.controlGroupStyle (.automatic)
+        ControlGroup ("") {
+          Button ("180°", systemImage: "arrow.left") { self.mSetter (.degrees180) }.labelsHidden().help ("180°")
+          Button ("-90°", systemImage: "arrow.down") { self.mSetter (.degrees270) }.labelsHidden().help ("270°")
           Button ("225°", systemImage: "arrow.down.left") { self.mSetter (.degrees225) }.labelsHidden().help ("-135°")
           Button ("315°", systemImage: "arrow.down.right") { self.mSetter (.degrees315) }.labelsHidden().help ("-45°")
         }.controlGroupStyle (.automatic)

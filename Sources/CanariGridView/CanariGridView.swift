@@ -12,8 +12,8 @@ public struct CanariGridView : View {
 
   private let mStep : CanariLength
   private let mContext : BackgroundViewContext
-  private let mXArray : [IndexAndLength]
-  private let mYArray : [IndexAndLength]
+  private let mXArray : [CanariLength]
+  private let mYArray : [CanariLength]
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -21,34 +21,24 @@ public struct CanariGridView : View {
                step inStep : CanariLength) {
     self.mContext = inContext
     self.mStep = inStep
-  //--- cm arraies
-    let xStartMM = Int ((self.mContext.margins.left / self.mStep).rounded(.up))
-    let yStartMM = Int ((self.mContext.margins.bottom / self.mStep).rounded(.up))
-    var xArray = [IndexAndLength] ()
-    var yArray = [IndexAndLength] ()
-    var x = inContext.margins.left - self.mStep * (xStartMM / 10)
-    var idx = -xStartMM / 10
+  //--- X array
+    let xStart = Int ((self.mContext.margins.left / inStep).rounded(.up))
+    var xArray = [CanariLength] ()
+    var x = inContext.margins.left - inStep * xStart
     while x <= inContext.contentSizeWithMargins.width {
-      xArray.append (IndexAndLength (idx: idx, f: x))
-      x += self.mStep
-      idx += 1
-    }
-    var y = inContext.margins.bottom - self.mStep * (yStartMM / 10)
-    idx = -yStartMM / 10
-    while y <= inContext.contentSizeWithMargins.height {
-      yArray.append (IndexAndLength (idx: idx, f: y))
-      y += self.mStep
-      idx += 1
+      xArray.append (x)
+      x += inStep
     }
     self.mXArray = xArray
+  //--- Y array
+    var yArray = [CanariLength] ()
+    let yStart = Int ((self.mContext.margins.bottom / inStep).rounded(.up))
+    var y = inContext.margins.bottom - inStep * yStart
+    while y <= inContext.contentSizeWithMargins.height {
+      yArray.append (y)
+      y += inStep
+    }
     self.mYArray = yArray
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  private struct IndexAndLength : Hashable {
-    let idx : Int
-    let f : CanariLength
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -56,13 +46,13 @@ public struct CanariGridView : View {
   private func displayGrid (_ ioContext : inout GraphicsContext,
                             _ inColor : Color) {
     var path = CanariPath ()
-    for indexAndFloat in self.mYArray {
-      let y = indexAndFloat.f * self.mContext.canvasScale
+    for yy in self.mYArray {
+      let y = yy * self.mContext.canvasScale
       path.addMove (toX: .zero, toY: y)
       path.addLine (toX: self.mContext.contentSizeWithMargins.width * self.mContext.canvasScale, toY: y)
     }
-    for indexAndFloat in self.mXArray {
-      let x = indexAndFloat.f * self.mContext.canvasScale
+    for xx in self.mXArray {
+      let x = xx * self.mContext.canvasScale
       path.addMove (toX: x, toY: .zero)
       path.addLine (toX: x, toY: self.mContext.contentSizeWithMargins.height * self.mContext.canvasScale)
     }

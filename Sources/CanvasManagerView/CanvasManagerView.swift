@@ -117,9 +117,9 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
             self.mVisibleUserRectangle = self.unalignedUserRectangle (geometry, newVisibleRect)
             self.mCenterOfVisibleRectUserLocation = self.mVisibleUserRectangle.center
           }
-          .onChange (of: self.mCanvasScale) {
-
-          }
+//          .onChange (of: self.mCanvasScale) {
+//
+//          }
           .overlay {
             self.rightVerticalRulerView (geometry)
             self.leftVerticalRulerView (geometry)
@@ -660,10 +660,11 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
   private func unalignedUserRectangle (_ inGeometry : GeometryProxy,
                                        _ inRect : NSRect) -> CanariRect {
     let left = (.pt (inRect.minX) - self.contentOverWidth (inGeometry) / 2.0) / self.mCanvasScale - self.mContext.margins.left
-    let bottom = self.mContext.contentSizeWithMargins.height - self.mContext.margins.bottom + (self.contentOverHeight (inGeometry) / 2.0 - .pt (inRect.minY)) / self.mCanvasScale
-    let width  = CanariLength.pt (inRect.width) / self.mCanvasScale
-    let height = CanariLength.pt (inRect.height) / self.mCanvasScale
-    return CanariRect (left: left, bottom: bottom, width: width, height: height)
+    let top = self.mContext.contentSizeWithMargins.height - self.mContext.margins.top + (self.contentOverHeight (inGeometry) / 2.0 - .pt (inRect.minY)) / self.mCanvasScale
+    let width  = (.pt (inRect.width) - self.mContext.leftVerticalRulerWidth - self.mContext.rightVerticalRulerWidth) / self.mCanvasScale
+    let height = (.pt (inRect.height) - self.mContext.topHorizontalRulerHeight  - self.mContext.bottomHorizontalRulerHeight) / self.mCanvasScale
+    let r = CanariRect (left: left, bottom: top - height, width: width, height: height)
+    return r
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
