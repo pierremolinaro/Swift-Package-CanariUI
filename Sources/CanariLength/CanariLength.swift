@@ -112,6 +112,12 @@ public struct CanariLength : Hashable, Comparable, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public var µmValue : CGFloat {
+    return Double (self.cuValue) / Double (Unit.µm.cuValue)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public func value (in inUnit : CanariLength.Unit) -> Double {
     return Double (self.cuValue) / Double (inUnit.cuValue)
   }
