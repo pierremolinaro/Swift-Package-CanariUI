@@ -861,24 +861,6 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// § private func anchorIsDisplayed () -> (any CanariShapeDecorationProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>.Type)? {
-//    var result : (any CanariShapeDecorationProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>.Type)? = nil
-//    for id in self.mSelection {
-//      if let shape = self.mShapeArrayManager [shapeID: id] {
-//        if let r = result {
-//          if r != type (of: shape.mDecoration) {
-//            return nil
-//          }
-//        }else{
-//          result = type (of: shape.mDecoration)
-//        }
-//      }
-//    }
-//    return result
-//  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 }
 
 //--------------------------------------------------------------------------------------------------
