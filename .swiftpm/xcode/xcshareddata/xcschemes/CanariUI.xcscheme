@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "2700"
+   LastUpgradeVersion = "2720"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -36,6 +36,15 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "SegmentIntersection"
                BuildableName = "SegmentIntersection"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "SegmentOverlapping"
+               BuildableName = "SegmentOverlapping"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>

@@ -146,6 +146,7 @@ import Combine
 
   private var mHoveredObject : UUID? = nil
   private var mSelectionUserRectangle : CanariRect? = nil
+  private var mCurrentKnobIndex : Int? = nil
   public var selectionUserRectangle : CanariRect? { self.mSelectionUserRectangle }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -268,20 +269,26 @@ import Combine
           context: &ioContext,
           drawingScale: inCanvasScale
         ) { context, decorationDrawingScale in
-          for knob in shape.knobs {
+          if let currentKnobIndex = self.mCurrentKnobIndex {
+            let knob = shape.knobs [currentKnobIndex]
             knob.drawKnobBackground (context: &context, scale: decorationDrawingScale)
-          }
-          for knob in shape.knobs {
-            let inside : Bool
-            if let p = inHoverUserLocationPoint {
-              inside = knob.contains (
-                localPoint: shape.mAnchor.globalToLocal (p),
-                drawingScale: inCanvasScale
-              )
-            }else{
-              inside = false
+            knob.drawKnob (context: &context, inside: true, scale: decorationDrawingScale)
+          }else{
+            for knob in shape.knobs {
+              knob.drawKnobBackground (context: &context, scale: decorationDrawingScale)
             }
-            knob.drawKnob (context: &context, inside: inside, scale: decorationDrawingScale)
+            for knob in shape.knobs {
+              let inside : Bool
+              if let p = inHoverUserLocationPoint {
+                inside = knob.contains (
+                  localPoint: shape.mAnchor.globalToLocal (p),
+                  drawingScale: inCanvasScale
+                )
+              }else{
+                inside = false
+              }
+              knob.drawKnob (context: &context, inside: inside, scale: decorationDrawingScale)
+            }
           }
         }
       }
@@ -366,8 +373,9 @@ import Combine
   //--- Mouse down in a knob of a selected object ?
     for shape in self.shapeArray.reversed () {
       if self.mSelection.contains (shape.id) {
-        for knob in shape.knobs {
+        for (index, knob) in shape.knobs.enumerated () {
           if knob.contains (localPoint: shape.mAnchor.globalToLocal (inGeometry.unalignedUserStartLocation), drawingScale: inGeometry.scale) {
+            self.mCurrentKnobIndex = index
             return MouseGesture_DragKnob <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> (
               alignedCurrentPoint: inGeometry.alignedUserStartLocation,
               optionKeyInitiallyOn: true,
@@ -464,8 +472,9 @@ import Combine
   //--- Mouse down in a knob of a selected object ?
     for shape in self.shapeArray.reversed () {
       if self.mSelection.contains (shape.id) {
-        for knob in shape.knobs {
+        for (index, knob) in shape.knobs.enumerated () {
           if knob.contains (localPoint: shape.mAnchor.globalToLocal (inGeometry.unalignedUserStartLocation), drawingScale: inGeometry.scale) {
+            self.mCurrentKnobIndex = index
             return MouseGesture_DragKnob <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> (
               alignedCurrentPoint: inGeometry.alignedUserStartLocation,
               optionKeyInitiallyOn: false,
@@ -484,7 +493,6 @@ import Combine
     }
   //--- Mouse down in a non selected object ?
     for shape in self.shapeArray.reversed () {
-//      let localPoint = shape.mAnchor.globalToLocal (inGeometry.unalignedUserStartLocation)
       if shape.mAnchor.outlineContainsGlobalPointForMouseGesture (inGeometry.unalignedUserStartLocation) {
         self.mSelection = [shape.id]
         return MouseGesture_DragSelection <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> (alignedCurrentPoint: inGeometry.alignedUserStartLocation)
@@ -527,7 +535,6 @@ import Combine
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   @MainActor public func mouseDraggedEnded () {
-//    print ("mouseDraggedEnded")
     self.mSelectionUserRectangle = nil
     if let dragGestureState = self.mDragGestureState {
       dragGestureState.onMouseUp (
@@ -538,6 +545,7 @@ import Combine
       self.closeUndoGroupingIfOpened ()
       self.mDragGestureState = nil
       self.mUndoGroupingIsOpened = false
+      self.mCurrentKnobIndex = nil
     }
   }
 
@@ -596,7 +604,7 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func backDeleteKeyAction () {
+  @MainActor public func backDeleteKeyAction () {
     var idx = 0
     while idx < self.mShapeArrayManager.count {
       if self.mSelection.contains (self.mShapeArrayManager [shapeIndex: idx].id) {
@@ -610,7 +618,7 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func rightArrowKeyAction (magneticGrid inMagneticGrid : CanariLength?, _ inCanvasSize : CanariSize) {
+  @MainActor public func rightArrowKeyAction (magneticGrid inMagneticGrid : CanariLength?, _ inCanvasSize : CanariSize) {
     if let magneticGrid = inMagneticGrid {
       let shift = NSEvent.modifierFlags.contains (.shift)
       let t = CanariPoint (x: magneticGrid * (shift ? 10.0 : 1.0))
@@ -629,7 +637,7 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func leftArrowKeyAction (magneticGrid inMagneticGrid : CanariLength?, _ inCanvasSize : CanariSize) {
+  @MainActor public func leftArrowKeyAction (magneticGrid inMagneticGrid : CanariLength?, _ inCanvasSize : CanariSize) {
     if let magneticGrid = inMagneticGrid {
       let shift = NSEvent.modifierFlags.contains (.shift)
       let t = CanariPoint (x: magneticGrid * (shift ? -10.0 : -1.0))
@@ -648,7 +656,7 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func upArrowKeyAction (magneticGrid inMagneticGrid : CanariLength?, _ inCanvasSize : CanariSize) {
+  @MainActor public func upArrowKeyAction (magneticGrid inMagneticGrid : CanariLength?, _ inCanvasSize : CanariSize) {
     if let magneticGrid = inMagneticGrid {
       let shift = NSEvent.modifierFlags.contains (.shift)
       let t = CanariPoint (y: magneticGrid * (shift ? 10.0 : 1.0))
@@ -667,7 +675,7 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func downArrowKeyAction (magneticGrid inMagneticGrid : CanariLength?, _ inCanvasSize : CanariSize) {
+  @MainActor public func downArrowKeyAction (magneticGrid inMagneticGrid : CanariLength?, _ inCanvasSize : CanariSize) {
     if let magneticGrid = inMagneticGrid {
       let shift = NSEvent.modifierFlags.contains (.shift)
       let t = CanariPoint (y: magneticGrid * (shift ? -10.0 : -1.0))
