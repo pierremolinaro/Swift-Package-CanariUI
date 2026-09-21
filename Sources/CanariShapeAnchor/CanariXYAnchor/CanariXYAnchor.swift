@@ -109,7 +109,7 @@ public struct CanariXYAnchor : Sendable, CanariShapeAnchorProtocol {
   //--- § À optimiser
     var originCenteredGlobalOutline = self.mOriginCenteredGlobalOutlineAndBoundingRect.path
     let stroked = originCenteredGlobalOutline.stroked (with: .pt (1.0))
-    originCenteredGlobalOutline.unionInPlaceUsingNonZeroRule (stroked)
+    originCenteredGlobalOutline.unionInPlace (stroked, using: .nonZeroRule)
     return originCenteredGlobalOutline.intersectsUsingNonZeroRule (globalRect)
   }
 

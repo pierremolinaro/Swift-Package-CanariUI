@@ -1,21 +1,33 @@
 //--------------------------------------------------------------------------------------------------
-//  Created by Pierre Molinaro on 02/06/2026.
+//  Created by Pierre Molinaro on 21/09/2026.
 //--------------------------------------------------------------------------------------------------
 
-import AppKit
+import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
 public extension CanariPath {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // CGPath:
-  // The granularity of the approximation is controlled by `threshold`, the maximum error
-  // tolerance (measured in points) for curves.
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func flattened (threshold inThreshold : CanariLength) -> CanariPath {
-    CanariPath (cgPath: self.mPath.cgPath.flattened (threshold: inThreshold.ptValue))
+  enum Rule {
+    case evenOddRule
+    case nonZeroRule
+
+    var uiEvenOddFill : Bool {
+      switch self {
+      case .evenOddRule : true
+      case .nonZeroRule : false
+      }
+    }
+
+    var cgRule : CGPathFillRule {
+      switch self {
+      case .evenOddRule : .evenOdd
+      case .nonZeroRule : .winding
+      }
+    }
+
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

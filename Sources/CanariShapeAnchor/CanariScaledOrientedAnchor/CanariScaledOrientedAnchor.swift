@@ -89,7 +89,7 @@ public struct CanariScaledOrientedAnchor : Sendable, CanariShapeAnchorProtocol {
     self.mOriginCenteredLocalOutline = inLocalOutLine
     self.mOriginCenteredLocalExtendedOutline = inLocalOutLine
     let stroked = inLocalOutLine.stroked (with: .pt (4.0))
-    self.mOriginCenteredLocalExtendedOutline.unionInPlaceUsingNonZeroRule (stroked)
+    self.mOriginCenteredLocalExtendedOutline.unionInPlace (stroked, using: .nonZeroRule)
     self.mOriginCenteredLocalBoundingRect = inLocalOutLine.boundingRect
     self.computeOriginCenteredGlobalOutlineAndBoundingRect ()
   }
@@ -154,7 +154,7 @@ public struct CanariScaledOrientedAnchor : Sendable, CanariShapeAnchorProtocol {
   //--- § À optimiser
     var originCenteredGlobalOutline = self.mOriginCenteredGlobalOutlineAndBoundingRect.path
     let stroked = originCenteredGlobalOutline.stroked (with: .pt (1.0))
-    originCenteredGlobalOutline.unionInPlaceUsingNonZeroRule (stroked)
+    originCenteredGlobalOutline.unionInPlace (stroked, using: .nonZeroRule)
     return originCenteredGlobalOutline.intersectsUsingNonZeroRule (globalCenteredRect)
 //    if self.mOriginCenteredGlobalOutlineAndBoundingRect.boundingRect.isEmpty {
 //      return self.mOriginCenteredGlobalOutlineAndBoundingRect.path.intersectsLines (of: globalRect)

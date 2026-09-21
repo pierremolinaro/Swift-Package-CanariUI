@@ -16,7 +16,7 @@ public struct CanariGroupShape <ANCHOR : CanariShapeAnchorProtocol,
   public var localOutlinePath : CanariPath {
     var result = CanariPath ()
     for shape in self.mArray {
-      shape.mAnchor.withGlobalOutline { result.unionInPlaceUsingNonZeroRule ($0) }
+      shape.mAnchor.withGlobalOutline { result.unionInPlace ($0, using: .nonZeroRule) }
     }
     return result
   }
@@ -61,7 +61,9 @@ public struct CanariGroupShape <ANCHOR : CanariShapeAnchorProtocol,
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public var shapeKnobs : [ShapeKnob <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>] { [] }
+  public func shapeKnobs (scale inScale : Double) -> [ShapeKnob <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>] {
+    []
+  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

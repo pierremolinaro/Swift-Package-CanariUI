@@ -13,13 +13,14 @@ struct MouseGesture_DragKnob <ANCHOR : CanariShapeAnchorProtocol,
   let alignedCurrentPoint : CanariPoint
   let optionKeyInitiallyOn : Bool
   let shapeID : UUID
-  let dragKnobAction : (inout CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>, CanariPoint, Bool) -> Void
+  let dragKnobAction : (inout CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>, CanariPoint, Double, Bool) -> Void
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func onMouseDragged (geometry inGeometry : MouseGestureGeometryContext,
                        beginOrContinueUndoGrouping inBeginOrContinueUndoGrouping : () -> Void,
                        userSelectionRectangle ioUserSelectionRectangle : inout CanariRect?,
+                       drawingScale inDrawingScale : Double,
                        shapesManagerInterface inShapesManagerInterface : ShapesUserInterface <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>,
                        optionalNextState outOptionalNextState : inout (any MouseGestureProtocol<ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>)?) {
     let translation = inGeometry.alignedUserCurrentLocation - self.alignedCurrentPoint
@@ -31,7 +32,7 @@ struct MouseGesture_DragKnob <ANCHOR : CanariShapeAnchorProtocol,
           canvasSize: inGeometry.canvasSize
         )
         let localTranslation = shape.mAnchor.globalTranslationToLocalTranslation (validatedGlobalTranslation)
-        self.dragKnobAction (&shape, localTranslation, self.optionKeyInitiallyOn)
+        self.dragKnobAction (&shape, localTranslation, inDrawingScale, self.optionKeyInitiallyOn)
         inShapesManagerInterface [shapeID: self.shapeID] = shape
       }
       outOptionalNextState = MouseGesture_DragKnob (

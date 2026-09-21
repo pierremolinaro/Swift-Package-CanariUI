@@ -6,6 +6,10 @@ import SwiftUI
 
 //--------------------------------------------------------------------------------------------------
 
+public let shapeKnobSize = CanariLength.pt (10)
+
+//--------------------------------------------------------------------------------------------------
+
 public struct ShapeKnob <ANCHOR : CanariShapeAnchorProtocol,
                          DOCUMENT_SHAPES_DISPLAY_SETTINGS,
                          SHAPE_TYPES_DESCRIPTION : DocumentShapesDescriptionProtocol> {
@@ -21,13 +25,13 @@ public struct ShapeKnob <ANCHOR : CanariShapeAnchorProtocol,
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private let mRole : Role
-  let dragKnobAction : (inout CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>, CanariPoint, Bool) -> Void
+  let dragKnobAction : (inout CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>, CanariPoint, Double, Bool) -> Void
   let menu : ((ContextualMenuExecutor <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>) -> any View)?
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (role inRole : Self.Role,
-               dragAction inKnobDragAction : @escaping (inout CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>, CanariPoint, Bool) -> Void,
+               dragAction inKnobDragAction : @escaping (inout CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>, CanariPoint, Double, Bool) -> Void,
                menu inMenu : ((ContextualMenuExecutor <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>) -> any View)? = nil) {
     self.mRole = inRole
     self.dragKnobAction = inKnobDragAction
@@ -40,7 +44,7 @@ public struct ShapeKnob <ANCHOR : CanariShapeAnchorProtocol,
                         drawingScale inDrawingScale : Double) -> Bool {
     let r = CanariRect (
       center: self.knobLocalCenter,
-      size: CanariSize (width: .pt (10.0) / inDrawingScale, height: .pt (10.0) / inDrawingScale)
+      size: CanariSize (width: shapeKnobSize / inDrawingScale, height: shapeKnobSize / inDrawingScale)
     )
     return r.contains (inLocalPoint)
   }
@@ -85,21 +89,17 @@ public struct ShapeKnob <ANCHOR : CanariShapeAnchorProtocol,
     case .translate :
       let r = CanariRect (
         center: .zero,
-        size: CanariSize (width: .pt (10) / inScale, height: .pt (10) / inScale)
+        size: CanariSize (width: shapeKnobSize / inScale, height: shapeKnobSize / inScale)
       )
       path = CanariPath (rect: r)
     case .extendShrink (let localCenter) :
       let r = CanariRect (
         center: localCenter,
-        size: CanariSize (width: .pt (10) / inScale, height: .pt (10) / inScale)
+        size: CanariSize (width: shapeKnobSize / inScale, height: shapeKnobSize / inScale)
       )
       path = CanariPath (ellipse: r)
     case .rotate (let localCenter) :
-      let r = CanariRect (
-        center: localCenter,
-        size: CanariSize (width: .pt (10) / inScale, height: .pt (10) / inScale)
-      )
-      path = CanariPath (ellipse: r)
+      path = CanariPath (hexagonCenter: localCenter, radius: shapeKnobSize / (2.0 * inScale))
     }
     ioContext.fill (
       path,

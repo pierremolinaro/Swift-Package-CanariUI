@@ -41,14 +41,15 @@ public nonisolated struct CanariShapeRoot <ANCHOR : CanariShapeAnchorProtocol,
   //MARK: Knobs
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  var knobs : [ShapeKnob <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>] {
-    var result = self.mDecoration.shapeKnobs
+  func knobs (scale inScale : Double) -> [ShapeKnob <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>] {
+    var result = self.mDecoration.shapeKnobs (scale: inScale)
   //--- Drag knob
     result.append (ShapeKnob (role: .translate, dragAction: Self.dragCenterKnob))
   //--- Rotation Knob
     if SHAPE_TYPES_DESCRIPTION.rotationKnobIsDisplayed (type (of: self.mDecoration)) {
-      let localPosition = CanariPoint (y: self.mDecoration.localOutlinePath.boundingRect.maxY + .cm (1))
-      result.append (ShapeKnob (role: .rotate (localPosition: localPosition), dragAction: Self.dragTopRotationKnob))
+      let distance = max (shapeKnobSize * 1.5 / inScale, .cm (1))
+      let localPosition = CanariPoint (x: self.mDecoration.localOutlinePath.boundingRect.maxX + distance)
+      result.append (ShapeKnob (role: .rotate (localPosition: localPosition), dragAction: Self.dragRotationKnob))
     }
     return result
   }
@@ -57,17 +58,20 @@ public nonisolated struct CanariShapeRoot <ANCHOR : CanariShapeAnchorProtocol,
 
   private static func dragCenterKnob (_ ioShape : inout CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>,
                                       _ inLocalTranslation : CanariPoint,
+                                      _ inScale : Double,
                                       _ inInitialOptionKeyOn : Bool) {
     ioShape.mAnchor.addLocalTranslation (inLocalTranslation)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private static func dragTopRotationKnob (_ ioShape : inout CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>,
-                                           _ inLocalTranslation : CanariPoint,
-                                           _ inInitialOptionKeyOn : Bool) {
-    let p = CanariPoint (y: ioShape.mDecoration.localOutlinePath.boundingRect.maxY + .cm (1)) + inLocalTranslation
-    let angle = p.angle () - .degrees90
+  private static func dragRotationKnob (_ ioShape : inout CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>,
+                                        _ inLocalTranslation : CanariPoint,
+                                        _ inScale : Double,
+                                        _ inInitialOptionKeyOn : Bool) {
+    let distance = max (shapeKnobSize * 1.5 / inScale, .cm (1))
+    let p = CanariPoint (x: ioShape.mDecoration.localOutlinePath.boundingRect.maxX + distance) + inLocalTranslation
+    let angle = p.angle ()
     ioShape.mAnchor.addRotation (angle)
   }
 

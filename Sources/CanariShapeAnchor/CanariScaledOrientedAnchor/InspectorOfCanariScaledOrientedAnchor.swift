@@ -70,15 +70,15 @@ struct InspectorOfCanariScaledOrientedAnchor <DOCUMENT_SHAPES_DISPLAY_SETTINGS, 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   var scaleAndFlipCollapsedSubtitle : String {
-    var str = ""
-    let scaleSet = self.mShapesUserInterface.selectedShapeArray ().map { $0.mAnchor.mScale }
+    var str : String
+    let scaleSet = Set (self.mShapesUserInterface.selectedShapeArray ().map { $0.mAnchor.mScale })
     if let s = scaleSet.first, scaleSet.count == 1 {
       str = "\(s)"
     }else{
       str = MULTIPLE_VALUES_MARK
     }
     str += ", flip: "
-    let flipSet = self.mShapesUserInterface.selectedShapeArray ().map { $0.mAnchor.mHorizontalFlip }
+    let flipSet = Set (self.mShapesUserInterface.selectedShapeArray ().map { $0.mAnchor.mHorizontalFlip })
     if let s = flipSet.first, flipSet.count == 1 {
       str += s ? "yes" : "no"
     }else{

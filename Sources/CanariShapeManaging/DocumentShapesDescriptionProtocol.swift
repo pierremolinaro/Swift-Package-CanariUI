@@ -62,10 +62,22 @@ extension DocumentShapesDescriptionProtocol {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  static func anchorInspectorIsDisplayed (_ inType : any CanariShapeDecorationProtocol.Type ) -> Bool {
+  static func anchorInspectorIsDisplayed (forType inType : any CanariShapeDecorationProtocol.Type ) -> Bool {
     for (shapeType, features) in Self.shapeTypeArray {
       if shapeType == inType {
         return features.presentAnchorInspector
+      }
+    }
+    return true
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  static func anchorInspectorIsDisplayed (forTypes inTypes : [any CanariShapeDecorationProtocol.Type]) -> Bool {
+    for t in inTypes {
+      let displayed = self.anchorInspectorIsDisplayed (forType: t)
+      if !displayed {
+        return false
       }
     }
     return true

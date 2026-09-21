@@ -67,6 +67,32 @@ public struct CanariPath : Equatable, Sendable {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  public init (hexagonCenter inCenter : CanariPoint,
+               radius inRadius : CanariLength,
+               angle inAngle : CanariAngle = .zero) {
+    var vertices = [CanariPoint] ()
+    for i in 0 ..< 6 {
+      let p = inCenter + CanariPoint (length: inRadius, angle: .degrees (60) * Double (i) + inAngle)
+      vertices.append (p)
+    }
+    self.init (points: vertices, isClosed: true)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public init (octogonCenter inCenter : CanariPoint,
+               radius inRadius : CanariLength,
+               angle inAngle : CanariAngle = .zero) {
+    var vertices = [CanariPoint] ()
+    for i in 0 ..< 8 {
+      let p = inCenter + CanariPoint (length: inRadius, angle: .degrees45 * Double (i) + inAngle)
+      vertices.append (p)
+    }
+    self.init (points: vertices, isClosed: true)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   public init (rect inRect : CGRect) {
     self.mPath = Path (inRect)
   }

@@ -404,7 +404,7 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
  //   .contextMenu { self.editorContextualMenu () }
   //--- Mouse down / dragging tracking
     .gesture (DragGesture (minimumDistance: 0) // 0 : nécessaire pour détecter un mouseDown
-      .onChanged { dragGestureValue in self.mouseDownOrMouseDragged (inGeometry, dragGestureValue) }
+      .onChanged { dragGestureValue in self.mouseDownOrMouseDragged (inGeometry, canvasScale: self.mCanvasScale, dragGestureValue) }
       .onEnded { dragGestureValue in self.mShapesUserInterface.mouseDraggedEnded () }
     )
   //--- Indispensable pour Key Press et focusedValue
@@ -490,6 +490,7 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private func mouseDownOrMouseDragged (_ inGeometry : GeometryProxy,
+                                        canvasScale inCanvasScale : Double,
                                         _ inDragGestureValue : DragGesture.Value) {
     let unalignedStart = self.unalignedUserPoint (
       inGeometry,
@@ -513,7 +514,7 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
       canvasSize: self.mContext.canvasSize
     )
     self.mAlignedHoverUserLocation = alignedCurrent
-    self.mShapesUserInterface.mouseDownOrMouseDragged (geometry: geometry)
+    self.mShapesUserInterface.mouseDownOrMouseDragged (geometry: geometry, canvasScale: inCanvasScale)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -74,8 +74,15 @@ public struct ShapeArrayManager <ANCHOR : CanariShapeAnchorProtocol,
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func remove (at inIndex : Int) {
-    self.mShapeArray.remove (at: inIndex)
+  mutating func remove (at inIndex : Int) -> CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> {
+    return self.mShapeArray.remove (at: inIndex)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  mutating func insert (_ inShapeRoot : CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>,
+                        at inIndex : Int) {
+    self.mShapeArray.insert (inShapeRoot, at: inIndex)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

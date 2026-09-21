@@ -145,14 +145,15 @@ import Combine
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private var mHoveredObject : UUID? = nil
+
   private var mSelectionUserRectangle : CanariRect? = nil
-  private var mCurrentKnobIndex : Int? = nil
   public var selectionUserRectangle : CanariRect? { self.mSelectionUserRectangle }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private var mStartSelectionSet = Set <UUID> ()
   private var mDragGestureState : (any MouseGestureProtocol<ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>)? = nil
+  private var mCurrentKnobIndex : Int? = nil
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Issues
@@ -177,6 +178,16 @@ import Combine
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public func appendAndSetSelection (_ inNewShapes : [CanariShapeRoot <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>]) {
+    for shape in inNewShapes {
+      self.mShapeArrayManager.append (shape)
+    }
+    self.mSelection.removeAll ()
+    self.mSelection = Set (inNewShapes.map { $0.id })
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Object Creator
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -192,7 +203,7 @@ import Combine
   //MARK: Draw
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func drawShapes (context ioContext : inout GraphicsContext,
+  @MainActor public func drawShapes (context ioContext : inout GraphicsContext,
                           documentShapeDisplaySettings inDisplaySettings : DOCUMENT_SHAPES_DISPLAY_SETTINGS,
                           hoverUserLocationPoint inHoverUserLocationPoint : CanariPoint?,
                           canvasScale inCanvasScale : Double) {
@@ -264,20 +275,21 @@ import Combine
     }
   //--- Draw knobs
     for shape in self.shapeArray {
-      if self.mSelection.contains (shape.id), !shape.knobs.isEmpty {
+      let knobs = shape.knobs (scale: inCanvasScale)
+      if self.mSelection.contains (shape.id), !knobs.isEmpty {
         shape.mAnchor.withLocalCoordinates (
           context: &ioContext,
           drawingScale: inCanvasScale
         ) { context, decorationDrawingScale in
           if let currentKnobIndex = self.mCurrentKnobIndex {
-            let knob = shape.knobs [currentKnobIndex]
+            let knob = knobs [currentKnobIndex]
             knob.drawKnobBackground (context: &context, scale: decorationDrawingScale)
             knob.drawKnob (context: &context, inside: true, scale: decorationDrawingScale)
           }else{
-            for knob in shape.knobs {
+            for knob in knobs {
               knob.drawKnobBackground (context: &context, scale: decorationDrawingScale)
             }
-            for knob in shape.knobs {
+            for knob in knobs {
               let inside : Bool
               if let p = inHoverUserLocationPoint {
                 inside = knob.contains (
@@ -339,7 +351,8 @@ import Combine
   //MARK: Mouse down, mouse dragged, mouse up
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @MainActor public func mouseDownOrMouseDragged (geometry inGeometry : MouseGestureGeometryContext) {
+  @MainActor public func mouseDownOrMouseDragged (geometry inGeometry : MouseGestureGeometryContext,
+                                                  canvasScale inCanvasScale : Double) {
     if let dragGestureState = self.mDragGestureState { // Mouse dragged event
       enterTracing ("shapes.user.interface.mouse.dragging") ; defer { exitTracing ("shapes.user.interface.mouse.dragging") }
       var optionalNextState : (any MouseGestureProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>)? = nil
@@ -347,6 +360,7 @@ import Combine
         geometry: inGeometry,
         beginOrContinueUndoGrouping: { self.beginOrContinueUndoGrouping () },
         userSelectionRectangle: &self.mSelectionUserRectangle,
+        drawingScale: inCanvasScale,
         shapesManagerInterface: self,
         optionalNextState: &optionalNextState
       )
@@ -358,10 +372,12 @@ import Combine
       self.mStartSelectionSet = self.mSelection
       let option = NSEvent.modifierFlags.contains (.option)
       if option {
-        let state : any MouseGestureProtocol<ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> = self.mouseDownWithOptionKey (geometry: inGeometry)
+        let state : any MouseGestureProtocol<ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> = self.mouseDownWithOptionKey (geometry: inGeometry,
+                                                                                                                                               canvasScale: inCanvasScale)
         self.mDragGestureState = state
       }else{
-        let state : any MouseGestureProtocol<ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> = self.mouseDownWithoutOptionKey (geometry: inGeometry)
+        let state : any MouseGestureProtocol<ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> = self.mouseDownWithoutOptionKey (geometry: inGeometry,
+                                                                                                                                                  canvasScale: inCanvasScale)
         self.mDragGestureState = state
       }
     }
@@ -369,11 +385,13 @@ import Combine
 
  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @MainActor private func mouseDownWithOptionKey (geometry inGeometry : MouseGestureGeometryContext) -> any MouseGestureProtocol<ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> {
+  @MainActor private func mouseDownWithOptionKey (geometry inGeometry : MouseGestureGeometryContext,
+                                                  canvasScale inCanvasScale : Double) -> any MouseGestureProtocol<ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> {
   //--- Mouse down in a knob of a selected object ?
     for shape in self.shapeArray.reversed () {
       if self.mSelection.contains (shape.id) {
-        for (index, knob) in shape.knobs.enumerated () {
+       let knobs = shape.knobs (scale: inCanvasScale)
+       for (index, knob) in knobs.enumerated () {
           if knob.contains (localPoint: shape.mAnchor.globalToLocal (inGeometry.unalignedUserStartLocation), drawingScale: inGeometry.scale) {
             self.mCurrentKnobIndex = index
             return MouseGesture_DragKnob <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> (
@@ -430,7 +448,8 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private func mouseDownWithoutOptionKey (geometry inGeometry : MouseGestureGeometryContext) -> any MouseGestureProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> {
+  @MainActor private func mouseDownWithoutOptionKey (geometry inGeometry : MouseGestureGeometryContext,
+                                                     canvasScale inCanvasScale : Double) -> any MouseGestureProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> {
     let control = NSEvent.modifierFlags.contains (.control)
     if control {
       return MouseGesture_Inactive <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> ()
@@ -439,14 +458,14 @@ import Combine
       if shift {
         return self.mouseDown_shiftKey (geometry: inGeometry)
       }else{
-        return self.mouseDown_noKey (geometry: inGeometry)
+        return self.mouseDown_noKey (geometry: inGeometry, canvasScale: inCanvasScale)
       }
     }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private func mouseDown_shiftKey (geometry inGeometry : MouseGestureGeometryContext) -> any MouseGestureProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> {
+  @MainActor private func mouseDown_shiftKey (geometry inGeometry : MouseGestureGeometryContext) -> any MouseGestureProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> {
     var shapeUnderMouseID : UUID? = nil
     for shape in self.shapeArray.reversed () {
       if shape.mAnchor.outlineContainsGlobalPointForMouseGesture (inGeometry.unalignedUserStartLocation) {
@@ -468,11 +487,13 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  private func mouseDown_noKey (geometry inGeometry : MouseGestureGeometryContext) -> any MouseGestureProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> {
+  @MainActor private func mouseDown_noKey (geometry inGeometry : MouseGestureGeometryContext,
+                                           canvasScale inCanvasScale : Double) -> any MouseGestureProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> {
   //--- Mouse down in a knob of a selected object ?
     for shape in self.shapeArray.reversed () {
       if self.mSelection.contains (shape.id) {
-        for (index, knob) in shape.knobs.enumerated () {
+        let knobs = shape.knobs (scale: inCanvasScale)
+        for (index, knob) in knobs.enumerated () {
           if knob.contains (localPoint: shape.mAnchor.globalToLocal (inGeometry.unalignedUserStartLocation), drawingScale: inGeometry.scale) {
             self.mCurrentKnobIndex = index
             return MouseGesture_DragKnob <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> (
@@ -505,12 +526,13 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  public func contextualMenu (at inUnalignedPoint : CanariPoint, scale inScale : Double) -> any View {
+  @MainActor public func contextualMenu (at inUnalignedPoint : CanariPoint, scale inScale : Double) -> any View {
   //--- CMD + Mouse down in a knob of a selected object ?
     for idx in (0 ..< self.mShapeArrayManager.count).reversed () {
       let shape = self.mShapeArrayManager [shapeIndex: idx]
       if self.mSelection.contains (shape.id) {
-        for knob in shape.knobs {
+        let knobs = shape.knobs (scale: inScale)
+        for knob in knobs {
           if knob.contains (localPoint: shape.mAnchor.globalToLocal (inUnalignedPoint), drawingScale: inScale) {
             if let menu = knob.menu {
               return menu (ContextualMenuExecutor (self, idx))
@@ -608,7 +630,7 @@ import Combine
     var idx = 0
     while idx < self.mShapeArrayManager.count {
       if self.mSelection.contains (self.mShapeArrayManager [shapeIndex: idx].id) {
-        self.mShapeArrayManager.remove (at: idx)
+        _ = self.mShapeArrayManager.remove (at: idx)
       }else{
         idx += 1
       }
@@ -757,7 +779,100 @@ import Combine
         }
       }
     }
- }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //MARK: Forward, Backward, Front, Back
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public override var forwardIsEnabled : Bool {
+    var baseIndex = self.shapeArray.count - 1
+    for (idx, shape) in self.shapeArray.enumerated ().reversed () {
+      if self.mSelection.contains (shape.id) {
+        if idx != baseIndex { return true }
+        baseIndex -= 1
+      }
+    }
+    return false
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public override func performFront () {
+    let selectedShapes = self.selectedShapeArray ()
+    for shape in self.shapeArray {
+      if self.mSelection.contains (shape.id) {
+        self.removeShape (id: shape.id)
+      }
+    }
+    self.appendAndSetSelection (selectedShapes)
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public override var backwardIsEnabled : Bool {
+    var baseIndex = 0
+    for (idx, shape) in self.shapeArray.enumerated () {
+      if self.mSelection.contains (shape.id) {
+        if idx != baseIndex { return true }
+        baseIndex += 1
+      }
+    }
+    return false
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public override func performBack () {
+    var baseIndex = 0
+    for (idx, shape) in self.shapeArray.enumerated () {
+      if self.mSelection.contains (shape.id) {
+        if idx != baseIndex {
+          let shape = self.mShapeArrayManager.remove (at: idx)
+          self.mShapeArrayManager.insert (shape, at: baseIndex)
+        }
+        baseIndex += 1
+      }
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public override var frontIsEnabled : Bool { self.forwardIsEnabled }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public override func performForward () {
+    var baseIndex = self.shapeArray.count - 1
+    for (idx, shape) in self.shapeArray.enumerated ().reversed () {
+      if self.mSelection.contains (shape.id) {
+        if baseIndex != idx {
+          let shape = self.mShapeArrayManager.remove (at: idx)
+          self.mShapeArrayManager.insert (shape, at: idx + 1)
+        }
+        baseIndex -= 1
+      }
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public override var backIsEnabled : Bool { self.backwardIsEnabled }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  public override func performBackward () {
+    var baseIndex = 0
+    for (idx, shape) in self.shapeArray.enumerated () {
+      if self.mSelection.contains (shape.id) {
+        if baseIndex != idx {
+          let shape = self.mShapeArrayManager.remove (at: idx)
+          self.mShapeArrayManager.insert (shape, at: idx - 1)
+        }
+        baseIndex += 1
+      }
+    }
+  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Grouping
@@ -835,14 +950,23 @@ import Combine
         VStack (spacing: 1) {
           Text (type.inspectorTitle).bold ()
           ScrollView (.vertical) {
-            if SHAPE_TYPES_DESCRIPTION.anchorInspectorIsDisplayed (type) {
+            if SHAPE_TYPES_DESCRIPTION.anchorInspectorIsDisplayed (forType: type) {
               AnyView (ANCHOR.anchorInspector (shapesUserInterface: self))
             }
             AnyView (type.inspectorView (proxy: CanariInspectorProxy (self)).id (self.mSelection))
           }
         }.padding (.leading, 8)
       }else if self.mSelection.count > 1 {
-        Text ("Multiple Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
+        VStack (spacing: 1) {
+          if SHAPE_TYPES_DESCRIPTION.anchorInspectorIsDisplayed (forTypes: self.selectionTypes ()) {
+            Text ("Multiple Selection").bold ()
+            ScrollView (.vertical) {
+              AnyView (ANCHOR.anchorInspector (shapesUserInterface: self))
+            }
+          }else{
+            Text ("Multiple Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
+          }
+        }.padding (.leading, 8)
       }else{
         Text ("Single Selection").frame (maxHeight: .infinity).foregroundStyle (.secondary)
       }
@@ -861,6 +985,21 @@ import Combine
           }
         }else{
           result = type (of: shape.mDecoration)
+        }
+      }
+    }
+    return result
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  private func selectionTypes () -> [any CanariShapeDecorationProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>.Type] {
+    var result = [any CanariShapeDecorationProtocol <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>.Type] ()
+    for id in self.mSelection {
+      if let shape = self.mShapeArrayManager [shapeID: id] {
+        let t = type (of: shape.mDecoration)
+        if !result.contains (where: { $0 == t }) {
+          result.append (t)
         }
       }
     }
