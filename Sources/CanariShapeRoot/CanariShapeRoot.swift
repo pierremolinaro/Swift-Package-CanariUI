@@ -41,7 +41,7 @@ public nonisolated struct CanariShapeRoot <ANCHOR : CanariShapeAnchorProtocol,
   //MARK: Knobs
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func knobs (scale inScale : Double) -> [ShapeKnob <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>] {
+  func knobs (canvasScale inScale : Double) -> [ShapeKnob <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>] {
     var result = self.mDecoration.shapeKnobs (scale: inScale)
   //--- Drag knob
     result.append (ShapeKnob (role: .translate, dragAction: Self.dragCenterKnob))

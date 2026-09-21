@@ -127,7 +127,7 @@ public struct CanariScaledOrientedAnchor : Sendable, CanariShapeAnchorProtocol {
 //    let stroked = originCenteredLocalOutline.stroked (with: .pt (1.0))
 //    originCenteredLocalOutline.unionInPlaceUsingNonZeroRule (stroked)
 //    return originCenteredLocalOutline.containsUsingNonZeroRule (localPoint)
-    return self.mOriginCenteredLocalExtendedOutline.containsUsingNonZeroRule (localPoint)
+    return self.mOriginCenteredLocalExtendedOutline.contains (localPoint, using: .nonZeroRule)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -155,14 +155,7 @@ public struct CanariScaledOrientedAnchor : Sendable, CanariShapeAnchorProtocol {
     var originCenteredGlobalOutline = self.mOriginCenteredGlobalOutlineAndBoundingRect.path
     let stroked = originCenteredGlobalOutline.stroked (with: .pt (1.0))
     originCenteredGlobalOutline.unionInPlace (stroked, using: .nonZeroRule)
-    return originCenteredGlobalOutline.intersectsUsingNonZeroRule (globalCenteredRect)
-//    if self.mOriginCenteredGlobalOutlineAndBoundingRect.boundingRect.isEmpty {
-//      return self.mOriginCenteredGlobalOutlineAndBoundingRect.path.intersectsLines (of: globalRect)
-//    }else{
-//      return self.mOriginCenteredGlobalOutlineAndBoundingRect.boundingRect.intersects (globalRect)
-//              &&
-//             self.mOriginCenteredGlobalOutlineAndBoundingRect.path.intersects (globalRect)
-//    }
+    return originCenteredGlobalOutline.intersects (globalCenteredRect, using: .nonZeroRule)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -221,7 +214,7 @@ public struct CanariScaledOrientedAnchor : Sendable, CanariShapeAnchorProtocol {
       var idx = 0
       var intersects = false
       while !intersects, idx < inUnselectedShapeOutlines.count {
-        intersects = inUnselectedShapeOutlines [idx].intersectsUsingNonZeroRule (self.globalOutline.translated (by: t))
+        intersects = inUnselectedShapeOutlines [idx].intersects (self.globalOutline.translated (by: t), using: .nonZeroRule)
         idx += 1
       }
       if intersects {
@@ -375,13 +368,13 @@ public struct CanariScaledOrientedAnchor : Sendable, CanariShapeAnchorProtocol {
  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func withLocalCoordinates (context ioContext: inout GraphicsContext,
-                                    drawingScale inDrawingScale : Double,
+                                    canvasScale inDrawingScale : Double,
                                     action inAction : (inout GraphicsContext, Double) -> Void) {
     ioContext.translate (by: self.mPoint)
     ioContext.rotate (by: self.mAngle)
     ioContext.scale (by: self.mScale, horizontalFlip: self.mHorizontalFlip)
-    let drawingScale = inDrawingScale * self.mScale
-    inAction (&ioContext, drawingScale)
+    let canvasScale = inDrawingScale * self.mScale
+    inAction (&ioContext, canvasScale)
     ioContext.scale (by: 1.0 / self.mScale, horizontalFlip: self.mHorizontalFlip)
     ioContext.rotate (by: -self.mAngle)
     ioContext.translate (by: -self.mPoint)

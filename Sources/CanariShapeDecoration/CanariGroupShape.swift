@@ -109,20 +109,20 @@ public struct CanariGroupShape <ANCHOR : CanariShapeAnchorProtocol,
   public func drawShape (context ioContext : inout GraphicsContext,
                          anchor inAnchor : ANCHOR,
                          documentShapeDisplaySettings inDisplaySettings : DOCUMENT_SHAPES_DISPLAY_SETTINGS,
-                         drawingScale inDrawingScale : Double,
+                         canvasScale inDrawingScale : Double,
                          hovered inHovered : Bool,
                          selected inSelected : Bool,
                          groupLevel inGroupLevel : UInt) {
     for shape in self.mArray {
       shape.mAnchor.withLocalCoordinates (
         context: &ioContext,
-        drawingScale: inDrawingScale
+        canvasScale: inDrawingScale
       ) { context, decorationDrawingScale in
         shape.mDecoration.drawShape (
           context: &context,
           anchor: shape.mAnchor,
           documentShapeDisplaySettings: inDisplaySettings,
-          drawingScale: decorationDrawingScale,
+          canvasScale: decorationDrawingScale,
           hovered: inHovered,
           selected: inSelected,
           groupLevel: inGroupLevel

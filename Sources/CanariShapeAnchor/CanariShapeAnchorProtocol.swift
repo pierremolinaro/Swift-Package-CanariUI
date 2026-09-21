@@ -43,7 +43,7 @@ public protocol CanariShapeAnchorProtocol : Sendable, Codable, Equatable {
   mutating func setLocalOutline (_ inLocalOutLine : CanariPath)
 
   func withLocalCoordinates (context ioContext: inout GraphicsContext,
-                             drawingScale inDrawingScale : Double,
+                             canvasScale inDrawingScale : Double,
                              action inAction : (inout GraphicsContext, Double) -> Void)
 
   func withLocalOutline (action inAction : (CanariPath) -> Void)

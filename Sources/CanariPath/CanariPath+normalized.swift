@@ -7,23 +7,12 @@ import AppKit
 //--------------------------------------------------------------------------------------------------
 
 public extension CanariPath {
+
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func normalized (using inRule : Self.Rule) -> CanariPath {
     CanariPath (cgPath: self.mPath.cgPath.normalized (using: inRule.cgRule))
   }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-//  func normalizedUsingNonZeroRule () -> CanariPath {
-//    CanariPath (cgPath: self.mPath.cgPath.normalized (using: .winding))
-//  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-//  func normalizedUsingEvenOddRule () -> CanariPath {
-//    CanariPath (cgPath: self.mPath.cgPath.normalized (using: .evenOdd))
-//  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

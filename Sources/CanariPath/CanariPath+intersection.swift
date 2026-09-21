@@ -16,41 +16,21 @@ public extension CanariPath {
   //MARK: Intersection test
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func intersectsUsingNonZeroRule (_ inRect : CanariRect) -> Bool {
+  func intersects (_ inRect : CanariRect, using inRule : Self.Rule) -> Bool {
   //--- BIZARRE ! le code avec Path renvoie toujours une intersection non vide !!!
 //    let r = Path (inRect.ptValue)
 //    let intersection = self.mPath.intersection (r)
   //--- Alors, on utilise un CGPath, et là, c'est ok
     let r = unsafe CGPath (rect: inRect.ptValue, transform: nil)
-    let intersection = self.mPath.cgPath.intersection (r, using: .winding)
+    let intersection = self.mPath.cgPath.intersection (r, using: inRule.cgRule)
     return !intersection.isEmpty
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func intersectsUsingEvenOddRule (_ inRect : CanariRect) -> Bool {
-  //--- BIZARRE ! le code avec Path renvoie toujours une intersection non vide !!!
-//    let r = Path (inRect.ptValue)
-//    let intersection = self.mPath.intersection (r)
-  //--- Alors, on utilise un CGPath, et là, c'est ok
-    let r = unsafe CGPath (rect: inRect.ptValue, transform: nil)
-    let intersection = self.mPath.cgPath.intersection (r, using: .evenOdd)
-    return !intersection.isEmpty
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  func intersectsUsingNonZeroRule (_ inPath : CanariPath) -> Bool {
+  func intersects (_ inPath : CanariPath, using inRule : Self.Rule) -> Bool {
   //--- On utilise aussi un CGPath
-    let intersection = self.mPath.cgPath.intersection (inPath.mPath.cgPath, using: .winding)
-    return !intersection.isEmpty
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  func intersectsUsingEvenOddRule (_ inPath : CanariPath) -> Bool {
-  //--- On utilise aussi un CGPath
-    let intersection = self.mPath.cgPath.intersection (inPath.mPath.cgPath, using: .evenOdd)
+    let intersection = self.mPath.cgPath.intersection (inPath.mPath.cgPath, using: inRule.cgRule)
     return !intersection.isEmpty
   }
 
@@ -58,65 +38,30 @@ public extension CanariPath {
   //MARK: Intersection Computation
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func intersectionInPlaceUsingNonZeroRule (_ inPath : CanariPath) {
+  mutating func intersectionInPlace (_ inPath : CanariPath, using inRule : Self.Rule) {
   //--- On utilise aussi un CGPath
-    let cgIntersection = self.mPath.cgPath.intersection (inPath.mPath.cgPath, using: .winding)
+    let cgIntersection = self.mPath.cgPath.intersection (inPath.mPath.cgPath, using: inRule.cgRule)
     self = CanariPath (cgPath: cgIntersection)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func intersectionInPlaceUsingEvenOddRule (_ inPath : CanariPath) {
+  func intersecting (_ inPath : CanariPath, using inRule : Self.Rule) -> CanariPath {
   //--- On utilise aussi un CGPath
-    let cgIntersection = self.mPath.cgPath.intersection (inPath.mPath.cgPath, using: .evenOdd)
-    self = CanariPath (cgPath: cgIntersection)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  func intersectingUsingNonZeroRule (_ inPath : CanariPath) -> CanariPath {
-  //--- On utilise aussi un CGPath
-    let cgIntersection = self.mPath.cgPath.intersection (inPath.mPath.cgPath, using: .winding)
+    let cgIntersection = self.mPath.cgPath.intersection (inPath.mPath.cgPath, using: inRule.cgRule)
     return CanariPath (cgPath: cgIntersection)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  func intersectingUsingEvenOddRule (_ inPath : CanariPath) -> CanariPath {
-  //--- On utilise aussi un CGPath
-    let cgIntersection = self.mPath.cgPath.intersection (inPath.mPath.cgPath, using: .evenOdd)
-    return CanariPath (cgPath: cgIntersection)
-  }
-
-   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Line Intersection
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func lineIntersectingUsingNonZeroRule (withClosedPath inClosedPath : CanariPath) -> CanariPath {
+  func lineIntersecting (withClosedPath inClosedPath : CanariPath,
+                         using inRule : Self.Rule) -> CanariPath {
   //--- On utilise aussi un CGPath
-    let cgIntersection = self.mPath.cgPath.lineIntersection (inClosedPath.mPath.cgPath, using: .winding)
+    let cgIntersection = self.mPath.cgPath.lineIntersection (inClosedPath.mPath.cgPath, using: inRule.cgRule)
     return CanariPath (cgPath: cgIntersection)
   }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  func lineIntersectingUsingEvenOddRule (withClosedPath inClosedPath : CanariPath) -> CanariPath {
-  //--- On utilise aussi un CGPath
-    let cgIntersection = self.mPath.cgPath.lineIntersection (inClosedPath.mPath.cgPath, using: .evenOdd)
-    return CanariPath (cgPath: cgIntersection)
-  }
-
- // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-//  func intersectsLines (of inRect : CanariRect) -> Bool {
-//  //--- BIZARRE ! le code avec Path renvoie toujours une intersection non vide !!!
-////    let r = Path (inRect.ptValue)
-////    let intersection = self.mPath.intersection (r)
-//  //--- Alors, on utilise un CGPath, et là, c'est ok
-//    let r = unsafe CGPath (rect: inRect.ptValue, transform: nil)
-//    let intersection = self.mPath.cgPath.lineIntersection (r)
-//    return !intersection.isEmpty
-//  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

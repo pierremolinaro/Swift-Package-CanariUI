@@ -84,7 +84,7 @@ public struct CanariXYAnchor : Sendable, CanariShapeAnchorProtocol {
 
   public func outlineContainsGlobalPointForMouseGesture (_ inGlobalPoint : CanariPoint) -> Bool {
     let localPoint = self.globalToLocal (inGlobalPoint)
-    return self.mOriginCenteredLocalOutline.containsUsingNonZeroRule (localPoint)
+    return self.mOriginCenteredLocalOutline.contains (localPoint, using: .nonZeroRule)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -110,7 +110,7 @@ public struct CanariXYAnchor : Sendable, CanariShapeAnchorProtocol {
     var originCenteredGlobalOutline = self.mOriginCenteredGlobalOutlineAndBoundingRect.path
     let stroked = originCenteredGlobalOutline.stroked (with: .pt (1.0))
     originCenteredGlobalOutline.unionInPlace (stroked, using: .nonZeroRule)
-    return originCenteredGlobalOutline.intersectsUsingNonZeroRule (globalRect)
+    return originCenteredGlobalOutline.intersects (globalRect, using: .nonZeroRule)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -164,7 +164,7 @@ public struct CanariXYAnchor : Sendable, CanariShapeAnchorProtocol {
                                    relativeTo inUnselectedShapeOutlines : [CanariPath]) {
     var idx = 0
     while !ioTranslation.isZero, idx < inUnselectedShapeOutlines.count {
-      let intersects = inUnselectedShapeOutlines [idx].intersectsUsingNonZeroRule (self.globalOutline.translated (by: ioTranslation))
+      let intersects = inUnselectedShapeOutlines [idx].intersects (self.globalOutline.translated (by: ioTranslation), using: .nonZeroRule)
       if intersects {
         ioTranslation *= 0.5
       }else{
@@ -301,11 +301,10 @@ public struct CanariXYAnchor : Sendable, CanariShapeAnchorProtocol {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func withLocalCoordinates (context ioContext: inout GraphicsContext,
-                                    drawingScale inDrawingScale : Double,
+                                    canvasScale inScale : Double,
                                     action inAction : (inout GraphicsContext, Double) -> Void) {
     ioContext.translate (by: self.mPoint)
-    let drawingScale = inDrawingScale
-    inAction (&ioContext, drawingScale)
+    inAction (&ioContext, inScale)
     ioContext.translate (by: -self.mPoint)
   }
 

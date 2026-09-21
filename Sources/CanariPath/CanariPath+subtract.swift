@@ -10,29 +10,15 @@ public extension CanariPath {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func subtractInPlaceUsingNonZeroRule (_ inPath : CanariPath) {
+  mutating func subtractInPlace (_ inPath : CanariPath, using inRule : Self.Rule) {
     let r = self.mPath.cgPath.subtracting (inPath.mPath.cgPath, using: .winding)
     self = CanariPath (cgPath: r)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func subtractInPlaceUsingEvenOddRule (_ inPath : CanariPath) {
-    let r = self.mPath.cgPath.subtracting (inPath.mPath.cgPath, using: .evenOdd)
-    self = CanariPath (cgPath: r)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  func subtractingUsingNonZeroRule (_ inPath : CanariPath) -> CanariPath {
-    let r = self.mPath.cgPath.subtracting (inPath.mPath.cgPath, using: .winding)
-    return CanariPath (cgPath: r)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  func subtractingUsingEvenOddRule (_ inPath : CanariPath) -> CanariPath {
-    let r = self.mPath.cgPath.subtracting (inPath.mPath.cgPath, using: .evenOdd)
+  func subtracting (_ inPath : CanariPath, using inRule : Self.Rule) -> CanariPath {
+    let r = self.mPath.cgPath.subtracting (inPath.mPath.cgPath, using: inRule.cgRule)
     return CanariPath (cgPath: r)
   }
 

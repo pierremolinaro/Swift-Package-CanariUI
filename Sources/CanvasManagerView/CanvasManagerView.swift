@@ -479,7 +479,7 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
 
   @ViewBuilder private func editorContextualMenu () -> some View {
     if let p = self.mUnalignedHoverUserLocation {
-      AnyView (self.mShapesUserInterface.contextualMenu (at: p, scale: self.mCanvasScale))
+      AnyView (self.mShapesUserInterface.contextualMenu (at: p, canvasScale: self.mCanvasScale))
     }else{
       EmptyView ()
     }

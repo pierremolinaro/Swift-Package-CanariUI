@@ -10,14 +10,8 @@ public extension CanariPath {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  func containsUsingNonZeroRule (_ inP : CanariPoint) -> Bool {
-    return self.mPath.cgPath.contains (inP.ptValue, using: .winding)
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  func containsUsingEvenOddRule (_ inP : CanariPoint) -> Bool {
-    return self.mPath.cgPath.contains (inP.ptValue, using: .evenOdd)
+  func contains (_ inP : CanariPoint, using inRule : Self.Rule) -> Bool {
+    return self.mPath.cgPath.contains (inP.ptValue, using: inRule.cgRule)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

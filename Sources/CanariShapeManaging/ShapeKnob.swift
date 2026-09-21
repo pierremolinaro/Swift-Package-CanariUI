@@ -41,7 +41,7 @@ public struct ShapeKnob <ANCHOR : CanariShapeAnchorProtocol,
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func contains (localPoint inLocalPoint : CanariPoint,
-                        drawingScale inDrawingScale : Double) -> Bool {
+                        canvasScale inDrawingScale : Double) -> Bool {
     let r = CanariRect (
       center: self.knobLocalCenter,
       size: CanariSize (width: shapeKnobSize / inDrawingScale, height: shapeKnobSize / inDrawingScale)

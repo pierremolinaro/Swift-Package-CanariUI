@@ -215,12 +215,12 @@ import Combine
       let selected = self.mSelection.contains (shape.id)
       shape.mAnchor.withLocalCoordinates (
         context: &ioContext,
-        drawingScale: inCanvasScale
+        canvasScale: inCanvasScale
       ) { context, decorationDrawingScale in
         shape.mAnchor.withLocalOutline {
           self.drawShapesBackground (
             context: &context,
-            drawingScale: decorationDrawingScale,
+            canvasScale: decorationDrawingScale,
             hovered: hovered,
             selected : selected,
             localOutline: $0
@@ -230,7 +230,7 @@ import Combine
           context: &context,
           anchor: shape.mAnchor,
           documentShapeDisplaySettings: inDisplaySettings,
-          drawingScale: decorationDrawingScale,
+          canvasScale: decorationDrawingScale,
           hovered: hovered,
           selected: selected,
           groupLevel: 0
@@ -238,7 +238,7 @@ import Combine
         shape.mAnchor.withLocalOutline {
           self.drawShapesForeground (
             context: &context,
-            drawingScale: decorationDrawingScale,
+            canvasScale: decorationDrawingScale,
             hovered: hovered,
             selected : selected,
             localOutline: $0
@@ -275,31 +275,41 @@ import Combine
     }
   //--- Draw knobs
     for shape in self.shapeArray {
-      let knobs = shape.knobs (scale: inCanvasScale)
-      if self.mSelection.contains (shape.id), !knobs.isEmpty {
+      if self.mSelection.contains (shape.id) {
         shape.mAnchor.withLocalCoordinates (
           context: &ioContext,
-          drawingScale: inCanvasScale
+          canvasScale: inCanvasScale
         ) { context, decorationDrawingScale in
-          if let currentKnobIndex = self.mCurrentKnobIndex {
-            let knob = knobs [currentKnobIndex]
-            knob.drawKnobBackground (context: &context, scale: decorationDrawingScale)
-            knob.drawKnob (context: &context, inside: true, scale: decorationDrawingScale)
-          }else{
-            for knob in knobs {
+          shape.mAnchor.withLocalOutline {
+            context.stroke ($0, with: .color (.cyan), lineWidth: .pt (0.5))
+          }
+        }
+        let knobs = shape.knobs (canvasScale: inCanvasScale)
+        if !knobs.isEmpty {
+          shape.mAnchor.withLocalCoordinates (
+            context: &ioContext,
+            canvasScale: inCanvasScale
+          ) { context, decorationDrawingScale in
+            if let currentKnobIndex = self.mCurrentKnobIndex {
+              let knob = knobs [currentKnobIndex]
               knob.drawKnobBackground (context: &context, scale: decorationDrawingScale)
-            }
-            for knob in knobs {
-              let inside : Bool
-              if let p = inHoverUserLocationPoint {
-                inside = knob.contains (
-                  localPoint: shape.mAnchor.globalToLocal (p),
-                  drawingScale: inCanvasScale
-                )
-              }else{
-                inside = false
+              knob.drawKnob (context: &context, inside: true, scale: decorationDrawingScale)
+            }else{
+              for knob in knobs {
+                knob.drawKnobBackground (context: &context, scale: decorationDrawingScale)
               }
-              knob.drawKnob (context: &context, inside: inside, scale: decorationDrawingScale)
+              for knob in knobs {
+                let inside : Bool
+                if let p = inHoverUserLocationPoint {
+                  inside = knob.contains (
+                    localPoint: shape.mAnchor.globalToLocal (p),
+                    canvasScale: inCanvasScale
+                  )
+                }else{
+                  inside = false
+                }
+                knob.drawKnob (context: &context, inside: inside, scale: decorationDrawingScale)
+              }
             }
           }
         }
@@ -311,7 +321,7 @@ import Combine
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   open func drawShapesBackground (context ioContext : inout GraphicsContext,
-                                  drawingScale inDrawingScale : Double,
+                                  canvasScale inDrawingScale : Double,
                                   hovered inHovered : Bool,
                                   selected inSelected : Bool,
                                   localOutline inLocalOutline : CanariPath) {
@@ -320,7 +330,7 @@ import Combine
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   open func drawShapesForeground (context ioContext : inout GraphicsContext,
-                                  drawingScale inDrawingScale : Double,
+                                  canvasScale inDrawingScale : Double,
                                   hovered inHovered : Bool,
                                   selected inSelected : Bool,
                                   localOutline inLocalOutline : CanariPath) {
@@ -360,7 +370,7 @@ import Combine
         geometry: inGeometry,
         beginOrContinueUndoGrouping: { self.beginOrContinueUndoGrouping () },
         userSelectionRectangle: &self.mSelectionUserRectangle,
-        drawingScale: inCanvasScale,
+        canvasScale: inCanvasScale,
         shapesManagerInterface: self,
         optionalNextState: &optionalNextState
       )
@@ -390,9 +400,9 @@ import Combine
   //--- Mouse down in a knob of a selected object ?
     for shape in self.shapeArray.reversed () {
       if self.mSelection.contains (shape.id) {
-       let knobs = shape.knobs (scale: inCanvasScale)
+       let knobs = shape.knobs (canvasScale: inCanvasScale)
        for (index, knob) in knobs.enumerated () {
-          if knob.contains (localPoint: shape.mAnchor.globalToLocal (inGeometry.unalignedUserStartLocation), drawingScale: inGeometry.scale) {
+          if knob.contains (localPoint: shape.mAnchor.globalToLocal (inGeometry.unalignedUserStartLocation), canvasScale: inGeometry.scale) {
             self.mCurrentKnobIndex = index
             return MouseGesture_DragKnob <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> (
               alignedCurrentPoint: inGeometry.alignedUserStartLocation,
@@ -492,9 +502,9 @@ import Combine
   //--- Mouse down in a knob of a selected object ?
     for shape in self.shapeArray.reversed () {
       if self.mSelection.contains (shape.id) {
-        let knobs = shape.knobs (scale: inCanvasScale)
+        let knobs = shape.knobs (canvasScale: inCanvasScale)
         for (index, knob) in knobs.enumerated () {
-          if knob.contains (localPoint: shape.mAnchor.globalToLocal (inGeometry.unalignedUserStartLocation), drawingScale: inGeometry.scale) {
+          if knob.contains (localPoint: shape.mAnchor.globalToLocal (inGeometry.unalignedUserStartLocation), canvasScale: inGeometry.scale) {
             self.mCurrentKnobIndex = index
             return MouseGesture_DragKnob <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> (
               alignedCurrentPoint: inGeometry.alignedUserStartLocation,
@@ -526,14 +536,14 @@ import Combine
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  @MainActor public func contextualMenu (at inUnalignedPoint : CanariPoint, scale inScale : Double) -> any View {
+  @MainActor public func contextualMenu (at inUnalignedPoint : CanariPoint, canvasScale inScale : Double) -> any View {
   //--- CMD + Mouse down in a knob of a selected object ?
     for idx in (0 ..< self.mShapeArrayManager.count).reversed () {
       let shape = self.mShapeArrayManager [shapeIndex: idx]
       if self.mSelection.contains (shape.id) {
-        let knobs = shape.knobs (scale: inScale)
+        let knobs = shape.knobs (canvasScale: inScale)
         for knob in knobs {
-          if knob.contains (localPoint: shape.mAnchor.globalToLocal (inUnalignedPoint), drawingScale: inScale) {
+          if knob.contains (localPoint: shape.mAnchor.globalToLocal (inUnalignedPoint), canvasScale: inScale) {
             if let menu = knob.menu {
               return menu (ContextualMenuExecutor (self, idx))
             }else{
