@@ -3,6 +3,7 @@
 //--------------------------------------------------------------------------------------------------
 
 import SwiftUI
+import CanariGeometry
 
 //--------------------------------------------------------------------------------------------------
 
@@ -59,29 +60,6 @@ public struct CanariStrokeStyle : Equatable, Sendable, CanariCodableByString {
       ioOk = false
     }
   }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-//  public init? (widthString inWidthString : String,
-//                linejoinString inLinejoinString: String,
-//                lineCapString inLineCapString : String) {
-//    if let lineWidth_pt = Double (inWidthString) {
-//      if inLineCapString == "round" {
-//        self.lineCapStyle = .round
-//      }else{
-//        fatalError ("inLinejoinString not handled yet")
-//      }
-//      if inLinejoinString == "round" {
-//        self.lineJoinStyle = .round
-//      }else{
-//        fatalError ("inLinejoinString not handled yet")
-//      }
-//      self.lineWidth = CanariLength.pt (lineWidth_pt)
-//      self.miterLimit = CanariLength.pt (10.0)
-//    }else{
-//      return nil
-//    }
-//  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

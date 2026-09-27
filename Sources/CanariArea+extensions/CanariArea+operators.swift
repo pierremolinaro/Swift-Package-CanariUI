@@ -3,17 +3,20 @@
 //--------------------------------------------------------------------------------------------------
 
 import Foundation
+import CanariGeometry
 
 //--------------------------------------------------------------------------------------------------
+//  Operators
+//--------------------------------------------------------------------------------------------------
 
-public func abs (_ inValue : CanariLength) -> CanariLength {
-  return .cu (abs (inValue.cuValue))
+public func * (_ inLeft : CanariArea, _ inRight : CanariLength) -> CanariVolume {
+  return .cu3 (int: Int128 (inLeft.cu2Value) * Int128 (inRight.cuValue))
 }
 
 //--------------------------------------------------------------------------------------------------
 
-public func square (_ inValue : CanariLength) -> CanariArea {
-  return inValue * inValue
+public func * (_ inLeft : CanariLength, _ inRight : CanariArea) -> CanariVolume {
+  return .cu3 (int: Int128 (inLeft.cuValue) * Int128 (inRight.cu2Value))
 }
 
 //--------------------------------------------------------------------------------------------------

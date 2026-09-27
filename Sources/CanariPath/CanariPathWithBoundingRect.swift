@@ -3,6 +3,7 @@
 //--------------------------------------------------------------------------------------------------
 
 import SwiftUI
+import CanariGeometry
 
 //--------------------------------------------------------------------------------------------------
 // Computing bounding rect is costly, using this struct enables computing it once
