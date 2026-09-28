@@ -12,13 +12,13 @@ public struct CanariPointView : View {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private let mPoint : CanariPoint
-  private let mUnit : CanariLength.Unit
+  private let mUnit : CanariLengthUnit
   private let mFractionDigits : Int
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (point inCanariPoint : CanariPoint,
-               unit inUnit : CanariLength.Unit = .cm,
+               unit inUnit : CanariLengthUnit = .cm,
                fractionDigits inFractionDigits : Int) {
     self.mPoint = inCanariPoint
     self.mUnit = inUnit

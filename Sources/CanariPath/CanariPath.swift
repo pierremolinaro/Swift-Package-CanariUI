@@ -60,7 +60,7 @@ public struct CanariPath : Equatable, Sendable {
     let x = rotationCenter.x.ptValue
     let y = rotationCenter.y.ptValue
     let af = CGAffineTransform (translationX: x, y: y)
-      .rotated (by: inAngle.radians)
+      .rotated (by: inAngle.radianValue)
       .translatedBy (x: -x, y: -y)
     self.mPath = Path (inRect.ptValue).applying (af)
   }
@@ -72,7 +72,7 @@ public struct CanariPath : Equatable, Sendable {
                angle inAngle : CanariAngle = .zero) {
     var vertices = [CanariPoint] ()
     for i in 0 ..< 6 {
-      let p = inCenter + CanariPoint (length: inRadius, angle: .degrees (60) * Double (i) + inAngle)
+      let p = inCenter + CanariPoint (length: inRadius, angle: .degree (60) * Double (i) + inAngle)
       vertices.append (p)
     }
     self.init (points: vertices, isClosed: true)
@@ -156,7 +156,7 @@ public struct CanariPath : Equatable, Sendable {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func rotated (by inAngle : CanariAngle) -> CanariPath {
-    let af = CGAffineTransform (rotationAngle: inAngle.radians)
+    let af = CGAffineTransform (rotationAngle: inAngle.radianValue)
     var result = CanariPath ()
     result.mPath = self.mPath.applying (af)
     return result

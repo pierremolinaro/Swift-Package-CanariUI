@@ -19,7 +19,7 @@ public struct EditorOfCanariAngle : View {
 
   public init (_ inAngle : Binding <CanariAngle>) {
     self._mAngle = inAngle
-    self.mDoubleValue = inAngle.wrappedValue.value (in: .degrees)
+    self.mDoubleValue = inAngle.wrappedValue.value (in: .degree)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -33,27 +33,27 @@ public struct EditorOfCanariAngle : View {
         prompt: Text (MULTIPLE_VALUES_MARK)
       )
       .onSubmit {
-        self.mAngle = CanariAngle (self.mDoubleValue, in: .degrees)
+        self.mAngle = CanariAngle (self.mDoubleValue, in: .degree)
       }
       .labelsHidden ()
       .frame (width: self.mWidth)
       .onChange (of: self.mAngle) {
-        self.mDoubleValue = self.mAngle.value (in: .degrees)
+        self.mDoubleValue = self.mAngle.value (in: .degree)
       }
       Text ("°")
       Stepper {
         EmptyView ()
       } onIncrement: {
-        self.mAngle += .degrees (1)
+        self.mAngle += .degree (1)
       } onDecrement: {
-        self.mAngle -= .degrees (1)
+        self.mAngle -= .degree (1)
       }.help ("± 1°")
       Stepper {
         EmptyView ()
       } onIncrement: {
-        self.mAngle += .degrees (0.1)
+        self.mAngle += .degree (0.1)
       } onDecrement: {
-        self.mAngle -= .degrees (0.1)
+        self.mAngle -= .degree (0.1)
       }.help ("± 0.1°")
       VStack (spacing: 0) {
         ControlGroup ("") {

@@ -22,7 +22,7 @@ public struct EditorOfCanariAngleSet : View {
                setter inSetter: @escaping (CanariAngle) -> Void) {
     self.mAngleArray = Array (inLengthSet).sorted ()
     if inLengthSet.count == 1, let v = inLengthSet.first {
-      self.mDoubleValue = v.value (in: .degrees)
+      self.mDoubleValue = v.value (in: .degree)
     }else{
       self.mDoubleValue = nil
     }
@@ -41,14 +41,14 @@ public struct EditorOfCanariAngleSet : View {
       )
       .onSubmit {
         if let v = self.mDoubleValue {
-          self.mSetter (CanariAngle (v, in: .degrees))
+          self.mSetter (CanariAngle (v, in: .degree))
         }
       }
       .labelsHidden ()
       .frame (width: self.mWidth)
       .onChange (of: self.mAngleArray) {
         if self.mAngleArray.count == 1, let v = self.mAngleArray.first {
-          self.mDoubleValue = v.value (in: .degrees)
+          self.mDoubleValue = v.value (in: .degree)
         }else{
           self.mDoubleValue = nil
         }
@@ -57,15 +57,15 @@ public struct EditorOfCanariAngleSet : View {
       Stepper {
         EmptyView ()
       } onIncrement: {
-        self.mSetter (CanariAngle (self.mDoubleValue!, in: .degrees) + .degrees (1))
+        self.mSetter (CanariAngle (self.mDoubleValue!, in: .degree) + .degree (1))
       } onDecrement: {
-        self.mSetter (CanariAngle (self.mDoubleValue!, in: .degrees) - .degrees (1))
+        self.mSetter (CanariAngle (self.mDoubleValue!, in: .degree) - .degree (1))
       }.help ("± 1°").hiddenWhen (self.mDoubleValue == nil).controlSize (.small)
       .overlay {
         if self.mAngleArray.count > 1 {
           Menu ("") {
             ForEach (self.mAngleArray, id: \.self) { angle in
-              Button (angle.string (in: .degrees, fractionDigits: 3)) { self.mSetter (angle) }
+              Button (angle.string (in: .degree, fractionDigits: 3)) { self.mSetter (angle) }
             }
           }.buttonStyle (.borderless)
         }
@@ -73,9 +73,9 @@ public struct EditorOfCanariAngleSet : View {
       Stepper {
         EmptyView ()
       } onIncrement: {
-        self.mSetter (CanariAngle (self.mDoubleValue!, in: .degrees) + .degrees (0.1))
+        self.mSetter (CanariAngle (self.mDoubleValue!, in: .degree) + .degree (0.1))
       } onDecrement: {
-        self.mSetter (CanariAngle (self.mDoubleValue!, in: .degrees) - .degrees (0.1))
+        self.mSetter (CanariAngle (self.mDoubleValue!, in: .degree) - .degree (0.1))
       }.help ("± 0.1°").hiddenWhen (self.mDoubleValue == nil).controlSize (.small)
       VStack (spacing: 0) {
         ControlGroup ("") {

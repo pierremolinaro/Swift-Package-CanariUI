@@ -23,7 +23,7 @@ extension CanariScaledOrientedAnchor : Codable {
        let hFlip = Int (components [4]) {
       self.init (
         origin: CanariPoint (x: x, y: y),
-        angle: CanariAngle (Double (angle) / 1000.0, in: .degrees),
+        angle: CanariAngle (Double (angle) / 1000.0, in: .degree),
         scale: scale,
         hFlip: hFlip != 0
       )
@@ -36,7 +36,7 @@ extension CanariScaledOrientedAnchor : Codable {
 
   public func encode (to inEncoder : any Encoder) throws { // Encodable
     var container = inEncoder.singleValueContainer ()
-    let angle = Int ((self.mAngle.degrees * 1000.0).rounded ())
+    let angle = Int ((self.mAngle.degreeValue * 1000.0).rounded ())
     try container.encode ("\(self.mPoint.x.valueEncodedWithUnit) \(self.mPoint.y.valueEncodedWithUnit) \(angle) \(self.mScale) \(self.mHorizontalFlip ? 1 : 0)")
   }
 

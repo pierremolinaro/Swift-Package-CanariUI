@@ -15,7 +15,7 @@ extension CanariLength {
     case cm
     case inch
 
-    var unit : CanariLength.Unit {
+    var unit : CanariLengthUnit {
       switch self {
       case .cm : return .cm
       case .inch : return .inch

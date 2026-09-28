@@ -27,13 +27,13 @@ public extension CanariVolume {
 
     public var cu3Value : Int128 {
       switch self {
-        case .mm3   : return Int128 (CanariArea.Unit.mm2.cu2Value) * Int128 (CanariLength.Unit.mm.cuValue)
-        case .cm3   : return Int128 (CanariArea.Unit.cm2.cu2Value) * Int128 (CanariLength.Unit.cm.cuValue)
-        case .inch3 : return Int128 (CanariArea.Unit.inch2.cu2Value) * Int128 (CanariLength.Unit.inch.cuValue)
-        case .mil3  : return Int128 (CanariArea.Unit.mil2.cu2Value) * Int128 (CanariLength.Unit.mil.cuValue)
-        case .µm3   : return Int128 (CanariArea.Unit.µm2.cu2Value) * Int128 (CanariLength.Unit.µm.cuValue)
+        case .mm3   : return Int128 (CanariAreaUnit.mm2.cu2Value) * Int128 (CanariLengthUnit.mm.cuValue)
+        case .cm3   : return Int128 (CanariAreaUnit.cm2.cu2Value) * Int128 (CanariLengthUnit.cm.cuValue)
+        case .inch3 : return Int128 (CanariAreaUnit.inch2.cu2Value) * Int128 (CanariLengthUnit.inch.cuValue)
+        case .mil3  : return Int128 (CanariAreaUnit.mil2.cu2Value) * Int128 (CanariLengthUnit.mil.cuValue)
+        case .µm3   : return Int128 (CanariAreaUnit.µm2.cu2Value) * Int128 (CanariLengthUnit.µm.cuValue)
         case .cu3   : return 1
-        case .pt3   : return Int128 (CanariArea.Unit.pt2.cu2Value) * Int128 (CanariLength.Unit.pt.cuValue)
+        case .pt3   : return Int128 (CanariAreaUnit.pt2.cu2Value) * Int128 (CanariLengthUnit.pt.cuValue)
       }
     }
 

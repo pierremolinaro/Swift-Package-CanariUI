@@ -51,7 +51,7 @@ public struct ExpandableInspectorOfCanariAngleSet : View {
 
   var collapsedTitle : String {
     if let p = self.mAngleSet.first, self.mAngleSet.count == 1 {
-      return p.string (in: .degrees, fractionDigits: self.mFractionDigits)
+      return p.string (in: .degree, fractionDigits: self.mFractionDigits)
     }else{
       return MULTIPLE_VALUES_MARK
     }
