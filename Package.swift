@@ -12,11 +12,11 @@ let package = Package (
     .library (name: "CanariUI", targets: ["CanariUI"]),
   ],
   dependencies: [
-//    .package (
-//      url: "https://github.com/pierremolinaro/Swift-Package-CanariGeometry",
-//      revision: "809a15d571c7b087385ceb6b9c6a8239f9252fa1"
-//    )
-    .package (path: "../Swift-Package-CanariGeometry")
+   .package (
+     url: "https://github.com/pierremolinaro/Swift-Package-CanariGeometry",
+     revision: "2148ffd891aa8daae05dad23dcd48205f61d7e0c"
+   )
+//    .package (path: "../Swift-Package-CanariGeometry")
   ],
   targets: [
     .target (
