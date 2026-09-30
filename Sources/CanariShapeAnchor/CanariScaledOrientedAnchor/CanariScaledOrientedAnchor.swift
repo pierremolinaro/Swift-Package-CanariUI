@@ -277,7 +277,7 @@ public struct CanariScaledOrientedAnchor : Sendable, CanariShapeAnchorProtocol {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public mutating func alignGlobalOrigin (on inUnit : CanariLength) {
-    self.mPoint = self.mPoint.aligning (to: inUnit)
+    self.mPoint = self.mPoint.aligning (on: inUnit)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -497,12 +497,12 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
       inGeometry,
       fromLocationInContentView: inDragGestureValue.startLocation
     )
-    let alignedStart = unalignedStart.aligning (to: self.mContext.magneticGrid)
+    let alignedStart = unalignedStart.aligning (on: self.mContext.magneticGrid)
     let unalignedCurrent = self.unalignedUserPoint (
       inGeometry,
       fromLocationInContentView: inDragGestureValue.location
     )
-    let alignedCurrent = unalignedCurrent.aligning (to: self.mContext.magneticGrid)
+    let alignedCurrent = unalignedCurrent.aligning (on: self.mContext.magneticGrid)
     self.mAlignedHoverUserLocation = alignedCurrent
     self.mUnalignedHoverUserLocation = unalignedCurrent
     let geometry = MouseGestureGeometryContext (
@@ -643,7 +643,7 @@ public struct CanvasManagerView <ANCHOR : CanariShapeAnchorProtocol,
   private func alignedUserPoint (_ inGeometry : GeometryProxy,
                                  fromLocationInContentView inLocation : NSPoint) -> CanariPoint {
     return self.unalignedUserPoint (inGeometry, fromLocationInContentView: inLocation)
-               .aligning (to: self.mContext.magneticGrid)
+               .aligning (on: self.mContext.magneticGrid)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

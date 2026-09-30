@@ -1,12 +1,12 @@
 {
-  "originHash" : "036f1423a4b9de40c7ddce1b14a61dec5a464e6149b3910d7c69e54c7e6635d3",
+  "originHash" : "5fdc17410a304abd3e990cdd773dd2fe783929f5361f66c99623e536a8a1161b",
   "pins" : [
     {
       "identity" : "swift-package-canarigeometry",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pierremolinaro/Swift-Package-CanariGeometry",
       "state" : {
-        "revision" : "2148ffd891aa8daae05dad23dcd48205f61d7e0c"
+        "revision" : "fd782b75d1207a8af834014584ec70d18b379bd4"
       }
     }
   ],

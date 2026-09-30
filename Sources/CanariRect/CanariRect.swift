@@ -96,7 +96,7 @@ public struct CanariRect : Hashable, Sendable {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func aligned (to inUnit : CanariLength?) -> CanariRect {
-    return CanariRect (origin: self.origin.aligning (to: inUnit), size: self.size.aligning (to: inUnit))
+    return CanariRect (origin: self.origin.aligning (on: inUnit), size: self.size.aligning (on: inUnit))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

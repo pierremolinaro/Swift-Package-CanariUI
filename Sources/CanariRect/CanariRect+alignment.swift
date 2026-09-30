@@ -14,13 +14,13 @@ public extension CanariRect {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func isAligned (_ inUnit : CanariLength) -> Bool {
-    return self.origin.isAligned (inUnit) && self.size.isAligned (inUnit)
+    return self.origin.isAligned (on: inUnit) && self.size.isAligned (on: inUnit)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func aligning (to inUnit : CanariLength?) -> Self {
-    return Self (origin: self.origin.aligning (to: inUnit), size: self.size.aligning (to: inUnit))
+    return Self (origin: self.origin.aligning (on: inUnit), size: self.size.aligning (on: inUnit))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

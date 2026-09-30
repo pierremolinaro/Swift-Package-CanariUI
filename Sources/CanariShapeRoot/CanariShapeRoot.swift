@@ -82,7 +82,7 @@ public nonisolated struct CanariShapeRoot <ANCHOR : CanariShapeAnchorProtocol,
 
   public func appendIssues (to ioArray : inout [CanariShapeIssue],
                             executor inShapesUI : ShapesUserInterface <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>) {
-    if !self.mAnchor.globalOrigin.isAligned (CanariLength.µm (1)) {
+    if !self.mAnchor.globalOrigin.isAligned (on: CanariLength.µm (1)) {
       let issue = CanariShapeIssue (
         id: CanariShapeIssue.Identifier (shapeID: self.id, index: 0),
         title: "Center is not µm aligned",
