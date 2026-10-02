@@ -12,7 +12,7 @@ public extension GraphicsContext {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   mutating func rotate (by inAngle : CanariAngle) {
-    self.rotate (by: Angle.radians (inAngle.radianValue))
+    self.rotate (by: SwiftUI.Angle.radians (inAngle.signedRadianValue))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

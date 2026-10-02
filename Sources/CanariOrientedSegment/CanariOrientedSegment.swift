@@ -316,8 +316,8 @@ public struct CanariOrientedSegment : Equatable, Hashable, CustomStringConvertib
       }else{ // Not parallel
         let nx = (A.x * B.y - A.y * B.x) * (C.x - D.x) - ABx * (C.x * D.y - C.y * D.x)
         let ny = (A.x * B.y - A.y * B.x) * (C.y - D.y) - ABy * (C.x * D.y - C.y * D.x)
-        let x = (nx / d).µmAligned
-        let y = (ny / d).µmAligned
+        let x = (nx / d).µmAligning
+        let y = (ny / d).µmAligning
         if x >= min (A.x, B.x), x <= max (A.x, B.x),
            x >= min (C.x, D.x), x <= max (C.x, D.x),
            y >= min (A.y, B.y), y <= max (A.y, B.y),
