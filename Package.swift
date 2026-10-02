@@ -14,7 +14,7 @@ let package = Package (
   dependencies: [
    .package (
      url: "https://github.com/pierremolinaro/Swift-Package-CanariGeometry",
-     revision: "7da6783ad26d043653b67844490109511d9f17e3"
+     revision: "b3778e62ea11c47bc9a2aab36ec3de63d5ff980c"
    )
 //    .package (path: "../Swift-Package-CanariGeometry")
   ],

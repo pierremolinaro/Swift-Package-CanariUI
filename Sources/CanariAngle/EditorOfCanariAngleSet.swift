@@ -20,7 +20,7 @@ public struct EditorOfCanariAngleSet : View {
 
   public init (angleSet inLengthSet : Set <CanariAngle>,
                setter inSetter: @escaping (CanariAngle) -> Void) {
-    self.mAngleArray = Array (inLengthSet) // .sorted ()
+    self.mAngleArray = Array (inLengthSet).sorted { $0.unsignedDegreeValue < $1.unsignedDegreeValue }
     if inLengthSet.count == 1, let v = inLengthSet.first {
       self.mDoubleValue = v.value (in: .degree)
     }else{
