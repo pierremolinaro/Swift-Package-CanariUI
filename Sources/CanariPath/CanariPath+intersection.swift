@@ -23,7 +23,7 @@ public extension CanariPath {
 //    let intersection = self.mPath.intersection (r)
   //--- Alors, on utilise un CGPath, et là, c'est ok
     let r = unsafe CGPath (rect: inRect.ptValue, transform: nil)
-    let intersection = self.mPath.cgPath.intersection (r, using: inRule.cgRule)
+    let intersection = self.cgPath.intersection (r, using: inRule.cgRule)
     return !intersection.isEmpty
   }
 
@@ -31,7 +31,7 @@ public extension CanariPath {
 
   func intersects (_ inPath : CanariPath, using inRule : Self.Rule) -> Bool {
   //--- On utilise aussi un CGPath
-    let intersection = self.mPath.cgPath.intersection (inPath.mPath.cgPath, using: inRule.cgRule)
+    let intersection = self.cgPath.intersection (inPath.cgPath, using: inRule.cgRule)
     return !intersection.isEmpty
   }
 
@@ -41,7 +41,7 @@ public extension CanariPath {
 
   mutating func intersectionInPlace (_ inPath : CanariPath, using inRule : Self.Rule) {
   //--- On utilise aussi un CGPath
-    let cgIntersection = self.mPath.cgPath.intersection (inPath.mPath.cgPath, using: inRule.cgRule)
+    let cgIntersection = self.cgPath.intersection (inPath.cgPath, using: inRule.cgRule)
     self = CanariPath (cgPath: cgIntersection)
   }
 
@@ -49,7 +49,7 @@ public extension CanariPath {
 
   func intersecting (_ inPath : CanariPath, using inRule : Self.Rule) -> CanariPath {
   //--- On utilise aussi un CGPath
-    let cgIntersection = self.mPath.cgPath.intersection (inPath.mPath.cgPath, using: inRule.cgRule)
+    let cgIntersection = self.cgPath.intersection (inPath.cgPath, using: inRule.cgRule)
     return CanariPath (cgPath: cgIntersection)
   }
 
@@ -60,7 +60,7 @@ public extension CanariPath {
   func lineIntersecting (withClosedPath inClosedPath : CanariPath,
                          using inRule : Self.Rule) -> CanariPath {
   //--- On utilise aussi un CGPath
-    let cgIntersection = self.mPath.cgPath.lineIntersection (inClosedPath.mPath.cgPath, using: inRule.cgRule)
+    let cgIntersection = self.cgPath.lineIntersection (inClosedPath.cgPath, using: inRule.cgRule)
     return CanariPath (cgPath: cgIntersection)
   }
 

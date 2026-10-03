@@ -3,6 +3,7 @@
 //--------------------------------------------------------------------------------------------------
 
 import AppKit
+import CanariGeometry
 
 //--------------------------------------------------------------------------------------------------
 
@@ -11,7 +12,7 @@ public extension CanariPath {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   func normalized (using inRule : Self.Rule) -> CanariPath {
-    CanariPath (cgPath: self.mPath.cgPath.normalized (using: inRule.cgRule))
+    CanariPath (cgPath: self.cgPath.normalized (using: inRule.cgRule))
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

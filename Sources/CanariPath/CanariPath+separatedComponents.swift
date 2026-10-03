@@ -3,6 +3,7 @@
 //--------------------------------------------------------------------------------------------------
 
 import AppKit
+import CanariGeometry
 
 //--------------------------------------------------------------------------------------------------
 
@@ -11,7 +12,7 @@ extension CanariPath {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func separatedComponents (using inRule : Self.Rule) -> [CanariPath] {
-    let components = self.mPath.cgPath.componentsSeparated (using: inRule.cgRule)
+    let components = self.cgPath.componentsSeparated (using: inRule.cgRule)
     var result = [CanariPath] ()
     for p in components {
       result.append (CanariPath (cgPath: p))
