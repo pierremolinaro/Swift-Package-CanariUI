@@ -22,7 +22,7 @@ public func += (_ ioLeft : inout CanariVolume, _ inRight : CanariVolume) {
 //--------------------------------------------------------------------------------------------------
 
 public prefix func - (_ inOperand : CanariVolume) -> CanariVolume {
-  return inOperand.multipliedBy (int: -1)
+  return inOperand.multipliedBy (double: -1.0)
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -51,9 +51,9 @@ public func * (_ inLeft : Double, _ inRight : CanariVolume) -> CanariVolume {
 
 //--------------------------------------------------------------------------------------------------
 
-public func * (_ inLeft : Int128, _ inRight : CanariVolume) -> CanariVolume {
-  return CanariVolume (inRight, multipliedByInt: inLeft)
-}
+//public func * (_ inLeft : Int128, _ inRight : CanariVolume) -> CanariVolume {
+//  return CanariVolume (inRight, multipliedByInt: inLeft)
+//}
 
 //--------------------------------------------------------------------------------------------------
 
@@ -63,10 +63,10 @@ public func * (_ inLeft : CanariVolume, _ inRight : Double) -> CanariVolume {
 
 //--------------------------------------------------------------------------------------------------
 
-public func * (_ inLeft : CanariVolume, _ inRight : Int128) -> CanariVolume {
-  return CanariVolume (inLeft, multipliedByInt: inRight)
-}
-
+//public func * (_ inLeft : CanariVolume, _ inRight : Int128) -> CanariVolume {
+//  return CanariVolume (inLeft, multipliedByInt: inRight)
+//}
+//
 //--------------------------------------------------------------------------------------------------
 
 public func / (_ inLeft : CanariVolume, _ inRight : CanariVolume) -> Double {
@@ -76,61 +76,61 @@ public func / (_ inLeft : CanariVolume, _ inRight : CanariVolume) -> Double {
 //--------------------------------------------------------------------------------------------------
 
 public func / (_ inLeft : CanariVolume, _ inRight : Double) -> CanariVolume {
-  return .cu3 (int: Int128 (Double (inLeft.cu3Value) / inRight))
+  return CanariVolume (pt3: inLeft.pt3Value / inRight)
 }
 
 //--------------------------------------------------------------------------------------------------
 
-public func / (_ inLeft : CanariVolume, _ inRight : Int128) -> CanariVolume {
-  return .cu3 (int: inLeft.cu3Value / inRight)
-}
+//public func / (_ inLeft : CanariVolume, _ inRight : Int128) -> CanariVolume {
+//  return .cu3 (int: inLeft.cu3Value / inRight)
+//}
 
 //--------------------------------------------------------------------------------------------------
 
 public func / (_ inLeft : CanariVolume, _ inRight : CanariLength) -> CanariArea {
-  return .cu2 (Int (inLeft.cu3Value / Int128 (inRight.cuValue)))
+  CanariArea (pt2: inLeft.pt3Value / inRight.ptValue)
 }
 
 //--------------------------------------------------------------------------------------------------
 
 public func / (_ inLeft : CanariVolume, _ inRight : CanariArea) -> CanariLength {
-  return .cu (Int (inLeft.cu3Value / Int128 (inRight.cu2Value)))
+  CanariLength (pt: inLeft.pt3Value / inRight.pt2Value)
 }
 
 //--------------------------------------------------------------------------------------------------
 
 public func == (_ inLeft : CanariVolume, _ inRight : CanariVolume) -> Bool {
-  return inLeft.cu3Value == inRight.cu3Value
+  return inLeft.pt3Value == inRight.pt3Value
 }
 
 //--------------------------------------------------------------------------------------------------
 
 public func != (_ inLeft : CanariVolume, _ inRight : CanariVolume) -> Bool {
-  return inLeft.cu3Value != inRight.cu3Value
+  return inLeft.pt3Value != inRight.pt3Value
 }
 
 //--------------------------------------------------------------------------------------------------
 
 public func <= (_ inLeft : CanariVolume, _ inRight : CanariVolume) -> Bool {
-  return inLeft.cu3Value <= inRight.cu3Value
+  return inLeft.pt3Value <= inRight.pt3Value
 }
 
 //--------------------------------------------------------------------------------------------------
 
 public func >= (_ inLeft : CanariVolume, _ inRight : CanariVolume) -> Bool {
-  return inLeft.cu3Value >= inRight.cu3Value
+  return inLeft.pt3Value >= inRight.pt3Value
 }
 
 //--------------------------------------------------------------------------------------------------
 
 public func < (_ inLeft : CanariVolume, _ inRight : CanariVolume) -> Bool {
-  return inLeft.cu3Value < inRight.cu3Value
+  return inLeft.pt3Value < inRight.pt3Value
 }
 
 //--------------------------------------------------------------------------------------------------
 
 public func > (_ inLeft : CanariVolume, _ inRight : CanariVolume) -> Bool {
-  return inLeft.cu3Value > inRight.cu3Value
+  return inLeft.pt3Value > inRight.pt3Value
 }
 
 //--------------------------------------------------------------------------------------------------

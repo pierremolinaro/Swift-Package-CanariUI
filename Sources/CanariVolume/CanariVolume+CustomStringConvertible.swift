@@ -11,7 +11,7 @@ extension CanariVolume : CustomStringConvertible {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public var description : String { // CustomStringConvertible protocol
-    self.value (in: .mm3).strf (3) + " " + Unit.mm3.unitString
+    self.value (in: .mm3).strf (3) + " " + CanariVolumeUnit.mm3.unitString
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
