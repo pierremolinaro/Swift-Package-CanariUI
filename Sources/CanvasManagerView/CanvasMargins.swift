@@ -47,11 +47,11 @@ public struct CanvasMargins : Codable, CustomStringConvertible, Equatable, Senda
     let container = try inDecoder.singleValueContainer ()
     let string = try container.decode (String.self)
     let components = string.split (separator: " ")
-    if components.count == 4,
-       let left = String (components [0]).decodedCanariLengthWithUnit (),
-       let bottom = String (components [1]).decodedCanariLengthWithUnit (),
-       let right = String (components [2]).decodedCanariLengthWithUnit (),
-       let top = String (components [3]).decodedCanariLengthWithUnit () {
+    if components.count == 4 {
+      let left = try String (components [0]).decodedCanariLengthWithUnit (container)
+      let bottom = try String (components [1]).decodedCanariLengthWithUnit (container)
+      let right = try String (components [2]).decodedCanariLengthWithUnit (container)
+      let top = try String (components [3]).decodedCanariLengthWithUnit (container)
       self.bottom = bottom
       self.left = left
       self.right = right
@@ -65,7 +65,7 @@ public struct CanvasMargins : Codable, CustomStringConvertible, Equatable, Senda
 
   public func encode (to inEncoder : any Encoder) throws { // Encodable
     var container = inEncoder.singleValueContainer ()
-    try container.encode ("\(self.left.valueEncodedWithUnit) \(self.bottom.valueEncodedWithUnit) \(self.right.valueEncodedWithUnit) \(self.top.valueEncodedWithUnit)")
+    try container.encode ("\(self.left.stringValueEncodedWithUnit) \(self.bottom.stringValueEncodedWithUnit) \(self.right.stringValueEncodedWithUnit) \(self.top.stringValueEncodedWithUnit)")
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
