@@ -10,13 +10,13 @@ import CanariGeometry
 //--------------------------------------------------------------------------------------------------
 
 public func * (_ inLeft : CanariArea, _ inRight : CanariLength) -> CanariVolume {
-  CanariVolume (pt3: inLeft.pt2Value * inRight.ptValue)
+  CanariVolume (cu3: Int128 (inLeft.cu2Value) * Int128 (inRight.cuValue))
 }
 
 //--------------------------------------------------------------------------------------------------
 
 public func * (_ inLeft : CanariLength, _ inRight : CanariArea) -> CanariVolume {
-  CanariVolume (pt3: inLeft.ptValue * inRight.pt2Value)
+  CanariVolume (cu3: Int128 (inLeft.cuValue) * Int128 (inRight.cu2Value))
 }
 
 //--------------------------------------------------------------------------------------------------
