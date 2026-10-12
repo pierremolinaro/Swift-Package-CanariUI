@@ -49,12 +49,14 @@ public struct EditorOfCanariAngleSet : View {
       }
       .labelsHidden ()
       .frame (width: self.mWidth)
+      .overlay (alignment: Alignment (horizontal: .trailing, vertical: .bottom)) {
+        Menu ("") {
+          ForEach (self.mAngleArray, id: \.self) { angle in
+            Button (angle.string (in: .degree, fractionDigits: 3)) { self.mSetter (angle) }
+          }
+        }.buttonStyle (.borderless).hiddenWhen (self.mAngleArray.count <= 1)
+      }
       Text ("°")
-      Menu ("") {
-        ForEach (self.mAngleArray, id: \.self) { angle in
-          Button (angle.string (in: .degree, fractionDigits: 3)) { self.mSetter (angle) }
-        }
-      }.buttonStyle (.borderless).hiddenWhen (self.mAngleArray.count <= 1)
       Stepper {
         EmptyView ()
       } onIncrement: {

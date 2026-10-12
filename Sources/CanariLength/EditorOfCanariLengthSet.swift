@@ -51,6 +51,7 @@ public struct EditorOfCanariLengthSet : View {
         format: .number.precision (.fractionLength (self.mFractionDigits)),
         prompt: Text (MULTIPLE_VALUES_MARK)
       )
+      .labelsHidden ()
       .frame (width: self.mWidth)
       .onSubmit {
         if let v = self.mDoubleValue {
@@ -62,15 +63,15 @@ public struct EditorOfCanariLengthSet : View {
           self.mSetter (CanariLength (v, in: self.mUnit.unit))
         }
       }
-      .labelsHidden ()
+      .overlay (alignment: Alignment (horizontal: .trailing, vertical: .bottom)) {
+        Menu ("") {
+          ForEach (self.mLengthArray, id: \.self) { length in
+            Button (length.string (in: self.mUnit.unit, fractionDigits: self.mFractionDigits)) { self.mSetter (length) }
+          }
+        }.buttonStyle (.borderless).hiddenWhen (self.mLengthArray.count <= 1)
+      }
     //--- Unit
       Text (" " + self.mUnit.string)
-    //--- Pull down
-      Menu ("") {
-        ForEach (self.mLengthArray, id: \.self) { length in
-          Button (length.string (in: self.mUnit.unit, fractionDigits: self.mFractionDigits)) { self.mSetter (length) }
-        }
-      }.buttonStyle (.borderless).hiddenWhen (self.mLengthArray.count <= 1)
     //--- Increment / decrement d1
       Stepper {
         EmptyView ()
