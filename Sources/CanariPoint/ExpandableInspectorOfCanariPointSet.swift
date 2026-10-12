@@ -18,6 +18,8 @@ public struct ExpandableInspectorOfCanariPointSet : View {
   private let mFieldWidth = 48.0
   private let mSetterX : (CanariLength) -> Void
   private let mSetterY : (CanariLength) -> Void
+  private let mIncrementerX : (CanariLength) -> Void
+  private let mIncrementerY : (CanariLength) -> Void
   @Binding private var mIsExpanded : Bool
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -28,13 +30,17 @@ public struct ExpandableInspectorOfCanariPointSet : View {
                fractionDigits inFractionDigits : Int,
                pointSet inCanariPointSet : Set <CanariPoint>,
                setterX: @escaping (CanariLength) -> Void,
-               setterY: @escaping (CanariLength) -> Void) {
+               incrementerX: @escaping (CanariLength) -> Void,
+               setterY: @escaping (CanariLength) -> Void,
+               incrementerY: @escaping (CanariLength) -> Void) {
     self.mTitle = inTitle
     self.mPointSet = inCanariPointSet
     self.mUnit = inUnit
     self.mFractionDigits = inFractionDigits
     self.mSetterX = setterX
     self.mSetterY = setterY
+    self.mIncrementerX = incrementerX
+    self.mIncrementerY = incrementerY
     self._mIsExpanded = inIsExpanded
   }
 
@@ -52,7 +58,9 @@ public struct ExpandableInspectorOfCanariPointSet : View {
           EditorOfCanariPointSet (
             pointSet: self.mPointSet,
             setterX: { newX in self.mSetterX (newX) },
+            incrementerX: { newX in self.mIncrementerX (newX) },
             setterY: { newY in self.mSetterY (newY) },
+            incrementerY: { newX in self.mIncrementerY (newX) },
             displayUnit: self.mUnit,
             fractionDigits: self.mFractionDigits
           )

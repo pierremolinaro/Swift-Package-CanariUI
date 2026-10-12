@@ -17,12 +17,16 @@ public struct EditorOfCanariSizeSet : View {
   private let mFieldWidth = 48.0
   private let mWidthSetter : (CanariLength) -> Void
   private let mHeightSetter : (CanariLength) -> Void
+  private let mWidthIncrementer : (CanariLength) -> Void
+  private let mHeightIncrementer : (CanariLength) -> Void
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (sizeSet inCanariSizeSet : Set <CanariSize>,
                widthSetter: @escaping (CanariLength) -> Void,
+               widthIncrementer: @escaping (CanariLength) -> Void,
                heightSetter: @escaping (CanariLength) -> Void,
+               heightIncrementer: @escaping (CanariLength) -> Void,
                displayUnit inUnit : CanariLength.DisplayUnit,
                fractionDigits inFractionDigits : Int) {
     self.mSizeSet = inCanariSizeSet
@@ -30,6 +34,8 @@ public struct EditorOfCanariSizeSet : View {
     self.mFractionDigits = inFractionDigits
     self.mWidthSetter = widthSetter
     self.mHeightSetter = heightSetter
+    self.mWidthIncrementer = widthIncrementer
+    self.mHeightIncrementer = heightIncrementer
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -40,6 +46,7 @@ public struct EditorOfCanariSizeSet : View {
         EditorOfCanariLengthSet (
           lengthSet: Set (Array (self.mSizeSet).map (\.width)),
           setter: { self.mWidthSetter ($0) },
+          incrementer: { self.mWidthIncrementer ($0) },
           displayUnit: self.mUnit,
           fractionDigits: self.mFractionDigits,
           width: self.mFieldWidth
@@ -52,6 +59,7 @@ public struct EditorOfCanariSizeSet : View {
         EditorOfCanariLengthSet (
           lengthSet: Set (Array (self.mSizeSet).map (\.height)),
           setter: { self.mHeightSetter ($0) },
+          incrementer: { self.mHeightIncrementer ($0) },
           displayUnit: self.mUnit,
           fractionDigits: self.mFractionDigits,
           width: self.mFieldWidth

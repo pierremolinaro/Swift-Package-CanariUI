@@ -34,14 +34,17 @@ struct InspectorOfCanariScaledOrientedAnchor <DOCUMENT_SHAPES_DISPLAY_SETTINGS, 
       fractionDigits: 3,
       pointSet: Set (self.mShapesUserInterface.selectedShapeArray ().map { $0.mAnchor.mPoint }),
       setterX: { for id in self.mShapesUserInterface.selection { self.mShapesUserInterface [shapeID: id]?.mAnchor.mPoint.x = $0 } },
-      setterY: { for id in self.mShapesUserInterface.selection { self.mShapesUserInterface [shapeID: id]?.mAnchor.mPoint.y = $0 } }
+      incrementerX: { for id in self.mShapesUserInterface.selection { self.mShapesUserInterface [shapeID: id]?.mAnchor.mPoint.x += $0 } },
+      setterY: { for id in self.mShapesUserInterface.selection { self.mShapesUserInterface [shapeID: id]?.mAnchor.mPoint.y = $0 } },
+      incrementerY: { for id in self.mShapesUserInterface.selection { self.mShapesUserInterface [shapeID: id]?.mAnchor.mPoint.y += $0 } }
     )
     ExpandableInspectorOfCanariAngleSet (
       title: "Angle",
       isExpanded: self.$mAngleInspectorIsExpanded,
       fractionDigits: 3,
       angleSet: Set (self.mShapesUserInterface.selectedShapeArray ().map { $0.mAnchor.mAngle }),
-      setter: { for id in self.mShapesUserInterface.selection { self.mShapesUserInterface [shapeID: id]?.mAnchor.mAngle = $0 } }
+      setter: { for id in self.mShapesUserInterface.selection { self.mShapesUserInterface [shapeID: id]?.mAnchor.mAngle = $0 } },
+      incrementer: { for id in self.mShapesUserInterface.selection { self.mShapesUserInterface [shapeID: id]?.mAnchor.mAngle += $0 } }
     )
     CanariExpandableInspectorView (
       title: "Scale, Flip",

@@ -39,6 +39,7 @@ public struct CanariSizeLabeledEditor : View {
       EditorOfCanariLengthSet (
         lengthSet: Set ([self.mSizeBinding.width]),
         setter: { self.mSizeBinding.width = $0 },
+        incrementer: { self.mSizeBinding.width += $0 },
         displayUnit: self.mDisplayUnit,
         fractionDigits: self.mFractionDigits,
         width: 64
@@ -50,6 +51,7 @@ public struct CanariSizeLabeledEditor : View {
       EditorOfCanariLengthSet (
         lengthSet: Set ([self.mSizeBinding.height]),
         setter: { self.mSizeBinding.height = $0 },
+        incrementer: { self.mSizeBinding.height += $0 },
         displayUnit: self.mDisplayUnit,
         fractionDigits: self.mFractionDigits,
         width: 64

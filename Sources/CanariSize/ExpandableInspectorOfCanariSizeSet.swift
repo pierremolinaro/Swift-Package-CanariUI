@@ -18,6 +18,8 @@ public struct ExpandableInspectorOfCanariSizeSet : View {
   private let mFieldWidth = 48.0
   private let mWidthSetter : (CanariLength) -> Void
   private let mHeightSetter : (CanariLength) -> Void
+  private let mWidthIncrementer : (CanariLength) -> Void
+  private let mHeightIncrementer : (CanariLength) -> Void
   @Binding private var mIsExpanded : Bool
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -27,8 +29,10 @@ public struct ExpandableInspectorOfCanariSizeSet : View {
                displayUnit inUnit : CanariLength.DisplayUnit,
                fractionDigits inFractionDigits : Int,
                sizeSet inCanariSizeSet : Set <CanariSize>,
-               widthSetter: @escaping (CanariLength) -> Void,
-               heightSetter: @escaping (CanariLength) -> Void) {
+               widthSetter : @escaping (CanariLength) -> Void,
+               widthIncrementer : @escaping (CanariLength) -> Void,
+               heightSetter : @escaping (CanariLength) -> Void,
+               heightIncrementer : @escaping (CanariLength) -> Void) {
     self.mTitle = inTitle
     self._mIsExpanded = inIsExpanded
     self.mSizeSet = inCanariSizeSet
@@ -36,6 +40,8 @@ public struct ExpandableInspectorOfCanariSizeSet : View {
     self.mFractionDigits = inFractionDigits
     self.mWidthSetter = widthSetter
     self.mHeightSetter = heightSetter
+    self.mWidthIncrementer = widthIncrementer
+    self.mHeightIncrementer = heightIncrementer
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -52,7 +58,9 @@ public struct ExpandableInspectorOfCanariSizeSet : View {
           EditorOfCanariSizeSet (
             sizeSet: self.mSizeSet,
             widthSetter: { newWidth in self.mWidthSetter (newWidth) },
+            widthIncrementer: { w in self.mWidthIncrementer (w) },
             heightSetter: { newHeight in self.mHeightSetter (newHeight) },
+            heightIncrementer: { h in self.mHeightIncrementer (h) },
             displayUnit: self.mUnit,
             fractionDigits: self.mFractionDigits
           )

@@ -16,6 +16,7 @@ public struct ExpandableInspectorOfCanariAngleSet : View {
   private let mFractionDigits : Int
   private let mFieldWidth = 48.0
   private let mSetter : (CanariAngle) -> Void
+  private let mIncrementer : (CanariAngle) -> Void
   @Binding private var mIsExpanded : Bool
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -24,11 +25,13 @@ public struct ExpandableInspectorOfCanariAngleSet : View {
                isExpanded inIsExpanded : Binding <Bool>,
                fractionDigits inFractionDigits : Int,
                angleSet inAngleSet : Set <CanariAngle>,
-               setter: @escaping (CanariAngle) -> Void) {
+               setter: @escaping (CanariAngle) -> Void,
+               incrementer: @escaping (CanariAngle) -> Void) {
     self.mTitle = inTitle
     self.mAngleSet = inAngleSet
     self.mFractionDigits = inFractionDigits
     self.mSetter = setter
+    self.mIncrementer = incrementer
     self._mIsExpanded = inIsExpanded
   }
 
@@ -42,7 +45,8 @@ public struct ExpandableInspectorOfCanariAngleSet : View {
     ) {
       EditorOfCanariAngleSet (
         angleSet: mAngleSet,
-        setter: { self.mSetter ($0) }
+        setter: { self.mSetter ($0) },
+        incrementer: { self.mIncrementer ($0) }
       )
     }
   }

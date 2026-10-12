@@ -15,11 +15,13 @@ public struct EditorOfCanariAngleSet : View {
   private let mAngleArray : [CanariAngle]
   private let mWidth : CGFloat = 64.0
   private let mSetter : (CanariAngle) -> Void
+  private let mIncrementer : (CanariAngle) -> Void
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (angleSet inLengthSet : Set <CanariAngle>,
-               setter inSetter: @escaping (CanariAngle) -> Void) {
+               setter inSetter: @escaping (CanariAngle) -> Void,
+               incrementer inIncrementer: @escaping (CanariAngle) -> Void) {
     self.mAngleArray = Array (inLengthSet).sorted { $0.unsignedDegreeValue < $1.unsignedDegreeValue }
     if inLengthSet.count == 1, let v = inLengthSet.first {
       self.mDoubleValue = v.value (in: .degree)
@@ -27,6 +29,7 @@ public struct EditorOfCanariAngleSet : View {
       self.mDoubleValue = nil
     }
     self.mSetter = inSetter
+    self.mIncrementer = inIncrementer
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -46,37 +49,26 @@ public struct EditorOfCanariAngleSet : View {
       }
       .labelsHidden ()
       .frame (width: self.mWidth)
-      .onChange (of: self.mAngleArray) {
-        if self.mAngleArray.count == 1, let v = self.mAngleArray.first {
-          self.mDoubleValue = v.value (in: .degree)
-        }else{
-          self.mDoubleValue = nil
-        }
-      }
       Text ("°")
-      Stepper {
-        EmptyView ()
-      } onIncrement: {
-        self.mSetter (CanariAngle (self.mDoubleValue!, in: .degree) + .degree (1))
-      } onDecrement: {
-        self.mSetter (CanariAngle (self.mDoubleValue!, in: .degree) - .degree (1))
-      }.help ("± 1°").hiddenWhen (self.mDoubleValue == nil).controlSize (.small)
-      .overlay {
-        if self.mAngleArray.count > 1 {
-          Menu ("") {
-            ForEach (self.mAngleArray, id: \.self) { angle in
-              Button (angle.string (in: .degree, fractionDigits: 3)) { self.mSetter (angle) }
-            }
-          }.buttonStyle (.borderless)
+      Menu ("") {
+        ForEach (self.mAngleArray, id: \.self) { angle in
+          Button (angle.string (in: .degree, fractionDigits: 3)) { self.mSetter (angle) }
         }
-      }
+      }.buttonStyle (.borderless).hiddenWhen (self.mAngleArray.count <= 1)
       Stepper {
         EmptyView ()
       } onIncrement: {
-        self.mSetter (CanariAngle (self.mDoubleValue!, in: .degree) + .degree (0.1))
+        self.mIncrementer (.degree (1))
       } onDecrement: {
-        self.mSetter (CanariAngle (self.mDoubleValue!, in: .degree) - .degree (0.1))
-      }.help ("± 0.1°").hiddenWhen (self.mDoubleValue == nil).controlSize (.small)
+        self.mIncrementer (-.degree (1))
+      }.help ("± 1°").controlSize (.small)
+      Stepper {
+        EmptyView ()
+      } onIncrement: {
+        self.mIncrementer (.degree (0.1))
+      } onDecrement: {
+        self.mIncrementer (-.degree (0.1))
+      }.help ("± 0.1°").controlSize (.small)
       VStack (spacing: 0) {
         ControlGroup ("") {
           Button ("0°", systemImage: "arrow.right") { self.mSetter (.zero) }.labelsHidden().help ("0°")
@@ -91,6 +83,13 @@ public struct EditorOfCanariAngleSet : View {
           Button ("315°", systemImage: "arrow.down.right") { self.mSetter (.degrees315) }.labelsHidden().help ("-45°")
         }.controlGroupStyle (.automatic)
       }.controlSize (.mini)
+    }
+    .onChange (of: self.mAngleArray) {
+      if self.mAngleArray.count == 1, let v = self.mAngleArray.first {
+        self.mDoubleValue = v.value (in: .degree)
+      }else{
+        self.mDoubleValue = nil
+      }
     }
   }
 
