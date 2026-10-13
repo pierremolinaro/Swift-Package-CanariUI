@@ -80,7 +80,7 @@ public protocol CanariShapeAnchorProtocol : Sendable, Codable, Equatable {
   //MARK: Rotation
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating func addRotation (_ inAngle : CanariAngle)
+  mutating func addGlobalRotation (_ inAngle : CanariAngle)
   
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Local to Global

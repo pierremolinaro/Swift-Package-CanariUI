@@ -322,8 +322,7 @@ public struct CanariScaledOrientedAnchor : Sendable, CanariShapeAnchorProtocol {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public func globalTranslationToLocalTranslation (_ inGlobalTranslation : CanariPoint) -> CanariPoint {
-     let s = 1.0 / self.mScale
-     let localTranslation = CanariAffinity.scaling (x: self.mHorizontalFlip ? -s : s, y: s)
+    let localTranslation = CanariAffinity.scaling (1.0 / self.mScale, horizontalFlip: self.mHorizontalFlip)
           .rotating (by: -self.mAngle)
           .transforming (inGlobalTranslation)
     return localTranslation
@@ -348,8 +347,7 @@ public struct CanariScaledOrientedAnchor : Sendable, CanariShapeAnchorProtocol {
   public mutating func addLocalTranslation (_ inLocalTranslation : CanariPoint) {
     let affinity = CanariAffinity ()
       .rotating (by: self.mAngle)
-  //    .scaling (x: self.mHorizontalFlip ? -self.mScale : self.mScale, y: self.mScale)
-      .scaling (self.mScale)
+      .scaling (self.mScale, horizontalFlip: self.mHorizontalFlip)
     let globalTranslation = inLocalTranslation.transformed(by: affinity)
     self.mPoint += globalTranslation
   }
@@ -364,8 +362,8 @@ public struct CanariScaledOrientedAnchor : Sendable, CanariShapeAnchorProtocol {
   //MARK: Rotation
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  mutating public func addRotation (_ inAngle : CanariAngle) {
-    self.mAngle += inAngle
+  mutating public func addGlobalRotation (_ inAngle : CanariAngle) {
+    self.mAngle += self.mHorizontalFlip ? -inAngle : inAngle
   }
 
  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

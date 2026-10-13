@@ -72,7 +72,7 @@ public nonisolated struct CanariShapeRoot <ANCHOR : CanariShapeAnchorProtocol,
                                         _ inInitialOptionKeyOn : Bool) {
     let distance = max (shapeKnobSize * 1.5 / inScale, .cm (1))
     let p = CanariPoint (x: ioShape.mDecoration.localOutlinePath.boundingRect.maxX + distance) + inLocalTranslation
-    ioShape.mAnchor.addRotation (p.angle)
+    ioShape.mAnchor.addGlobalRotation (p.angle)
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -67,16 +67,7 @@ public struct EditorOfScaleSet : View {
         self.mMultiplier (1.0 / self.mFactor.value)
       }
       .help (self.mFactor.value.str3f)
-      .hiddenWhen (self.mDoubleValue == nil).controlSize (.small)
-      .overlay {
-        if self.mValueArray.count > 1 {
-          Menu ("") {
-            ForEach (self.mValueArray, id: \.self) { scale in
-              Button ("\(scale)") { self.mSetter (scale) }
-            }
-          }.buttonStyle (.borderless)
-        }
-      }
+      .controlSize (.small)
     //--- Factor
       Picker (selection: self.$mFactor) {
         ForEach (Factor.allCases, id: \.self) { grid in
