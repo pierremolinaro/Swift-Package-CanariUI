@@ -154,7 +154,7 @@ import CanariGeometry
 
   private var mStartSelectionSet = Set <UUID> ()
   private var mDragGestureState : (any MouseGestureProtocol<ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION>)? = nil
-  private var mCurrentKnobIndex : Int? = nil
+  private var mDraggedKnob : (UUID, Int)? = nil
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //MARK: Issues
@@ -291,8 +291,8 @@ import CanariGeometry
             context: &ioContext,
             canvasScale: inCanvasScale
           ) { context, decorationDrawingScale in
-            if let currentKnobIndex = self.mCurrentKnobIndex {
-              let knob = knobs [currentKnobIndex]
+            if let (id, knobIndex) = self.mDraggedKnob, shape.id == id {
+              let knob = knobs [knobIndex]
               knob.drawKnobBackground (context: &context, scale: decorationDrawingScale)
               knob.drawKnob (context: &context, inside: true, scale: decorationDrawingScale)
             }else{
@@ -404,7 +404,7 @@ import CanariGeometry
        let knobs = shape.knobs (canvasScale: inCanvasScale)
        for (index, knob) in knobs.enumerated () {
           if knob.contains (localPoint: shape.mAnchor.globalToLocal (inGeometry.unalignedUserStartLocation), canvasScale: inGeometry.scale) {
-            self.mCurrentKnobIndex = index
+            self.mDraggedKnob = (shape.id, index)
             return MouseGesture_DragKnob <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> (
               alignedCurrentPoint: inGeometry.alignedUserStartLocation,
               optionKeyInitiallyOn: true,
@@ -506,7 +506,7 @@ import CanariGeometry
         let knobs = shape.knobs (canvasScale: inCanvasScale)
         for (index, knob) in knobs.enumerated () {
           if knob.contains (localPoint: shape.mAnchor.globalToLocal (inGeometry.unalignedUserStartLocation), canvasScale: inGeometry.scale) {
-            self.mCurrentKnobIndex = index
+            self.mDraggedKnob = (shape.id, index)
             return MouseGesture_DragKnob <ANCHOR, DOCUMENT_SHAPES_DISPLAY_SETTINGS, SHAPE_TYPES_DESCRIPTION> (
               alignedCurrentPoint: inGeometry.alignedUserStartLocation,
               optionKeyInitiallyOn: false,
@@ -578,7 +578,7 @@ import CanariGeometry
       self.closeUndoGroupingIfOpened ()
       self.mDragGestureState = nil
       self.mUndoGroupingIsOpened = false
-      self.mCurrentKnobIndex = nil
+      self.mDraggedKnob = nil
     }
   }
 

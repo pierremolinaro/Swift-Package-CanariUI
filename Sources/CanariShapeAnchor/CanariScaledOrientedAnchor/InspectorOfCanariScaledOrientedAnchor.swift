@@ -53,7 +53,8 @@ struct InspectorOfCanariScaledOrientedAnchor <DOCUMENT_SHAPES_DISPLAY_SETTINGS, 
     ) {
       EditorOfScaleSet (
         valueSet: Set (self.mShapesUserInterface.selectedShapeArray ().map { $0.mAnchor.mScale }),
-        setter: { for id in self.mShapesUserInterface.selection { self.mShapesUserInterface [shapeID: id]?.mAnchor.mScale = $0 } }
+        setter: { for id in self.mShapesUserInterface.selection { self.mShapesUserInterface [shapeID: id]?.mAnchor.mScale = $0 } },
+        multiplier: { for id in self.mShapesUserInterface.selection { self.mShapesUserInterface [shapeID: id]?.mAnchor.mScale *= $0 } }
       )
       InspectorOfBoolSet (
         title: "Horizontal Flip",

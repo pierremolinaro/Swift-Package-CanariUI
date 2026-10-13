@@ -15,11 +15,13 @@ public struct EditorOfScaleSet : View {
   private let mValueArray : [Double]
   private let mFractionDigits = 3
   private let mSetter : (Double) -> Void
+  private let mMultiplier : (Double) -> Void
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public init (valueSet inValueSet : Set <Double>,
-               setter inSetter: @escaping (Double) -> Void) {
+               setter inSetter: @escaping (Double) -> Void,
+               multiplier inMultiplier: @escaping (Double) -> Void) {
     self.mValueArray = Array (inValueSet).sorted ()
     if inValueSet.count == 1, let v = inValueSet.first {
       self.mDoubleValue = v
@@ -27,6 +29,7 @@ public struct EditorOfScaleSet : View {
       self.mDoubleValue = nil
     }
     self.mSetter = inSetter
+    self.mMultiplier = inMultiplier
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -46,22 +49,25 @@ public struct EditorOfScaleSet : View {
       }
       .labelsHidden ()
       .frame (width: 48.0)
-      .onChange (of: self.mValueArray) {
-        if self.mValueArray.count == 1, let v = self.mValueArray.first {
-          self.mDoubleValue = v
-        }else{
-          self.mDoubleValue = nil
-        }
+      .overlay (alignment: Alignment (horizontal: .trailing, vertical: .bottom)) {
+        Menu ("") {
+          ForEach (self.mValueArray, id: \.self) { scale in
+            Button (scale.str3f) { self.mSetter (scale) }
+          }
+        }.buttonStyle (.borderless).hiddenWhen (self.mValueArray.count <= 1)
       }
       Text (" ")
+      VStack (spacing: 0) { Image (systemName: "multiply") ; Image (systemName: "divide") }
+    //--- Stepper
       Stepper {
         EmptyView ()
       } onIncrement: {
-        self.mSetter (self.mDoubleValue! * self.mFactor.value)
+        self.mMultiplier (self.mFactor.value)
       } onDecrement: {
-        self.mSetter (self.mDoubleValue! / self.mFactor.value)
+        self.mMultiplier (1.0 / self.mFactor.value)
       }
-      .help (self.mFactor.value.str3f).hiddenWhen (self.mDoubleValue == nil).controlSize (.small)
+      .help (self.mFactor.value.str3f)
+      .hiddenWhen (self.mDoubleValue == nil).controlSize (.small)
       .overlay {
         if self.mValueArray.count > 1 {
           Menu ("") {
@@ -71,14 +77,22 @@ public struct EditorOfScaleSet : View {
           }.buttonStyle (.borderless)
         }
       }
+    //--- Factor
       Picker (selection: self.$mFactor) {
         ForEach (Factor.allCases, id: \.self) { grid in
           Text (grid.description).tag (grid)
         }
       } label: {
-         HStack (spacing: 0) { Image (systemName: "multiply") ; Image (systemName: "divide") }
+        Text (" ")
       }
-
+    }
+  //---
+    .onChange (of: self.mValueArray) {
+      if self.mValueArray.count == 1, let v = self.mValueArray.first {
+        self.mDoubleValue = v
+      }else{
+        self.mDoubleValue = nil
+      }
     }
   }
 
